@@ -7,7 +7,7 @@ package graph
 import (
 	"kloudlite.io/common"
 
-	"kloudlite.io/apps/console/internal/app/graph/generated"
+	"kloudlite.io/apps/container-registry/internal/app/graph/generated"
 )
 
 func (r *Resolver) Metadata() generated.MetadataResolver     { return &common.MetadataResolver{} }

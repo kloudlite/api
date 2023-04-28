@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	json_patch "github.com/kloudlite/operator/pkg/json-patch"
 	"github.com/kloudlite/operator/pkg/operator"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	fn "kloudlite.io/pkg/functions"
@@ -13,21 +14,30 @@ import (
 
 type MetadataResolver struct{}
 type StatusResolver struct{}
-type SyncStatusResolver struct{}
 type MetadataInResolver struct{}
 
-func (*SyncStatusResolver) Action(ctx context.Context, obj *t.SyncStatus) (t.SyncAction, error) {
+type PatchResolver struct{}
+
+func (r *PatchResolver) Value(ctx context.Context, obj *json_patch.PatchOperation) (interface{}, error) {
 	if obj == nil {
-		return t.SyncAction(""), fmt.Errorf("syncStatus can not be nil")
+		return nil, nil
 	}
-	return obj.Action, nil
+	return obj.Value.MarshalJSON()
 }
 
-func (*SyncStatusResolver) State(ctx context.Context, obj *t.SyncStatus) (t.SyncState, error) {
+type PatchInResolver struct{}
+
+func (r *PatchInResolver) Value(ctx context.Context, obj *json_patch.PatchOperation, data interface{}) error {
 	if obj == nil {
-		return t.SyncState(""), fmt.Errorf("syncStatus can not be nil")
+		return nil
 	}
-	return obj.State, nil
+
+	b, err := json.Marshal(data)
+	if err != nil {
+		return err
+	}
+
+	return json.Unmarshal(b, &obj.Value)
 }
 
 func (*MetadataInResolver) Labels(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error {
@@ -42,6 +52,22 @@ func (*MetadataInResolver) Annotations(ctx context.Context, obj *v1.ObjectMeta, 
 		return nil
 	}
 	return fn.JsonConversion(data, &obj.Annotations)
+}
+
+type SyncStatusResolver struct{}
+
+func (*SyncStatusResolver) Action(ctx context.Context, obj *t.SyncStatus) (t.SyncAction, error) {
+	if obj == nil {
+		return t.SyncAction(""), fmt.Errorf("syncStatus can not be nil")
+	}
+	return obj.Action, nil
+}
+
+func (*SyncStatusResolver) State(ctx context.Context, obj *t.SyncStatus) (t.SyncState, error) {
+	if obj == nil {
+		return t.SyncState(""), fmt.Errorf("syncStatus can not be nil")
+	}
+	return obj.State, nil
 }
 
 func (*SyncStatusResolver) SyncScheduledAt(ctx context.Context, obj *t.SyncStatus) (string, error) {

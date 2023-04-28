@@ -11,5 +11,7 @@ import (
 
 func (r *Resolver) Metadata() generated.MetadataResolver     { return &common.MetadataResolver{} }
 func (r *Resolver) Status() generated.StatusResolver         { return &common.StatusResolver{} }
-func (r *Resolver) SyncStatus() *common.SyncStatusResolver   { return &common.SyncStatusResolver{} }
+func (r *Resolver) SyncStatus() generated.SyncStatusResolver   { return &common.SyncStatusResolver{} }
 func (r *Resolver) MetadataIn() generated.MetadataInResolver { return &common.MetadataInResolver{} }
+func (r *Resolver) Patch() generated.PatchResolver      { return &common.PatchResolver{} }
+func (r *Resolver) PatchIn() generated.PatchInResolver    { return &common.PatchInResolver{} }
