@@ -165,6 +165,9 @@ models:
   SyncStatus:
     model: kloudlite.io/pkg/types.SyncStatus
 
+  SyncState:
+    model: kloudlite.io/pkg/types.SyncState
+
   SyncAction:
     model: kloudlite.io/pkg/types.SyncAction
 

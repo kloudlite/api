@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/kloudlite/operator/pkg/operator"
 	"kloudlite.io/apps/infra/internal/app/graph/generated"
@@ -26,7 +25,14 @@ func (r *edgeResolver) Spec(ctx context.Context, obj *entities.Edge) (*model.Edg
 
 // Status is the resolver for the status field.
 func (r *edgeResolver) Status(ctx context.Context, obj *entities.Edge) (*operator.Status, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return nil, nil
+	}
+	var op operator.Status
+	if err := fn.JsonConversion(obj.Status, &op); err != nil {
+		return nil, err
+	}
+	return &op, nil
 }
 
 // Spec is the resolver for the spec field.

@@ -7,7 +7,6 @@ package graph
 import (
 	"context"
 
-	"github.com/kloudlite/cluster-operator/lib/operator"
 	corev1 "k8s.io/api/core/v1"
 	"kloudlite.io/apps/infra/internal/app/graph/generated"
 	"kloudlite.io/apps/infra/internal/domain/entities"
@@ -79,22 +78,3 @@ func (r *Resolver) SecretIn() generated.SecretInResolver { return &secretInResol
 
 type secretResolver struct{ *Resolver }
 type secretInResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *secretResolver) Status(ctx context.Context, obj *entities.Secret) (*operator.Status, error) {
-	if obj == nil {
-		return nil, nil
-	}
-
-	var m operator.Status
-	if err := fn.JsonConversion(obj.Status, &m); err != nil {
-		return nil, err
-	}
-
-	return &m, nil
-}

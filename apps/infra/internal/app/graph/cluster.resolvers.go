@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"github.com/kloudlite/operator/pkg/operator"
 	"kloudlite.io/apps/infra/internal/app/graph/generated"
@@ -26,7 +25,14 @@ func (r *clusterResolver) Spec(ctx context.Context, obj *entities.Cluster) (*mod
 
 // Status is the resolver for the status field.
 func (r *clusterResolver) Status(ctx context.Context, obj *entities.Cluster) (*operator.Status, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return nil, nil
+	}
+	var op operator.Status
+	if err := fn.JsonConversion(obj.Status, &op); err != nil {
+		return nil, err
+	}
+	return &op, nil
 }
 
 // Spec is the resolver for the spec field.

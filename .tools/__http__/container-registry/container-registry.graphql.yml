@@ -90,6 +90,6 @@ variables:
     spec:
       harborProjectName: kloudlite-dev
       permissions: 
-        - push
-        - pull
+        - push-repository
+        - pull-repository
 ---

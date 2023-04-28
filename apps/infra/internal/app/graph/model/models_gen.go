@@ -2,12 +2,6 @@
 
 package model
 
-import (
-	"fmt"
-	"io"
-	"strconv"
-)
-
 type BYOCClusterSpec struct {
 	AccountName         string    `json:"accountName"`
 	DefaultIngressClass *string   `json:"defaultIngressClass,omitempty"`
@@ -166,49 +160,4 @@ type WorkerNodeSpecIn struct {
 	ClusterName  string `json:"clusterName"`
 	Region       string `json:"region"`
 	AccountName  string `json:"accountName"`
-}
-
-type SyncState string
-
-const (
-	SyncStateIDLe       SyncState = "IDLE"
-	SyncStateInProgress SyncState = "IN_PROGRESS"
-	SyncStateReady      SyncState = "READY"
-	SyncStateNotReady   SyncState = "NOT_READY"
-)
-
-var AllSyncState = []SyncState{
-	SyncStateIDLe,
-	SyncStateInProgress,
-	SyncStateReady,
-	SyncStateNotReady,
-}
-
-func (e SyncState) IsValid() bool {
-	switch e {
-	case SyncStateIDLe, SyncStateInProgress, SyncStateReady, SyncStateNotReady:
-		return true
-	}
-	return false
-}
-
-func (e SyncState) String() string {
-	return string(e)
-}
-
-func (e *SyncState) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = SyncState(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid SyncState", str)
-	}
-	return nil
-}
-
-func (e SyncState) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
