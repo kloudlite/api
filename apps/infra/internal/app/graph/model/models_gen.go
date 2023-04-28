@@ -26,12 +26,6 @@ type BYOCClusterSpecIn struct {
 	Region              string    `json:"region"`
 }
 
-type Check struct {
-	Status     *bool   `json:"status,omitempty"`
-	Message    *string `json:"message,omitempty"`
-	Generation *int    `json:"generation,omitempty"`
-}
-
 type CloudProviderSpec struct {
 	DisplayName    string                           `json:"display_name"`
 	Provider       string                           `json:"provider"`
@@ -172,47 +166,6 @@ type WorkerNodeSpecIn struct {
 	ClusterName  string `json:"clusterName"`
 	Region       string `json:"region"`
 	AccountName  string `json:"accountName"`
-}
-
-type SyncAction string
-
-const (
-	SyncActionApply  SyncAction = "APPLY"
-	SyncActionDelete SyncAction = "DELETE"
-)
-
-var AllSyncAction = []SyncAction{
-	SyncActionApply,
-	SyncActionDelete,
-}
-
-func (e SyncAction) IsValid() bool {
-	switch e {
-	case SyncActionApply, SyncActionDelete:
-		return true
-	}
-	return false
-}
-
-func (e SyncAction) String() string {
-	return string(e)
-}
-
-func (e *SyncAction) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = SyncAction(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid SyncAction", str)
-	}
-	return nil
-}
-
-func (e SyncAction) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type SyncState string
