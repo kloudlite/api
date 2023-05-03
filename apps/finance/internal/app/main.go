@@ -4,7 +4,6 @@ import (
 	"context"
 
 	"kloudlite.io/constants"
-	"fmt"
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
@@ -77,7 +76,6 @@ var Module = fx.Module(
 			)
 		},
 	),
-	fmt.Println("here")
 	// config.EnvFx[WorkloadFinanceConsumerEnv](),
 	// fx.Provide(
 	// 	func(env *Env) *stripe.Client {
