@@ -1,4 +1,4 @@
-name: finance
+name: message-office
 
 on:
   workflow_dispatch:

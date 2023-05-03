@@ -1,4 +1,4 @@
-name: finance
+name: container-registry
 
 on:
   workflow_dispatch:

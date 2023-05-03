@@ -1,4 +1,4 @@
-name: finance
+name: gateway
 
 on:
   workflow_dispatch:

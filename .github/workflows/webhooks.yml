@@ -1,4 +1,4 @@
-name: finance
+name: webhooks
 
 on:
   workflow_dispatch:

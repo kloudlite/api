@@ -1,4 +1,4 @@
-name: finance
+name: js-eval
 
 on:
   workflow_dispatch:
