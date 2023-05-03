@@ -45,18 +45,28 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 		return nil, err
 	}
 
-	d.environmentRepo.Create(ctx, &entities.Environment{
+	defaultEnv := &entities.Environment{
 		Env: crdsv1.Env{
-			TypeMeta:   metav1.TypeMeta{},
-			ObjectMeta: metav1.ObjectMeta{},
-			Spec:       crdsv1.EnvSpec{},
+			ObjectMeta: metav1.ObjectMeta{
+				Name:      "default",
+				Namespace: project.Spec.TargetNamespace,
+			},
+			Spec: crdsv1.EnvSpec{
+				ProjectName: project.Name,
+			},
 		},
-		AccountName: "",
-		ClusterName: "",
-		SyncStatus:  t.SyncStatus{},
-	})
+		AccountName: ctx.AccountName,
+		ClusterName: ctx.ClusterName,
+		SyncStatus:  t.GetSyncStatusForCreation(),
+	}
+
+	d.environmentRepo.Create(ctx, defaultEnv)
 
 	if err := d.applyK8sResource(ctx, &prj.Project); err != nil {
+		return nil, err
+	}
+
+	if err := d.applyK8sResource(ctx, defaultEnv); err != nil {
 		return nil, err
 	}
 

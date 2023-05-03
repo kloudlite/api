@@ -16,7 +16,7 @@ require (
 	github.com/google/go-github/v45 v45.2.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/kloudlite/cluster-operator v0.0.0-20230329090334-40fc9f00d55e
-	github.com/kloudlite/operator v0.0.0-20230426043807-ca6e9c60fd16
+	github.com/kloudlite/operator v0.0.0-20230503141352-127cd601f65c
 	github.com/kloudlite/wg-operator v0.0.0-20230329090407-183297dc23b8
 	github.com/matoous/go-nanoid/v2 v2.0.0
 	github.com/miekg/dns v1.1.41
