@@ -1,17 +1,7 @@
-input ManagedResourceSpecMresKindIn {
-	kind: String!
-}
-
-type ManagedResourceSpecMsvcRef @shareable {
-	kind: String
-	name: String!
-	apiVersion: String!
-}
-
 input ManagedResourceSpecMsvcRefIn {
+	apiVersion: String!
 	kind: String
 	name: String!
-	apiVersion: String!
 }
 
 type ManagedResourceSpec @shareable {
@@ -48,5 +38,15 @@ input ManagedResourceIn {
 
 type ManagedResourceSpecMresKind @shareable {
 	kind: String!
+}
+
+input ManagedResourceSpecMresKindIn {
+	kind: String!
+}
+
+type ManagedResourceSpecMsvcRef @shareable {
+	apiVersion: String!
+	kind: String
+	name: String!
 }
 

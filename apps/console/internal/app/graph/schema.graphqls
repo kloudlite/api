@@ -23,6 +23,9 @@ type Query {
   core_listProjects(clusterName: String): [Project!] @isLoggedIn @hasAccount
   core_getProject(name: String!): Project @isLoggedIn @hasAccountAndCluster
 
+  core_listEnvironments: [Environment!] @isLoggedIn @hasAccountAndCluster
+  core_getEnvironment(name: String!): Environment @isLoggedIn @hasAccountAndCluster
+
   core_listApps(namespace: String!): [App!] @isLoggedIn @hasAccountAndCluster
   core_getApp(namespace: String!, name: String!): App @isLoggedIn @hasAccountAndCluster
 
@@ -46,6 +49,10 @@ type Mutation {
   core_createProject(project: ProjectIn!): Project @isLoggedIn @hasAccountAndCluster
   core_updateProject(project: ProjectIn!): Project @isLoggedIn @hasAccountAndCluster
   core_deleteProject(name: String!): Boolean! @isLoggedIn @hasAccountAndCluster
+
+  core_createEnvironment(env: EnvironmentIn!): Environment @isLoggedIn @hasAccountAndCluster
+  core_updateEnvironment(env: EnvironmentIn!): Environment @isLoggedIn @hasAccountAndCluster
+  core_deleteEnvironment(name: String!): Boolean! @isLoggedIn @hasAccountAndCluster
  
   core_createApp(app: AppIn!): App @isLoggedIn @hasAccountAndCluster
   core_updateApp(app: AppIn!): App @isLoggedIn @hasAccountAndCluster

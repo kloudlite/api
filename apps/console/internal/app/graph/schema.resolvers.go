@@ -30,6 +30,24 @@ func (r *mutationResolver) CoreDeleteProject(ctx context.Context, name string) (
 	return true, nil
 }
 
+// CoreCreateEnvironment is the resolver for the core_createEnvironment field.
+func (r *mutationResolver) CoreCreateEnvironment(ctx context.Context, env entities.Environment) (*entities.Environment, error) {
+	return r.Domain.CreateEnvironment(toConsoleContext(ctx), env)
+}
+
+// CoreUpdateEnvironment is the resolver for the core_updateEnvironment field.
+func (r *mutationResolver) CoreUpdateEnvironment(ctx context.Context, env entities.Environment) (*entities.Environment, error) {
+	return r.Domain.UpdateEnvironment(toConsoleContext(ctx), env)
+}
+
+// CoreDeleteEnvironment is the resolver for the core_deleteEnvironment field.
+func (r *mutationResolver) CoreDeleteEnvironment(ctx context.Context, name string) (bool, error) {
+	if err := r.Domain.DeleteEnvironment(toConsoleContext(ctx), name); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // CoreCreateApp is the resolver for the core_createApp field.
 func (r *mutationResolver) CoreCreateApp(ctx context.Context, app entities.App) (*entities.App, error) {
 	return r.Domain.CreateApp(toConsoleContext(ctx), app)
@@ -159,6 +177,25 @@ func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *strin
 // CoreGetProject is the resolver for the core_getProject field.
 func (r *queryResolver) CoreGetProject(ctx context.Context, name string) (*entities.Project, error) {
 	return r.Domain.GetProject(toConsoleContext(ctx), name)
+}
+
+// CoreListEnvironments is the resolver for the core_listEnvironments field.
+func (r *queryResolver) CoreListEnvironments(ctx context.Context) ([]*entities.Environment, error) {
+	envs, err := r.Domain.ListEnvironments(toConsoleContext(ctx))
+
+	if err != nil {
+		return nil, err
+	}
+
+	if envs == nil {
+		return make([]*entities.Environment, 0), nil
+	}
+	return envs, nil
+}
+
+// CoreGetEnvironment is the resolver for the core_getEnvironment field.
+func (r *queryResolver) CoreGetEnvironment(ctx context.Context, name string) (*entities.Environment, error) {
+	return r.Domain.GetEnvironment(toConsoleContext(ctx), name)
 }
 
 // CoreListApps is the resolver for the core_listApps field.

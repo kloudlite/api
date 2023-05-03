@@ -1,20 +1,7 @@
-input RouterSpecHttpsIn {
+input RouterSpecBasicAuthIn {
 	enabled: Boolean!
-	forceRedirect: Boolean
-}
-
-input RouterSpecRoutesIn {
-	lambda: String
-	path: String!
-	port: Int!
-	rewrite: Boolean
-	app: String
-}
-
-type RouterSpecCors @shareable {
-	allowCredentials: Boolean
-	enabled: Boolean
-	origins: [String]
+	secretName: String
+	username: String
 }
 
 input RouterSpecCorsIn {
@@ -23,69 +10,75 @@ input RouterSpecCorsIn {
 	origins: [String]
 }
 
-type RouterSpecRoutes @shareable {
-	lambda: String
+type RouterSpecCors @shareable {
+	allowCredentials: Boolean
+	enabled: Boolean
+	origins: [String]
+}
+
+type RouterSpec @shareable {
+	routes: [RouterSpecRoutes]
+	backendProtocol: String
+	basicAuth: RouterSpecBasicAuth
+	domains: [String]!
+	maxBodySizeInMB: Int
+	region: String
+	cors: RouterSpecCors
+	https: RouterSpecHttps
+	ingressClass: String
+	rateLimit: RouterSpecRateLimit
+}
+
+input RouterIn {
+	kind: String
+	metadata: MetadataIn! @goField(name: "objectMeta")
+	overrides: OverridesIn
+	spec: RouterSpecIn
+	apiVersion: String
+}
+
+input RouterSpecRoutesIn {
 	path: String!
 	port: Int!
 	rewrite: Boolean
 	app: String
-}
-
-input RouterSpecIn {
-	https: RouterSpecHttpsIn
-	maxBodySizeInMB: Int
-	rateLimit: RouterSpecRateLimitIn
-	region: String
-	routes: [RouterSpecRoutesIn]
-	basicAuth: RouterSpecBasicAuthIn
-	cors: RouterSpecCorsIn
-	domains: [String]!
-}
-
-input RouterIn {
-	overrides: OverridesIn
-	spec: RouterSpecIn
-	apiVersion: String
-	kind: String
-	metadata: MetadataIn! @goField(name: "objectMeta")
+	lambda: String
 }
 
 type RouterSpecBasicAuth @shareable {
+	enabled: Boolean!
 	secretName: String
 	username: String
-	enabled: Boolean!
 }
 
-input RouterSpecBasicAuthIn {
-	secretName: String
-	username: String
+type RouterSpecHttps @shareable {
+	clusterIssuer: String
 	enabled: Boolean!
+	forceRedirect: Boolean
 }
 
-type RouterSpec @shareable {
-	https: RouterSpecHttps
-	maxBodySizeInMB: Int
-	rateLimit: RouterSpecRateLimit
-	region: String
-	routes: [RouterSpecRoutes]
-	basicAuth: RouterSpecBasicAuth
-	cors: RouterSpecCors
-	domains: [String]!
+input RouterSpecHttpsIn {
+	clusterIssuer: String
+	enabled: Boolean!
+	forceRedirect: Boolean
 }
 
 type Router @shareable {
+	kind: String
+	metadata: Metadata! @goField(name: "objectMeta")
 	overrides: Overrides
 	syncStatus: SyncStatus
 	spec: RouterSpec
 	status: Status
 	apiVersion: String
-	kind: String
-	metadata: Metadata! @goField(name: "objectMeta")
 }
 
-type RouterSpecHttps @shareable {
-	enabled: Boolean!
-	forceRedirect: Boolean
+type RouterSpecRoutes @shareable {
+	path: String!
+	port: Int!
+	rewrite: Boolean
+	app: String
+	lambda: String
 }
 
 type RouterSpecRateLimit @shareable {
@@ -100,5 +93,18 @@ input RouterSpecRateLimitIn {
 	enabled: Boolean
 	rpm: Int
 	rps: Int
+}
+
+input RouterSpecIn {
+	routes: [RouterSpecRoutesIn]
+	backendProtocol: String
+	basicAuth: RouterSpecBasicAuthIn
+	domains: [String]!
+	maxBodySizeInMB: Int
+	region: String
+	cors: RouterSpecCorsIn
+	https: RouterSpecHttpsIn
+	ingressClass: String
+	rateLimit: RouterSpecRateLimitIn
 }
 

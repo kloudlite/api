@@ -1,22 +1,26 @@
 type Config @shareable {
-	enabled: Boolean
-	kind: String
-	metadata: Metadata! @goField(name: "objectMeta")
-	overrides: Overrides
 	projectName: String
-	status: Status
 	apiVersion: String
+	clusterName: String!
 	syncStatus: SyncStatus
 	data: Map
+	enabled: Boolean
+	kind: String
+	accountName: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: Overrides
+	status: Status
 }
 
 input ConfigIn {
-	enabled: Boolean
-	kind: String
-	metadata: MetadataIn! @goField(name: "objectMeta")
-	overrides: OverridesIn
 	projectName: String
 	apiVersion: String
+	clusterName: String!
 	data: Map
+	enabled: Boolean
+	kind: String
+	accountName: String!
+	metadata: MetadataIn! @goField(name: "objectMeta")
+	overrides: OverridesIn
 }
 

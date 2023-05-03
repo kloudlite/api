@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"time"
 
+	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/console/internal/domain/entities"
 	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
@@ -42,6 +44,17 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 		}
 		return nil, err
 	}
+
+	d.environmentRepo.Create(ctx, &entities.Environment{
+		Env: crdsv1.Env{
+			TypeMeta:   metav1.TypeMeta{},
+			ObjectMeta: metav1.ObjectMeta{},
+			Spec:       crdsv1.EnvSpec{},
+		},
+		AccountName: "",
+		ClusterName: "",
+		SyncStatus:  t.SyncStatus{},
+	})
 
 	if err := d.applyK8sResource(ctx, &prj.Project); err != nil {
 		return nil, err

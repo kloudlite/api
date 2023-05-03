@@ -1,0 +1,30 @@
+type EnvironmentSpec @shareable {
+	routerBaseDomain: String
+	accountId: String!
+	blueprintName: String
+	projectName: String!
+}
+
+input EnvironmentSpecIn {
+	routerBaseDomain: String
+	accountId: String!
+	blueprintName: String
+	projectName: String!
+}
+
+type Environment @shareable {
+	metadata: Metadata! @goField(name: "objectMeta")
+	syncStatus: SyncStatus
+	spec: EnvironmentSpec
+	status: Status
+	apiVersion: String
+	kind: String
+}
+
+input EnvironmentIn {
+	metadata: MetadataIn! @goField(name: "objectMeta")
+	spec: EnvironmentSpecIn
+	apiVersion: String
+	kind: String
+}
+
