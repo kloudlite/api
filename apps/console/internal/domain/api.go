@@ -61,6 +61,20 @@ type Domain interface {
 	OnDeleteProjectMessage(ctx ConsoleContext, cluster entities.Project) error
 	OnUpdateProjectMessage(ctx ConsoleContext, cluster entities.Project) error
 
+	// environment:query
+	ListEnvironments(ctx ConsoleContext) ([]*entities.Environment, error)
+	GetEnvironment(ctx ConsoleContext, name string) (*entities.Environment, error)
+
+	// environment:mutation
+	CreateEnvironment(ctx ConsoleContext, env entities.Environment) (*entities.Environment, error)
+	UpdateEnvironment(ctx ConsoleContext, env entities.Environment) (*entities.Environment, error)
+	DeleteEnvironment(ctx ConsoleContext, name string) error
+
+	// environment:messaging-updates
+	OnApplyEnvironmentError(ctx ConsoleContext, err error, name string) error
+	OnDeleteEnvironmentMessage(ctx ConsoleContext, cluster entities.Environment) error
+	OnUpdateEnvironmentMessage(ctx ConsoleContext, cluster entities.Environment) error
+
 	// apps:query
 	ListApps(ctx ConsoleContext, namespace string) ([]*entities.App, error)
 	GetApp(ctx ConsoleContext, namespace, name string) (*entities.App, error)

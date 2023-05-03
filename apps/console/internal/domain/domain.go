@@ -25,13 +25,14 @@ type domain struct {
 
 	iamClient iam.IAMClient
 
-	projectRepo repos.DbRepo[*entities.Project]
-	appRepo     repos.DbRepo[*entities.App]
-	configRepo  repos.DbRepo[*entities.Config]
-	secretRepo  repos.DbRepo[*entities.Secret]
-	routerRepo  repos.DbRepo[*entities.Router]
-	msvcRepo    repos.DbRepo[*entities.MSvc]
-	mresRepo    repos.DbRepo[*entities.MRes]
+	projectRepo     repos.DbRepo[*entities.Project]
+	environmentRepo repos.DbRepo[*entities.Environment]
+	appRepo         repos.DbRepo[*entities.App]
+	configRepo      repos.DbRepo[*entities.Config]
+	secretRepo      repos.DbRepo[*entities.Secret]
+	routerRepo      repos.DbRepo[*entities.Router]
+	msvcRepo        repos.DbRepo[*entities.MSvc]
+	mresRepo        repos.DbRepo[*entities.MRes]
 }
 
 func errAlreadyMarkedForDeletion(label, namespace, name string) error {
@@ -121,6 +122,7 @@ var Module = fx.Module("domain",
 		iamClient iam.IAMClient,
 
 		projectRepo repos.DbRepo[*entities.Project],
+		environmentRepo repos.DbRepo[*entities.Environment],
 		appRepo repos.DbRepo[*entities.App],
 		configRepo repos.DbRepo[*entities.Config],
 		secretRepo repos.DbRepo[*entities.Secret],
@@ -136,13 +138,14 @@ var Module = fx.Module("domain",
 
 			iamClient: iamClient,
 
-			projectRepo: projectRepo,
-			appRepo:     appRepo,
-			configRepo:  configRepo,
-			routerRepo:  routerRepo,
-			secretRepo:  secretRepo,
-			msvcRepo:    msvcRepo,
-			mresRepo:    mresRepo,
+			projectRepo:     projectRepo,
+			environmentRepo: environmentRepo,
+			appRepo:         appRepo,
+			configRepo:      configRepo,
+			routerRepo:      routerRepo,
+			secretRepo:      secretRepo,
+			msvcRepo:        msvcRepo,
+			mresRepo:        mresRepo,
 		}
 	}),
 )
