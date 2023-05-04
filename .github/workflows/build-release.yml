@@ -27,7 +27,7 @@ jobs:
 
       - shell: bash
         run: |
-          echo ${{ steps.setup.outputs.image-tag }}
+          echo ${{ steps.setup.outputs }}
       - name: Release App
         env:
           REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
