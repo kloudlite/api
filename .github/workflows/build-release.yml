@@ -25,6 +25,9 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
+      - shell: bash
+        run: |
+          echo ${{ steps.setup.outputs.image-tag }}
       - name: Release App
         env:
           REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
