@@ -34,6 +34,8 @@ runs:
 
     - name: Set Docker tag
       id: tag
+      with:
+        latest_git_branch: main
       uses: cytopia/docker-tag-action@v0.4.22
 
     - shell: bash
