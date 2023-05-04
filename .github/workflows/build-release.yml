@@ -29,7 +29,19 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
+      - uses: dorny/paths-filter@v2
+        id: changes
+        with:
+          filters: |
+            src:
+              - apps/${{matrix.app}}/**
+              - common/**
+              - constants/**
+              - grpc-interfaces/**
+              - pkg/**
+
       - name: Setup Docker
+        if: steps.changes.outputs.src == 'true'
         id: setup
         uses: ./.github/actions/setup
         with:
@@ -39,6 +51,7 @@ jobs:
           password: ${{ secrets.DOCKER_PASSWORD }}
 
       - name: Build & Push Image
+        if: steps.changes.outputs.src == 'true'
         env:
           REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
           APP: ${{ matrix.app }}
