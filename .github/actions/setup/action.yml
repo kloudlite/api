@@ -12,7 +12,9 @@ inputs:
     required: false
 
 outputs:
-  image-tag: ${{ steps.tag.outputs.docker-tag }}
+  image-tag:
+    description: 'Image Tag'
+    value: ${{ steps.tag.outputs.docker-tag }}
 
 runs:
   using: "composite"
@@ -36,10 +38,6 @@ runs:
       with:
         latest_git_branch: main
       uses: cytopia/docker-tag-action@v0.4.22
-
-    - shell: bash
-      run: |
-        echo "image-tag=${{ steps.tag.outputs.docker-tag }}" >> $GITHUB_OUTPUT
 
 
 #    - name: Setup Docker Cache
