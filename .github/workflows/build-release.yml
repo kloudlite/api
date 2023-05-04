@@ -30,4 +30,4 @@ jobs:
           APP: ${{ matrix.app }}
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: |
-          docker buildx build -f ./apps/${APP}/Dockerfile -t ${REGISTRY}/kloudlite/${APP}:${{ steps.setup.outputs.image-tag }} --push --build-arg APP=${APP} --build-arg GH_ACCESS_TOKEN=${GH_ACCESS_TOKEN} --build-context project-root=. --cache-from type=local,src=/docker-cache --cache-to type=local,src=/docker-cache ./apps/${APP}
+          docker buildx build -f ./apps/${APP}/Dockerfile -t ${REGISTRY}/kloudlite/${APP}:${{ steps.setup.outputs.image-tag }} --push --build-arg APP=${APP} --build-arg GH_ACCESS_TOKEN=${GH_ACCESS_TOKEN} --build-context project-root=. --cache-from type=local,src=/docker-cache --cache-to type=local,dest=/docker-cache ./apps/${APP}
