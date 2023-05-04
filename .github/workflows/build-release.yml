@@ -1,4 +1,4 @@
-name: build / Container Builds
+name: build/Container Builds
 
 on:
   workflow_dispatch:
