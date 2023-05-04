@@ -38,6 +38,7 @@ runs:
 
     - shell: bash
       run: |
+        echo ${{ steps.tag.outputs.docker-tag }}
         echo "image-tag=${{ steps.tag.outputs.docker-tag }}" >> $GITHUB_OUTPUT
 
 
