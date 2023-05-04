@@ -25,6 +25,7 @@ jobs:
           - finance
           - container-registry
           - dns
+          - gateway
     steps:
       - name: Checkout
         uses: actions/checkout@v3
