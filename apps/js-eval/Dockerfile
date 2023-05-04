@@ -19,7 +19,6 @@ ARG APP
 RUN mkdir -p ./apps/$APP
 WORKDIR /tmp/app/apps/$APP
 COPY ./ ./
-ENV CGO_ENABLED=0
 RUN GOOS=linux GOARCH=amd64 go build -tags musl -o /tmp/bin/$APP ./main.go
 RUN chmod +x /tmp/bin/$APP
 
