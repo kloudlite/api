@@ -12,6 +12,7 @@ jobs:
         app:
           - auth
           - finance
+          - container-registry
     steps:
       - name: Checkout
         uses: actions/checkout@v3
