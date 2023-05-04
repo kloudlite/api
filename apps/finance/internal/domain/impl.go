@@ -3,6 +3,7 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
+	iamT "kloudlite.io/common/iam-types"
 	"math"
 	"math/rand"
 	"reflect"
@@ -22,7 +23,6 @@ import (
 
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/console"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/errors"

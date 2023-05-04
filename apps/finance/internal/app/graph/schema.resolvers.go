@@ -8,11 +8,11 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	iamT "kloudlite.io/common/iam-types"
 
 	"kloudlite.io/apps/finance/internal/app/graph/generated"
 	"kloudlite.io/apps/finance/internal/app/graph/model"
 	"kloudlite.io/apps/finance/internal/domain"
-	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/pkg/repos"
 )
 

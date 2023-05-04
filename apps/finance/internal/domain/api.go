@@ -2,8 +2,8 @@ package domain
 
 import (
 	"context"
+	iamT "kloudlite.io/common/iam-types"
 
-	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/pkg/repos"
 )
 
