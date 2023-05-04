@@ -33,6 +33,7 @@ runs:
         key: ${{ runner.os }}-
 
     - name: Change permissions for cache folder
+      shell: bash
       run: |
         sudo chown -R $(whoami) ~/docker-cache
 
