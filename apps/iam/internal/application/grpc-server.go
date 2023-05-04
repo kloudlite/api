@@ -3,10 +3,10 @@ package application
 import (
 	context "context"
 	"fmt"
+	t "kloudlite.io/common/iam-types"
 	"strings"
 
 	"kloudlite.io/apps/iam/internal/domain/entities"
-	t "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/errors"
 	"kloudlite.io/pkg/logging"

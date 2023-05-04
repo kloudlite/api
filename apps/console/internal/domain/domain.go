@@ -3,12 +3,12 @@ package domain
 import (
 	"encoding/json"
 	"fmt"
+	iamT "kloudlite.io/common/iam-types"
 
 	t "github.com/kloudlite/operator/agent/types"
 	"github.com/kloudlite/operator/pkg/kubectl"
 	"go.uber.org/fx"
 	"kloudlite.io/apps/console/internal/domain/entities"
-	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"

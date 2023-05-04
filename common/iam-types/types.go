@@ -1,4 +1,4 @@
-package types
+package iam_types
 
 import "fmt"
 

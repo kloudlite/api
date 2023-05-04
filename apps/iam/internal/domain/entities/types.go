@@ -1,7 +1,7 @@
 package entities
 
 import (
-	t "kloudlite.io/apps/iam/types"
+	t "kloudlite.io/common/iam-types"
 	"kloudlite.io/pkg/repos"
 )
 

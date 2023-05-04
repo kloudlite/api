@@ -3,10 +3,10 @@ package domain
 import (
 	"context"
 	"fmt"
+	iamT "kloudlite.io/common/iam-types"
 	"time"
 
 	"kloudlite.io/apps/console/internal/domain/entities"
-	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"

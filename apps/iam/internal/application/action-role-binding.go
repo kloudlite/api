@@ -1,7 +1,7 @@
 package application
 
 import (
-	t "kloudlite.io/apps/iam/types"
+	t "kloudlite.io/common/iam-types"
 )
 
 type RoleBindingMap map[t.Action][]t.Role
