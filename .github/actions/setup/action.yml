@@ -11,6 +11,10 @@ inputs:
     description: 'registry password'
     required: false
 
+outputs:
+  image-tag:
+    description: 'Image Tag'
+
 runs:
   using: "composite"
   steps:
@@ -31,6 +35,11 @@ runs:
     - name: Set Docker tag
       id: tag
       uses: cytopia/docker-tag-action@v0.4.7
+
+    - shell: bash
+      run: |
+        echo "::set-output name=image-tag::${{ steps.tag.outputs.docker-tag }}"
+
 
     - name: Setup Docker Cache
       uses: satackey/action-docker-layer-caching@v0.0.11

@@ -18,6 +18,7 @@ jobs:
         uses: actions/checkout@v3
 
       - name: Setup
+        id: setup
         uses: ./.github/actions/setup
         with:
           registry: ${{ secrets.DOCKER_REGISTRY }}
@@ -29,4 +30,4 @@ jobs:
           REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
           APP: ${{ matrix.app }}
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-        run: docker buildx build -f ./apps/${APP}/Dockerfile -t ${REGISTRY}/kloudlite/${APP}:${{ steps.tag.outputs.docker-tag }} ./apps/${APP} --push --build-arg APP=${APP} --build-arg GH_ACCESS_TOKEN=${GH_ACCESS_TOKEN} --build-context project-root=.
+        run: docker buildx build -f ./apps/${APP}/Dockerfile -t ${REGISTRY}/kloudlite/${APP}:${{ steps.setup.outputs.image-tag }} ./apps/${APP} --push --build-arg APP=${APP} --build-arg GH_ACCESS_TOKEN=${GH_ACCESS_TOKEN} --build-context project-root=.
