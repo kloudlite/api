@@ -12,8 +12,7 @@ inputs:
     required: false
 
 outputs:
-  image-tag:
-    description: 'Image Tag'
+  image-tag: ${{ steps.tag.outputs.docker-tag }}
 
 runs:
   using: "composite"
