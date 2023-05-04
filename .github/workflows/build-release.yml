@@ -2,6 +2,12 @@ name: Build & Publish
 
 on:
   workflow_dispatch:
+  push:
+    branches:
+      - main
+      - issue/**
+      - feature/**
+      - bug/**
 
 jobs:
   build:
