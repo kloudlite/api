@@ -7,8 +7,8 @@ import (
 )
 
 type Account struct {
-	ID    repos.ID `json:"id"`
-	Sites []*Site  `json:"sites"`
+	Name  string  `json:"name"`
+	Sites []*Site `json:"sites"`
 }
 
 func (Account) IsEntity() {}
@@ -16,7 +16,7 @@ func (Account) IsEntity() {}
 type Site struct {
 	ID           repos.ID `json:"id"`
 	RegionID     repos.ID `json:"regionId"`
-	AccountID    repos.ID `json:"accountId"`
+	AccountName  string   `json:"accountName"`
 	IsVerified   bool     `json:"isVerified"`
 	Domain       string   `json:"domain"`
 	CreationDate string   `json:"creationDate"`

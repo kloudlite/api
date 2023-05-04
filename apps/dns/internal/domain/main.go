@@ -34,8 +34,8 @@ func (d *domainI) UpsertARecords(ctx context.Context, host string, records []str
 	return d.addARecords(ctx, host, records)
 }
 
-func (d *domainI) UpdateNodeIPs(ctx context.Context, regionId string, accountId string, clusterPart string, ips []string) bool {
-	accountCname, err := d.getAccountCName(ctx, accountId)
+func (d *domainI) UpdateNodeIPs(ctx context.Context, regionId string, accountName string, clusterPart string, ips []string) bool {
+	accountCname, err := d.getAccountCName(ctx, accountName)
 	if err != nil {
 		return false
 	}
@@ -112,17 +112,7 @@ func (d *domainI) GetNodeIps(ctx context.Context,
 }
 
 func (d *domainI) DeleteSite(ctx context.Context, siteId repos.ID) error {
-	site, err := d.sitesRepo.FindById(ctx, siteId)
-	if err != nil {
-		return err
-	}
-	err = d.sitesRepo.DeleteById(ctx, siteId)
-	if err != nil {
-		return err
-	}
-	_, err = d.consoleClient.SetupAccount(ctx, &console.AccountSetupIn{
-		AccountId: string(site.AccountId),
-	})
+	err := d.sitesRepo.DeleteById(ctx, siteId)
 	if err != nil {
 		return err
 	}
@@ -159,10 +149,10 @@ func (d *domainI) GetVerifiedSites(ctx context.Context, accountId string) ([]*Si
 	})
 }
 
-func (d *domainI) CreateSite(ctx context.Context, domain string, accountId, regionId repos.ID) error {
+func (d *domainI) CreateSite(ctx context.Context, domain string, accountName string, regionId repos.ID) error {
 	one, err := d.sitesRepo.FindOne(ctx, repos.Filter{
-		"host":      domain,
-		"accountId": accountId,
+		"host":        domain,
+		"accountName": accountName,
 	})
 	if err != nil {
 		return err
@@ -172,10 +162,10 @@ func (d *domainI) CreateSite(ctx context.Context, domain string, accountId, regi
 	}
 	if one == nil {
 		_, err = d.sitesRepo.Create(ctx, &Site{
-			Domain:    domain,
-			AccountId: accountId,
-			RegionId:  regionId,
-			Verified:  false,
+			Domain:      domain,
+			AccountName: accountName,
+			RegionId:    regionId,
+			Verified:    false,
 		})
 		if err != nil {
 			return err
@@ -205,7 +195,7 @@ func (d *domainI) VerifySite(ctx context.Context, siteId repos.ID) error {
 	}
 
 	fmt.Println(site.Domain, cname)
-	accountCnameIdentity, err := d.getAccountCName(ctx, string(site.AccountId))
+	accountCnameIdentity, err := d.getAccountCName(ctx, string(site.AccountName))
 	if err != nil {
 		return err
 	}
@@ -215,7 +205,7 @@ func (d *domainI) VerifySite(ctx context.Context, siteId repos.ID) error {
 		return err
 	}
 
-	accountId := string(site.AccountId)
+	accountId := string(site.AccountName)
 
 	clusterId, err := d.getClusterFromAccount(ctx, err, accountId)
 	if err != nil {
@@ -239,7 +229,7 @@ func (d *domainI) VerifySite(ctx context.Context, siteId repos.ID) error {
 		return err
 	}
 	_, err = d.consoleClient.SetupAccount(ctx, &console.AccountSetupIn{
-		AccountId: string(site.AccountId),
+		AccountId: string(site.AccountName),
 	})
 	if err != nil {
 		return err
@@ -247,9 +237,9 @@ func (d *domainI) VerifySite(ctx context.Context, siteId repos.ID) error {
 	return err
 }
 
-func (d *domainI) getClusterFromAccount(ctx context.Context, err error, accountId string) (string, error) {
+func (d *domainI) getClusterFromAccount(ctx context.Context, err error, accountName string) (string, error) {
 	cluster, err := d.financeClient.GetAttachedCluster(ctx, &finance.GetAttachedClusterIn{
-		AccountId: accountId,
+		AccountName: accountName,
 	})
 	if err != nil {
 		return "", err
@@ -261,8 +251,8 @@ func (d *domainI) GetSite(ctx context.Context, siteId string) (*Site, error) {
 	return d.sitesRepo.FindById(ctx, repos.ID(siteId))
 }
 
-func (d *domainI) GetAccountEdgeCName(ctx context.Context, accountId string, regionId repos.ID) (string, error) {
-	name, err := d.getAccountCName(ctx, accountId)
+func (d *domainI) GetAccountEdgeCName(ctx context.Context, accountName string, regionId repos.ID) (string, error) {
+	name, err := d.getAccountCName(ctx, accountName)
 	if err != nil {
 		return "", err
 	}
@@ -272,7 +262,7 @@ func (d *domainI) GetAccountEdgeCName(ctx context.Context, accountId string, reg
 		return "", err
 	}
 
-	cluster, err := d.getClusterFromAccount(ctx, err, accountId)
+	cluster, err := d.getClusterFromAccount(ctx, err, accountName)
 	if err != nil {
 		return fmt.Sprintf("%s.%s.%s", regionCnameIdentity, name, d.env.EdgeCnameBaseDomain), nil
 	}
@@ -328,9 +318,9 @@ func (d *domainI) getRegionCName(ctx context.Context, regionId string) (string, 
 	return regionDNS.CName, nil
 }
 
-func (d *domainI) getAccountCName(ctx context.Context, accountId string) (string, error) {
+func (d *domainI) getAccountCName(ctx context.Context, accountName string) (string, error) {
 	accountDNS, err := d.accountCNamesRepo.FindOne(ctx, repos.Filter{
-		"accountId": accountId,
+		"accountName": accountName,
 	})
 	if err != nil {
 		return "", err
@@ -359,8 +349,8 @@ func (d *domainI) getAccountCName(ctx context.Context, accountId string) (string
 	}
 	if accountDNS == nil {
 		create, err := d.accountCNamesRepo.Create(ctx, &AccountCName{
-			AccountId: repos.ID(accountId),
-			CName:     generatedName,
+			AccountName: repos.ID(accountName),
+			CName:       generatedName,
 		})
 		if err != nil {
 			return "", err

@@ -13,7 +13,7 @@ extend type Account @key(fields: "name") {
 type Site @key(fields: "id"){
   id : ID!
   regionId: ID!
-  accountId: ID!
+  accountName: String!
   isVerified: Boolean!
   domain: String!
   creationDate: String!
@@ -22,7 +22,7 @@ type Site @key(fields: "id"){
 
 
 type Mutation {
-  dns_createSite(domain:String!, accountId:ID!, regionId:ID!) :Boolean! # account-owner-access, account-admin-access
+  dns_createSite(domain:String!, accountName:String!, regionId:ID!) :Boolean! # account-owner-access, account-admin-access
   dns_deleteSite(siteId:ID!) :Boolean! # account-owner-access, account-admin-access
   dns_VerifySite(siteId:ID!) :Boolean! # account-owner-access, account-admin-access
 }

@@ -4,7 +4,7 @@ import "kloudlite.io/pkg/repos"
 
 type AccountCName struct {
 	repos.BaseEntity `bson:",inline"`
-	AccountId        repos.ID `bson:"accountId" json:"accountId"`
+	AccountName      repos.ID `bson:"accountName" json:"accountName"`
 	CName            string   `bson:"cName" json:"cName"`
 }
 
@@ -25,7 +25,7 @@ type NodeIps struct {
 
 type Site struct {
 	repos.BaseEntity `bson:",inline"`
-	AccountId        repos.ID `bson:"accountId,omitempty" json:"accountId,omitempty"`
+	AccountName      string   `bson:"accountName,omitempty" json:"accountName,omitempty"`
 	RegionId         repos.ID `bson:"regionId,omitempty" json:"regionId,omitempty"`
 	Domain           string   `bson:"host,omitempty" json:"host,omitempty"`
 	Verified         bool     `bson:"verified,omitempty" json:"verified,omitempty"`
@@ -105,7 +105,7 @@ var AccountCNameIndexes = []repos.IndexField{
 	},
 	{
 		Field: []repos.IndexKey{
-			{Key: "accountId", Value: repos.IndexAsc},
+			{Key: "accountName", Value: repos.IndexAsc},
 		},
 		Unique: true,
 	},

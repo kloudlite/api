@@ -19,7 +19,7 @@ type Domain interface {
 	GetSiteFromDomain(ctx context.Context, domain string) (*Site, error)
 	GetAccountEdgeCName(ctx context.Context, accountId string, regionId repos.ID) (string, error)
 
-	CreateSite(ctx context.Context, domain string, accountId, regionId repos.ID) error
+	CreateSite(ctx context.Context, domain string, accountId string, regionId repos.ID) error
 	DeleteSite(ctx context.Context, siteId repos.ID) error
 	UpdateNodeIPs(
 		ctx context.Context,
