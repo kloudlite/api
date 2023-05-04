@@ -20,6 +20,7 @@ jobs:
         id: setup
         uses: ./.github/actions/setup
         with:
+          app: ${{ matrix.app }}
           registry: ${{ secrets.DOCKER_REGISTRY }}
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
