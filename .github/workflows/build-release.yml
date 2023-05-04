@@ -26,6 +26,9 @@ jobs:
           - container-registry
           - dns
           - gateway
+          - iam
+          - js-eval
+          - message-office
     steps:
       - name: Checkout
         uses: actions/checkout@v3
