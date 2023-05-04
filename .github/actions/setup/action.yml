@@ -29,14 +29,14 @@ runs:
     - uses: actions/cache@v3
       with:
         path: |
-          /docker-cache
+          /home/$(whoami)/docker-cache
         key: ${{ runner.os }}-
 
     - name: Change permissions for cache folder
       shell: bash
       run: |
-        sudo mkdir -p /docker-cache
-        sudo chown -R $(whoami) /docker-cache
+        sudo mkdir -p /home/$(whoami)/docker-cache
+        sudo chown -R $(whoami) /home/$(whoami)/docker-cache
 
     - name: Login to GitHub Container Registry
       uses: docker/login-action@v2
