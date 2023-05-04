@@ -35,7 +35,7 @@ runs:
     - name: Change permissions for cache folder
       shell: bash
       run: |
-        mkdir -p /docker-cache
+        sudo mkdir -p /docker-cache
         sudo chown -R $(whoami) /docker-cache
 
     - name: Login to GitHub Container Registry
