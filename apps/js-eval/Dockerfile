@@ -1,7 +1,7 @@
 # syntax=docker/dockerfile:1.4
 FROM golang:1.18.3-alpine3.16 AS base
 RUN apk add git
-RUN apk add --no-cache gcc musl-dev
+RUN apk add --no-cache gcc g++ musl-dev
 ARG GH_ACCESS_TOKEN
 ENV GH_ACCESS_TOKEN=$GH_ACCESS_TOKEN
 RUN git config --global url.https://$GH_ACCESS_TOKEN@github.com/.insteadOf https://github.com/
