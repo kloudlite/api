@@ -8,6 +8,11 @@ jobs:
   build:
     name: Deploy to Docker Image
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        app:
+          - auth
+          - finance
     steps:
       - name: Checkout
         uses: actions/checkout@v3
@@ -15,16 +20,9 @@ jobs:
       - name: Setup
         uses: ./.github/actions/setup
 
-      - name: Release Auth
+      - name: Release App
         env:
           REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-          APP: auth
-          GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
-        run: docker buildx build -f ./apps/${APP}/Dockerfile -t ${REGISTRY}/kloudlite/${APP}:${{ steps.tag.outputs.docker-tag }} ./apps/${APP} --push --build-arg APP=${APP} --build-arg GH_ACCESS_TOKEN=${GH_ACCESS_TOKEN} --build-context project-root=.
-
-      - name: Release Finance
-        env:
-          REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
-          APP: finance
+          APP: ${{ matrix.app }}
           GH_ACCESS_TOKEN: ${{ secrets.GH_ACCESS_TOKEN }}
         run: docker buildx build -f ./apps/${APP}/Dockerfile -t ${REGISTRY}/kloudlite/${APP}:${{ steps.tag.outputs.docker-tag }} ./apps/${APP} --push --build-arg APP=${APP} --build-arg GH_ACCESS_TOKEN=${GH_ACCESS_TOKEN} --build-context project-root=.
