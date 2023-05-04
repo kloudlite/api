@@ -2,6 +2,11 @@ name: build/Container Builds
 
 on:
   workflow_dispatch:
+    inputs:
+      image-tag:
+        description: 'Image Tag'
+        required: true
+
   push:
     branches:
       - main
