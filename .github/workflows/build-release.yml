@@ -1,4 +1,4 @@
-name: Build & Publish
+name: build / Container Builds
 
 on:
   workflow_dispatch:
@@ -11,7 +11,7 @@ on:
 
 jobs:
   build:
-    name: Deploy to Docker Image
+    name: Building Container Image
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -24,7 +24,7 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v3
 
-      - name: Setup
+      - name: Setup Docker
         id: setup
         uses: ./.github/actions/setup
         with:
@@ -33,7 +33,7 @@ jobs:
           username: ${{ secrets.DOCKER_USERNAME }}
           password: ${{ secrets.DOCKER_PASSWORD }}
 
-      - name: Release App
+      - name: Build & Push Image
         env:
           REGISTRY: ${{ secrets.DOCKER_REGISTRY }}
           APP: ${{ matrix.app }}
