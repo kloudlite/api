@@ -23,7 +23,7 @@ RUN cd bin && curl -o tf.zip https://releases.hashicorp.com/terraform/1.2.9/terr
 # RUN cd bin && curl -L0 -o talosctl https://github.com/siderolabs/talos/releases/download/v1.2.3/talosctl-linux-amd64 && chmod +x talosctl
 USER nonroot
 WORKDIR /tmp/app
-COPY --chown=nonroot --from=base /tmp/bin/nodecontroller ./nodecontroller  
+COPY --chown=nonroot --from=base /tmp/bin/nodecontroller ./nodecontroller
 COPY --chown=nonroot --from=project-root  ./pkg/infraClient/terraform  /templates/terraform
 # COPY --chown=nonroot --from=project-root  ./pkg/infraClient/templates  /tmp/app/pkg/infraClient/templates
 CMD ["./nodecontroller"]

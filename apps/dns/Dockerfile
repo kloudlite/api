@@ -10,11 +10,11 @@ ENV GOCACHE=/tmp/go-cache
 ENV GOPRIVATE=github.com/kloudlite/operator,github.com/kloudlite/wg-operator,github.com/kloudlite/cluster-operator
 WORKDIR /tmp/app
 COPY --chown=1001 --from=project-root ./go.mod ./go.sum ./tools.go ./
+RUN go mod download -x
 COPY --chown=1001 --from=project-root common ./common
 COPY --chown=1001 --from=project-root constants ./constants
 COPY --chown=1001 --from=project-root grpc-interfaces ./grpc-interfaces
 COPY --chown=1001 --from=project-root pkg ./pkg
-RUN go mod download -x
 ARG APP
 RUN mkdir -p ./apps/$APP
 WORKDIR /tmp/app/apps/$APP
@@ -23,8 +23,7 @@ ENV CGO_ENABLED=0
 RUN GOOS=linux GOARCH=amd64 go build -tags musl -o /tmp/bin/$APP ./main.go
 RUN chmod +x /tmp/bin/$APP
 
-#FROM gcr.io/distroless/static:nonroot
-FROM golang:1.18.3-alpine3.16
+FROM gcr.io/distroless/static:nonroot
 USER 1001:1001
 ARG APP
 COPY --from=base /tmp/bin/$APP /dns
