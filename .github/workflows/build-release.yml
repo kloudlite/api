@@ -27,7 +27,7 @@ jobs:
           - dns
           - gateway
           - iam
-          - js-eval
+#          - js-eval
           - message-office
           - infra
           - webhooks
