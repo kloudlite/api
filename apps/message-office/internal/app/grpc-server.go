@@ -8,6 +8,7 @@ import (
 	"github.com/kloudlite/operator/grpc-interfaces/grpc/messages"
 	"kloudlite.io/apps/message-office/internal/domain"
 	"kloudlite.io/apps/message-office/internal/env"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/logging"
 	"kloudlite.io/pkg/redpanda"
 )
@@ -88,7 +89,7 @@ func (g grpcServer) SendActions(request *messages.StreamActionsRequest, server m
 		if c, ok := g.consumers[key]; ok {
 			return c, nil
 		}
-		c, err := g.createConsumer(g.ev, fmt.Sprintf("clus-%s-%s-incoming", request.AccountName, request.ClusterName))
+		c, err := g.createConsumer(g.ev, common.GetKafkaTopicName(request.AccountName, request.ClusterName))
 		if err != nil {
 			return nil, err
 		}
