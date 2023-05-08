@@ -121,10 +121,6 @@ var Module = fx.Module("app",
 	fx.Invoke(ProcessErrorOnApply),
 	fx.Invoke(ProcessStatusUpdates),
 
-	// fx.Provide(func(p redpanda.Producer) agent.Sender {
-	// 	return agent.NewSender(p)
-	// }),
-
 	fx.Provide(
 		func(clientConn IAMGrpcClient) iam.IAMClient {
 			return iam.NewIAMClient((*grpc.ClientConn)(clientConn))
