@@ -15,10 +15,9 @@ query: |+
       spec {
         domains
       }
-      syncStatls {
+      syncStatus {
         state
         generation
-        message
       }
     }
   }
@@ -92,4 +91,15 @@ query: |+
 variables:
   namespace: '{{.namespace}}'
   name: "{{.name}}"
+---
+
+label: Resync Routers
+query: |+
+  query Query($namespace: String!, $name: String!) {
+    core_resyncRouter(namespace: $namespace, name: $name)
+  }
+variables:
+  namespace: '{{.namespace}}'
+  name: "{{.name}}"
+
 ---
