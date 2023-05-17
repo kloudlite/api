@@ -13,18 +13,6 @@ import (
 	fn "kloudlite.io/pkg/functions"
 )
 
-// Data is the resolver for the data field.
-func (r *secretResolver) Data(ctx context.Context, obj *entities.Secret) (map[string]interface{}, error) {
-	if obj == nil || obj.Data == nil {
-		return nil, nil
-	}
-	m := make(map[string]any, len(obj.Data))
-	if err := fn.JsonConversion(obj.Data, &m); err != nil {
-		return nil, err
-	}
-	return m, nil
-}
-
 // Type is the resolver for the type field.
 func (r *secretResolver) Type(ctx context.Context, obj *entities.Secret) (*string, error) {
 	s := string(obj.Type)
@@ -44,15 +32,15 @@ func (r *secretResolver) StringData(ctx context.Context, obj *entities.Secret) (
 }
 
 // Data is the resolver for the data field.
-func (r *secretInResolver) Data(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error {
-	if obj == nil {
-		return nil
+func (r *secretResolver) Data(ctx context.Context, obj *entities.Secret) (map[string]interface{}, error) {
+	if obj == nil || obj.Data == nil {
+		return nil, nil
 	}
-
-	if obj.Data == nil {
-		obj.Data = make(map[string][]byte, len(data))
+	m := make(map[string]any, len(obj.Data))
+	if err := fn.JsonConversion(obj.Data, &m); err != nil {
+		return nil, err
 	}
-	return fn.JsonConversion(data, &obj.Data)
+	return m, nil
 }
 
 // Type is the resolver for the type field.
@@ -73,6 +61,18 @@ func (r *secretInResolver) StringData(ctx context.Context, obj *entities.Secret,
 		obj.StringData = make(map[string]string, len(data))
 	}
 	return fn.JsonConversion(data, &obj.StringData)
+}
+
+// Data is the resolver for the data field.
+func (r *secretInResolver) Data(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error {
+	if obj == nil {
+		return nil
+	}
+
+	if obj.Data == nil {
+		obj.Data = make(map[string][]byte, len(data))
+	}
+	return fn.JsonConversion(data, &obj.Data)
 }
 
 // Secret returns generated.SecretResolver implementation.
