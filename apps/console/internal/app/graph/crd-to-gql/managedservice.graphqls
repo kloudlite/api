@@ -50,13 +50,8 @@ type ManagedServiceSpec @shareable {
 	tolerations: [ManagedServiceSpecTolerations]
 	inputs: Map
 	msvcKind: ManagedServiceSpecMsvcKind!
-}
-
-input ManagedServiceSpecIn {
 	nodeSelector: Map
 	region: String
-	tolerations: [ManagedServiceSpecTolerationsIn]
-	inputs: Map
-	msvcKind: ManagedServiceSpecMsvcKindIn!
+	tolerations: [ManagedServiceSpecTolerations]
 }
 

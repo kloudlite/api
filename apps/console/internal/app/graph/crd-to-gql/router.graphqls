@@ -31,8 +31,6 @@ type RouterSpecRoutes @shareable {
 
 type RouterSpecBasicAuth @shareable {
 	enabled: Boolean!
-	secretName: String
-	username: String
 }
 
 type RouterSpecCors @shareable {
