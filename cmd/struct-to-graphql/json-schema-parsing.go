@@ -3,6 +3,7 @@ package main
 import (
 	"bytes"
 	"fmt"
+	"sort"
 	"strings"
 
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
@@ -107,6 +108,8 @@ func navigateTree(tree *v1.JSONSchemaProps, name string, schemaMap map[string][]
 
 		fields = append(fields, genFieldEntry(k, gqlTypeMap(v.Type), m[k]))
 	}
+
+	sort.Strings(fields)
 	schemaMap[name] = fields
 }
 

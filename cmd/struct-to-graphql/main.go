@@ -4,7 +4,9 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"io"
 	"reflect"
+	"sort"
 	"strings"
 	"time"
 
@@ -20,7 +22,8 @@ import (
 
 // DONE: read omitempty from json tag
 // DONE: read inline from json tag and flatten struct
-// TODO: lowercase first letter of field name
+// WONT FIX: lowercase first letter of field name
+// DONE: unexport field name should be ignored, i.e. with `json:"-"`
 
 var typeMap = map[reflect.Type]string{
 	reflect.TypeOf(metav1.Time{}):      "Date",
@@ -68,15 +71,17 @@ type Project struct {
 // 	Email          string `json:"email"`
 // }
 
-func GenerateGraphQLSchema(name string, data interface{}, kCli k8s.ExtendedK8sClient, schemaMap map[string][]string) error {
-	t := reflect.TypeOf(data)
-	if t.Kind() == reflect.Ptr {
-		t = t.Elem()
+func GenerateGraphQLSchema(name string, data interface{}, kCli k8s.ExtendedK8sClient) (map[string][]string, error) {
+	ty := reflect.TypeOf(data)
+	if ty.Kind() == reflect.Ptr {
+		ty = ty.Elem()
 	}
 
-	getGraphQLFields(t, name, schemaMap, kCli)
+	schemaMap := map[string][]string{}
 
-	return nil
+	getGraphQLFields(ty, name, schemaMap, kCli)
+
+	return schemaMap, nil
 }
 
 func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, kCli k8s.ExtendedK8sClient) {
@@ -84,6 +89,11 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
+
+		if !field.IsExported() {
+			// unexported field
+			continue
+		}
 
 		jsonSchemaTag := field.Tag.Get("json-schema")
 		fieldName := field.Tag.Get("json")
@@ -153,6 +163,7 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 									fields = append(fields, v...)
 									continue
 								}
+								sort.Strings(v)
 								dataMap[k] = v
 							}
 							continue
@@ -167,14 +178,16 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 						dMap := map[string][]string{}
 						getGraphQLFields(field.Type, field.Name, dMap, kCli)
 						for k, v := range dMap {
-							if k == field.Type.Name() {
+							if k == field.Name {
 								fields = append(fields, v...)
 								continue
 							}
+							sort.Strings(v)
 							dataMap[k] = v
 						}
 						continue
 					} else {
+						fieldType = name + field.Name
 						getGraphQLFields(field.Type, name+field.Name, dataMap, kCli)
 					}
 				}
@@ -234,9 +247,27 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 		// fmt.Printf("hello: %v\n", fieldName)
 	}
 
+	sort.Strings(fields)
 	dataMap[name] = fields
 
 	// return fields
+}
+
+func WriteSchema(schema map[string][]string, writer io.Writer) error {
+	for k, v := range schema {
+		if _, err := fmt.Fprintf(writer, "\ntype %s {\n", k); err != nil {
+			return err
+		}
+		for _, f := range v {
+			if _, err := fmt.Fprintf(writer, "\t%s\n", f); err != nil {
+				return err
+			}
+		}
+		if _, err := fmt.Fprintln(writer, "}"); err != nil {
+			return err
+		}
+	}
+	return nil
 }
 
 func main() {
@@ -249,34 +280,16 @@ func main() {
 		panic(err)
 	}
 
-	schemaMap := map[string][]string{}
-
-	if err := GenerateGraphQLSchema("Project", project, kCli, schemaMap); err != nil {
+	schemaMap, err := GenerateGraphQLSchema("Project", project, kCli)
+	if err != nil {
 		fmt.Printf("Failed to generate GraphQL schema: %v", err)
-		return
+		panic(err)
 	}
 
-	for k, v := range schemaMap {
-		fmt.Printf("\ntype %s {\n", k)
-		for _, f := range v {
-			fmt.Printf("\t %s\n", f)
-		}
-		fmt.Println("}")
-	}
+	fmt.Printf("%#v\n", schemaMap)
 
-	// Save the schema to a .gqls file
-	// file, err := os.Create("schema.gqls")
-	// if err != nil {
-	// 	fmt.Printf("Failed to create schema file: %v", err)
-	// 	return
+	// if err := WriteSchema(schemaMap, os.Stdout); err != nil {
+	// 	fmt.Println(err)
+	// 	panic(err)
 	// }
-	// defer file.Close()
-	//
-	// _, err = file.WriteString(schema)
-	// if err != nil {
-	// 	fmt.Printf("Failed to write schema to file: %v", err)
-	// 	return
-	// }
-	//
-	// fmt.Println("GraphQL schema saved to schema.gqls")
 }
