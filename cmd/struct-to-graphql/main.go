@@ -18,6 +18,10 @@ import (
 	t "kloudlite.io/pkg/types"
 )
 
+// DONE: read omitempty from json tag
+// DONE: read inline from json tag and flatten struct
+// TODO: lowercase first letter of field name
+
 var typeMap = map[reflect.Type]string{
 	reflect.TypeOf(metav1.Time{}):      "Date",
 	reflect.TypeOf(&metav1.Time{}):     "Date",
@@ -41,6 +45,13 @@ var kindMap = map[reflect.Kind]string{
 	reflect.String: "String",
 }
 
+func genFieldType(fieldType string, omitempty bool) string {
+	if omitempty {
+		return fieldType
+	}
+	return fieldType + "!"
+}
+
 type Project struct {
 	repos.BaseEntity `json:",inline"`
 	crdsv1.Project   `json:",inline" json-schema:"k8s://projects.crds.kloudlite.io"`
@@ -57,13 +68,13 @@ type Project struct {
 // 	Email          string `json:"email"`
 // }
 
-func GenerateGraphQLSchema(data interface{}, kCli k8s.ExtendedK8sClient, schemaMap map[string][]string) error {
+func GenerateGraphQLSchema(name string, data interface{}, kCli k8s.ExtendedK8sClient, schemaMap map[string][]string) error {
 	t := reflect.TypeOf(data)
 	if t.Kind() == reflect.Ptr {
 		t = t.Elem()
 	}
 
-	getGraphQLFields(t, "ProjectX", schemaMap, kCli)
+	getGraphQLFields(t, name, schemaMap, kCli)
 
 	return nil
 }
@@ -75,26 +86,25 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 		field := t.Field(i)
 
 		jsonSchemaTag := field.Tag.Get("json-schema")
-		// fmt.Println("fieldName2: ", jsonSchemaTag)
-		// if jsonSchemaTag != "" {
-		// 	if strings.HasPrefix(jsonSchemaTag, "k8s://") {
-		// 		crdName := strings.Split(jsonSchemaTag, "k8s://")[1]
-		// 		jp, err := kCli.GetCRDJsonSchema(context.TODO(), crdName)
-		// 		if err != nil {
-		// 			panic(err)
-		// 		}
-		// 		Convert(jp, field.Type.Name(), dataMap)
-		// 		continue
-		// 	}
-		// }
-
-		// fieldName := field.Tag.Get(tring([]byte("json")))
 		fieldName := field.Tag.Get("json")
 		sp := strings.Split(fieldName, ",")
+
+		omitempty := false
+		inline := false
 
 		if len(sp) >= 1 && sp[0] == "-" {
 			// this field does not want to be included in the schema
 			continue
+		}
+
+		// iterating from 1 as the first element is the field name, it would always be there
+		for i := 1; i < len(sp); i++ {
+			if sp[i] == "omitempty" {
+				omitempty = true
+			}
+			if sp[i] == "inline" {
+				inline = true
+			}
 		}
 
 		if len(sp) > 1 {
@@ -117,29 +127,56 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 		if !hasSpecialCase {
 			switch field.Type.Kind() {
 			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				fieldType = "Int"
+				fieldType = genFieldType("Int", omitempty)
 			case reflect.Float32, reflect.Float64:
-				fieldType = "Float"
+				fieldType = genFieldType("Float", omitempty)
 			case reflect.Bool:
-				fieldType = "Boolean"
+				fieldType = genFieldType("Boolean", omitempty)
 			case reflect.String:
-				fieldType = "String"
+				fieldType = genFieldType("String", omitempty)
 			case reflect.Struct:
 				fieldType = field.Name
 				// fmt.Println("fieldType: ", fieldType)
 				if jsonSchemaTag != "" {
 					if strings.HasPrefix(jsonSchemaTag, "k8s://") {
-						fieldType = "K8s" + field.Type.Name()
 						crdName := strings.Split(jsonSchemaTag, "k8s://")[1]
 						jp, err := kCli.GetCRDJsonSchema(context.TODO(), crdName)
 						if err != nil {
 							panic(err)
 						}
-						Convert(jp, fieldType, dataMap)
-						// continue
+
+						if inline {
+							dMap := map[string][]string{}
+							Convert(jp, field.Type.Name(), dMap)
+							for k, v := range dMap {
+								if k == field.Type.Name() {
+									fields = append(fields, v...)
+									continue
+								}
+								dataMap[k] = v
+							}
+							continue
+						} else {
+							fieldType = genFieldType("K8s"+field.Type.Name(), omitempty)
+							Convert(jp, "K8s"+field.Type.Name(), dataMap)
+							// continue
+						}
 					}
 				} else {
-					getGraphQLFields(field.Type, name+field.Name, dataMap, kCli)
+					if inline {
+						dMap := map[string][]string{}
+						getGraphQLFields(field.Type, field.Name, dMap, kCli)
+						for k, v := range dMap {
+							if k == field.Type.Name() {
+								fields = append(fields, v...)
+								continue
+							}
+							dataMap[k] = v
+						}
+						continue
+					} else {
+						getGraphQLFields(field.Type, name+field.Name, dataMap, kCli)
+					}
 				}
 			case reflect.Slice:
 				{
@@ -147,14 +184,14 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 						// fieldType = fmt.Sprintf("[%s]", field.Name)
 						if jsonSchemaTag != "" {
 							if strings.HasPrefix(jsonSchemaTag, "k8s://") {
-								fieldType = "K8s" + field.Type.Name()
+								fieldType = genFieldType(fmt.Sprintf("[%s]", "K8s"+field.Type.Name()), omitempty)
 								crdName := strings.Split(jsonSchemaTag, "k8s://")[1]
 								jp, err := kCli.GetCRDJsonSchema(context.TODO(), crdName)
 								if err != nil {
 									panic(err)
 								}
-								Convert(jp, fieldType, dataMap)
-								continue
+								Convert(jp, "K8s"+field.Type.Name(), dataMap)
+								// continue
 							}
 						} else {
 							getGraphQLFields(field.Type.Elem(), name+field.Name, dataMap, kCli)
@@ -203,7 +240,7 @@ func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, 
 }
 
 func main() {
-	person := Project{}
+	project := Project{}
 
 	kCli, err := func() (k8s.ExtendedK8sClient, error) {
 		return k8s.NewExtendedK8sClient(&rest.Config{Host: "localhost:8080"})
@@ -214,7 +251,7 @@ func main() {
 
 	schemaMap := map[string][]string{}
 
-	if err := GenerateGraphQLSchema(person, kCli, schemaMap); err != nil {
+	if err := GenerateGraphQLSchema("Project", project, kCli, schemaMap); err != nil {
 		fmt.Printf("Failed to generate GraphQL schema: %v", err)
 		return
 	}
