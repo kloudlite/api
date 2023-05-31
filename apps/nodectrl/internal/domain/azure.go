@@ -1,5 +1,5 @@
 package domain
 
-func (d domain) StartDoJob() error {
+func (d domain) StartAzureJob() error {
 	panic("not implemented yet")
 }

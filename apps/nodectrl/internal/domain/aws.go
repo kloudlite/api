@@ -1,103 +1,180 @@
 package domain
 
 import (
-	"encoding/base64"
-	"encoding/json"
-	"errors"
 	"fmt"
+	"os"
+	"os/exec"
+	"path"
 
 	"gopkg.in/yaml.v3"
-	infraclient "kloudlite.io/pkg/infraClient"
+	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 )
 
-type awsConfig struct {
-	Version  string `yaml:"version"`
-	Action   string `yaml:"action"`
-	Provider string `yaml:"provider"`
-	Spec     struct {
-		Provider struct {
-			AccessKey    string `yaml:"accessKey"`
-			AccessSecret string `yaml:"accessSecret"`
-			AccountId    string `yaml:"accountId"`
-		} `yaml:"provider"`
-		Node struct {
-			Region       string `yaml:"region"`
-			InstanceType string `yaml:"instanceType"`
-			NodeId       string `yaml:"nodeId"`
-			VPC          string `yaml:"vpc"`
-		} `yaml:"node"`
-	} `yaml:"spec"`
+type CommonProviderData struct {
+	StorePath   string            `yaml:"storePath"`
+	TfTemplates string            `yaml:"tfTemplates"`
+	Labels      map[string]string `yaml:"labels"`
+	Taints      []string          `yaml:"taints"`
+	Secrets     string            `yaml:"secrets"`
+	SSHPath     string            `yaml:"sshPath"`
 }
 
-func (d *domainI) doWithAWS() error {
+type awsProviderConfig struct {
+	accessKey    string `yaml:"accessKey"`
+	accessSecret string `yaml:"accessSecret"`
+	accountId    string `yaml:"accountId"`
+}
 
-	out, err := base64.StdEncoding.DecodeString(d.env.Config)
-	if err != nil {
+type AWSNode struct {
+	NodeId       string `yaml:"nodeId"`
+	Region       string `yaml:"region"`
+	InstanceType string `yaml:"instanceType"`
+	VPC          string `yaml:"vpc"`
+	ImageId      string `yaml:"imageId"`
+}
+
+type awsClient struct {
+	node AWSNode
+
+	accessKey    string
+	accessSecret string
+
+	SSHPath     string
+	accountId   string
+	secrets     string
+	providerDir string
+	storePath   string
+	tfTemplates string
+	labels      map[string]string
+	taints      []string
+}
+
+// getFolder implements doProviderClient
+func (a awsClient) getFolder() string {
+	// eg -> /path/acc_id/do/blr1/node_id/do
+
+	return path.Join(a.storePath, a.accountId, a.providerDir, a.node.Region, a.node.NodeId)
+}
+
+// initTFdir implements doProviderClient
+func (d awsClient) initTFdir() error {
+
+	folder := d.getFolder()
+
+	if err := utils.ExecCmd(fmt.Sprintf("cp -r %s %s", fmt.Sprintf("%s/%s", d.tfTemplates, d.providerDir), folder), "initialize terraform"); err != nil {
 		return err
 	}
-	var awsConf awsConfig
-	e := yaml.Unmarshal(out, &awsConf)
-	if e != nil {
-		return e
-	}
-	klConf, err := d.getKlConf()
-	if err != nil {
+
+	cmd := exec.Command("terraform", "init")
+	cmd.Dir = path.Join(folder, d.providerDir)
+
+	cmd.Stdout = os.Stdout
+	cmd.Stderr = os.Stderr
+
+	return cmd.Run()
+}
+
+// NewNode implements ProviderClient
+func (a awsClient) NewNode() error {
+
+	values := map[string]string{}
+
+	values["access_key"] = a.accessKey
+	values["secret_key"] = a.accessSecret
+
+	values["region"] = a.node.Region
+	values["node_id"] = a.node.NodeId
+	values["instance_type"] = a.node.InstanceType
+	values["keys-path"] = a.SSHPath
+	values["ami"] = a.node.ImageId
+
+	return nil
+
+	// making dir
+	if err := utils.Mkdir(a.getFolder()); err != nil {
 		return err
 	}
 
-	labels := map[string]string{}
-	if e := json.Unmarshal([]byte(d.env.Labels), &labels); e != nil {
-		fmt.Println(e)
+	// initialize directory
+	if err := a.initTFdir(); err != nil {
+		return err
 	}
 
-	taints := []string{}
-	if e := json.Unmarshal([]byte(d.env.Taints), &taints); e != nil {
-		fmt.Println(e)
+	// apply terraform
+	return utils.ApplyTF(path.Join(a.getFolder(), a.providerDir), values)
+
+}
+
+// AttachNode implements ProviderClientkkk
+func (awsClient) AttachNode() error {
+	panic("unimplemented")
+}
+
+// DeleteNode implements ProviderClient
+func (awsClient) DeleteNode() error {
+	panic("unimplemented")
+}
+
+// UnattachNode implements ProviderClient
+func (awsClient) UnattachNode() error {
+	panic("unimplemented")
+}
+
+func NewAwsProviderClient(node AWSNode, cpd CommonProviderData, apc awsProviderConfig) ProviderClient {
+	return awsClient{
+		node:         node,
+		accessKey:    apc.accessKey,
+		accessSecret: apc.accessSecret,
+		accountId:    apc.accountId,
+
+		providerDir: "aws",
+		secrets:     cpd.Secrets,
+		storePath:   cpd.StorePath,
+		tfTemplates: cpd.TfTemplates,
+		labels:      cpd.Labels,
+		taints:      cpd.Taints,
+		SSHPath:     cpd.SSHPath,
+	}
+}
+
+func (d domain) StartAwsJob() error {
+
+	node := AWSNode{}
+
+	if err := yaml.Unmarshal([]byte(d.env.NodeConfig), &node); err != nil {
+		return err
 	}
 
-	awsProvider := infraclient.NewAWSProvider(infraclient.AWSProvider{
-		AccessKey:    awsConf.Spec.Provider.AccessKey,
-		AccessSecret: awsConf.Spec.Provider.AccessSecret,
-		AccountId:    awsConf.Spec.Provider.AccountId,
-	}, infraclient.AWSProviderEnv{
-		StorePath:   klConf.Values.StorePath,
-		TfTemplates: klConf.Values.TfTemplates,
-		Labels:      labels,
-		Taints:      taints,
-		Secrets:     klConf.Values.Secrets,
-		SSHPath:     klConf.Values.SSHPath,
-	})
+	cpd := CommonProviderData{}
 
-	awsNode := infraclient.AWSNode{
-		NodeId:       awsConf.Spec.Node.NodeId,
-		Region:       awsConf.Spec.Node.Region,
-		InstanceType: awsConf.Spec.Node.InstanceType,
-		VPC:          awsConf.Spec.Node.VPC,
+	if err := yaml.Unmarshal([]byte(d.env.ProviderConfig), &cpd); err != nil {
+		return err
 	}
 
-	// return nil
+	apc := awsProviderConfig{}
 
-	switch awsConf.Action {
+	if err := yaml.Unmarshal([]byte(d.env.AWSProviderConfig), &apc); err != nil {
+		return err
+	}
+
+	pc := NewAwsProviderClient(node, cpd, apc)
+
+	switch d.env.Action {
 	case "create":
-		err = awsProvider.NewNode(awsNode)
-		if err != nil {
+		fmt.Println("needs to create node")
+		if err := pc.NewNode(); err != nil {
 			return err
 		}
-		err = awsProvider.AttachNode(awsNode)
-		if err != nil {
-			return err
-		}
-
 	case "delete":
-		err = awsProvider.DeleteNode(awsNode)
-
-		if err != nil {
+		fmt.Println("needs to delete node")
+		if err := pc.DeleteNode(); err != nil {
 			return err
 		}
-
+	case "":
+		return fmt.Errorf("ACTION not provided, supported actions {create, delete} ")
 	default:
-		return errors.New("wrong action")
+		return fmt.Errorf("not supported actions '%s' please provide one of supported action like { create, delete }", d.env.Action)
 	}
-
+	fmt.Println("aws job started")
 	return nil
 }
