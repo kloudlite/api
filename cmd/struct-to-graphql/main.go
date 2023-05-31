@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"reflect"
 	"sort"
 	"strings"
@@ -288,8 +289,7 @@ func main() {
 
 	fmt.Printf("%#v\n", schemaMap)
 
-	// if err := WriteSchema(schemaMap, os.Stdout); err != nil {
-	// 	fmt.Println(err)
-	// 	panic(err)
-	// }
+	if err := WriteSchema(schemaMap, os.Stdout); err != nil {
+		panic(err)
+	}
 }

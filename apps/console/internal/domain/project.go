@@ -40,7 +40,8 @@ func (d *domain) ListProjects(ctx context.Context, userId repos.ID, accountName 
 		filter["clusterName"] = clusterName
 	}
 
-	return d.projectRepo.FindPaginated(ctx, repos.Query{Filter: filter}, paginationProps.Page, paginationProps.PerPage)
+	return d.projectRepo.Find(ctx, repos.Query{Filter: filter})
+	// return d.projectRepo.FindPaginated(ctx, repos.Query{Filter: filter}, paginationProps.Page, paginationProps.PerPage)
 }
 
 func (d *domain) findProject(ctx ConsoleContext, name string) (*entities.Project, error) {
@@ -64,7 +65,6 @@ func (d *domain) findProjectByTargetNs(ctx ConsoleContext, targetNamespace strin
 		"clusterName":          ctx.ClusterName,
 		"spec.targetNamespace": targetNamespace,
 	})
-
 	if err != nil {
 		return nil, err
 	}
