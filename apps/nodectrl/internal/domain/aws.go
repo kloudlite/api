@@ -1,28 +1,22 @@
 package domain
 
 import (
-	"fmt"
-	"os"
-	"os/exec"
-	"path"
-
-	"gopkg.in/yaml.v3"
-	"kloudlite.io/apps/nodectrl/internal/domain/utils"
+	mongogridfs "kloudlite.io/pkg/mongo-gridfs"
 )
 
 type CommonProviderData struct {
-	StorePath   string            `yaml:"storePath"`
+	// StorePath   string            `yaml:"storePath"`
 	TfTemplates string            `yaml:"tfTemplates"`
 	Labels      map[string]string `yaml:"labels"`
 	Taints      []string          `yaml:"taints"`
-	Secrets     string            `yaml:"secrets"`
-	SSHPath     string            `yaml:"sshPath"`
+	// Secrets     string            `yaml:"secrets"`
+	SSHPath string `yaml:"sshPath"`
 }
 
-type awsProviderConfig struct {
-	accessKey    string `yaml:"accessKey"`
-	accessSecret string `yaml:"accessSecret"`
-	accountId    string `yaml:"accountId"`
+type AwsProviderConfig struct {
+	AccessKey    string `yaml:"accessKey"`
+	AccessSecret string `yaml:"accessSecret"`
+	AccountId    string `yaml:"accountId"`
 }
 
 type AWSNode struct {
@@ -34,6 +28,7 @@ type AWSNode struct {
 }
 
 type awsClient struct {
+	gfs  mongogridfs.GridFs
 	node AWSNode
 
 	accessKey    string
@@ -49,30 +44,30 @@ type awsClient struct {
 	taints      []string
 }
 
-// getFolder implements doProviderClient
-func (a awsClient) getFolder() string {
-	// eg -> /path/acc_id/do/blr1/node_id/do
+// // getFolder implements doProviderClient
+// func (a awsClient) getFolder() string {
+// 	// eg -> /path/acc_id/do/blr1/node_id/do
+//
+// 	return path.Join(a.storePath, a.accountId, a.providerDir, a.node.Region, a.node.NodeId)
+// }
 
-	return path.Join(a.storePath, a.accountId, a.providerDir, a.node.Region, a.node.NodeId)
-}
-
-// initTFdir implements doProviderClient
-func (d awsClient) initTFdir() error {
-
-	folder := d.getFolder()
-
-	if err := utils.ExecCmd(fmt.Sprintf("cp -r %s %s", fmt.Sprintf("%s/%s", d.tfTemplates, d.providerDir), folder), "initialize terraform"); err != nil {
-		return err
-	}
-
-	cmd := exec.Command("terraform", "init")
-	cmd.Dir = path.Join(folder, d.providerDir)
-
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stderr
-
-	return cmd.Run()
-}
+// // initTFdir implements doProviderClient
+// func (d awsClient) initTFdir() error {
+//
+// 	folder := d.getFolder()
+//
+// 	if err := utils.ExecCmd(fmt.Sprintf("cp -r %s %s", fmt.Sprintf("%s/%s", d.tfTemplates, d.providerDir), folder), "initialize terraform"); err != nil {
+// 		return err
+// 	}
+//
+// 	cmd := exec.Command("terraform", "init")
+// 	cmd.Dir = path.Join(folder, d.providerDir)
+//
+// 	cmd.Stdout = os.Stdout
+// 	cmd.Stderr = os.Stderr
+//
+// 	return cmd.Run()
+// }
 
 // NewNode implements ProviderClient
 func (a awsClient) NewNode() error {
@@ -88,21 +83,29 @@ func (a awsClient) NewNode() error {
 	values["keys-path"] = a.SSHPath
 	values["ami"] = a.node.ImageId
 
-	return nil
+	/*
+		steps:
+			- check if state present in db
+			- if present load that to working dir
+			- else initialize new tf dir
+			- apply terraform
+			- upload the final state with defer
+	*/
 
 	// making dir
-	if err := utils.Mkdir(a.getFolder()); err != nil {
-		return err
-	}
-
-	// initialize directory
-	if err := a.initTFdir(); err != nil {
-		return err
-	}
-
-	// apply terraform
-	return utils.ApplyTF(path.Join(a.getFolder(), a.providerDir), values)
-
+	// if err := utils.Mkdir(a.getFolder()); err != nil {
+	// 	return err
+	// }
+	//
+	// // initialize directory
+	// if err := a.initTFdir(); err != nil {
+	// 	return err
+	// }
+	//
+	// // apply terraform
+	// return utils.ApplyTF(path.Join(a.getFolder(), a.providerDir), values)
+	//
+	return nil
 }
 
 // AttachNode implements ProviderClientkkk
@@ -120,61 +123,19 @@ func (awsClient) UnattachNode() error {
 	panic("unimplemented")
 }
 
-func NewAwsProviderClient(node AWSNode, cpd CommonProviderData, apc awsProviderConfig) ProviderClient {
+func NewAwsProviderClient(node AWSNode, cpd CommonProviderData, apc AwsProviderConfig) ProviderClient {
 	return awsClient{
 		node:         node,
-		accessKey:    apc.accessKey,
-		accessSecret: apc.accessSecret,
-		accountId:    apc.accountId,
+		accessKey:    apc.AccessKey,
+		accessSecret: apc.AccessSecret,
+		accountId:    apc.AccountId,
 
 		providerDir: "aws",
-		secrets:     cpd.Secrets,
-		storePath:   cpd.StorePath,
+		// secrets:     cpd.Secrets,
+		// storePath:   cpd.StorePath,
 		tfTemplates: cpd.TfTemplates,
 		labels:      cpd.Labels,
 		taints:      cpd.Taints,
 		SSHPath:     cpd.SSHPath,
 	}
-}
-
-func (d domain) StartAwsJob() error {
-
-	node := AWSNode{}
-
-	if err := yaml.Unmarshal([]byte(d.env.NodeConfig), &node); err != nil {
-		return err
-	}
-
-	cpd := CommonProviderData{}
-
-	if err := yaml.Unmarshal([]byte(d.env.ProviderConfig), &cpd); err != nil {
-		return err
-	}
-
-	apc := awsProviderConfig{}
-
-	if err := yaml.Unmarshal([]byte(d.env.AWSProviderConfig), &apc); err != nil {
-		return err
-	}
-
-	pc := NewAwsProviderClient(node, cpd, apc)
-
-	switch d.env.Action {
-	case "create":
-		fmt.Println("needs to create node")
-		if err := pc.NewNode(); err != nil {
-			return err
-		}
-	case "delete":
-		fmt.Println("needs to delete node")
-		if err := pc.DeleteNode(); err != nil {
-			return err
-		}
-	case "":
-		return fmt.Errorf("ACTION not provided, supported actions {create, delete} ")
-	default:
-		return fmt.Errorf("not supported actions '%s' please provide one of supported action like { create, delete }", d.env.Action)
-	}
-	fmt.Println("aws job started")
-	return nil
 }

@@ -1,13 +1,39 @@
 package utils
 
 import (
+	"encoding/base64"
 	"encoding/csv"
 	"encoding/json"
 	"fmt"
 	"os"
 	"os/exec"
 	"strings"
+
+	"gopkg.in/yaml.v2"
 )
+
+func Base64YamlDecode(in string, out interface{}) error {
+	rawDecodedText, err := base64.StdEncoding.DecodeString(in)
+	if err != nil {
+		return err
+	}
+
+	fmt.Println(string(rawDecodedText))
+
+	return yaml.Unmarshal(rawDecodedText, out)
+}
+
+func ColorText(text interface{}, code int) string {
+	return fmt.Sprintf("\033[38;05;%dm%v\033[0m", code, text)
+}
+
+func DownloadDir() error {
+	return nil
+}
+
+func UploadDir() error {
+	return nil
+}
 
 func ExecCmd(cmdString string, logStr string) error {
 	r := csv.NewReader(strings.NewReader(cmdString))
