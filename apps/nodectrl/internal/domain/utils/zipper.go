@@ -161,7 +161,7 @@ func ExtractZip(src, destination string) error {
 	return nil
 }
 
-func MutateOperation() error {
+func mutateOperation() error {
 
 	file, err := ioutil.TempFile("out", "prefix_")
 	if err != nil {
@@ -171,13 +171,13 @@ func MutateOperation() error {
 	return os.WriteFile(file.Name(), []byte("hi"), os.ModePerm)
 }
 
-func ZipSample() error {
+func TestZip() error {
 	zipName, dirName := "ram.zip", "out"
 	if err := ExtractZip(zipName, dirName); err != nil {
 		return err
 	}
 
-	if err := MutateOperation(); err != nil {
+	if err := mutateOperation(); err != nil {
 		return err
 	}
 
