@@ -31,7 +31,6 @@ type doClient struct {
 
 	SSHPath     string
 	accountId   string
-	providerDir string
 	tfTemplates string
 	labels      map[string]string
 	taints      []string
@@ -144,8 +143,6 @@ func NewDoProviderClient(node DoNode, cpd common.CommonProviderData, dpc DoProvi
 
 		apiToken:  dpc.ApiToken,
 		accountId: dpc.AccountId,
-
-		providerDir: "do",
 
 		tfTemplates: cpd.TfTemplates,
 		labels:      cpd.Labels,

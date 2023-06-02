@@ -5,19 +5,22 @@ import (
 	"fmt"
 
 	"go.uber.org/fx"
+
 	"kloudlite.io/apps/nodectrl/internal/domain"
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
+	"kloudlite.io/apps/nodectrl/internal/domain/entities"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 	"kloudlite.io/apps/nodectrl/internal/env"
+	"kloudlite.io/pkg/repos"
 )
 
 var Module = fx.Module("app",
+	repos.NewFxMongoRepo[*entities.Token]("tokens", "tkn", entities.TokenIndexes),
 	domain.Module,
 	fx.Invoke(
 		func(env *env.Env, pc common.ProviderClient, shutdowner fx.Shutdowner, lifecycle fx.Lifecycle) {
 			lifecycle.Append(fx.Hook{
 				OnStart: func(context.Context) error {
-
 					go func() error {
 						ctx := context.Background()
 						if err := utils.SetupGetWorkDir(); err != nil {
@@ -48,7 +51,6 @@ var Module = fx.Module("app",
 							shutdowner.Shutdown()
 							return nil
 						}()
-
 						if err != nil {
 							fmt.Println(utils.ColorText(fmt.Sprint("\n", "Error: ", err, "\n"), 1))
 							return err
@@ -62,7 +64,6 @@ var Module = fx.Module("app",
 					return nil
 				},
 			})
-
 		},
 	),
 )

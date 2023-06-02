@@ -1,11 +1,11 @@
 package aws
 
 import (
+	"context"
 	"fmt"
 	"path"
 	"time"
 
-	"golang.org/x/net/context"
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 	mongogridfs "kloudlite.io/pkg/mongo-gridfs"
@@ -31,13 +31,46 @@ type awsClient struct {
 
 	accessKey    string
 	accessSecret string
+	accountId    string
 
 	SSHPath     string
-	accountId   string
-	providerDir string
 	tfTemplates string
 	labels      map[string]string
 	taints      []string
+}
+
+// CreateAndAttachNode implements common.ProviderClient
+func (a awsClient) CreateAndAttachNode(ctx context.Context) error {
+	privateKeyBytes, publicKeyBytes, err := utils.GenerateKeys()
+	if err != nil {
+		return err
+	}
+
+	if err := a.NewNode(ctx, privateKeyBytes); err != nil {
+		return err
+	}
+
+	if err := a.AttachNode(ctx, publicKeyBytes); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// AttachNode implements common.ProviderClient
+func (a awsClient) AttachNode(ctx context.Context, publicKeyBytes []byte) error {
+	/*
+		check readyness, wait if not ready
+		if ready install agent
+		  to install fetch
+	*/
+
+	panic("unimplemented")
+}
+
+// CreateCluster implements common.ProviderClient
+func (awsClient) CreateCluster() error {
+	panic("unimplemented")
 }
 
 func parseValues(a awsClient) map[string]string {
@@ -67,8 +100,7 @@ func (a awsClient) SaveToDbGuranteed(ctx context.Context) {
 }
 
 // NewNode implements ProviderClient
-func (a awsClient) NewNode(ctx context.Context) error {
-
+func (a awsClient) NewNode(ctx context.Context, privateKeyBytes []byte) error {
 	values := parseValues(a)
 
 	/*
@@ -108,7 +140,6 @@ func (a awsClient) NewNode(ctx context.Context) error {
 
 // DeleteNode implements ProviderClient
 func (a awsClient) DeleteNode(ctx context.Context) error {
-
 	values := parseValues(a)
 
 	/*
@@ -153,7 +184,6 @@ func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsPr
 		accessSecret: apc.AccessSecret,
 		accountId:    apc.AccountId,
 
-		providerDir: "aws",
 		tfTemplates: cpd.TfTemplates,
 		labels:      cpd.Labels,
 		taints:      cpd.Taints,
