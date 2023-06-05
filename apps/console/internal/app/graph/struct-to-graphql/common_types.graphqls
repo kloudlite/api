@@ -1,0 +1,48 @@
+enum SyncStatusState {
+	IDLE
+	IN_PROGRESS
+	NOT_READY
+	READY
+}
+
+type SyncStatus shareable {
+	action: SyncStatusAction!
+	error: String
+	generation: Int!
+	lastSyncedAt: Date
+	state: SyncStatusState
+	syncScheduledAt: Date
+}
+
+enum SyncStatusAction {
+	APPLY
+	DELETE
+}
+
+type type TypeMeta shareable {
+	apiVersion: String
+	kind: String
+}
+
+type StatusResources shareable {
+	name: String!
+	namespace: String!
+}
+
+type StatusMessage shareable {
+	RawMessage: Any
+}
+
+type StatusChecks shareable {
+	generation: Int
+	message: String
+	status: Boolean!
+}
+
+type Status shareable {
+	checks: Map
+	isReady: Boolean!
+	lastReconcileTime: Date
+	message: Message
+}
+

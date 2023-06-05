@@ -1,0 +1,328 @@
+type AppSpecContainersVolumes {
+	items: [AppSpecContainersVolumesItems]
+	mountPath: String!
+	refName: String!
+	type: String!
+}
+
+input AppSpecContainersReadinessProbeShellIn {
+	command: [String]
+}
+
+type AppOverrides {
+	applied: Boolean
+	patches: [AppOverridesPatches]
+}
+
+input AppSpecInterceptIn {
+	enabled: Boolean!
+	toDevice: String!
+}
+
+input AppSpecContainersReadinessProbeTcpIn {
+	port: Int!
+}
+
+type AppSpecContainersLivenessProbeShell {
+	command: [String]
+}
+
+input AppSpecContainersVolumesItemsIn {
+	fileName: String
+	key: String!
+}
+
+type AppSpecContainersResourceCpu {
+	max: String
+	min: String
+}
+
+type AppSpecHpa {
+	enabled: Boolean
+	maxReplicas: Int
+	minReplicas: Int
+	thresholdCpu: Int
+	thresholdMemory: Int
+}
+
+input AppSpecIn {
+	containers: [AppSpecContainersIn]!
+	displayName: String
+	freeze: Boolean
+	hpa: AppSpecHpaIn
+	intercept: AppSpecInterceptIn
+	nodeSelector: Map
+	region: String
+	replicas: Int
+	serviceAccount: String
+	services: [AppSpecServicesIn]
+	tolerations: [AppSpecTolerationsIn]
+}
+
+type AppSpecContainers {
+	args: [String]
+	command: [String]
+	env: [AppSpecContainersEnv]
+	envFrom: [AppSpecContainersEnvFrom]
+	image: String!
+	imagePullPolicy: String
+	livenessProbe: AppSpecContainersLivenessProbe
+	name: String!
+	readinessProbe: AppSpecContainersReadinessProbe
+	resourceCpu: AppSpecContainersResourceCpu
+	resourceMemory: AppSpecContainersResourceMemory
+	volumes: [AppSpecContainersVolumes]
+}
+
+input AppIn {
+	apiVersion: String!
+	enabled: Boolean
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: AppOverrides
+	restart: Boolean
+	spec: AppSpec
+	spec: AppSpecIn
+	status: Status
+}
+
+input AppSpecContainersIn {
+	args: [String]
+	command: [String]
+	env: [AppSpecContainersEnvIn]
+	envFrom: [AppSpecContainersEnvFromIn]
+	image: String!
+	imagePullPolicy: String
+	livenessProbe: AppSpecContainersLivenessProbeIn
+	name: String!
+	readinessProbe: AppSpecContainersReadinessProbeIn
+	resourceCpu: AppSpecContainersResourceCpuIn
+	resourceMemory: AppSpecContainersResourceMemoryIn
+	volumes: [AppSpecContainersVolumesIn]
+}
+
+type AppSpecContainersVolumesItems {
+	fileName: String
+	key: String!
+}
+
+input AppSpecContainersLivenessProbeHttpGetIn {
+	httpHeaders: Map
+	path: String!
+	port: Int!
+}
+
+input AppSpecContainersReadinessProbeHttpGetIn {
+	httpHeaders: Map
+	path: String!
+	port: Int!
+}
+
+type AppSpecContainersResourceMemory {
+	max: String
+	min: String
+}
+
+type type BaseEntity {
+	creation_time: Date
+	id: String!
+	update_time: Date
+}
+
+type App {
+	accountName: String!
+	clusterName: String!
+	syncStatus: SyncStatus
+}
+
+type AppSpecContainersEnvFrom {
+	refName: String!
+	type: String!
+}
+
+type AppSpecContainersReadinessProbeHttpGet {
+	httpHeaders: Map
+	path: String!
+	port: Int!
+}
+
+input AppSpecContainersReadinessProbeIn {
+	failureThreshold: Int
+	httpGet: AppSpecContainersReadinessProbeHttpGetIn
+	initialDelay: Int
+	interval: Int
+	shell: AppSpecContainersReadinessProbeShellIn
+	tcp: AppSpecContainersReadinessProbeTcpIn
+	type: String!
+}
+
+input AppSpecContainersEnvIn {
+	key: String!
+	optional: Boolean
+	refKey: String
+	refName: String
+	type: String
+	value: String
+}
+
+type AppOverridesPatches {
+	op: String!
+	path: String!
+	value: Any
+}
+
+input AppSpecServicesIn {
+	name: String
+	port: Int!
+	targetPort: Int
+	type: String
+}
+
+input AppSpecContainersVolumesIn {
+	items: [AppSpecContainersVolumesItemsIn]
+	mountPath: String!
+	refName: String!
+	type: String!
+}
+
+type AppSpecContainersEnv {
+	key: String!
+	optional: Boolean
+	refKey: String
+	refName: String
+	type: String
+	value: String
+}
+
+input AppSpecContainersLivenessProbeTcpIn {
+	port: Int!
+}
+
+type AppSpec {
+	containers: [AppSpecContainers]!
+	displayName: String
+	freeze: Boolean
+	hpa: AppSpecHpa
+	intercept: AppSpecIntercept
+	nodeSelector: Map
+	region: String
+	replicas: Int
+	serviceAccount: String
+	services: [AppSpecServices]
+	tolerations: [AppSpecTolerations]
+}
+
+type AppSpecIntercept {
+	enabled: Boolean!
+	toDevice: String!
+}
+
+input AppSpecContainersLivenessProbeIn {
+	failureThreshold: Int
+	httpGet: AppSpecContainersLivenessProbeHttpGetIn
+	initialDelay: Int
+	interval: Int
+	shell: AppSpecContainersLivenessProbeShellIn
+	tcp: AppSpecContainersLivenessProbeTcpIn
+	type: String!
+}
+
+type AppSpecContainersReadinessProbe {
+	failureThreshold: Int
+	httpGet: AppSpecContainersReadinessProbeHttpGet
+	initialDelay: Int
+	interval: Int
+	shell: AppSpecContainersReadinessProbeShell
+	tcp: AppSpecContainersReadinessProbeTcp
+	type: String!
+}
+
+type AppSpecContainersLivenessProbeTcp {
+	port: Int!
+}
+
+input AppSpecContainersEnvFromIn {
+	refName: String!
+	type: String!
+}
+
+input AppSpecContainersLivenessProbeShellIn {
+	command: [String]
+}
+
+input AppOverridesPatchesIn {
+	op: String!
+	path: String!
+	value: Any
+}
+
+type AppSpecContainersLivenessProbeHttpGet {
+	httpHeaders: Map
+	path: String!
+	port: Int!
+}
+
+input AppSpecContainersResourceCpuIn {
+	max: String
+	min: String
+}
+
+type AppSpecServices {
+	name: String
+	port: Int!
+	targetPort: Int
+	type: String
+}
+
+type AppSpecContainersReadinessProbeShell {
+	command: [String]
+}
+
+input AppSpecHpaIn {
+	enabled: Boolean
+	maxReplicas: Int
+	minReplicas: Int
+	thresholdCpu: Int
+	thresholdMemory: Int
+}
+
+input AppOverridesIn {
+	applied: Boolean
+	patches: [AppOverridesPatchesIn]
+}
+
+type AppSpecTolerations {
+	effect: String
+	key: String
+	operator: String
+	tolerationSeconds: Int
+	value: String
+}
+
+type AppSpecContainersReadinessProbeTcp {
+	port: Int!
+}
+
+input AppSpecTolerationsIn {
+	effect: String
+	key: String
+	operator: String
+	tolerationSeconds: Int
+	value: String
+}
+
+input AppSpecContainersResourceMemoryIn {
+	max: String
+	min: String
+}
+
+type AppSpecContainersLivenessProbe {
+	failureThreshold: Int
+	httpGet: AppSpecContainersLivenessProbeHttpGet
+	initialDelay: Int
+	interval: Int
+	shell: AppSpecContainersLivenessProbeShell
+	tcp: AppSpecContainersLivenessProbeTcp
+	type: String!
+}
+

@@ -1,0 +1,86 @@
+input ManagedResourceOverridesPatchesIn {
+	op: String!
+	path: String!
+	value: Any
+}
+
+input ManagedResourceSpecMresKindIn {
+	kind: String!!
+}
+
+input ManagedResourceSpecIn {
+	inputs: Map
+	mresKind: ManagedResourceSpecMresKindIn!
+	msvcRef: ManagedResourceSpecMsvcRefIn!
+}
+
+input ManagedResourceSpecMsvcRefIn {
+	apiVersion: String!!
+	kind: String!
+	name: String!
+}
+
+type ManagedResource {
+	apiVersion: String!
+	enabled: Boolean
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: ManagedResourceOverrides
+	spec: ManagedResourceSpec
+	status: Status
+}
+
+type MRes {
+	accountName: String!
+	clusterName: String!
+	syncStatus: SyncStatus
+}
+
+type type BaseEntity {
+	creation_time: Date
+	id: String!
+	update_time: Date
+}
+
+input ManagedResourceOverridesIn {
+	applied: Boolean
+	patches: [ManagedResourceOverridesPatchesIn]
+}
+
+type ManagedResourceOverrides {
+	applied: Boolean
+	patches: [ManagedResourceOverridesPatches]
+}
+
+type ManagedResourceSpecMresKind {
+	kind: String!!
+}
+
+type ManagedResourceSpec {
+	inputs: Map
+	mresKind: ManagedResourceSpecMresKind!
+	msvcRef: ManagedResourceSpecMsvcRef!
+}
+
+input ManagedResourceIn {
+	apiVersion: String!
+	enabled: Boolean
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: ManagedResourceOverrides
+	spec: ManagedResourceSpec
+	status: Status
+}
+
+type ManagedResourceOverridesPatches {
+	op: String!
+	path: String!
+	value: Any
+}
+
+type ManagedResourceSpecMsvcRef {
+	apiVersion: String!!
+	kind: String!
+	name: String!
+}
+

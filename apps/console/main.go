@@ -22,13 +22,17 @@ func main() {
 	flag.Parse()
 
 	app := fx.New(
-		fx.Provide(env.LoadEnv),
 		fx.NopLogger,
+		fn.FxErrorHandler(),
+
+		fx.Provide(env.LoadEnv),
+
 		fx.Provide(
 			func() (logging.Logger, error) {
 				return logging.New(&logging.Options{Name: "console", Dev: isDev})
 			},
 		),
+
 		fx.Provide(func() (*rest.Config, error) {
 			if isDev {
 				return &rest.Config{
@@ -37,7 +41,6 @@ func main() {
 			}
 			return k8s.RestInclusterConfig()
 		}),
-		fn.FxErrorHandler(),
 		framework.Module,
 	)
 

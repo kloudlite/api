@@ -1,0 +1,97 @@
+input ManagedServiceSpecTolerationsIn {
+	effect: String
+	key: String
+	operator: String
+	tolerationSeconds: Int
+	value: String
+}
+
+type ManagedService {
+	apiVersion: String!
+	enabled: Boolean
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: ManagedServiceOverrides
+	spec: ManagedServiceSpec
+	status: Status
+}
+
+input ManagedServiceIn {
+	apiVersion: String!
+	enabled: Boolean
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: ManagedServiceOverrides
+	overrides: ManagedServiceOverridesIn
+	spec: ManagedServiceSpec
+	status: Status
+}
+
+type ManagedServiceSpecMsvcKind {
+	apiVersion: String!!
+	kind: String!
+}
+
+input ManagedServiceSpecMsvcKindIn {
+	apiVersion: String!!
+	kind: String!
+}
+
+type ManagedServiceOverrides {
+	applied: Boolean
+	patches: [ManagedServiceOverridesPatches]
+}
+
+type MSvc {
+	accountName: String!
+	clusterName: String!
+	syncStatus: SyncStatus
+}
+
+type ManagedServiceSpec {
+	inputs: Map
+	msvcKind: ManagedServiceSpecMsvcKind!
+	nodeSelector: Map
+	region: String
+	tolerations: [ManagedServiceSpecTolerations]
+}
+
+input ManagedServiceOverridesPatchesIn {
+	op: String!
+	path: String!
+	value: Any
+}
+
+input ManagedServiceSpecIn {
+	inputs: Map
+	msvcKind: ManagedServiceSpecMsvcKindIn!
+	nodeSelector: Map
+	region: String
+	tolerations: [ManagedServiceSpecTolerationsIn]
+}
+
+input ManagedServiceOverridesIn {
+	applied: Boolean
+	patches: [ManagedServiceOverridesPatchesIn]
+}
+
+type ManagedServiceSpecTolerations {
+	effect: String
+	key: String
+	operator: String
+	tolerationSeconds: Int
+	value: String
+}
+
+type type BaseEntity {
+	creation_time: Date
+	id: String!
+	update_time: Date
+}
+
+type ManagedServiceOverridesPatches {
+	op: String!
+	path: String!
+	value: Any
+}
+

@@ -8,10 +8,10 @@ import (
 
 type Project struct {
 	repos.BaseEntity `json:",inline"`
-	crdsv1.Project   `json:",inline"`
+	crdsv1.Project   `json:",inline" json-schema:"uri=k8s://projects.crds.kloudlite.io"`
 	AccountName      string       `json:"accountName"`
 	ClusterName      string       `json:"clusterName"`
-	SyncStatus       t.SyncStatus `json:"syncStatus"`
+	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"common=true"`
 }
 
 var ProjectIndexes = []repos.IndexField{
@@ -41,10 +41,10 @@ var ProjectIndexes = []repos.IndexField{
 
 type Workspace struct {
 	repos.BaseEntity `json:",inline"`
-	crdsv1.Env       `json:",inline"`
+	crdsv1.Env       `json:",inline" json-schema:"uri=k8s://envs.crds.kloudlite.io"`
 	AccountName      string       `json:"accountName"`
 	ClusterName      string       `json:"clusterName"`
-	SyncStatus       t.SyncStatus `json:"syncStatus"`
+	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"common=true"`
 }
 
 var WorkspaceIndexes = []repos.IndexField{

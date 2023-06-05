@@ -1,0 +1,45 @@
+input ConfigOverridesPatchesIn {
+	op: String!
+	path: String!
+	value: Any
+}
+
+type ConfigOverrides {
+	applied: Boolean
+	patches: [ConfigOverridesPatches]
+}
+
+type type BaseEntity {
+	creation_time: Date
+	id: String!
+	update_time: Date
+}
+
+input ConfigOverridesIn {
+	applied: Boolean
+	patches: [ConfigOverridesPatchesIn]
+}
+
+type Config {
+	accountName: String!
+	clusterName: String!
+	syncStatus: SyncStatus
+}
+
+input ConfigIn {
+	apiVersion: String!
+	data: Map
+	enabled: Boolean
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: ConfigOverrides
+	overrides: ConfigOverridesIn
+	status: Status
+}
+
+type ConfigOverridesPatches {
+	op: String!
+	path: String!
+	value: Any
+}
+

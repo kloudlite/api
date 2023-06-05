@@ -1,7 +1,8 @@
 # Where are all the schema files located? globs are supported eg  src/**/*.graphqls
 schema:
   - graph/*.graphqls
-  - graph/crd-to-gql/*.graphqls
+  # - graph/crd-to-gql/*.graphqls
+  - graph/struct-to-graphql/*.graphqls
 
 # Where should the generated server code go?
 exec:
@@ -96,120 +97,12 @@ models:
     model:
       - kloudlite.io/apps/console/internal/domain/entities.App
 
-  # AppSpec:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.AppSpec
-  # AppSpecIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.AppSpec
-  #
-  # AppSpecInterception:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.Interception
-  #
-  # AppSpecServices:
-  #   fields:
-  #     port:
-  #       resolver: false
-  #     targetPort:
-  #       resolver: false
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.AppSvc
-  # AppSpecServicesIn:
-  #   fields:
-  #     port:
-  #       resolver: false
-  #     targetPort:
-  #       resolver: false
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.AppSvc
-  #
-  # AppSpecHpa:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.HPA
-  # AppSpecHpaIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.HPA
-  #
-  # AppSpecVolumes:
-  #   model:
-  #     - k8s.io/api/core/v1.Volume
-  # AppSpecVolumesIn:
-  #   model:
-  #     - k8s.io/api/core/v1.Volume
-  #
-  # AppSpecTolerations:
-  #   model: k8s.io/api/core/v1.Toleration
-  # AppSpecTolerationsIn:
-  #   model: k8s.io/api/core/v1.Toleration
-  #
-  # AppSpecContainers:
-  #   fields:
-  #     readinessProbe:
-  #       resolver: false
-  #     livenessProbe:
-  #         resolver: false
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.AppContainer
-  # AppSpecContainersIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.AppContainer
-
-  # AppSpecContainersResourceMemory:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerResource
-  # AppSpecContainersResourceMemoryIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerResource
-  # AppSpecContainersResourceCpu:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerResource
-  # AppSpecContainersResourceCpuIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerResource
-  # AppSpecContainersEnv:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerEnv
-  # AppSpecContainersEnvIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerEnv
-  # AppSpecContainersEnvFrom:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.EnvFrom
-  # AppSpecContainersEnvFromIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.EnvFrom
-  #
-  # AppSpecContainersReadinessProbe:
-  #   model: &containerProbe
-  #     - github.com/kloudlite/operator/apis/crds/v1.Probe
-  # AppSpecContainersReadinessProbeIn:
-  #   model: *containerProbe
-
-  # AppSpecContainersVolumes:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerVolume
-  # AppSpecContainersVolumesIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerVolume
-  # AppSpecContainersVolumesItems:
-  #   model: &containerVolumeItem
-  #     - github.com/kloudlite/operator/apis/crds/v1.ContainerVolumeItem
-  # AppSpecContainersVolumesItemsIn:
-  #   model: *containerVolumeItem
-
   Router:
     model:
       - kloudlite.io/apps/console/internal/domain/entities.Router
   RouterIn:
     model:
       - kloudlite.io/apps/console/internal/domain/entities.Router
-  # RouterSpec:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.RouterSpec
-  # RouterSpecIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.RouterSpec
 
   Patch:
     model:
@@ -226,24 +119,11 @@ models:
   ManagedServiceIn:
     model:
       - kloudlite.io/apps/console/internal/domain/entities.MSvc
-  # ManagedServiceSpec:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ManagedServiceSpec
-  # ManagedServiceSpecIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ManagedServiceSpec
 
   ManagedResource:
     model: kloudlite.io/apps/console/internal/domain/entities.MRes
   ManagedResourceIn:
     model: kloudlite.io/apps/console/internal/domain/entities.MRes
-
-  # ManagedResourceSpec:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ManagedResourceSpec
-  # ManagedResourceSpecIn:
-  #   model:
-  #     - github.com/kloudlite/operator/apis/crds/v1.ManagedResourceSpec
 
   Status:
     model: github.com/kloudlite/operator/pkg/operator.Status

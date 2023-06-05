@@ -132,7 +132,7 @@ require (
 	github.com/sendgrid/rest v2.6.9+incompatible // indirect
 	github.com/shopspring/decimal v1.3.1 // indirect
 	github.com/spf13/cast v1.5.0 // indirect
-	github.com/spf13/pflag v1.0.5 // indirect
+	github.com/spf13/pflag v1.0.5
 	github.com/tektoncd/pipeline v0.43.2 // indirect
 	github.com/twmb/franz-go/pkg/kmsg v1.1.0 // indirect
 	github.com/urfave/cli/v2 v2.24.4 // indirect
@@ -173,7 +173,7 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 )
 
-// replace github.com/kloudlite/operator v0.0.0-20230515115651-baa43440ec41 => /home/nxtcoder17/workspace/kloudlite-forks/kloudlite-operator
+replace github.com/kloudlite/operator v0.0.0-20230519115853-9aa81fd2e1f7 => /home/nxtcoder17/workspace/kloudlite-forks/kl-operator
 
 // replace github.com/kloudlite/cluster-operator v0.0.0-20230213105023-96cd6d1e38d3 => /home/vision/kloudlite/cluster-operator
 // replace github.com/kloudlite/cluster-operator v0.0.0-20230213105023-96cd6d1e38d3 => /home/nxtcoder17/workspace/kloudlite/cluster-operator

@@ -1,0 +1,135 @@
+input RouterIn {
+	apiVersion: String!
+	kind: String!
+	metadata: Metadata! @goField(name: "objectMeta")
+	overrides: RouterOverrides
+	spec: RouterSpec
+	status: Status
+}
+
+type RouterSpecRoutes {
+	app: String
+	lambda: String
+	path: String!
+	port: Int!
+	rewrite: Boolean
+}
+
+type RouterSpecRateLimit {
+	connections: Int
+	enabled: Boolean
+	rpm: Int
+	rps: Int
+}
+
+type RouterSpec {
+	backendProtocol: String
+	basicAuth: RouterSpecBasicAuth
+	cors: RouterSpecCors
+	domains: [String]!
+	https: RouterSpecHttps
+	ingressClass: String
+	maxBodySizeInMB: Int
+	rateLimit: RouterSpecRateLimit
+	region: String
+	routes: [RouterSpecRoutes]
+}
+
+type type BaseEntity {
+	creation_time: Date
+	id: String!
+	update_time: Date
+}
+
+input RouterSpecRoutesIn {
+	app: String
+	lambda: String
+	path: String!
+	port: Int!
+	rewrite: Boolean
+}
+
+input RouterSpecCorsIn {
+	allowCredentials: Boolean
+	enabled: Boolean
+	origins: [String]
+}
+
+type RouterSpecHttps {
+	clusterIssuer: String
+	enabled: Boolean!
+	forceRedirect: Boolean
+}
+
+input RouterSpecHttpsIn {
+	clusterIssuer: String
+	enabled: Boolean!
+	forceRedirect: Boolean
+}
+
+input RouterOverridesPatchesIn {
+	op: String!
+	path: String!
+	value: Any
+}
+
+type RouterSpecBasicAuth {
+	enabled: Boolean!
+	secretName: String
+	username: String
+}
+
+type Router {
+	accountName: String!
+	clusterName: String!
+	syncStatus: SyncStatus
+}
+
+input RouterOverridesIn {
+	applied: Boolean
+	patches: [RouterOverridesPatchesIn]
+}
+
+input RouterSpecRateLimitIn {
+	connections: Int
+	enabled: Boolean
+	rpm: Int
+	rps: Int
+}
+
+input RouterSpecIn {
+	backendProtocol: String
+	basicAuth: RouterSpecBasicAuthIn
+	cors: RouterSpecCorsIn
+	domains: [String]!
+	https: RouterSpecHttpsIn
+	ingressClass: String
+	maxBodySizeInMB: Int
+	rateLimit: RouterSpecRateLimitIn
+	region: String
+	routes: [RouterSpecRoutesIn]
+}
+
+type RouterOverridesPatches {
+	op: String!
+	path: String!
+	value: Any
+}
+
+type RouterOverrides {
+	applied: Boolean
+	patches: [RouterOverridesPatches]
+}
+
+input RouterSpecBasicAuthIn {
+	enabled: Boolean!
+	secretName: String
+	username: String
+}
+
+type RouterSpecCors {
+	allowCredentials: Boolean
+	enabled: Boolean
+	origins: [String]
+}
+
