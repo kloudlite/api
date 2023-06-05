@@ -29,10 +29,9 @@ var Module = fx.Module("app",
 
 						err := func() error {
 							switch env.Action {
-							case "create":
-
+							case "create-cluster":
 								fmt.Println("needs to create node")
-								if err := pc.NewNode(ctx); err != nil {
+								if err := pc.CreateCluster(ctx); err != nil {
 									return err
 								}
 							case "delete":

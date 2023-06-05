@@ -7,8 +7,10 @@ import (
 	"time"
 
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
+	"kloudlite.io/apps/nodectrl/internal/domain/entities"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 	mongogridfs "kloudlite.io/pkg/mongo-gridfs"
+	"kloudlite.io/pkg/repos"
 )
 
 type DoProviderConfig struct {
@@ -34,6 +36,21 @@ type doClient struct {
 	tfTemplates string
 	labels      map[string]string
 	taints      []string
+}
+
+// AttachNode implements common.ProviderClient.
+func (doClient) AttachNode(ctx context.Context) error {
+	panic("unimplemented")
+}
+
+// CreateAndAttachNode implements common.ProviderClient.
+func (doClient) CreateAndAttachNode(ctx context.Context) error {
+	panic("unimplemented")
+}
+
+// CreateCluster implements common.ProviderClient.
+func (doClient) CreateCluster(ctx context.Context) error {
+	panic("unimplemented")
 }
 
 func parseValues(d doClient) map[string]string {
@@ -136,7 +153,7 @@ func (d doClient) DeleteNode(ctx context.Context) error {
 	return nil
 }
 
-func NewDoProviderClient(node DoNode, cpd common.CommonProviderData, dpc DoProviderConfig, gfs mongogridfs.GridFs) common.ProviderClient {
+func NewDoProviderClient(node DoNode, cpd common.CommonProviderData, dpc DoProviderConfig, gfs mongogridfs.GridFs, tokenRepo repos.DbRepo[*entities.Token]) common.ProviderClient {
 	return doClient{
 		node: node,
 		gfs:  gfs,

@@ -70,12 +70,12 @@ func MakeTfWorkFileReady(ctx context.Context, nodeId, tfPath string, gfs mongogr
 		return err
 	}
 
-	if s, err := Unzip(source, path.Join(Workdir)); err != nil {
+	if _, err := Unzip(source, path.Join(Workdir)); err != nil {
 		return err
 	} else {
-		for _, v := range s {
-			fmt.Print(v, " \n")
-		}
+		// for _, v := range s {
+		// 	fmt.Print(v, " \n")
+		// }
 	}
 
 	return nil

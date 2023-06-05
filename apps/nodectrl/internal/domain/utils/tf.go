@@ -64,11 +64,11 @@ func DestroyNode(nodeId string, values map[string]string) error {
 func ApplyTF(folder string, values map[string]string) error {
 	vars := []string{"apply", "-auto-approve"}
 
-	fmt.Printf("[#] terraform %s", strings.Join(vars, " "))
-
 	for k, v := range values {
 		vars = append(vars, fmt.Sprintf("-var=%s=%s", k, v))
 	}
+
+	fmt.Printf("[#] terraform %s", strings.Join(vars, " "))
 
 	cmd := exec.Command("terraform", vars...)
 	cmd.Dir = folder

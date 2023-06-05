@@ -1,16 +1,16 @@
 package entities
 
 import (
-	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
-
 	"kloudlite.io/pkg/repos"
 )
 
 type Token struct {
 	repos.BaseEntity `json:",inline"`
-	crdsv1.Secret    `json:",inline"`
 
-	Token       string `json:"token"`
+	JoinToken   string `json:"join%oken"`
+	EndpointUrl string `json:"endpointUrl" yaml:"endPointUrl"`
+	KubeConfig  string `json:"kubeConfig" yaml:"kubeConfig"`
+
 	NodeId      string `json:"nodeId"`
 	AccountName string `json:"accountName"`
 	ClusterName string `json:"clusterName"`

@@ -54,3 +54,24 @@ func ExecCmd(cmdString string, logStr string) error {
 	}
 	return nil
 }
+
+func ExecCmdWithOutput(cmdString string, logStr string) ([]byte, error) {
+	r := csv.NewReader(strings.NewReader(cmdString))
+	r.Comma = ' '
+	cmdArr, err := r.Read()
+	if err != nil {
+		return nil, err
+	}
+
+	if logStr != "" {
+		fmt.Printf("[#] %s\n", logStr)
+	} else {
+		fmt.Printf("[#] %s\n", strings.Join(cmdArr, " "))
+	}
+
+	cmd := exec.Command(cmdArr[0], cmdArr[1:]...)
+	cmd.Stderr = os.Stderr
+	// cmd.Stdout = os.Stdout
+
+	return cmd.Output()
+}

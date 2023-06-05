@@ -24,7 +24,7 @@ type ProviderClient interface {
 	DeleteNode(ctx context.Context) error
 	SaveToDbGuranteed(ctx context.Context)
 
-	CreateCluster() error
+	CreateCluster(ctx context.Context) error
 	/*
 		It will perform generation of ssh
 		create node

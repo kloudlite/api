@@ -10,6 +10,7 @@ tasks:
       - ./main.go
     cmds:
       # - go run -tags dynamic main.go --dev
+      - cd ./.secrets && go run main.go
       - nodemon -e go --signal SIGKILL --exec 'go run  main.go --dev || exit 1'
 
   docker-build:
