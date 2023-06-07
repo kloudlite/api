@@ -47,7 +47,8 @@ func main() {
 	}
 
 	p := parser.NewParser(kCli)
-	p.GenerateGraphQLSchema("Project", reflect.TypeOf(Project{}))
-	// p.Debug()
-	p.PrintSchema()
+	p.GenerateGraphQLSchema("Project", "Project", reflect.TypeOf(Project{}))
+	if err := p.DumpSchema("struct-to-graphql"); err != nil {
+		panic(err)
+	}
 }
