@@ -22,6 +22,7 @@ type Project struct {
 	Sample4          int        `json:"-"`
 	SampleItem1      SampleType `json:",inline"`
 	SampleItem2      *SampleType
+	SampleItem3      SampleType `json:"sampleItem3"`
 	SampleItems1     []int
 	SampleItems2     []SampleType          `json:"sampleItem2"`
 	SampleItems4     []SampleType          `json:",omitempty"`
@@ -47,5 +48,6 @@ func main() {
 
 	p := parser.NewParser(kCli)
 	p.GenerateGraphQLSchema("Project", reflect.TypeOf(Project{}))
-	p.Debug()
+	// p.Debug()
+	p.PrintSchema()
 }

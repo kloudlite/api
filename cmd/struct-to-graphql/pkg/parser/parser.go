@@ -19,6 +19,7 @@ import (
 type Parser interface {
 	GenerateGraphQLSchema(name string, t reflect.Type)
 	Debug()
+	PrintSchema()
 }
 
 type GraphqlType string
@@ -56,7 +57,6 @@ var kindMap = map[reflect.Kind]string{
 
 	reflect.Bool:      "Boolean",
 	reflect.Interface: "Any",
-	// reflect.String: "String",
 }
 
 type parser struct {
@@ -69,6 +69,8 @@ type parser struct {
 	CommonTypes   map[string][]string
 	CommonInpuuts map[string][]string
 	CommonEnums   map[string][]string
+
+	VisitedStructs map[string]bool
 }
 
 type JsonTag struct {
@@ -174,6 +176,31 @@ func (p *parser) mergeParser(other *parser, overKey string) (fields []string, in
 	return fields, inputFields
 }
 
+// call it like HasStructBeenVisited("github.com/username/repo/pkg", "pkg.structname")
+func (p *parser) HasStructBeenVisited(pkgpath string, fieldType string) bool {
+	sp := strings.Split(fieldType, ".")
+	fieldType = sp[1]
+	if len(sp) != 2 {
+		fieldType = sp[1]
+	}
+
+	if _, ok := p.VisitedStructs[pkgpath+"."+fieldType]; ok {
+		return true
+	}
+
+	return false
+}
+
+func (p *parser) MarkStructAsVisited(pkgpath string, fieldType string) {
+	sp := strings.Split(fieldType, ".")
+	fieldType = sp[1]
+	if len(sp) != 2 {
+		fieldType = sp[1]
+	}
+
+	p.VisitedStructs[pkgpath+"."+fieldType] = true
+}
+
 func (p *parser) GenerateGraphQLSchema(name string, t reflect.Type) {
 	var fields []string
 	var inputFields []string
@@ -222,8 +249,6 @@ func (p *parser) GenerateGraphQLSchema(name string, t reflect.Type) {
 				}
 			case reflect.Struct:
 				{
-					fmt.Println("structName: ", field.Type.String(), field.Type.PkgPath())
-
 					if gt.Uri != nil {
 						if strings.HasPrefix(*gt.Uri, "k8s://") {
 							k8sCrdName := strings.Split(*gt.Uri, "k8s://")[1]
@@ -233,7 +258,12 @@ func (p *parser) GenerateGraphQLSchema(name string, t reflect.Type) {
 							}
 
 							func() {
-								childType := "K8s" + jt.Value
+								// childType := "K8s" + jt.Value
+								pkgPath := field.Type.PkgPath()
+								pkgPath = strings.ReplaceAll(pkgPath, "/", "__")
+								pkgPath = strings.ReplaceAll(pkgPath, ".", "_")
+
+								childType := genTypeName(pkgPath + "_" + field.Type.Name())
 								if jt.Inline {
 									// TODO: call json parsing and create type, input, and enum for all those types, using jsonSchema, with fields being inline
 									p2 := newParser(p.kCli)
@@ -257,9 +287,15 @@ func (p *parser) GenerateGraphQLSchema(name string, t reflect.Type) {
 					}
 
 					func() {
+						pkgPath := field.Type.PkgPath()
+						pkgPath = strings.ReplaceAll(pkgPath, "/", "__")
+						pkgPath = strings.ReplaceAll(pkgPath, ".", "_")
+
+						childType := genTypeName(pkgPath + "_" + field.Type.Name())
+
 						if jt.Inline {
 							p2 := newParser(p.kCli)
-							childType := name + field.Name
+							// childType := name + field.Name
 							p2.GenerateGraphQLSchema(childType, field.Type)
 
 							fields2, inputFields2 := p.mergeParser(p2, childType)
@@ -269,10 +305,9 @@ func (p *parser) GenerateGraphQLSchema(name string, t reflect.Type) {
 							return
 						}
 
-						fieldType = toFieldType(name+field.Name, jt.OmitEmpty)
-						inputFieldType = toFieldType(name+field.Name+"In", jt.OmitEmpty)
-						// p.GenerateGraphQLSchema(name+field.Name, field.Type)
-						p.GenerateGraphQLSchema(fieldType, field.Type)
+						fieldType = toFieldType(childType, jt.OmitEmpty)
+						inputFieldType = toFieldType(childType+"In", jt.OmitEmpty)
+						p.GenerateGraphQLSchema(childType, field.Type)
 					}()
 				}
 			case reflect.Slice:
@@ -420,6 +455,44 @@ func (p *parser) Debug() {
 	litter.Dump(p.Inputs)
 	fmt.Println("Enums:")
 	litter.Dump(p.Enums)
+}
+
+func (p *parser) PrintSchema() {
+	keys := make([]string, 0, len(p.Types))
+	for k := range p.Types {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+	for i := range keys {
+		fmt.Printf("type %s {\n", keys[i])
+		fmt.Printf("  %s\n", strings.Join(p.Types[keys[i]], "\n  "))
+		fmt.Printf("}\n\n")
+	}
+
+	keys = make([]string, 0, len(p.Inputs))
+	for k := range p.Inputs {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+	for i := range keys {
+		fmt.Printf("input %s {\n", keys[i])
+		fmt.Printf("  %s\n", strings.Join(p.Inputs[keys[i]], "\n  "))
+		fmt.Printf("}\n\n")
+	}
+
+	keys = make([]string, 0, len(p.Enums))
+	for k := range p.Enums {
+		keys = append(keys, k)
+	}
+
+	sort.Strings(keys)
+	for i := range keys {
+		fmt.Printf("enum %s {\n", keys[i])
+		fmt.Printf("  %s\n", strings.Join(p.Enums[keys[i]], "\n  "))
+		fmt.Printf("}\n\n")
+	}
 }
 
 func newParser(kCli k8s.ExtendedK8sClient) *parser {
