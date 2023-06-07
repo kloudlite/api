@@ -4,17 +4,32 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io"
 	"reflect"
 	"sort"
 	"strings"
 	"time"
 
+	"github.com/sanity-io/litter"
+	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"
 )
 
-var typeMap = map[reflect.Type]string{
+type Parser interface {
+	GenerateGraphQLSchema(name string, t reflect.Type)
+	Debug()
+}
+
+type GraphqlType string
+
+const (
+	Type  GraphqlType = "type"
+	Input GraphqlType = "input"
+	Enum  GraphqlType = "enum"
+)
+
+var scalarMappings = map[reflect.Type]string{
 	reflect.TypeOf(metav1.Time{}):      "Date",
 	reflect.TypeOf(&metav1.Time{}):     "Date",
 	reflect.TypeOf(time.Time{}):        "Date",
@@ -39,263 +54,386 @@ var kindMap = map[reflect.Kind]string{
 	reflect.Float32: "Float",
 	reflect.Float64: "Float",
 
-	reflect.Bool:   "Boolean",
-	reflect.String: "String",
+	reflect.Bool:      "Boolean",
+	reflect.Interface: "Any",
+	// reflect.String: "String",
 }
 
-func genFieldType(fieldType string, omitempty bool) string {
-	if omitempty {
-		return fieldType
+type parser struct {
+	Types  map[string][]string
+	Inputs map[string][]string
+	Enums  map[string][]string
+
+	kCli k8s.ExtendedK8sClient
+
+	CommonTypes   map[string][]string
+	CommonInpuuts map[string][]string
+	CommonEnums   map[string][]string
+}
+
+type JsonTag struct {
+	Value     string
+	OmitEmpty bool
+	Inline    bool
+}
+
+func parseJsonTag(field reflect.StructField) JsonTag {
+	jsonTag := field.Tag.Get("json")
+	if jsonTag == "" {
+		return JsonTag{Value: field.Name, OmitEmpty: false, Inline: false}
 	}
-	return fieldType + "!"
-}
 
-func GenerateGraphQLSchema(name string, data interface{}, kCli k8s.ExtendedK8sClient) (map[string][]string, error) {
-	ty := reflect.TypeOf(data)
-	if ty.Kind() == reflect.Ptr {
-		ty = ty.Elem()
+	var jt JsonTag
+	sp := strings.Split(jsonTag, ",")
+	jt.Value = sp[0]
+
+	if jt.Value == "" {
+		jt.Value = field.Name
 	}
 
-	schemaMap := map[string][]string{}
-	commonTypesMap := map[string][]string{}
+	for i := 1; i < len(sp); i++ {
+		if sp[i] == "omitempty" {
+			jt.OmitEmpty = true
+		}
+		if sp[i] == "inline" {
+			jt.Inline = true
+		}
+	}
 
-	getGraphQLFields(ty, name, schemaMap, commonTypesMap, kCli)
-
-	return schemaMap, nil
+	return jt
 }
 
-func getGraphQLFields(t reflect.Type, name string, dataMap map[string][]string, commonTypesMap map[string][]string, kCli k8s.ExtendedK8sClient) {
+type GraphqlTag struct {
+	Uri        *string
+	Enum       []string
+	CommonType *bool
+}
+
+func parseGraphqlTag(field reflect.StructField) GraphqlTag {
+	tag := field.Tag.Get("graphql")
+	if tag == "" {
+		return GraphqlTag{}
+	}
+
+	var gt GraphqlTag
+	sp := strings.Split(tag, ",")
+	for i := range sp {
+		kv := strings.Split(sp[i], "=")
+		if len(kv) != 2 {
+			return GraphqlTag{}
+		}
+
+		switch kv[0] {
+		case "uri":
+			{
+				gt.Uri = &kv[1]
+			}
+		case "enum":
+			{
+				enumVals := strings.Split(kv[1], ";")
+				gt.Enum = enumVals
+			}
+		case "common":
+			{
+				gt.CommonType = fn.New(kv[1] == "true")
+			}
+		}
+	}
+
+	return gt
+}
+
+func toFieldType(fieldType string, isRequired bool) string {
+	if isRequired {
+		return fieldType + "!"
+	}
+	return fieldType
+}
+
+func (p *parser) mergeParser(other *parser, overKey string) (fields []string, inputFields []string) {
+	for k, v := range other.Types {
+		if k == overKey {
+			fields = append(fields, v...)
+			continue
+		}
+		p.Types[k] = v
+	}
+
+	for k, v := range other.Inputs {
+		if k == overKey+"In" {
+			inputFields = append(inputFields, v...)
+			continue
+		}
+		p.Inputs[k] = v
+	}
+
+	for k, v := range other.Enums {
+		p.Enums[k] = v
+	}
+
+	return fields, inputFields
+}
+
+func (p *parser) GenerateGraphQLSchema(name string, t reflect.Type) {
 	var fields []string
+	var inputFields []string
 
 	for i := 0; i < t.NumField(); i++ {
 		field := t.Field(i)
 
 		if !field.IsExported() {
-			// unexported field
 			continue
 		}
 
-		graphqlTag := field.Tag.Get("graphql")
-
-		jsonSchemaTag := field.Tag.Get("json-schema")
-		fieldName := field.Tag.Get("json")
-		sp := strings.Split(fieldName, ",")
-
-		omitempty := false
-		inline := false
-
-		if len(sp) >= 1 && sp[0] == "-" {
-			// this field does not want to be included in the schema
+		jt := parseJsonTag(field)
+		if jt.Value == "-" {
 			continue
-		}
-
-		// iterating from 1 as the first element is the field name, it would always be there
-		for i := 1; i < len(sp); i++ {
-			if sp[i] == "omitempty" {
-				omitempty = true
-			}
-			if sp[i] == "inline" {
-				inline = true
-			}
-		}
-
-		if len(sp) > 1 {
-			fieldName = sp[0]
-		}
-
-		if fieldName == "" {
-			fieldName = field.Name
 		}
 
 		fieldType := ""
+		inputFieldType := ""
 
-		hasSpecialCase := false
-
-		if tf, ok := typeMap[field.Type]; ok {
-			hasSpecialCase = true
-			fieldType = tf
+		if scalar, ok := scalarMappings[field.Type]; ok {
+			fieldType = toFieldType(scalar, !jt.OmitEmpty)
+			inputFieldType = toFieldType(scalar, !jt.OmitEmpty)
 		}
 
-		if !hasSpecialCase {
+		if v, ok := kindMap[field.Type.Kind()]; ok {
+			fieldType = toFieldType(v, !jt.OmitEmpty)
+			inputFieldType = toFieldType(v, !jt.OmitEmpty)
+		}
+
+		gt := parseGraphqlTag(field)
+
+		if fieldType == "" {
 			switch field.Type.Kind() {
-			case reflect.Int, reflect.Int8, reflect.Int16, reflect.Int32, reflect.Int64,
-				reflect.Uint, reflect.Uint8, reflect.Uint16, reflect.Uint32, reflect.Uint64:
-				fieldType = genFieldType("Int", omitempty)
-			case reflect.Float32, reflect.Float64:
-				fieldType = genFieldType("Float", omitempty)
-			case reflect.Bool:
-				fieldType = genFieldType("Boolean", omitempty)
 			case reflect.String:
-				if jsonSchemaTag != "" {
-					jsonSchemaEnum := ""
+				{
+					if gt.Enum != nil {
+						sort.Strings(gt.Enum)
+						p.Enums[field.Name] = gt.Enum
 
-					if strings.HasPrefix(jsonSchemaTag, "enum=") {
-						jsonSchemaEnum = strings.Split(jsonSchemaTag, "enum=")[1]
+						fieldType = toFieldType(field.Name, !jt.OmitEmpty)
+						inputFieldType = toFieldType(field.Name, !jt.OmitEmpty)
+						break
 					}
-
-					if jsonSchemaEnum != "" {
-						enums := strings.Split(jsonSchemaEnum, ",")
-						fieldType = genFieldType(name+field.Name, omitempty)
-
-						fields := make([]string, len(enums))
-						copy(fields, enums)
-
-						sort.Strings(fields)
-						dataMap[fmt.Sprintf("enum %s", name+field.Name)] = fields
-					}
-				} else {
-					fieldType = genFieldType("String", omitempty)
+					fieldType = toFieldType("String", !jt.OmitEmpty)
+					inputFieldType = toFieldType("String", !jt.OmitEmpty)
 				}
-
 			case reflect.Struct:
-				fieldType = field.Name
+				{
+					fmt.Println("structName: ", field.Type.String(), field.Type.PkgPath())
 
-				typeIsCommon := false
-
-				if graphqlTag != "" {
-					sp := strings.Split(graphqlTag, " ")
-					for i := range sp {
-						if strings.HasPrefix(sp[i], "common=") {
-							if strings.SplitN(sp[i], "common=", 2)[1] == "true" {
-								typeIsCommon = true
-								getGraphQLFields(field.Type, fieldType, commonTypesMap, commonTypesMap, kCli)
+					if gt.Uri != nil {
+						if strings.HasPrefix(*gt.Uri, "k8s://") {
+							k8sCrdName := strings.Split(*gt.Uri, "k8s://")[1]
+							jsonSchema, err := p.kCli.GetCRDJsonSchema(context.TODO(), k8sCrdName)
+							if err != nil {
+								panic(err)
 							}
-						}
-					}
-				}
 
-				if jsonSchemaTag != "" {
-					jsonSchemaUri := ""
-					if strings.HasPrefix(jsonSchemaTag, "uri=") {
-						jsonSchemaUri = strings.Split(jsonSchemaTag, "uri=")[1]
-					}
+							func() {
+								childType := "K8s" + jt.Value
+								if jt.Inline {
+									// TODO: call json parsing and create type, input, and enum for all those types, using jsonSchema, with fields being inline
+									p2 := newParser(p.kCli)
+									p2.GenerateFromJsonSchema(childType, jsonSchema)
 
-					if strings.HasPrefix(jsonSchemaUri, "k8s://") {
-						crdName := strings.Split(jsonSchemaUri, "k8s://")[1]
-						jp, err := kCli.GetCRDJsonSchema(context.TODO(), crdName)
-						if err != nil {
-							panic(err)
-						}
+									fields2, inputFields2 := p.mergeParser(p2, childType)
+									fields = append(fields, fields2...)
+									inputFields = append(inputFields, inputFields2...)
 
-						if inline {
-							dMap := map[string][]string{}
-							Convert(jp, field.Type.Name(), dMap)
-							for k, v := range dMap {
-								if k == field.Type.Name() {
-									fields = append(fields, v...)
-									continue
+									return
 								}
-								sort.Strings(v)
-								dataMap[k] = v
-							}
-							continue
-						} else {
-							fieldType = genFieldType("K8s"+field.Type.Name(), omitempty)
-							Convert(jp, "K8s"+field.Type.Name(), dataMap)
+
+								fieldType = toFieldType(childType, !jt.OmitEmpty)
+								inputFieldType = toFieldType(childType+"In", !jt.OmitEmpty)
+
+								// TODO: call json parsing and create type, input, and enum for all those types, using jsonSchema
+								p.GenerateFromJsonSchema(childType, jsonSchema)
+							}()
 						}
+						break
 					}
-				} else {
-					if inline {
-						dMap := map[string][]string{}
-						getGraphQLFields(field.Type, field.Name, dMap, commonTypesMap, kCli)
-						for k, v := range dMap {
-							if k == field.Name {
-								fields = append(fields, v...)
-								continue
-							}
-							sort.Strings(v)
-							dataMap[fmt.Sprintf("type %s", k)] = v
+
+					func() {
+						if jt.Inline {
+							p2 := newParser(p.kCli)
+							childType := name + field.Name
+							p2.GenerateGraphQLSchema(childType, field.Type)
+
+							fields2, inputFields2 := p.mergeParser(p2, childType)
+							fields = append(fields, fields2...)
+							inputFields = append(inputFields, inputFields2...)
+
+							return
 						}
-						continue
-					} else {
-						if typeIsCommon {
-							fieldType = field.Name
-						} else {
-							fieldType = name + field.Name
-							getGraphQLFields(field.Type, name+field.Name, dataMap, commonTypesMap, kCli)
-						}
-					}
+
+						fieldType = toFieldType(name+field.Name, jt.OmitEmpty)
+						inputFieldType = toFieldType(name+field.Name+"In", jt.OmitEmpty)
+						// p.GenerateGraphQLSchema(name+field.Name, field.Type)
+						p.GenerateGraphQLSchema(fieldType, field.Type)
+					}()
 				}
 			case reflect.Slice:
 				{
 					if field.Type.Elem().Kind() == reflect.Struct {
-						if jsonSchemaTag != "" {
-							jsonSchemaUri := ""
-							if strings.HasPrefix(jsonSchemaTag, "uri=") {
-								jsonSchemaUri = strings.Split(jsonSchemaTag, "uri=")[1]
-							}
-							if strings.HasPrefix(jsonSchemaUri, "k8s://") {
-								fieldType = genFieldType(fmt.Sprintf("[%s]", "K8s"+field.Type.Name()), omitempty)
-								crdName := strings.Split(jsonSchemaUri, "k8s://")[1]
-								jp, err := kCli.GetCRDJsonSchema(context.TODO(), crdName)
-								if err != nil {
-									panic(err)
-								}
-								Convert(jp, "K8s"+field.Type.Name(), dataMap)
-							}
-						} else {
-							getGraphQLFields(field.Type.Elem(), name+field.Name, dataMap, commonTypesMap, kCli)
-						}
-					} else {
-						fieldType = fmt.Sprintf("[%s]", kindMap[field.Type.Elem().Kind()])
+						// TODO: if common, take out the name+ field,
+						fieldType = toFieldType(fmt.Sprintf("[%s]", name+field.Type.Elem().Name()), !jt.OmitEmpty)
+						inputFieldType = toFieldType(fmt.Sprintf("[%sIn]", name+field.Type.Elem().Name()), !jt.OmitEmpty)
+						p.GenerateGraphQLSchema(name+field.Type.Elem().Name(), field.Type.Elem())
+						break
 					}
+					fieldType = toFieldType(fmt.Sprintf("[%s]", kindMap[field.Type.Elem().Kind()]), !jt.OmitEmpty)
+					inputFieldType = toFieldType(fmt.Sprintf("[%s]", kindMap[field.Type.Elem().Kind()]), !jt.OmitEmpty)
 				}
 			case reflect.Ptr:
 				{
 					if field.Type.Elem().Kind() == reflect.Struct {
-						fieldType = field.Name
-						getGraphQLFields(field.Type.Elem(), name+field.Name, dataMap, commonTypesMap, kCli)
-					} else {
-						fieldType = kindMap[field.Type.Elem().Kind()]
+						fieldType = name + field.Type.Elem().Name()
+						inputFieldType = name + field.Type.Elem().Name() + "In"
+						p.GenerateGraphQLSchema(name+field.Type.Elem().Name(), field.Type.Elem())
+						break
 					}
+					fieldType = kindMap[field.Type.Elem().Kind()]
+					inputFieldType = kindMap[field.Type.Elem().Kind()]
 				}
 			case reflect.Map:
 				{
 					fieldType = "Map"
+					inputFieldType = "Map"
 					if field.Type.Elem().Kind() == reflect.Struct {
-						getGraphQLFields(field.Type.Elem(), name+field.Name, dataMap, commonTypesMap, kCli)
+						// p.GenerateGraphQLSchema(name+field.Name, field.Type.Elem())
+						p.GenerateGraphQLSchema(name+field.Type.Elem().Name(), field.Type.Elem())
 					}
-				}
-			case reflect.Interface:
-				{
-					fieldType = "Any"
 				}
 			default:
 				{
-					fmt.Printf("default: name: %v (%v), type: %v, kind: %v\n", fieldName, field.Name, field.Type, field.Type.Kind())
+					fmt.Printf("default: name: %v (field-name: %v), type: %v, kind: %v\n", jt.Value, field.Name, field.Type, field.Type.Kind())
 				}
 			}
 		}
 
 		if fieldType != "" {
-			fields = append(fields, fmt.Sprintf("%s: %s", fieldName, fieldType))
+			fields = append(fields, fmt.Sprintf("%s: %s", jt.Value, fieldType))
+			inputFields = append(inputFields, fmt.Sprintf("%s: %s", jt.Value, inputFieldType))
 			continue
 		}
 	}
 
-	sort.Strings(fields)
-	dataMap[fmt.Sprintf("type %s", name)] = fields
+	p.Types[name] = fields
+	p.Inputs[name+"In"] = inputFields
 }
 
-func WriteSchema(schema map[string][]string, writer io.Writer, shareable ...bool) error {
-	for k, v := range schema {
-		if strings.HasPrefix(k, "type") && len(shareable) > 0 {
-			if _, err := fmt.Fprintf(writer, "%s shareable {\n", k); err != nil {
-				return err
-			}
-		} else {
-			if _, err := fmt.Fprintf(writer, "%s {\n", k); err != nil {
-				return err
-			}
+func (p *parser) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...int) {
+	currDepth := func() int {
+		if len(depth) == 0 {
+			return 1
 		}
-		for _, f := range v {
-			if _, err := fmt.Fprintf(writer, "\t%s\n", f); err != nil {
-				return err
-			}
-		}
-		if _, err := fmt.Fprintf(writer, "}\n\n"); err != nil {
-			return err
-		}
+		return depth[0]
+	}()
+
+	m := map[string]bool{}
+	for i := range tree.Required {
+		m[tree.Required[i]] = true
 	}
-	return nil
+
+	typeName := genTypeName(name)
+
+	fields := make([]string, 0, len(tree.Properties))
+	inputFields := make([]string, 0, len(tree.Properties))
+
+	for k, v := range tree.Properties {
+		if currDepth == 1 {
+			if k == "apiVersion" || k == "kind" {
+				fields = append(fields, genFieldEntry(k, "String!", m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, "String!", m[k]))
+				continue
+			}
+		}
+
+		if v.Type == "array" {
+			if v.Items.Schema != nil && v.Items.Schema.Type == "object" {
+				fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", typeName+genTypeName(k)), m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%sIn]", typeName+genTypeName(k)), m[k]))
+				p.NavigateTree(typeName+genTypeName(k), v.Items.Schema, currDepth+1)
+				continue
+			}
+
+			fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", genTypeName(v.Items.Schema.Type)), m[k]))
+			inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%s]", genTypeName(v.Items.Schema.Type)), m[k]))
+			continue
+		}
+
+		if v.Type == "object" {
+			if currDepth == 1 {
+				// these types are common across all the types that will be generated
+				if k == "metadata" {
+					fields = append(fields, genFieldEntry(k, "Metadata! @goField(name: \"objectMeta\")", false))
+					inputFields = append(fields, genFieldEntry(k, "MetadataIn!", false))
+					continue
+				}
+
+				// if k == "status" {
+				// 	fields = append(fields, genFieldEntry(k, "Status", m[k]))
+				// 	continue
+				// }
+			}
+
+			if len(v.Properties) == 0 {
+				fields = append(fields, genFieldEntry(k, "Map", m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, "Map", m[k]))
+				continue
+			}
+
+			fields = append(fields, genFieldEntry(k, typeName+genTypeName(k), m[k]))
+			inputFields = append(inputFields, genFieldEntry(k, typeName+genTypeName(k)+"In", m[k]))
+			p.NavigateTree(typeName+genTypeName(k), &v, currDepth+1)
+			continue
+		}
+
+		fields = append(fields, genFieldEntry(k, gqlTypeMap(v.Type), m[k]))
+		inputFields = append(inputFields, genFieldEntry(k, gqlTypeMap(v.Type), m[k]))
+	}
+
+	p.Types[typeName] = fields
+	p.Inputs[typeName+"In"] = inputFields
+}
+
+func (p *parser) GenerateFromJsonSchema(name string, schema *v1.JSONSchemaProps) {
+	p.NavigateTree(name, schema)
+}
+
+func (p *parser) LoadStruct(name string, data any) {
+	ty := reflect.TypeOf(data)
+	if ty.Kind() == reflect.Ptr {
+		ty = ty.Elem()
+	}
+
+	p.GenerateGraphQLSchema(name, ty)
+}
+
+func (p *parser) Debug() {
+	fmt.Println("Types:")
+	litter.Dump(p.Types)
+	fmt.Println("Inputs:")
+	litter.Dump(p.Inputs)
+	fmt.Println("Enums:")
+	litter.Dump(p.Enums)
+}
+
+func newParser(kCli k8s.ExtendedK8sClient) *parser {
+	return &parser{
+		Types:         map[string][]string{},
+		Inputs:        map[string][]string{},
+		Enums:         map[string][]string{},
+		kCli:          kCli,
+		CommonTypes:   map[string][]string{},
+		CommonInpuuts: map[string][]string{},
+		CommonEnums:   map[string][]string{},
+	}
+}
+
+func NewParser(kCli k8s.ExtendedK8sClient) Parser {
+	return newParser(kCli)
 }
