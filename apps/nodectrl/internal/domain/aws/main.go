@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"path"
+	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
@@ -26,6 +27,7 @@ type AWSNode struct {
 	InstanceType string `yaml:"instanceType"`
 	VPC          string `yaml:"vpc"`
 	ImageId      string `yaml:"imageId"`
+	IsGpu        bool   `yaml:"isGpu"`
 }
 
 type awsClient struct {
@@ -42,52 +44,65 @@ type awsClient struct {
 	taints      []string
 }
 
-// CreateAndAttachNode implements common.ProviderClient
-func (a awsClient) CreateAndAttachNode(ctx context.Context) error {
-	if err := a.NewNode(ctx); err != nil {
-		return err
-	}
-
-	if err := a.AttachNode(ctx); err != nil {
-		return err
-	}
-
-	return nil
+type tokenAndKubeconfig struct {
+	Token      string `json:"token"`
+	Kubeconfig string `json:"kubeconfig"`
+	ServerIp   string `json:"serverIp"`
 }
 
-// AttachNode implements common.ProviderClient
-func (a awsClient) AttachNode(ctx context.Context) error {
-	/*
-		check readyness, wait if not ready
-		if ready install agent
-		  to install fetch
-	*/
+// AddMaster implements common.ProviderClient.
+func (a awsClient) AddMaster(ctx context.Context) error {
+	// fetch token
+	a.SSHPath = path.Join("/tmp/ssh", a.accountId)
 
-	//
-	var out []byte
+	tokenFileName := fmt.Sprintf("%s-config.yaml", a.accountId)
 
-	out, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
+	if err := a.awsS3Client.IsFileExists(tokenFileName); err != nil {
+		return err
+	}
+
+	tokenPath := path.Join(a.SSHPath, "config.yaml")
+	if err := a.awsS3Client.DownloadFile(tokenPath, tokenFileName); err != nil {
+		return err
+	}
+
+	b, err := os.ReadFile(tokenPath)
 	if err != nil {
 		return err
 	}
 
-	// labels := func() []string {
-	// 	l := []string{}
-	// 	for k, v := range a.labels {
-	// 		l = append(l, fmt.Sprintf("--node-label %s=%s", k, v))
-	// 	}
-	// 	l = append(l, fmt.Sprintf("--node-label %s=%s", "kloudlite.io/public-ip", string(out)))
-	// 	return l
-	// }()
+	kc := tokenAndKubeconfig{}
+
+	if err := yaml.Unmarshal(b, &kc); err != nil {
+		return err
+	}
+
+	// setup ssh
+
+	if err := a.SetupSSH(); err != nil {
+		return err
+	}
+	defer a.saveForSure()
+
+	// create node and wait for ready
+	if err := a.NewNode(ctx); err != nil {
+		return err
+	}
+
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
+	if err != nil {
+		return err
+	}
 
 	count := 0
 
 	for {
 		if e := utils.ExecCmd(
 			fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s ls",
-				fmt.Sprintf("%s/access", a.SSHPath),
-				string(out)),
-			"checking if node is ready "); e == nil {
+				fmt.Sprintf("%v/access", a.SSHPath),
+				string(ip),
+			),
+			""); e == nil {
 			break
 		}
 
@@ -95,17 +110,115 @@ func (a awsClient) AttachNode(ctx context.Context) error {
 		if count > 24 {
 			return fmt.Errorf("node is not ready even after 6 minutes")
 		}
-		time.Sleep(time.Second * 15)
+		time.Sleep(time.Second * 5)
 	}
 
-	// // attach node
-	// if e := utils.ExecCmd(
-	// 	fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s sudo sh /tmp/k3s-install.sh agent --server %s --token %s %s --node-name %s --node-external-ip %s --node-ip %s",
-	// 		fmt.Sprintf("%v/access", a.SSHPath), string(out), token.EndpointUrl, token.JoinToken,
-	// 		strings.Join(labels, " "), a.node.NodeId, string(out), string(out)),
-	// 	"attaching to cluster"); e != nil {
-	// 	return e
-	// }
+	// attach to cluster as master
+
+	panic("unimplemented")
+}
+
+func (a awsClient) AddWorker(ctx context.Context) error {
+	// fetch token
+
+	a.SSHPath = path.Join("/tmp/ssh", a.accountId)
+
+	tokenFileName := fmt.Sprintf("%s-config.yaml", a.accountId)
+
+	if err := a.awsS3Client.IsFileExists(tokenFileName); err != nil {
+		return err
+	}
+
+	tokenPath := path.Join(a.SSHPath, "config.yaml")
+	if err := a.awsS3Client.DownloadFile(tokenPath, tokenFileName); err != nil {
+		return err
+	}
+
+	b, err := os.ReadFile(tokenPath)
+	if err != nil {
+		return err
+	}
+
+	kc := tokenAndKubeconfig{}
+
+	if err := yaml.Unmarshal(b, &kc); err != nil {
+		return err
+	}
+
+	// setup ssh
+
+	if err := a.SetupSSH(); err != nil {
+		return err
+	}
+	defer a.saveForSure()
+
+	// create node and wait for ready
+	if err := a.NewNode(ctx); err != nil {
+		return err
+	}
+
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
+	if err != nil {
+		return err
+	}
+
+	count := 0
+
+	for {
+		if e := utils.ExecCmd(
+			fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s ls",
+				fmt.Sprintf("%s/access", a.SSHPath),
+				string(ip),
+			),
+			""); e == nil {
+			break
+		}
+
+		count++
+		if count > 24 {
+			return fmt.Errorf("node is not ready even after 6 minutes")
+		}
+		time.Sleep(time.Second * 5)
+	}
+
+	labels := func() []string {
+		l := []string{}
+		for k, v := range map[string]string{
+			"kloudlite.io/public-ip": string(ip),
+		} {
+			l = append(l, fmt.Sprintf("--node-label %s=%s", k, v))
+		}
+
+		for k, v := range a.labels {
+			l = append(l, fmt.Sprintf("--node-label %s=%s", k, v))
+		}
+		return l
+	}()
+
+	// attach to cluster as workernode
+
+	cmd := fmt.Sprintf(
+		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh agent --token=%s --server https://%s:6443 --node-external-ip %s --node-name %s %s %s",
+		a.SSHPath,
+		ip,
+		strings.TrimSpace(string(kc.Token)),
+		kc.ServerIp,
+		ip,
+		fmt.Sprintf("kl-worker-%s", a.node.NodeId),
+		strings.Join(labels, " "),
+		func() string {
+			if a.node.IsGpu {
+				// return "--docker"
+				// return "--docker"
+				return ""
+			}
+			return ""
+		}(),
+	)
+
+	if err := utils.ExecCmd(cmd, ""); err != nil {
+		return err
+	}
 
 	return nil
 }
@@ -147,12 +260,16 @@ func (a awsClient) SetupSSH() error {
 		return nil
 	}
 
+	if err := os.RemoveAll(destDir); err != nil {
+		return err
+	}
+
 	err := a.awsS3Client.DownloadFile(path.Join(sshDir, fileName), fileName)
 	if err != nil {
 		return err
 	}
 
-	_, err = utils.Unzip(path.Join(sshDir, fileName), destDir)
+	_, err = utils.Unzip(path.Join(sshDir, fileName), sshDir)
 	if err != nil {
 		return err
 	}
@@ -232,15 +349,14 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 		if count > 24 {
 			return fmt.Errorf("node is not ready even after 6 minutes")
 		}
-		time.Sleep(time.Second * 15)
+		time.Sleep(time.Second * 5)
 	}
 
 	// install k3s
 	cmd := fmt.Sprintf(
-		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s sudo sh /tmp/k3s-install.sh server --token=%q --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%q",
+		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh server --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%s",
 		a.SSHPath,
 		string(ip),
-		a.node.NodeId,
 		string(ip),
 		fmt.Sprintf("kl-master-%s", a.node.NodeId),
 	)
@@ -250,7 +366,7 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 	}
 	// needed to fetch kubeconfig
 
-	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s cat /etc/rancher/k3s/k3s.yaml", a.SSHPath, string(ip)), "")
+	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /etc/rancher/k3s/k3s.yaml", a.SSHPath, string(ip)), "")
 	if err != nil {
 		return err
 	}
@@ -264,24 +380,36 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 		kubeconfig.Clusters[i].Cluster.Server = fmt.Sprintf("https://%s:6443", string(ip))
 	}
 
-	// kc, err := yaml.Marshal(kubeconfig)
-	// if err != nil {
-	// 	return err
-	// }
+	kc, err := yaml.Marshal(kubeconfig)
+	if err != nil {
+		return err
+	}
 
-	// tokenOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s cat /var/lib/rancher/k3s/server/node-token", a.SSHPath, string(ip)), "")
-	// if err != nil {
-	// 	return err
-	// }
+	tokenOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /var/lib/rancher/k3s/server/node-token", a.SSHPath, string(ip)), "")
+	if err != nil {
+		return err
+	}
 
-	// _, err = a.tokenRepo.Create(ctx, &entities.Token{
-	// 	JoinToken:   string(tokenOut),
-	// 	EndpointUrl: fmt.Sprintf("https://%s:6443", ip),
-	// 	KubeConfig:  string(kc),
-	// 	NodeId:      a.node.NodeId,
-	// 	AccountName: a.accountId,
-	// 	ClusterName: "",
-	// })
+	st := tokenAndKubeconfig{
+		Token:      string(tokenOut),
+		Kubeconfig: string(kc),
+		ServerIp:   string(ip),
+	}
+
+	b, err := yaml.Marshal(st)
+	if err != nil {
+		return err
+	}
+
+	tokenPath := path.Join(a.SSHPath, "config.yaml")
+
+	if err := os.WriteFile(tokenPath, b, os.ModePerm); err != nil {
+		return err
+	}
+
+	if err := a.awsS3Client.UploadFile(tokenPath, fmt.Sprintf("%s-config.yaml", a.accountId)); err != nil {
+		return err
+	}
 
 	return err
 }
@@ -297,8 +425,6 @@ func parseValues(a awsClient) map[string]string {
 	values["instance_type"] = a.node.InstanceType
 	values["keys-path"] = a.SSHPath
 	values["ami"] = a.node.ImageId
-
-	fmt.Print(values)
 
 	return values
 }
@@ -318,11 +444,13 @@ func (a awsClient) SaveToDbGuranteed(ctx context.Context) {
 func (a awsClient) NewNode(ctx context.Context) error {
 	values := parseValues(a)
 
-	if err := utils.MakeTfWorkFileReady(a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.awsS3Client, true); err != nil {
-		return err
-	}
+	if true {
+		if err := utils.MakeTfWorkFileReady(a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.awsS3Client, true); err != nil {
+			return err
+		}
 
-	defer a.SaveToDbGuranteed(ctx)
+		defer a.SaveToDbGuranteed(ctx)
+	}
 
 	// upload the final state to the db, upsert if db is already present
 
@@ -376,7 +504,7 @@ func (a awsClient) DeleteNode(ctx context.Context) error {
 }
 
 func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsProviderConfig) (common.ProviderClient, error) {
-	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, node.NodeId)
+	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, apc.AccountId)
 	if err != nil {
 		return nil, err
 	}

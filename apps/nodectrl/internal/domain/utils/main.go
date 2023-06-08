@@ -49,7 +49,7 @@ func ExecCmd(cmdString string, logStr string) error {
 	// cmd.Stdout = os.Stdout
 
 	if err := cmd.Run(); err != nil {
-		fmt.Printf("err occurred: %s\n", err.Error())
+		fmt.Printf("err occurred: %v\n", err.Error())
 		return err
 	}
 	return nil

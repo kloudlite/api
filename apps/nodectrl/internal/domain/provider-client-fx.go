@@ -1,7 +1,6 @@
 package domain
 
 import (
-	"fmt"
 	"os"
 
 	"go.uber.org/fx"
@@ -14,7 +13,7 @@ import (
 )
 
 var ProviderClientFx = fx.Module("provider-client-fx",
-	fx.Provide(func(env *env.Env, d Domain) (common.ProviderClient, error) {
+	fx.Provide(func(env *env.Env) (common.ProviderClient, error) {
 		const sshDir = "/tmp/ssh"
 
 		if _, err := os.Stat(sshDir); err != nil {
@@ -39,8 +38,6 @@ var ProviderClientFx = fx.Module("provider-client-fx",
 			}
 
 			apc := aws.AwsProviderConfig{}
-
-			fmt.Println("here......................", env.AWSProviderConfig)
 
 			if err := utils.Base64YamlDecode(env.AWSProviderConfig, &apc); err != nil {
 				return nil, err

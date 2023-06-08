@@ -18,7 +18,7 @@ var Module = fx.Module("app",
 		func(env *env.Env, pc common.ProviderClient, shutdowner fx.Shutdowner, lifecycle fx.Lifecycle) {
 			lifecycle.Append(fx.Hook{
 				OnStart: func(context.Context) error {
-					go func() error {
+					runner := func() error {
 						ctx := context.Background()
 						if err := utils.SetupGetWorkDir(); err != nil {
 							return err
@@ -31,6 +31,18 @@ var Module = fx.Module("app",
 								if err := pc.CreateCluster(ctx); err != nil {
 									return err
 								}
+							case "add-master":
+								fmt.Println("needs to attach master")
+								if err := pc.AddMaster(ctx); err != nil {
+									return err
+								}
+
+							case "add-worker":
+								fmt.Println("needs to attach worker")
+								if err := pc.AddWorker(ctx); err != nil {
+									return err
+								}
+
 							case "delete":
 								fmt.Println("needs to delete node")
 								if err := pc.DeleteNode(ctx); err != nil {
@@ -52,6 +64,12 @@ var Module = fx.Module("app",
 							return err
 						}
 						return nil
+					}
+
+					go func() {
+						if err := runner(); err != nil {
+							shutdowner.Shutdown()
+						}
 					}()
 
 					return nil

@@ -12,19 +12,20 @@ Tasks needs to be performed by this job
 */
 
 type ProviderClient interface {
-	CreateAndAttachNode(ctx context.Context) error
 	/*
 		ssh generation
 		create node
 		AttachNode
 	*/
 	NewNode(ctx context.Context) error
-	AttachNode(ctx context.Context) error
-
 	DeleteNode(ctx context.Context) error
 	SaveToDbGuranteed(ctx context.Context)
 
 	CreateCluster(ctx context.Context) error
+
+	AddWorker(ctx context.Context) error
+	AddMaster(ctx context.Context) error
+
 	/*
 		It will perform generation of ssh
 		create node
