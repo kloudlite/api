@@ -2,10 +2,9 @@ package framework
 
 import (
 	"go.uber.org/fx"
+
 	"kloudlite.io/apps/nodectrl/internal/app"
 	"kloudlite.io/apps/nodectrl/internal/env"
-	mongogridfs "kloudlite.io/pkg/mongo-gridfs"
-	mongoDb "kloudlite.io/pkg/repos"
 )
 
 type fm struct {
@@ -21,7 +20,5 @@ var Module = fx.Module(
 	fx.Provide(func(env *env.Env) *fm {
 		return &fm{env}
 	}),
-	mongogridfs.NewMongoGridFsClientFx[*fm](),
-	mongoDb.NewMongoClientFx[*fm](),
 	app.Module,
 )

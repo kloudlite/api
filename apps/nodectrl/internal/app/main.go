@@ -8,14 +8,11 @@ import (
 
 	"kloudlite.io/apps/nodectrl/internal/domain"
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
-	"kloudlite.io/apps/nodectrl/internal/domain/entities"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 	"kloudlite.io/apps/nodectrl/internal/env"
-	"kloudlite.io/pkg/repos"
 )
 
 var Module = fx.Module("app",
-	repos.NewFxMongoRepo[*entities.Token]("tokens", "tkn", entities.TokenIndexes),
 	domain.Module,
 	fx.Invoke(
 		func(env *env.Env, pc common.ProviderClient, shutdowner fx.Shutdowner, lifecycle fx.Lifecycle) {

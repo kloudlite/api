@@ -3,19 +3,15 @@ package aws
 import (
 	"context"
 	"fmt"
-	"io/ioutil"
 	"os"
 	"path"
-	"strings"
 	"time"
 
 	"gopkg.in/yaml.v2"
 
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
-	"kloudlite.io/apps/nodectrl/internal/domain/entities"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
-	mongogridfs "kloudlite.io/pkg/mongo-gridfs"
-	"kloudlite.io/pkg/repos"
+	awss3 "kloudlite.io/pkg/aws-s3"
 )
 
 type AwsProviderConfig struct {
@@ -33,9 +29,8 @@ type AWSNode struct {
 }
 
 type awsClient struct {
-	gfs       mongogridfs.GridFs
-	node      AWSNode
-	tokenRepo repos.DbRepo[*entities.Token]
+	node        AWSNode
+	awsS3Client awss3.AwsS3
 
 	accessKey    string
 	accessSecret string
@@ -68,32 +63,29 @@ func (a awsClient) AttachNode(ctx context.Context) error {
 		  to install fetch
 	*/
 
-	token, err := a.tokenRepo.FindOne(ctx, repos.Filter{"nodeId": a.node.NodeId, "accountId": a.accountId})
+	//
+	var out []byte
+
+	out, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
 	if err != nil {
 		return err
 	}
 
-	var out []byte
-
-	if out, err = utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip"); err != nil {
-		return err
-	}
-
-	labels := func() []string {
-		l := []string{}
-		for k, v := range a.labels {
-			l = append(l, fmt.Sprintf("--node-label %s=%s", k, v))
-		}
-		l = append(l, fmt.Sprintf("--node-label %s=%s", "kloudlite.io/public-ip", string(out)))
-		return l
-	}()
+	// labels := func() []string {
+	// 	l := []string{}
+	// 	for k, v := range a.labels {
+	// 		l = append(l, fmt.Sprintf("--node-label %s=%s", k, v))
+	// 	}
+	// 	l = append(l, fmt.Sprintf("--node-label %s=%s", "kloudlite.io/public-ip", string(out)))
+	// 	return l
+	// }()
 
 	count := 0
 
 	for {
 		if e := utils.ExecCmd(
 			fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s ls",
-				fmt.Sprintf("%v/access", a.SSHPath),
+				fmt.Sprintf("%s/access", a.SSHPath),
 				string(out)),
 			"checking if node is ready "); e == nil {
 			break
@@ -106,13 +98,94 @@ func (a awsClient) AttachNode(ctx context.Context) error {
 		time.Sleep(time.Second * 15)
 	}
 
-	// attach node
-	if e := utils.ExecCmd(
-		fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s sudo sh /tmp/k3s-install.sh agent --server %s --token %s %s --node-name %s --node-external-ip %s --node-ip %s",
-			fmt.Sprintf("%v/access", a.SSHPath), string(out), token.EndpointUrl, token.JoinToken,
-			strings.Join(labels, " "), a.node.NodeId, string(out), string(out)),
-		"attaching to cluster"); e != nil {
-		return e
+	// // attach node
+	// if e := utils.ExecCmd(
+	// 	fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s sudo sh /tmp/k3s-install.sh agent --server %s --token %s %s --node-name %s --node-external-ip %s --node-ip %s",
+	// 		fmt.Sprintf("%v/access", a.SSHPath), string(out), token.EndpointUrl, token.JoinToken,
+	// 		strings.Join(labels, " "), a.node.NodeId, string(out), string(out)),
+	// 	"attaching to cluster"); e != nil {
+	// 	return e
+	// }
+
+	return nil
+}
+
+func (a awsClient) SetupSSH() error {
+	const sshDir = "/tmp/ssh"
+
+	if _, err := os.Stat(sshDir); err != nil {
+		return os.Mkdir(sshDir, os.ModePerm)
+	}
+
+	destDir := path.Join(sshDir, a.accountId)
+	fileName := fmt.Sprintf("%s.zip", a.accountId)
+
+	if err := a.awsS3Client.IsFileExists(fileName); err != nil {
+
+		if _, err := os.Stat(destDir); err == nil {
+			if err := os.RemoveAll(destDir); err != nil {
+				return err
+			}
+		}
+
+		if e := os.Mkdir(destDir, os.ModePerm); e != nil {
+			return e
+		}
+
+		privateKeyBytes, publicKeyBytes, err := utils.GenerateKeys()
+		if err != nil {
+			return err
+		}
+
+		if err := os.WriteFile(fmt.Sprintf("%s/access.pub", destDir), publicKeyBytes, os.ModePerm); err != nil {
+			return err
+		}
+
+		if err := os.WriteFile(fmt.Sprintf("%s/access", destDir), privateKeyBytes, 0400); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	err := a.awsS3Client.DownloadFile(path.Join(sshDir, fileName), fileName)
+	if err != nil {
+		return err
+	}
+
+	_, err = utils.Unzip(path.Join(sshDir, fileName), destDir)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (a awsClient) saveForSure() error {
+	count := 0
+	for {
+		if err := a.saveSSH(); err == nil {
+			return nil
+		}
+		if count >= 10 {
+			return fmt.Errorf("coudn't save the state")
+		}
+
+		time.Sleep(time.Second * 20)
+		count++
+	}
+}
+
+func (a awsClient) saveSSH() error {
+	const sshDir = "/tmp/ssh"
+	destDir := path.Join(sshDir, a.accountId)
+	fileName := fmt.Sprintf("%s.zip", a.accountId)
+
+	if err := utils.ZipSource(destDir, path.Join(sshDir, fileName)); err != nil {
+		return err
+	}
+
+	if err := a.awsS3Client.UploadFile(path.Join(sshDir, fileName), fileName); err != nil {
+		return err
 	}
 
 	return nil
@@ -128,24 +201,18 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 		install maaster
 	*/
 
-	const sshDir = "/tmp/ssh"
-
-	if _, err := os.Stat(sshDir); err != nil {
-		return os.Mkdir(sshDir, os.ModePerm)
-	}
-
-	file, err := ioutil.TempDir("/tmp/ssh", "ssh_")
-	if err != nil {
+	if err := a.SetupSSH(); err != nil {
 		return err
 	}
+	defer a.saveForSure()
+	a.SSHPath = path.Join("/tmp/ssh", a.accountId)
 
 	if err := a.NewNode(ctx); err != nil {
 		return err
 	}
 
-	var ip []byte
-
-	if ip, err = utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip"); err != nil {
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
+	if err != nil {
 		return err
 	}
 
@@ -154,9 +221,10 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 	for {
 		if e := utils.ExecCmd(
 			fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s ls",
-				fmt.Sprintf("%v/access", file),
-				string(ip)),
-			"checking if node is ready "); e == nil {
+				fmt.Sprintf("%v/access", a.SSHPath),
+				string(ip),
+			),
+			""); e == nil {
 			break
 		}
 
@@ -170,7 +238,7 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 	// install k3s
 	cmd := fmt.Sprintf(
 		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s sudo sh /tmp/k3s-install.sh server --token=%q --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%q",
-		file,
+		a.SSHPath,
 		string(ip),
 		a.node.NodeId,
 		string(ip),
@@ -182,7 +250,7 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 	}
 	// needed to fetch kubeconfig
 
-	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s cat /etc/rancher/k3s/k3s.yaml", file, string(ip)), "")
+	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s cat /etc/rancher/k3s/k3s.yaml", a.SSHPath, string(ip)), "")
 	if err != nil {
 		return err
 	}
@@ -196,24 +264,24 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 		kubeconfig.Clusters[i].Cluster.Server = fmt.Sprintf("https://%s:6443", string(ip))
 	}
 
-	kc, err := yaml.Marshal(kubeconfig)
-	if err != nil {
-		return err
-	}
+	// kc, err := yaml.Marshal(kubeconfig)
+	// if err != nil {
+	// 	return err
+	// }
 
-	tokenOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s cat /var/lib/rancher/k3s/server/node-token", file, string(ip)), "")
-	if err != nil {
-		return err
-	}
+	// tokenOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s root@%s cat /var/lib/rancher/k3s/server/node-token", a.SSHPath, string(ip)), "")
+	// if err != nil {
+	// 	return err
+	// }
 
-	_, err = a.tokenRepo.Create(ctx, &entities.Token{
-		JoinToken:   string(tokenOut),
-		EndpointUrl: fmt.Sprintf("https://%s:6443", ip),
-		KubeConfig:  string(kc),
-		NodeId:      a.node.NodeId,
-		AccountName: a.accountId,
-		ClusterName: "",
-	})
+	// _, err = a.tokenRepo.Create(ctx, &entities.Token{
+	// 	JoinToken:   string(tokenOut),
+	// 	EndpointUrl: fmt.Sprintf("https://%s:6443", ip),
+	// 	KubeConfig:  string(kc),
+	// 	NodeId:      a.node.NodeId,
+	// 	AccountName: a.accountId,
+	// 	ClusterName: "",
+	// })
 
 	return err
 }
@@ -237,7 +305,7 @@ func parseValues(a awsClient) map[string]string {
 
 func (a awsClient) SaveToDbGuranteed(ctx context.Context) {
 	for {
-		if err := utils.SaveToDb(ctx, a.node.NodeId, a.gfs); err == nil {
+		if err := utils.SaveToDb(a.node.NodeId, a.awsS3Client); err == nil {
 			break
 		} else {
 			fmt.Println(err)
@@ -248,25 +316,9 @@ func (a awsClient) SaveToDbGuranteed(ctx context.Context) {
 
 // NewNode implements ProviderClient
 func (a awsClient) NewNode(ctx context.Context) error {
-	file, err := ioutil.TempDir("/tmp/ssh", "ssh_")
-	if err != nil {
-		return err
-	}
-
-	a.SSHPath = file
-
 	values := parseValues(a)
 
-	/*
-		steps:
-			- check if state present in db
-			- if present load that to working dir
-			- else initialize new tf dir
-			- apply terraform
-			- upload the final state with defer
-	*/
-
-	if err := utils.MakeTfWorkFileReady(ctx, a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.gfs, true); err != nil {
+	if err := utils.MakeTfWorkFileReady(a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.awsS3Client, true); err != nil {
 		return err
 	}
 
@@ -305,7 +357,7 @@ func (a awsClient) DeleteNode(ctx context.Context) error {
 			- delete final state
 	*/
 
-	if err := utils.MakeTfWorkFileReady(ctx, a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.gfs, false); err != nil {
+	if err := utils.MakeTfWorkFileReady(a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.awsS3Client, false); err != nil {
 		return err
 	}
 
@@ -320,20 +372,18 @@ func (a awsClient) DeleteNode(ctx context.Context) error {
 		return err
 	}
 
-	filename := fmt.Sprintf("%s.zip", a.node.NodeId)
-
-	if err := a.gfs.DeleteAllWithFilename(filename); err != nil {
-		return err
-	}
-
 	return nil
 }
 
-func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsProviderConfig, gfs mongogridfs.GridFs, tokenRepo repos.DbRepo[*entities.Token]) common.ProviderClient {
+func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsProviderConfig) (common.ProviderClient, error) {
+	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, node.NodeId)
+	if err != nil {
+		return nil, err
+	}
+
 	return awsClient{
-		node:      node,
-		gfs:       gfs,
-		tokenRepo: tokenRepo,
+		node:        node,
+		awsS3Client: awsS3Client,
 
 		accessKey:    apc.AccessKey,
 		accessSecret: apc.AccessSecret,
@@ -343,5 +393,5 @@ func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsPr
 		labels:      cpd.Labels,
 		taints:      cpd.Taints,
 		SSHPath:     cpd.SSHPath,
-	}
+	}, nil
 }

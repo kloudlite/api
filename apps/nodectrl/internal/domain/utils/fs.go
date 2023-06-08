@@ -1,14 +1,13 @@
 package utils
 
 import (
-	"context"
 	"fmt"
 	"os"
 	"path"
 
 	"github.com/containerd/continuity/fs"
 
-	mongogridfs "kloudlite.io/pkg/mongo-gridfs"
+	awss3 "kloudlite.io/pkg/aws-s3"
 )
 
 func CreateNodeWorkDir(nodeId string) error {
@@ -35,16 +34,12 @@ func SetupGetWorkDir() error {
 	return nil
 }
 
-func MakeTfWorkFileReady(ctx context.Context, nodeId, tfPath string, gfs mongogridfs.GridFs, createIfNotExists bool) error {
+func MakeTfWorkFileReady(nodeId, tfPath string, awss3client awss3.AwsS3, createIfNotExists bool) error {
 	filename := fmt.Sprintf("%s.zip", nodeId)
 	// check if file exists in db
-	gf, err := gfs.FetchFileRef(ctx, filename)
+	err := awss3client.IsFileExists(filename)
 	if err != nil {
-		return err
-	}
 
-	// not found create new dir
-	if gf == nil {
 		if !createIfNotExists {
 			return fmt.Errorf("no state file found with the nodeId %s to operate", nodeId)
 		}
@@ -62,26 +57,22 @@ func MakeTfWorkFileReady(ctx context.Context, nodeId, tfPath string, gfs mongogr
 	}
 
 	// found file in db, download and extract to the workdir
-	fmt.Println(gf.Name, "found, extract it by downloading")
+	fmt.Println("found, extract it by downloading")
 
 	source := path.Join(Workdir, filename)
 	// Download from db
-	if err := gfs.Download(ctx, filename, source); err != nil {
+	if err := awss3client.DownloadFile(source, filename); err != nil {
 		return err
 	}
 
 	if _, err := Unzip(source, path.Join(Workdir)); err != nil {
 		return err
-	} else {
-		// for _, v := range s {
-		// 	fmt.Print(v, " \n")
-		// }
 	}
 
 	return nil
 }
 
-func SaveToDb(ctx context.Context, nodeId string, gfs mongogridfs.GridFs) error {
+func SaveToDb(nodeId string, awss3client awss3.AwsS3) error {
 	/*
 		Steps:
 		  - compress the workdir into zip
@@ -104,7 +95,7 @@ func SaveToDb(ctx context.Context, nodeId string, gfs mongogridfs.GridFs) error 
 			return err
 		}
 
-		if err := gfs.Upsert(ctx, filename, source); err != nil {
+		if err := awss3client.UploadFile(source, filename); err != nil {
 			return err
 		}
 

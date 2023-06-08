@@ -2,7 +2,6 @@ package domain
 
 import (
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"go.uber.org/fx"
@@ -16,30 +15,12 @@ import (
 
 var ProviderClientFx = fx.Module("provider-client-fx",
 	fx.Provide(func(env *env.Env, d Domain) (common.ProviderClient, error) {
-		privateKeyBytes, publicKeyBytes, err := utils.GenerateKeys()
-		if err != nil {
-			return nil, err
-		}
-
 		const sshDir = "/tmp/ssh"
 
 		if _, err := os.Stat(sshDir); err != nil {
 			if e := os.Mkdir(sshDir, os.ModePerm); e != nil {
 				return nil, e
 			}
-		}
-
-		file, err := ioutil.TempDir("/tmp/ssh", "ssh_")
-		if err != nil {
-			return nil, err
-		}
-
-		if err := os.WriteFile(fmt.Sprintf("%s/access.pub", file), publicKeyBytes, os.ModePerm); err != nil {
-			return nil, err
-		}
-
-		if err := os.WriteFile(fmt.Sprintf("%s/access", file), privateKeyBytes, os.ModePerm); err != nil {
-			return nil, err
 		}
 
 		cpd := common.CommonProviderData{}
@@ -65,7 +46,7 @@ var ProviderClientFx = fx.Module("provider-client-fx",
 				return nil, err
 			}
 
-			return aws.NewAwsProviderClient(node, cpd, apc, d.GetGRidFs(), d.GetTokenRepo()), nil
+			return aws.NewAwsProviderClient(node, cpd, apc)
 		case "azure":
 			panic("not implemented")
 		case "do":
@@ -82,7 +63,6 @@ var ProviderClientFx = fx.Module("provider-client-fx",
 				return nil, err
 			}
 
-			return do.NewDoProviderClient(node, cpd, dpc, d.GetGRidFs(), d.GetTokenRepo()), nil
 		case "gcp":
 			panic("not implemented")
 		}
