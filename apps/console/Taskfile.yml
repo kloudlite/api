@@ -39,6 +39,7 @@ tasks:
       #     --crd Router=routers.crds.kloudlite.io
       #     --crd ManagedService=managedservices.crds.kloudlite.io
       #     --crd ManagedResource=managedresources.crds.kloudlite.io
+
       - mkdir -p "./internal/app/_struct-to-graphql"
       - go run ../../cmd/struct-to-graphql
           --struct kloudlite.io/apps/console/internal/domain/entities.Project
@@ -55,7 +56,7 @@ tasks:
         pushd ./internal/app/_struct-to-graphql
         go run main.go --out-dir ../graph/struct-to-graphql
         popd
-      - rm -rf ./internal/app/_struct-to-graphql
+      # - rm -rf ./internal/app/_struct-to-graphql
 
   docker-build:
     vars:

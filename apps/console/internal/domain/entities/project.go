@@ -8,10 +8,10 @@ import (
 
 type Project struct {
 	repos.BaseEntity `json:",inline"`
-	crdsv1.Project   `json:",inline" json-schema:"uri=k8s://projects.crds.kloudlite.io"`
+	crdsv1.Project   `json:",inline" project:"uri=k8s://projects.crds.kloudlite.io"`
 	AccountName      string       `json:"accountName"`
 	ClusterName      string       `json:"clusterName"`
-	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"common=true"`
+	SyncStatus       t.SyncStatus `json:"syncStatus"`
 }
 
 var ProjectIndexes = []repos.IndexField{

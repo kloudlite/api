@@ -41,8 +41,13 @@ func main() {
 		sp[1] = fn.StringReverse(sp[1])
 
 		alias := "kl" + rand.String(30)
+		existingAlias, ok := imports[sp[1]]
+		if ok {
+			alias = existingAlias
+		} else {
+			imports[sp[1]] = alias
+		}
 
-		imports[alias] = sp[1]
 		values[sp[0]] = fmt.Sprintf("&%s.%s{}", alias, sp[0])
 	}
 	t2 := template.New("code_gen")
@@ -51,8 +56,9 @@ func main() {
 
 import (
   {{- range $key, $value := .Imports}}
-  {{$key}} {{$value | quote}}
+  {{$value}} {{$key | quote}}
   {{- end }}
+  // "reflect"
   parser "kloudlite.io/cmd/struct-to-graphql/pkg/parser"
   "kloudlite.io/pkg/k8s"
   "k8s.io/client-go/rest"
@@ -60,12 +66,12 @@ import (
   "golang.org/x/sync/errgroup"
   "context"
   "path"
-  "github.com/pkg/errors"
-  "strings"
+  // "github.com/pkg/errors"
+  // "strings"
   "flag"
   "fmt"
-	rApi "github.com/kloudlite/operator/pkg/operator"
-	t "kloudlite.io/pkg/types"
+  rApi "github.com/kloudlite/operator/pkg/operator"
+  // t "kloudlite.io/pkg/types"
 )
 
 func main() {
@@ -75,7 +81,7 @@ func main() {
 
   stat, err := os.Stat(outDir)
   if err != nil {
-    if os.IsNotExist(err) { 
+    if os.IsNotExist(err) {
       if err := os.MkdirAll(outDir, 0755); err != nil {
         panic(err)
       }
@@ -92,13 +98,12 @@ func main() {
     {{- end }}
   }
 
-	k8sTypes := map[string]any{
-		"Status": &rApi.Status{},
-		"SyncStatus": &t.SyncStatus{},
-	}
+  k8sTypes := map[string]any{
+    "Status": &rApi.Status{},
+  }
 
   kCli, err := func() (k8s.ExtendedK8sClient, error) {
-		return k8s.NewExtendedK8sClient(&rest.Config{Host: "localhost:8080"})
+    return k8s.NewExtendedK8sClient(&rest.Config{Host: "localhost:8080"})
   }()
   if err != nil {
     panic(err)
@@ -130,42 +135,37 @@ func main() {
     return os.WriteFile(path.Join(outDir, "k8s_types.graphqls"), k8s_types, 0644)
   })
 
+  p := parser.NewParser(kCli)
+
   for k, v := range types {
     typeName := k
     typeValue := v
-    g.Go(func() error {
-      schemaMap, err := parser.GenerateGraphQLSchema(typeName, typeValue, kCli)
-      if err != nil {
-        return errors.Wrap(err, "failed to generate GraphQL schema")
-      }
-
-      f, err := os.Create(path.Join(outDir, strings.ToLower(typeName) + ".graphqls"))
-      if err != nil {
-        return err
-      }
-      return parser.WriteSchema(schemaMap, f)
-    })
+    // g.Go(func() error { 
+      p.LoadStruct(typeName, typeValue)
+    //   return nil
+    // })
   }
 
-	f, err := os.Create(path.Join(outDir, "common_types" + ".graphqls"))
-	if err != nil {
-		panic(err)
-	}
-	defer f.Close()
+  f, err := os.Create(path.Join(outDir, "k8s-common-types" + ".graphqls"))
+  if err != nil {
+    panic(err)
+  }
+  defer f.Close()
 
   for k, v := range k8sTypes {
     typeName := k
     typeValue := v
-    g.Go(func() error {
-      schemaMap, err := parser.GenerateGraphQLSchema(typeName, typeValue, kCli)
-      if err != nil {
-        return errors.Wrap(err, "failed to generate GraphQL schema")
-      }
-      return parser.WriteSchema(schemaMap, f, true)
-    })
+    // g.Go(func() error {
+      p.LoadStruct(typeName, typeValue)
+    //   return nil
+    // })
   }
 
   if err := g.Wait(); err != nil {
+    panic(err)
+  }
+
+  if err := p.DumpSchema(outDir); err != nil {
     panic(err)
   }
 }

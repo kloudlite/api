@@ -1,86 +1,111 @@
-input ManagedResourceOverridesPatchesIn {
-	op: String!
-	path: String!
-	value: Any
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches]
 }
 
-input ManagedResourceSpecMresKindIn {
-	kind: String!!
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
 }
 
-input ManagedResourceSpecIn {
-	inputs: Map
-	mresKind: ManagedResourceSpecMresKindIn!
-	msvcRef: ManagedResourceSpecMsvcRefIn!
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec {
+  inputs: Map
+  mresKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKind!
+  msvcRef: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef!
 }
 
-input ManagedResourceSpecMsvcRefIn {
-	apiVersion: String!!
-	kind: String!
-	name: String!
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKind {
+  kind: String!
 }
 
-type ManagedResource {
-	apiVersion: String!
-	enabled: Boolean
-	kind: String!
-	metadata: Metadata! @goField(name: "objectMeta")
-	overrides: ManagedResourceOverrides
-	spec: ManagedResourceSpec
-	status: Status
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef {
+  apiVersion: String!
+  kind: String
+  name: String!
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatus {
+  checks: Map
+  isReady: Boolean
+  lastReconcileTime: String
+  message: Map
+  resources: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatusResources]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatusResources {
+  apiVersion: String
+  kind: String
+  name: String!
+  namespace: String!
 }
 
 type MRes {
-	accountName: String!
-	clusterName: String!
-	syncStatus: SyncStatus
+  accountName: String!
+  apiVersion: String!
+  clusterName: String!
+  enabled: Boolean
+  kind: String!
+  metadata: Metadata! @goField(name: "objectMeta")
+  overrides: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides
+  spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec
+  status: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatus
+  syncStatus: Kloudlite_io__pkg__types_SyncStatus
 }
 
-type type BaseEntity {
-	creation_time: Date
-	id: String!
-	update_time: Date
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn]
 }
 
-input ManagedResourceOverridesIn {
-	applied: Boolean
-	patches: [ManagedResourceOverridesPatchesIn]
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
 }
 
-type ManagedResourceOverrides {
-	applied: Boolean
-	patches: [ManagedResourceOverridesPatches]
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn {
+  inputs: Map
+  mresKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKindIn!
+  msvcRef: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRefIn!
 }
 
-type ManagedResourceSpecMresKind {
-	kind: String!!
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKindIn {
+  kind: String!
 }
 
-type ManagedResourceSpec {
-	inputs: Map
-	mresKind: ManagedResourceSpecMresKind!
-	msvcRef: ManagedResourceSpecMsvcRef!
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRefIn {
+  apiVersion: String!
+  kind: String
+  name: String!
 }
 
-input ManagedResourceIn {
-	apiVersion: String!
-	enabled: Boolean
-	kind: String!
-	metadata: Metadata! @goField(name: "objectMeta")
-	overrides: ManagedResourceOverrides
-	spec: ManagedResourceSpec
-	status: Status
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatusIn {
+  checks: Map
+  isReady: Boolean
+  lastReconcileTime: String
+  message: Map
+  resources: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatusResourcesIn]
 }
 
-type ManagedResourceOverridesPatches {
-	op: String!
-	path: String!
-	value: Any
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatusResourcesIn {
+  apiVersion: String
+  kind: String
+  name: String!
+  namespace: String!
 }
 
-type ManagedResourceSpecMsvcRef {
-	apiVersion: String!!
-	kind: String!
-	name: String!
+input MResIn {
+  accountName: String!
+  apiVersion: String!
+  clusterName: String!
+  enabled: Boolean
+  kind: String!
+  metadata: Metadata! @goField(name: "objectMeta")
+  overrides: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides
+  spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec
+  status: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatus
+  status: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceStatusIn
+  syncStatus: Kloudlite_io__pkg__types_SyncStatusIn
 }
 
