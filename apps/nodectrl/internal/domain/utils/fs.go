@@ -57,7 +57,7 @@ func MakeTfWorkFileReady(nodeId, tfPath string, awss3client awss3.AwsS3, createI
 	}
 
 	// found file in db, download and extract to the workdir
-	fmt.Println("found, extract it by downloading")
+	fmt.Println("-> found, extract it by downloading")
 
 	source := path.Join(Workdir, filename)
 	// Download from db

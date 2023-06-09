@@ -15,6 +15,9 @@ import (
 )
 
 func ZipSource(source, target string) error {
+	fmt.Printf("\n[#] compressing %s -> %s\n", source, target)
+	defer fmt.Printf("\n[#] compressed %s -> %s\n", source, target)
+
 	// 1. Create a ZIP file and zip.Writer
 	f, err := os.Create(target)
 	if err != nil {
@@ -71,6 +74,8 @@ func ZipSource(source, target string) error {
 }
 
 func Unzip(src string, destination string) ([]string, error) {
+	fmt.Printf("\n[#] extracting %s -> %s\n", src, destination)
+	defer fmt.Printf("\n[#] extracted %s -> %s\n", src, destination)
 	var filenames []string
 	r, err := zip.OpenReader(src)
 	if err != nil {
@@ -125,6 +130,9 @@ func Unzip(src string, destination string) ([]string, error) {
 }
 
 func ExtractZip(src, destination string) error {
+	fmt.Printf("[#] extracting %s -> %s", src, destination)
+	defer fmt.Printf("[#] extracted %s -> %s", src, destination)
+
 	if _, err := os.Stat(destination); err == nil {
 		if er := os.RemoveAll(destination); er != nil {
 			return err

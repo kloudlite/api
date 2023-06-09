@@ -8,6 +8,7 @@ import (
 	"strings"
 	"time"
 
+	guuid "github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
@@ -45,9 +46,10 @@ type awsClient struct {
 }
 
 type tokenAndKubeconfig struct {
-	Token      string `json:"token"`
-	Kubeconfig string `json:"kubeconfig"`
-	ServerIp   string `json:"serverIp"`
+	Token       string `json:"token"`
+	Kubeconfig  string `json:"kubeconfig"`
+	ServerIp    string `json:"serverIp"`
+	MasterToken string `json:"masterToken"`
 }
 
 // AddMaster implements common.ProviderClient.
@@ -59,6 +61,12 @@ func (a awsClient) AddMaster(ctx context.Context) error {
 
 	if err := a.awsS3Client.IsFileExists(tokenFileName); err != nil {
 		return err
+	}
+
+	if _, err := os.Stat(a.SSHPath); err != nil {
+		if e := os.Mkdir(a.SSHPath, os.ModePerm); e != nil {
+			return e
+		}
 	}
 
 	tokenPath := path.Join(a.SSHPath, "config.yaml")
@@ -102,7 +110,7 @@ func (a awsClient) AddMaster(ctx context.Context) error {
 				fmt.Sprintf("%v/access", a.SSHPath),
 				string(ip),
 			),
-			""); e == nil {
+			"checking if node is ready"); e == nil {
 			break
 		}
 
@@ -114,14 +122,33 @@ func (a awsClient) AddMaster(ctx context.Context) error {
 	}
 
 	// attach to cluster as master
+	cmd := fmt.Sprintf(
+		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh server --server https://%s:6443 --token %s  --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%s",
+		a.SSHPath,
+		string(ip),
+		kc.ServerIp,
+		strings.TrimSpace(string(kc.Token)),
+		string(ip),
+		fmt.Sprintf("kl-master-%s", a.node.NodeId),
+	)
 
-	panic("unimplemented")
+	if err := utils.ExecCmd(cmd, "attaching to cluster as a master"); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (a awsClient) AddWorker(ctx context.Context) error {
 	// fetch token
 
 	a.SSHPath = path.Join("/tmp/ssh", a.accountId)
+
+	if _, err := os.Stat(a.SSHPath); err != nil {
+		if e := os.Mkdir(a.SSHPath, os.ModePerm); e != nil {
+			return e
+		}
+	}
 
 	tokenFileName := fmt.Sprintf("%s-config.yaml", a.accountId)
 
@@ -170,7 +197,7 @@ func (a awsClient) AddWorker(ctx context.Context) error {
 				fmt.Sprintf("%s/access", a.SSHPath),
 				string(ip),
 			),
-			""); e == nil {
+			"checking if node ready"); e == nil {
 			break
 		}
 
@@ -198,11 +225,11 @@ func (a awsClient) AddWorker(ctx context.Context) error {
 	// attach to cluster as workernode
 
 	cmd := fmt.Sprintf(
-		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh agent --token=%s --server https://%s:6443 --node-external-ip %s --node-name %s %s %s",
+		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh agent --server https://%s:6443 --token=%s --node-external-ip %s --node-name %s %s %s",
 		a.SSHPath,
 		ip,
-		strings.TrimSpace(string(kc.Token)),
 		kc.ServerIp,
+		strings.TrimSpace(string(kc.Token)),
 		ip,
 		fmt.Sprintf("kl-worker-%s", a.node.NodeId),
 		strings.Join(labels, " "),
@@ -216,7 +243,7 @@ func (a awsClient) AddWorker(ctx context.Context) error {
 		}(),
 	)
 
-	if err := utils.ExecCmd(cmd, ""); err != nil {
+	if err := utils.ExecCmd(cmd, "attaching to cluster as a worker node"); err != nil {
 		return err
 	}
 
@@ -341,7 +368,7 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 				fmt.Sprintf("%v/access", a.SSHPath),
 				string(ip),
 			),
-			""); e == nil {
+			"checking is node is ready"); e == nil {
 			break
 		}
 
@@ -352,21 +379,24 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 		time.Sleep(time.Second * 5)
 	}
 
+	masterToken := guuid.New()
+
 	// install k3s
 	cmd := fmt.Sprintf(
-		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh server --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%s",
+		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh server --token=%s --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%s --cluster-init",
 		a.SSHPath,
 		string(ip),
+		masterToken.String(),
 		string(ip),
 		fmt.Sprintf("kl-master-%s", a.node.NodeId),
 	)
 
-	if err := utils.ExecCmd(cmd, cmd); err != nil {
+	if err := utils.ExecCmd(cmd, "installing k3s"); err != nil {
 		return err
 	}
 	// needed to fetch kubeconfig
 
-	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /etc/rancher/k3s/k3s.yaml", a.SSHPath, string(ip)), "")
+	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /etc/rancher/k3s/k3s.yaml", a.SSHPath, string(ip)), "fetching kubeconfig from the cluster")
 	if err != nil {
 		return err
 	}
@@ -385,15 +415,16 @@ func (a awsClient) CreateCluster(ctx context.Context) error {
 		return err
 	}
 
-	tokenOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /var/lib/rancher/k3s/server/node-token", a.SSHPath, string(ip)), "")
+	tokenOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /var/lib/rancher/k3s/server/node-token", a.SSHPath, string(ip)), "fetching node token from the cluster")
 	if err != nil {
 		return err
 	}
 
 	st := tokenAndKubeconfig{
-		Token:      string(tokenOut),
-		Kubeconfig: string(kc),
-		ServerIp:   string(ip),
+		Token:       string(tokenOut),
+		Kubeconfig:  string(kc),
+		ServerIp:    string(ip),
+		MasterToken: masterToken.String(),
 	}
 
 	b, err := yaml.Marshal(st)

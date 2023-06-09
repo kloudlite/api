@@ -21,7 +21,7 @@ func Base64YamlDecode(in string, out interface{}) error {
 		return err
 	}
 
-	fmt.Println(string(rawDecodedText))
+	// fmt.Println(string(rawDecodedText))
 
 	return yaml.Unmarshal(rawDecodedText, out)
 }
