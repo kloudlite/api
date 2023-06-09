@@ -4,15 +4,27 @@ import (
 	"bytes"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"testing"
 
 	// "github.com/maxatome/go-testdeep/td"
 	// "github.com/andreyvit/diff"
 	// "github.com/sergi/go-diff/diffmatchpatch"
+	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	"k8s.io/client-go/rest"
 	"kloudlite.io/pkg/k8s"
 )
 
 func Test_GeneratedGraphqlSchema(t *testing.T) {
+	kCli, err := func() (k8s.ExtendedK8sClient, error) {
+		return k8s.NewExtendedK8sClient(&rest.Config{Host: "localhost:8080"})
+	}()
+	if err != nil {
+		t.Error(err)
+	}
+
+	t.Parallel()
+
 	type fields struct {
 		structs map[string]*Struct
 		kCli    k8s.ExtendedK8sClient
@@ -31,7 +43,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 1 (without any json tag)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "User",
@@ -65,7 +77,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 2 (with json tags, for naming)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "User",
@@ -99,7 +111,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 3 (with json tags for naming, and graphql enum tags)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "User",
@@ -138,7 +150,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 5 (with struct containing slice field)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Post",
@@ -175,7 +187,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 6 (with struct containing pointer field)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Address",
@@ -209,7 +221,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 7 (with struct containing nested anonymous struct field)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Employee",
@@ -254,7 +266,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 8 (with struct containing nested struct field with json tags)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Employee",
@@ -299,7 +311,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 9 (with struct containing struct pointer field)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Company",
@@ -344,7 +356,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 11 (with struct containing struct slice field)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Organization",
@@ -389,7 +401,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 12 (with struct containing struct slice field with json tags)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Organization",
@@ -434,7 +446,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 13 (with struct containing enum field)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Product",
@@ -474,7 +486,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			name: "test case 14 (with struct containing struct slice to pointer of a inline struct)",
 			fields: fields{
 				structs: map[string]*Struct{},
-				kCli:    nil,
+				kCli:    kCli,
 			},
 			args: args{
 				name: "Organization",
@@ -515,9 +527,135 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "test case 16 (with struct containing map field)",
+			fields: fields{
+				structs: map[string]*Struct{},
+				kCli:    kCli,
+			},
+			args: args{
+				name: "User",
+				data: struct {
+					ID    int
+					Name  string
+					Email string
+					Tags  map[string]string
+					KVs   map[string]any `json:"kvs"`
+				}{},
+			},
+			want: map[string]*Struct{
+				"User": {
+					Types: map[string][]string{
+						"User": {
+							"ID: Int!",
+							"Name: String!",
+							"Email: String!",
+							"Tags: Map!",
+							"kvs: Map!",
+						},
+					},
+					Inputs: map[string][]string{
+						"UserIn": {
+							"ID: Int!",
+							"Name: String!",
+							"Email: String!",
+							"Tags: Map!",
+							"kvs: Map!",
+						},
+					},
+					Enums: map[string][]string{},
+				},
+			},
+		},
+		{
+			name: "test case 16 (with struct containing nested kloudlite CRD)",
+			fields: fields{
+				structs: map[string]*Struct{},
+				kCli:    kCli,
+			},
+			args: args{
+				name: "Project",
+				data: struct {
+					// AccountName string
+					Project crdsv1.Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
+				}{},
+			},
+			want: map[string]*Struct{
+				"Project": {
+					Types: map[string][]string{
+						"Project": {
+							"apiVersion: String!",
+							"kind: String!",
+							"metadata: Metadata! @goField(name: \"objectMeta\")",
+							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec",
+							"status: Github_com__kloudlite__operator__apis__crds__v1_ProjectStatus",
+						},
+					},
+					Inputs: map[string][]string{
+						"ProjectIn": {
+							"apiVersion: String!",
+							"kind: String!",
+							"metadata: MetadataIn!",
+							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn",
+							"status: Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusIn",
+						},
+					},
+					Enums: map[string][]string{},
+				},
+				"common-types": {
+					Types: map[string][]string{
+						"Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec": {
+							"accountName: String!",
+							"clusterName: String!",
+							"displayName: String",
+							"logo: String",
+							"targetNamespace: String!",
+						},
+						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatus": {
+							"lastReconcileTime: String",
+							"message: Map",
+							"resources: [Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResources]",
+							"checks: Map",
+							"isReady: Boolean",
+						},
+						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResources": {
+							"apiVersion: String",
+							"kind: String",
+							"name: String!",
+							"namespace: String!",
+						},
+					},
+					Inputs: map[string][]string{
+						"Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn": {
+							"accountName: String!",
+							"clusterName: String!",
+							"displayName: String",
+							"logo: String",
+							"targetNamespace: String!",
+						},
+						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusIn": {
+							"lastReconcileTime: String",
+							"message: Map",
+							"resources: [Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResourcesIn]",
+							"checks: Map",
+							"isReady: Boolean",
+						},
+						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResourcesIn": {
+							"apiVersion: String",
+							"kind: String",
+							"name: String!",
+							"namespace: String!",
+						},
+					},
+					Enums: map[string][]string{},
+				},
+			},
+		},
 	}
 
-	for _, tt := range tests {
+	for _, _tt := range tests {
+		tt := _tt
+
 		t.Run(tt.name, func(t *testing.T) {
 			p := &parser{
 				structs: tt.fields.structs,
@@ -543,19 +681,20 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 
 			if got != want {
 				// t.Errorf("Result not as expected:\n%v", diff.LineDiff(got, want))
-				g, err2 := os.Create("./got.txt")
+				dir := "/tmp/x"
+				g, err2 := os.Create(filepath.Join(dir, "./got.txt"))
 				if err2 != nil {
 					t.Error(err2)
 				}
 				g.WriteString(got)
 
-				w, err2 := os.Create("./want.txt")
+				w, err2 := os.Create(filepath.Join(dir, "./want.txt"))
 				if err2 != nil {
 					t.Error(err2)
 				}
 				w.WriteString(want)
 
-				cmd := exec.Command("delta", "./got.txt", "./want.txt", "-s")
+				cmd := exec.Command("delta", filepath.Join(dir, "./got.txt"), filepath.Join(dir, "./want.txt"), "-s")
 				b, err := cmd.CombinedOutput()
 				if err != nil {
 					t.Error(err)
