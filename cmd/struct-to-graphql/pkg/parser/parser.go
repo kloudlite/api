@@ -1,7 +1,6 @@
 package parser
 
 import (
-	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -12,6 +11,7 @@ import (
 	"strings"
 	"time"
 
+	"github.com/sanity-io/litter"
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	fn "kloudlite.io/pkg/functions"
@@ -22,6 +22,7 @@ type Parser interface {
 	GenerateGraphQLSchema(structName string, name string, t reflect.Type)
 	LoadStruct(name string, data any)
 	PrintSchema(w io.Writer)
+	DebugSchema(w io.Writer)
 	DumpSchema(dir string) error
 }
 
@@ -78,6 +79,22 @@ func newStruct() *Struct {
 	}
 }
 
+type Field struct {
+	ParentName  string
+	Name        string
+	PkgPath     string
+	Type        reflect.Type
+	StructName  string
+	kcli        k8s.ExtendedK8sClient
+	Fields      *[]string
+	InputFields *[]string
+
+	Parser *parser
+
+	JsonTag
+	GraphqlTag
+}
+
 const (
 	commonLabel = "common-types"
 )
@@ -95,6 +112,13 @@ type JsonTag struct {
 
 func sanitizePackagePath(t reflect.Type) string {
 	pkgPath := t.PkgPath()
+	pkgPath = strings.ReplaceAll(pkgPath, "/", "__")
+	pkgPath = strings.ReplaceAll(pkgPath, ".", "_")
+
+	return pkgPath
+}
+
+func fixPackagePath(pkgPath string) string {
 	pkgPath = strings.ReplaceAll(pkgPath, "/", "__")
 	pkgPath = strings.ReplaceAll(pkgPath, ".", "_")
 
@@ -235,136 +259,40 @@ func (p *parser) GenerateGraphQLSchema(structName string, name string, t reflect
 
 		gt := parseGraphqlTag(field)
 
+		f := Field{
+			ParentName:  name,
+			Name:        field.Name,
+			PkgPath:     field.Type.PkgPath(),
+			Type:        field.Type,
+			StructName:  structName,
+			Fields:      &fields,
+			InputFields: &inputFields,
+			Parser:      p,
+			JsonTag:     jt,
+			GraphqlTag:  gt,
+		}
+
 		if fieldType == "" {
 			switch field.Type.Kind() {
 			case reflect.String:
 				{
-					childType := name + field.Name
-					if gt.Enum != nil {
-						p.structs[structName].Enums[childType] = gt.Enum
-						fieldType = toFieldType(childType, !jt.OmitEmpty)
-						inputFieldType = toFieldType(childType, !jt.OmitEmpty)
-						break
-					}
-
-					fieldType = toFieldType("String", !jt.OmitEmpty)
-					inputFieldType = toFieldType("String", !jt.OmitEmpty)
+					fieldType, inputFieldType = f.handleString()
 				}
 			case reflect.Struct:
 				{
-					if gt.Uri != nil {
-						if strings.HasPrefix(*gt.Uri, "k8s://") {
-							k8sCrdName := strings.Split(*gt.Uri, "k8s://")[1]
-							jsonSchema, err := p.kCli.GetCRDJsonSchema(context.TODO(), k8sCrdName)
-							if err != nil {
-								panic(err)
-							}
-
-							func() {
-								childType := getGraphqlType(name, field.Name, field.Type, jt, gt)
-								if jt.Inline {
-									// TODO: call json parsing and create type, input, and enum for all those types, using jsonSchema, with fields being inline
-									p2 := newParser(p.kCli)
-									p2.structs[structName] = newStruct()
-									p2.structs[structName].GenerateFromJsonSchema(childType, jsonSchema)
-
-									// TODO
-									fields2, inputFields2 := p.structs[structName].mergeParser(p2.structs[structName], childType)
-									fields = append(fields, fields2...)
-									inputFields = append(inputFields, inputFields2...)
-
-									return
-								}
-
-								fieldType = toFieldType(childType, !jt.OmitEmpty)
-								inputFieldType = toFieldType(childType+"In", !jt.OmitEmpty)
-
-								// TODO: call json parsing and create type, input, and enum for all those types, using jsonSchema
-								p.structs[structName].GenerateFromJsonSchema(childType, jsonSchema)
-							}()
-						}
-						break
-					}
-
-					func() {
-						pkgPath := sanitizePackagePath(field.Type)
-						childType := getGraphqlType(name, field.Name, field.Type, jt, gt)
-
-						if jt.Inline {
-							p2 := newParser(p.kCli)
-							p2.GenerateGraphQLSchema(structName, childType, field.Type)
-							p2.structs[structName] = newStruct()
-
-							fields2, inputFields2 := p.structs[structName].mergeParser(p2.structs[structName], childType)
-							fields = append(fields, fields2...)
-							inputFields = append(inputFields, inputFields2...)
-
-							return
-						}
-
-						fieldType = toFieldType(childType, !jt.OmitEmpty)
-						inputFieldType = toFieldType(childType+"In", !jt.OmitEmpty)
-
-						if pkgPath == "" {
-							p.GenerateGraphQLSchema(structName, childType, field.Type)
-							return
-						}
-						p.GenerateGraphQLSchema(commonLabel, childType, field.Type)
-					}()
+					fieldType, inputFieldType = f.handleStruct()
 				}
 			case reflect.Slice:
 				{
-					if field.Type.Elem().Kind() == reflect.Struct {
-						childType := getGraphqlType(name, field.Name, field.Type.Elem(), jt, gt)
-						pkgPath := sanitizePackagePath(field.Type.Elem())
-
-						fieldType = toFieldType(fmt.Sprintf("[%s]", toFieldType(childType, true)), !jt.OmitEmpty)
-						inputFieldType = toFieldType(fmt.Sprintf("[%s]", toFieldType(childType+"In", true)), !jt.OmitEmpty)
-
-						if pkgPath == "" {
-							p.GenerateGraphQLSchema(structName, childType, field.Type.Elem())
-							break
-						}
-						p.GenerateGraphQLSchema(commonLabel, childType, field.Type.Elem())
-						break
-					}
-
-					fieldType = toFieldType(fmt.Sprintf("[%s]", toFieldType(kindMap[field.Type.Elem().Kind()], true)), !jt.OmitEmpty)
-					inputFieldType = toFieldType(fmt.Sprintf("[%s]", toFieldType(kindMap[field.Type.Elem().Kind()], true)), !jt.OmitEmpty)
+					fieldType, inputFieldType = f.handleSlice()
 				}
 			case reflect.Ptr:
 				{
-					if field.Type.Elem().Kind() == reflect.Struct {
-						childType := getGraphqlType(name, field.Name, field.Type.Elem(), jt, gt)
-						pkgPath := sanitizePackagePath(field.Type.Elem())
-
-						fieldType = childType
-						inputFieldType = childType + "In"
-
-						if pkgPath == "" {
-							p.GenerateGraphQLSchema(structName, childType, field.Type.Elem())
-							break
-						}
-						p.GenerateGraphQLSchema(commonLabel, childType, field.Type.Elem())
-						break
-					}
-
-					fieldType = kindMap[field.Type.Elem().Kind()]
-					inputFieldType = kindMap[field.Type.Elem().Kind()]
+					fieldType, inputFieldType = f.handlePtr()
 				}
 			case reflect.Map:
 				{
-					fieldType = "Map"
-					inputFieldType = "Map"
-					if field.Type.Elem().Kind() == reflect.Struct {
-						childType := getGraphqlType(name, field.Name, field.Type.Elem(), jt, gt)
-						pkgPath := sanitizePackagePath(field.Type.Elem())
-						if pkgPath == "" {
-							p.GenerateGraphQLSchema(structName, childType, field.Type.Elem())
-							break
-						}
-						p.GenerateGraphQLSchema(commonLabel, childType, field.Type.Elem())
-					}
+					fieldType, inputFieldType = f.handleMap()
 				}
 			default:
 				{
@@ -429,7 +357,8 @@ func (s *Struct) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...in
 				// these types are common across all the types that will be generated
 				if k == "metadata" {
 					fields = append(fields, genFieldEntry(k, "Metadata! @goField(name: \"objectMeta\")", false))
-					inputFields = append(fields, genFieldEntry(k, "MetadataIn!", false))
+					inputFields = append(inputFields, genFieldEntry(k, "MetadataIn!", false))
+
 					continue
 				}
 
@@ -520,8 +449,24 @@ func (s *Struct) WriteSchema(w io.Writer) {
 }
 
 func (p *parser) PrintSchema(w io.Writer) {
-	for _, v := range p.structs {
-		v.WriteSchema(w)
+	keys := make([]string, 0, len(p.structs))
+	for k := range p.structs {
+		keys = append(keys, k)
+	}
+	sort.Slice(keys, func(p, q int) bool {
+		return strings.ToLower(keys[p]) < strings.ToLower(keys[q])
+	})
+
+	for _, v := range keys {
+		p.structs[v].WriteSchema(w)
+	}
+}
+
+func (p *parser) DebugSchema(w io.Writer) {
+	for k, v := range p.structs {
+		io.WriteString(w, fmt.Sprintf("struct: %v\n", k))
+		io.WriteString(w, litter.Sdump(v))
+		io.WriteString(w, "\n")
 	}
 }
 
