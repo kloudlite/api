@@ -8,10 +8,10 @@ import (
 
 type MRes struct {
 	repos.BaseEntity       `json:",inline"`
-	crdsv1.ManagedResource `json:",inline" json-schema:"uri=k8s://managedresources.crds.kloudlite.io"`
+	crdsv1.ManagedResource `json:",inline" graphql:"uri=k8s://managedresources.crds.kloudlite.io"`
 	AccountName            string       `json:"accountName"`
 	ClusterName            string       `json:"clusterName"`
-	SyncStatus             t.SyncStatus `json:"syncStatus" graphql:"common=true"`
+	SyncStatus             t.SyncStatus `json:"syncStatus"`
 }
 
 var MresIndexes = []repos.IndexField{

@@ -8,10 +8,10 @@ import (
 
 type Secret struct {
 	repos.BaseEntity `json:",inline"`
-	crdsv1.Secret    `json:",inline" json-schema:"uri=k8s://secrets.crds.kloudlite.io"`
+	crdsv1.Secret    `json:",inline" graphql:"uri=k8s://secrets.crds.kloudlite.io"`
 	AccountName      string       `json:"accountName"`
 	ClusterName      string       `json:"clusterName"`
-	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"common=true"`
+	SyncStatus       t.SyncStatus `json:"syncStatus"`
 }
 
 var SecretIndexes = []repos.IndexField{

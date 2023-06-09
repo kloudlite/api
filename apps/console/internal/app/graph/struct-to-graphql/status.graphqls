@@ -1,0 +1,16 @@
+type Status {
+  checks: Map
+  isReady: Boolean!
+  lastReconcileTime: Date
+  message: Github_com__kloudlite__operator__pkg__raw-json_RawJson
+  resources: [Github_com__kloudlite__operator__pkg__operator_ResourceRef]
+}
+
+input StatusIn {
+  checks: Map
+  isReady: Boolean!
+  lastReconcileTime: Date
+  message: Github_com__kloudlite__operator__pkg__raw-json_RawJsonIn
+  resources: [Github_com__kloudlite__operator__pkg__operator_ResourceRefIn]
+}
+

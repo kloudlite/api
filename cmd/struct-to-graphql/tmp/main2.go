@@ -31,6 +31,10 @@ type Project struct {
 	ClusterName      string                `json:"clusterName"`
 	SyncStatus       t.SyncStatus          `json:"syncStatus"`
 	EnumItem         string                `json:"enumItem" graphql:"enum=One;Two;Three;Four"`
+	SampleExample    struct {
+		Example1 string
+		Example2 string `json:"example2,omitempty"`
+	}
 }
 
 type SampleType struct {

@@ -8,10 +8,10 @@ import (
 
 type MSvc struct {
 	repos.BaseEntity      `json:",inline"`
-	crdsv1.ManagedService `json:",inline" json-schema:"uri=k8s://managedservices.crds.kloudlite.io"`
+	crdsv1.ManagedService `json:",inline" graphql:"uri=k8s://managedservices.crds.kloudlite.io"`
 	AccountName           string       `json:"accountName"`
 	ClusterName           string       `json:"clusterName"`
-	SyncStatus            t.SyncStatus `json:"syncStatus" graphql:"common=true"`
+	SyncStatus            t.SyncStatus `json:"syncStatus"`
 }
 
 var MsvcIndexes = []repos.IndexField{

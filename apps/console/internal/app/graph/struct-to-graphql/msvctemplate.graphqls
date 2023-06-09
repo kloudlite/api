@@ -1,53 +1,12 @@
-type MsvcTemplateItemsOutputs {
-	description: String!
-	label: String!
-	name: String!
-}
-
-type MsvcTemplateItemsResourcesFields {
-	defaultValue: Any
-	inputType: String!
-	label: String!
-	max: Float
-	min: Float
-	name: String!
-	required: Boolean
-	unit: String
-}
-
-type MsvcTemplateItemsResourcesOutputs {
-	description: String!
-	label: String!
-	name: String!
-}
-
-type MsvcTemplateItemsResources {
-	description: String!
-	displayName: String!
-	name: String!
-}
-
-type MsvcTemplateItems {
-	active: Boolean!
-	description: String!
-	displayName: String!
-	logoUrl: String!
-	name: String!
-}
-
 type MsvcTemplate {
-	category: String!
-	displayName: String!
+  category: String!
+  displayName: String!
+  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry]!
 }
 
-type MsvcTemplateItemsFields {
-	defaultValue: Any
-	inputType: String!
-	label: String!
-	max: Float
-	min: Float
-	name: String!
-	required: Boolean
-	unit: String
+input MsvcTemplateIn {
+  category: String!
+  displayName: String!
+  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryIn]!
 }
 
