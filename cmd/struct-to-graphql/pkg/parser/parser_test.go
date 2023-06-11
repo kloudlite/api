@@ -576,28 +576,29 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			args: args{
 				name: "Project",
 				data: struct {
-					// AccountName string
-					Project crdsv1.Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
+					AccountName string
+					Project     crdsv1.Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 				}{},
 			},
 			want: map[string]*Struct{
 				"Project": {
 					Types: map[string][]string{
 						"Project": {
+							"AccountName: String!",
 							"apiVersion: String!",
 							"kind: String!",
 							"metadata: Metadata! @goField(name: \"objectMeta\")",
 							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec",
-							"status: Github_com__kloudlite__operator__apis__crds__v1_ProjectStatus",
+							"status: Github_com__kloudlite__operator__pkg__operator_Status",
 						},
 					},
 					Inputs: map[string][]string{
 						"ProjectIn": {
+							"AccountName: String!",
 							"apiVersion: String!",
 							"kind: String!",
 							"metadata: MetadataIn!",
 							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn",
-							"status: Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusIn",
 						},
 					},
 					Enums: map[string][]string{},
@@ -611,18 +612,33 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"logo: String",
 							"targetNamespace: String!",
 						},
-						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatus": {
-							"lastReconcileTime: String",
-							"message: Map",
-							"resources: [Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResources]",
-							"checks: Map",
-							"isReady: Boolean",
+						"Github_com__kloudlite__operator__pkg__operator_Check": {
+							"status: Boolean!",
+							"message: String",
+							"generation: Int",
 						},
-						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResources": {
+						"Github_com__kloudlite__operator__pkg__operator_ResourceRef": {
 							"apiVersion: String",
 							"kind: String",
+							"namespace: String!",
+							"name: String!",
+						},
+						"Github_com__kloudlite__operator__pkg__operator_Status": {
+							"isReady: Boolean!",
+							"resources: [Github_com__kloudlite__operator__pkg__operator_ResourceRef!]",
+							"message: Github_com__kloudlite__operator__pkg__raw___json_RawJson",
+							"checks: Map",
+							"lastReconcileTime: Date",
+						},
+						"Github_com__kloudlite__operator__pkg__raw___json_RawJson": {
+							"RawMessage: Any",
+						},
+						"Metadata": {
 							"name: String!",
 							"namespace: String!",
+							"labels: Map",
+							"annotations: Map",
+							"generation: Int!",
 						},
 					},
 					Inputs: map[string][]string{
@@ -633,18 +649,12 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"logo: String",
 							"targetNamespace: String!",
 						},
-						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusIn": {
-							"lastReconcileTime: String",
-							"message: Map",
-							"resources: [Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResourcesIn]",
-							"checks: Map",
-							"isReady: Boolean",
-						},
-						"Github_com__kloudlite__operator__apis__crds__v1_ProjectStatusResourcesIn": {
-							"apiVersion: String",
-							"kind: String",
+						"MetadataIn": {
 							"name: String!",
 							"namespace: String!",
+							"labels: Map",
+							"annotations: Map",
+							"generation: Int!",
 						},
 					},
 					Enums: map[string][]string{},

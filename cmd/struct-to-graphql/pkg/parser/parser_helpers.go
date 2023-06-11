@@ -71,12 +71,10 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 				return commonLabel
 			}()
 
-			fmt.Println("structName:", structName)
-
 			if f.Inline {
 				p2 := newParser(f.Parser.kCli)
 				p2.structs[structName] = newStruct()
-				p2.structs[structName].GenerateFromJsonSchema(childType, jsonSchema)
+				p2.GenerateFromJsonSchema(p2.structs[structName], childType, jsonSchema)
 
 				if f.Parser.structs[structName] == nil {
 					f.Parser.structs[structName] = newStruct()
@@ -85,14 +83,16 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 				fields2, inputFields2 := f.Parser.structs[structName].mergeParser(p2.structs[structName], childType)
 
 				*f.Fields = append(*f.Fields, fields2...)
-				*f.InputFields = append(*f.InputFields, inputFields2...)
+				if !f.GraphqlTag.NoInput {
+					*f.InputFields = append(*f.InputFields, inputFields2...)
+				}
 
 				return "", ""
 			}
 
 			fieldType = toFieldType(childType, !f.OmitEmpty)
 			inputFieldType = toFieldType(childType+"In", !f.OmitEmpty)
-			f.Parser.structs[structName].GenerateFromJsonSchema(childType, jsonSchema)
+			f.Parser.GenerateFromJsonSchema(f.Parser.structs[structName], childType, jsonSchema)
 			return fieldType, inputFieldType
 		}
 
@@ -101,17 +101,23 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 
 	if f.Inline {
 		p2 := newParser(f.Parser.kCli)
-		p2.GenerateGraphQLSchema(f.StructName, childType, f.Type)
 		p2.structs[f.StructName] = newStruct()
+		p2.GenerateGraphQLSchema(f.StructName, childType, f.Type)
 
 		fields2, inputFields2 := f.Parser.structs[f.StructName].mergeParser(p2.structs[f.StructName], childType)
 		*f.Fields = append(*f.Fields, fields2...)
-		*f.InputFields = append(*f.InputFields, inputFields2...)
+
+		if !f.GraphqlTag.NoInput {
+			*f.InputFields = append(*f.InputFields, inputFields2...)
+		}
+
 		return "", ""
 	}
 
 	fieldType = toFieldType(childType, !f.OmitEmpty)
-	inputFieldType = toFieldType(childType+"In", !f.OmitEmpty)
+	if !f.GraphqlTag.NoInput {
+		inputFieldType = toFieldType(childType+"In", !f.OmitEmpty)
+	}
 
 	if pkgPath == "" {
 		f.Parser.GenerateGraphQLSchema(f.StructName, childType, f.Type)

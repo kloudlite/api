@@ -53,7 +53,6 @@ require (
 )
 
 require (
-	github.com/andreyvit/diff v0.0.0-20170406064948-c7f18ee00883 // indirect
 	github.com/emicklei/go-restful/v3 v3.9.0 // indirect
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
@@ -122,7 +121,6 @@ require (
 	github.com/mattn/go-colorable v0.1.13 // indirect
 	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
-	github.com/maxatome/go-testdeep v1.13.0
 	github.com/mitchellh/copystructure v1.2.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect

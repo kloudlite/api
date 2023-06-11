@@ -14,7 +14,7 @@ import (
 )
 
 // Spec is the resolver for the spec field.
-func (r *managedResourceResolver) Spec(ctx context.Context, obj *entities.MRes) (*model.ManagedResourceSpec, error) {
+func (r *managedResourceResolver) Spec(ctx context.Context, obj *entities.ManagedResource) (*model.ManagedResourceSpec, error) {
 	if obj == nil {
 		return nil, nil
 	}
@@ -26,7 +26,7 @@ func (r *managedResourceResolver) Spec(ctx context.Context, obj *entities.MRes) 
 }
 
 // Spec is the resolver for the spec field.
-func (r *managedResourceInResolver) Spec(ctx context.Context, obj *entities.MRes, data *model.ManagedResourceSpecIn) error {
+func (r *managedResourceInResolver) Spec(ctx context.Context, obj *entities.ManagedResource, data *model.ManagedResourceSpecIn) error {
 	if obj == nil {
 		return nil
 	}

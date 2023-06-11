@@ -48,15 +48,15 @@ tasks:
           --struct kloudlite.io/apps/console/internal/domain/entities.Secret
           --struct kloudlite.io/apps/console/internal/domain/entities.Config
           --struct kloudlite.io/apps/console/internal/domain/entities.Router
-          --struct kloudlite.io/apps/console/internal/domain/entities.MRes
-          --struct kloudlite.io/apps/console/internal/domain/entities.MSvc
+          --struct kloudlite.io/apps/console/internal/domain/entities.ManagedResource
+          --struct kloudlite.io/apps/console/internal/domain/entities.ManagedService
           --struct kloudlite.io/apps/console/internal/domain/entities.MsvcTemplate
         > ./internal/app/_struct-to-graphql/main.go
       - |+
         pushd ./internal/app/_struct-to-graphql
         go run main.go --out-dir ../graph/struct-to-graphql
         popd
-      # - rm -rf ./internal/app/_struct-to-graphql
+      - rm -rf ./internal/app/_struct-to-graphql
 
   docker-build:
     vars:

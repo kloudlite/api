@@ -9,7 +9,7 @@ import (
 	t "kloudlite.io/pkg/types"
 )
 
-func (d *domain) ListManagedServices(ctx ConsoleContext, namespace string) ([]*entities.MSvc, error) {
+func (d *domain) ListManagedServices(ctx ConsoleContext, namespace string) ([]*entities.ManagedService, error) {
 	if err := d.canReadResourcesInWorkspace(ctx, namespace); err != nil {
 		return nil, err
 	}
@@ -20,7 +20,7 @@ func (d *domain) ListManagedServices(ctx ConsoleContext, namespace string) ([]*e
 	}})
 }
 
-func (d *domain) findMSvc(ctx ConsoleContext, namespace string, name string) (*entities.MSvc, error) {
+func (d *domain) findMSvc(ctx ConsoleContext, namespace string, name string) (*entities.ManagedService, error) {
 	mres, err := d.msvcRepo.FindOne(ctx, repos.Filter{
 		"accountName":        ctx.AccountName,
 		"clusterName":        ctx.ClusterName,
@@ -36,7 +36,7 @@ func (d *domain) findMSvc(ctx ConsoleContext, namespace string, name string) (*e
 	return mres, nil
 }
 
-func (d *domain) GetManagedService(ctx ConsoleContext, namespace string, name string) (*entities.MSvc, error) {
+func (d *domain) GetManagedService(ctx ConsoleContext, namespace string, name string) (*entities.ManagedService, error) {
 	if err := d.canReadResourcesInWorkspace(ctx, namespace); err != nil {
 		return nil, err
 	}
@@ -45,7 +45,7 @@ func (d *domain) GetManagedService(ctx ConsoleContext, namespace string, name st
 
 // mutations
 
-func (d *domain) CreateManagedService(ctx ConsoleContext, msvc entities.MSvc) (*entities.MSvc, error) {
+func (d *domain) CreateManagedService(ctx ConsoleContext, msvc entities.ManagedService) (*entities.ManagedService, error) {
 	if err := d.canMutateResourcesInWorkspace(ctx, msvc.Namespace); err != nil {
 		return nil, err
 	}
@@ -75,7 +75,7 @@ func (d *domain) CreateManagedService(ctx ConsoleContext, msvc entities.MSvc) (*
 	return m, nil
 }
 
-func (d *domain) UpdateManagedService(ctx ConsoleContext, msvc entities.MSvc) (*entities.MSvc, error) {
+func (d *domain) UpdateManagedService(ctx ConsoleContext, msvc entities.ManagedService) (*entities.ManagedService, error) {
 	if err := d.canMutateResourcesInWorkspace(ctx, msvc.Namespace); err != nil {
 		return nil, err
 	}
@@ -123,7 +123,7 @@ func (d *domain) DeleteManagedService(ctx ConsoleContext, namespace string, name
 	return d.deleteK8sResource(ctx, &m.ManagedService)
 }
 
-func (d *domain) OnDeleteManagedServiceMessage(ctx ConsoleContext, msvc entities.MSvc) error {
+func (d *domain) OnDeleteManagedServiceMessage(ctx ConsoleContext, msvc entities.ManagedService) error {
 	m, err := d.findMSvc(ctx, msvc.Namespace, msvc.Name)
 	if err != nil {
 		return err
@@ -132,7 +132,7 @@ func (d *domain) OnDeleteManagedServiceMessage(ctx ConsoleContext, msvc entities
 	return d.msvcRepo.DeleteById(ctx, m.Id)
 }
 
-func (d *domain) OnUpdateManagedServiceMessage(ctx ConsoleContext, msvc entities.MSvc) error {
+func (d *domain) OnUpdateManagedServiceMessage(ctx ConsoleContext, msvc entities.ManagedService) error {
 	m, err := d.findMSvc(ctx, msvc.Namespace, msvc.Name)
 	if err != nil {
 		return err

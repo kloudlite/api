@@ -324,8 +324,8 @@ type ComplexityRoot struct {
 	Mutation struct {
 		CoreCreateApp             func(childComplexity int, app entities.App) int
 		CoreCreateConfig          func(childComplexity int, config entities.Config) int
-		CoreCreateManagedResource func(childComplexity int, mres entities.MRes) int
-		CoreCreateManagedService  func(childComplexity int, msvc entities.MSvc) int
+		CoreCreateManagedResource func(childComplexity int, mres entities.ManagedResource) int
+		CoreCreateManagedService  func(childComplexity int, msvc entities.ManagedService) int
 		CoreCreateProject         func(childComplexity int, project entities.Project) int
 		CoreCreateRouter          func(childComplexity int, router entities.Router) int
 		CoreCreateSecret          func(childComplexity int, secret entities.Secret) int
@@ -340,8 +340,8 @@ type ComplexityRoot struct {
 		CoreDeleteWorkspace       func(childComplexity int, namespace string, name string) int
 		CoreUpdateApp             func(childComplexity int, app entities.App) int
 		CoreUpdateConfig          func(childComplexity int, config entities.Config) int
-		CoreUpdateManagedResource func(childComplexity int, mres entities.MRes) int
-		CoreUpdateManagedService  func(childComplexity int, msvc entities.MSvc) int
+		CoreUpdateManagedResource func(childComplexity int, mres entities.ManagedResource) int
+		CoreUpdateManagedService  func(childComplexity int, msvc entities.ManagedService) int
 		CoreUpdateProject         func(childComplexity int, project entities.Project) int
 		CoreUpdateRouter          func(childComplexity int, router entities.Router) int
 		CoreUpdateSecret          func(childComplexity int, secret entities.Secret) int
@@ -518,10 +518,10 @@ type ConfigResolver interface {
 	Data(ctx context.Context, obj *entities.Config) (map[string]interface{}, error)
 }
 type ManagedResourceResolver interface {
-	Spec(ctx context.Context, obj *entities.MRes) (*model.ManagedResourceSpec, error)
+	Spec(ctx context.Context, obj *entities.ManagedResource) (*model.ManagedResourceSpec, error)
 }
 type ManagedServiceResolver interface {
-	Spec(ctx context.Context, obj *entities.MSvc) (*model.ManagedServiceSpec, error)
+	Spec(ctx context.Context, obj *entities.ManagedService) (*model.ManagedServiceSpec, error)
 }
 type MetadataResolver interface {
 	Labels(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
@@ -548,11 +548,11 @@ type MutationResolver interface {
 	CoreCreateRouter(ctx context.Context, router entities.Router) (*entities.Router, error)
 	CoreUpdateRouter(ctx context.Context, router entities.Router) (*entities.Router, error)
 	CoreDeleteRouter(ctx context.Context, namespace string, name string) (bool, error)
-	CoreCreateManagedService(ctx context.Context, msvc entities.MSvc) (*entities.MSvc, error)
-	CoreUpdateManagedService(ctx context.Context, msvc entities.MSvc) (*entities.MSvc, error)
+	CoreCreateManagedService(ctx context.Context, msvc entities.ManagedService) (*entities.ManagedService, error)
+	CoreUpdateManagedService(ctx context.Context, msvc entities.ManagedService) (*entities.ManagedService, error)
 	CoreDeleteManagedService(ctx context.Context, namespace string, name string) (bool, error)
-	CoreCreateManagedResource(ctx context.Context, mres entities.MRes) (*entities.MRes, error)
-	CoreUpdateManagedResource(ctx context.Context, mres entities.MRes) (*entities.MRes, error)
+	CoreCreateManagedResource(ctx context.Context, mres entities.ManagedResource) (*entities.ManagedResource, error)
+	CoreUpdateManagedResource(ctx context.Context, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	CoreDeleteManagedResource(ctx context.Context, namespace string, name string) (bool, error)
 }
 type PatchResolver interface {
@@ -583,11 +583,11 @@ type QueryResolver interface {
 	CoreResyncRouter(ctx context.Context, namespace string, name string) (bool, error)
 	CoreListManagedServiceTemplates(ctx context.Context) (interface{}, error)
 	CoreGetManagedServiceTemplate(ctx context.Context, category string, name string) (interface{}, error)
-	CoreListManagedServices(ctx context.Context, namespace string) ([]*entities.MSvc, error)
-	CoreGetManagedService(ctx context.Context, namespace string, name string) (*entities.MSvc, error)
+	CoreListManagedServices(ctx context.Context, namespace string) ([]*entities.ManagedService, error)
+	CoreGetManagedService(ctx context.Context, namespace string, name string) (*entities.ManagedService, error)
 	CoreResyncManagedService(ctx context.Context, namespace string, name string) (bool, error)
-	CoreListManagedResources(ctx context.Context, namespace string) ([]*entities.MRes, error)
-	CoreGetManagedResource(ctx context.Context, namespace string, name string) (*entities.MRes, error)
+	CoreListManagedResources(ctx context.Context, namespace string) ([]*entities.ManagedResource, error)
+	CoreGetManagedResource(ctx context.Context, namespace string, name string) (*entities.ManagedResource, error)
 	CoreResyncManagedResource(ctx context.Context, namespace string, name string) (bool, error)
 }
 type RouterResolver interface {
@@ -618,10 +618,10 @@ type ConfigInResolver interface {
 	Data(ctx context.Context, obj *entities.Config, data map[string]interface{}) error
 }
 type ManagedResourceInResolver interface {
-	Spec(ctx context.Context, obj *entities.MRes, data *model.ManagedResourceSpecIn) error
+	Spec(ctx context.Context, obj *entities.ManagedResource, data *model.ManagedResourceSpecIn) error
 }
 type ManagedServiceInResolver interface {
-	Spec(ctx context.Context, obj *entities.MSvc, data *model.ManagedServiceSpecIn) error
+	Spec(ctx context.Context, obj *entities.ManagedService, data *model.ManagedServiceSpecIn) error
 }
 type MetadataInResolver interface {
 	Labels(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
@@ -1710,7 +1710,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CoreCreateManagedResource(childComplexity, args["mres"].(entities.MRes)), true
+		return e.complexity.Mutation.CoreCreateManagedResource(childComplexity, args["mres"].(entities.ManagedResource)), true
 
 	case "Mutation.core_createManagedService":
 		if e.complexity.Mutation.CoreCreateManagedService == nil {
@@ -1722,7 +1722,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CoreCreateManagedService(childComplexity, args["msvc"].(entities.MSvc)), true
+		return e.complexity.Mutation.CoreCreateManagedService(childComplexity, args["msvc"].(entities.ManagedService)), true
 
 	case "Mutation.core_createProject":
 		if e.complexity.Mutation.CoreCreateProject == nil {
@@ -1902,7 +1902,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CoreUpdateManagedResource(childComplexity, args["mres"].(entities.MRes)), true
+		return e.complexity.Mutation.CoreUpdateManagedResource(childComplexity, args["mres"].(entities.ManagedResource)), true
 
 	case "Mutation.core_updateManagedService":
 		if e.complexity.Mutation.CoreUpdateManagedService == nil {
@@ -1914,7 +1914,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CoreUpdateManagedService(childComplexity, args["msvc"].(entities.MSvc)), true
+		return e.complexity.Mutation.CoreUpdateManagedService(childComplexity, args["msvc"].(entities.ManagedService)), true
 
 	case "Mutation.core_updateProject":
 		if e.complexity.Mutation.CoreUpdateProject == nil {
@@ -3845,10 +3845,10 @@ func (ec *executionContext) field_Mutation_core_createConfig_args(ctx context.Co
 func (ec *executionContext) field_Mutation_core_createManagedResource_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 entities.MRes
+	var arg0 entities.ManagedResource
 	if tmp, ok := rawArgs["mres"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mres"))
-		arg0, err = ec.unmarshalNManagedResourceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx, tmp)
+		arg0, err = ec.unmarshalNManagedResourceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -3860,10 +3860,10 @@ func (ec *executionContext) field_Mutation_core_createManagedResource_args(ctx c
 func (ec *executionContext) field_Mutation_core_createManagedService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 entities.MSvc
+	var arg0 entities.ManagedService
 	if tmp, ok := rawArgs["msvc"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("msvc"))
-		arg0, err = ec.unmarshalNManagedServiceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx, tmp)
+		arg0, err = ec.unmarshalNManagedServiceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -4148,10 +4148,10 @@ func (ec *executionContext) field_Mutation_core_updateConfig_args(ctx context.Co
 func (ec *executionContext) field_Mutation_core_updateManagedResource_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 entities.MRes
+	var arg0 entities.ManagedResource
 	if tmp, ok := rawArgs["mres"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mres"))
-		arg0, err = ec.unmarshalNManagedResourceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx, tmp)
+		arg0, err = ec.unmarshalNManagedResourceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -4163,10 +4163,10 @@ func (ec *executionContext) field_Mutation_core_updateManagedResource_args(ctx c
 func (ec *executionContext) field_Mutation_core_updateManagedService_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 entities.MSvc
+	var arg0 entities.ManagedService
 	if tmp, ok := rawArgs["msvc"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("msvc"))
-		arg0, err = ec.unmarshalNManagedServiceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx, tmp)
+		arg0, err = ec.unmarshalNManagedServiceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -9407,7 +9407,7 @@ func (ec *executionContext) fieldContext_ConsoleCheckNameAvailabilityOutput_sugg
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_overrides(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9454,7 +9454,7 @@ func (ec *executionContext) fieldContext_ManagedResource_overrides(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_syncStatus(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9509,7 +9509,7 @@ func (ec *executionContext) fieldContext_ManagedResource_syncStatus(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_spec(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_spec(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_spec(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9558,7 +9558,7 @@ func (ec *executionContext) fieldContext_ManagedResource_spec(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_status(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_status(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_status(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9607,7 +9607,7 @@ func (ec *executionContext) fieldContext_ManagedResource_status(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_apiVersion(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9648,7 +9648,7 @@ func (ec *executionContext) fieldContext_ManagedResource_apiVersion(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_enabled(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_enabled(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9689,7 +9689,7 @@ func (ec *executionContext) fieldContext_ManagedResource_enabled(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_kind(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_kind(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_kind(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -9730,7 +9730,7 @@ func (ec *executionContext) fieldContext_ManagedResource_kind(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.MRes) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedResource_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_metadata(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10104,7 +10104,7 @@ func (ec *executionContext) fieldContext_ManagedResourceSpecMsvcRef_name(ctx con
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_overrides(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10151,7 +10151,7 @@ func (ec *executionContext) fieldContext_ManagedService_overrides(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_syncStatus(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10206,7 +10206,7 @@ func (ec *executionContext) fieldContext_ManagedService_syncStatus(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_spec(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_spec(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_spec(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10259,7 +10259,7 @@ func (ec *executionContext) fieldContext_ManagedService_spec(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_status(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_status(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_status(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10308,7 +10308,7 @@ func (ec *executionContext) fieldContext_ManagedService_status(ctx context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_apiVersion(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10349,7 +10349,7 @@ func (ec *executionContext) fieldContext_ManagedService_apiVersion(ctx context.C
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_enabled(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_enabled(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10390,7 +10390,7 @@ func (ec *executionContext) fieldContext_ManagedService_enabled(ctx context.Cont
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_kind(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_kind(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_kind(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -10431,7 +10431,7 @@ func (ec *executionContext) fieldContext_ManagedService_kind(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.MSvc) (ret graphql.Marshaler) {
+func (ec *executionContext) _ManagedService_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_metadata(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -12952,7 +12952,7 @@ func (ec *executionContext) _Mutation_core_createManagedService(ctx context.Cont
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CoreCreateManagedService(rctx, fc.Args["msvc"].(entities.MSvc))
+			return ec.resolvers.Mutation().CoreCreateManagedService(rctx, fc.Args["msvc"].(entities.ManagedService))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -12974,10 +12974,10 @@ func (ec *executionContext) _Mutation_core_createManagedService(ctx context.Cont
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.MSvc); ok {
+		if data, ok := tmp.(*entities.ManagedService); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.MSvc`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ManagedService`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -12986,9 +12986,9 @@ func (ec *executionContext) _Mutation_core_createManagedService(ctx context.Cont
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.MSvc)
+	res := resTmp.(*entities.ManagedService)
 	fc.Result = res
-	return ec.marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx, field.Selections, res)
+	return ec.marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_core_createManagedService(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13048,7 +13048,7 @@ func (ec *executionContext) _Mutation_core_updateManagedService(ctx context.Cont
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CoreUpdateManagedService(rctx, fc.Args["msvc"].(entities.MSvc))
+			return ec.resolvers.Mutation().CoreUpdateManagedService(rctx, fc.Args["msvc"].(entities.ManagedService))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -13070,10 +13070,10 @@ func (ec *executionContext) _Mutation_core_updateManagedService(ctx context.Cont
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.MSvc); ok {
+		if data, ok := tmp.(*entities.ManagedService); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.MSvc`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ManagedService`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13082,9 +13082,9 @@ func (ec *executionContext) _Mutation_core_updateManagedService(ctx context.Cont
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.MSvc)
+	res := resTmp.(*entities.ManagedService)
 	fc.Result = res
-	return ec.marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx, field.Selections, res)
+	return ec.marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_core_updateManagedService(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13225,7 +13225,7 @@ func (ec *executionContext) _Mutation_core_createManagedResource(ctx context.Con
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CoreCreateManagedResource(rctx, fc.Args["mres"].(entities.MRes))
+			return ec.resolvers.Mutation().CoreCreateManagedResource(rctx, fc.Args["mres"].(entities.ManagedResource))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -13247,10 +13247,10 @@ func (ec *executionContext) _Mutation_core_createManagedResource(ctx context.Con
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.MRes); ok {
+		if data, ok := tmp.(*entities.ManagedResource); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.MRes`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ManagedResource`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13259,9 +13259,9 @@ func (ec *executionContext) _Mutation_core_createManagedResource(ctx context.Con
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.MRes)
+	res := resTmp.(*entities.ManagedResource)
 	fc.Result = res
-	return ec.marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx, field.Selections, res)
+	return ec.marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_core_createManagedResource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13321,7 +13321,7 @@ func (ec *executionContext) _Mutation_core_updateManagedResource(ctx context.Con
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CoreUpdateManagedResource(rctx, fc.Args["mres"].(entities.MRes))
+			return ec.resolvers.Mutation().CoreUpdateManagedResource(rctx, fc.Args["mres"].(entities.ManagedResource))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -13343,10 +13343,10 @@ func (ec *executionContext) _Mutation_core_updateManagedResource(ctx context.Con
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.MRes); ok {
+		if data, ok := tmp.(*entities.ManagedResource); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.MRes`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ManagedResource`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -13355,9 +13355,9 @@ func (ec *executionContext) _Mutation_core_updateManagedResource(ctx context.Con
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.MRes)
+	res := resTmp.(*entities.ManagedResource)
 	fc.Result = res
-	return ec.marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx, field.Selections, res)
+	return ec.marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_core_updateManagedResource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16066,10 +16066,10 @@ func (ec *executionContext) _Query_core_listManagedServices(ctx context.Context,
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*entities.MSvc); ok {
+		if data, ok := tmp.([]*entities.ManagedService); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/console/internal/domain/entities.MSvc`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/console/internal/domain/entities.ManagedService`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16078,9 +16078,9 @@ func (ec *executionContext) _Query_core_listManagedServices(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*entities.MSvc)
+	res := resTmp.([]*entities.ManagedService)
 	fc.Result = res
-	return ec.marshalOManagedService2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvcᚄ(ctx, field.Selections, res)
+	return ec.marshalOManagedService2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedServiceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_core_listManagedServices(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16162,10 +16162,10 @@ func (ec *executionContext) _Query_core_getManagedService(ctx context.Context, f
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.MSvc); ok {
+		if data, ok := tmp.(*entities.ManagedService); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.MSvc`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ManagedService`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16174,9 +16174,9 @@ func (ec *executionContext) _Query_core_getManagedService(ctx context.Context, f
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.MSvc)
+	res := resTmp.(*entities.ManagedService)
 	fc.Result = res
-	return ec.marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx, field.Selections, res)
+	return ec.marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_core_getManagedService(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16339,10 +16339,10 @@ func (ec *executionContext) _Query_core_listManagedResources(ctx context.Context
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]*entities.MRes); ok {
+		if data, ok := tmp.([]*entities.ManagedResource); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/console/internal/domain/entities.MRes`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/console/internal/domain/entities.ManagedResource`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16351,9 +16351,9 @@ func (ec *executionContext) _Query_core_listManagedResources(ctx context.Context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*entities.MRes)
+	res := resTmp.([]*entities.ManagedResource)
 	fc.Result = res
-	return ec.marshalOManagedResource2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMResᚄ(ctx, field.Selections, res)
+	return ec.marshalOManagedResource2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResourceᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_core_listManagedResources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16435,10 +16435,10 @@ func (ec *executionContext) _Query_core_getManagedResource(ctx context.Context, 
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.MRes); ok {
+		if data, ok := tmp.(*entities.ManagedResource); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.MRes`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ManagedResource`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -16447,9 +16447,9 @@ func (ec *executionContext) _Query_core_getManagedResource(ctx context.Context, 
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.MRes)
+	res := resTmp.(*entities.ManagedResource)
 	fc.Result = res
-	return ec.marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx, field.Selections, res)
+	return ec.marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_core_getManagedResource(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -22592,8 +22592,8 @@ func (ec *executionContext) unmarshalInputConfigIn(ctx context.Context, obj inte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputManagedResourceIn(ctx context.Context, obj interface{}) (entities.MRes, error) {
-	var it entities.MRes
+func (ec *executionContext) unmarshalInputManagedResourceIn(ctx context.Context, obj interface{}) (entities.ManagedResource, error) {
+	var it entities.ManagedResource
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -22779,8 +22779,8 @@ func (ec *executionContext) unmarshalInputManagedResourceSpecMsvcRefIn(ctx conte
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputManagedServiceIn(ctx context.Context, obj interface{}) (entities.MSvc, error) {
-	var it entities.MSvc
+func (ec *executionContext) unmarshalInputManagedServiceIn(ctx context.Context, obj interface{}) (entities.ManagedService, error) {
+	var it entities.ManagedService
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -24877,7 +24877,7 @@ func (ec *executionContext) _ConsoleCheckNameAvailabilityOutput(ctx context.Cont
 
 var managedResourceImplementors = []string{"ManagedResource"}
 
-func (ec *executionContext) _ManagedResource(ctx context.Context, sel ast.SelectionSet, obj *entities.MRes) graphql.Marshaler {
+func (ec *executionContext) _ManagedResource(ctx context.Context, sel ast.SelectionSet, obj *entities.ManagedResource) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, managedResourceImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -25052,7 +25052,7 @@ func (ec *executionContext) _ManagedResourceSpecMsvcRef(ctx context.Context, sel
 
 var managedServiceImplementors = []string{"ManagedService"}
 
-func (ec *executionContext) _ManagedService(ctx context.Context, sel ast.SelectionSet, obj *entities.MSvc) graphql.Marshaler {
+func (ec *executionContext) _ManagedService(ctx context.Context, sel ast.SelectionSet, obj *entities.ManagedService) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, managedServiceImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -27552,7 +27552,7 @@ func (ec *executionContext) marshalNInt2int64(ctx context.Context, sel ast.Selec
 	return res
 }
 
-func (ec *executionContext) marshalNManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx context.Context, sel ast.SelectionSet, v *entities.MRes) graphql.Marshaler {
+func (ec *executionContext) marshalNManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedResource) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -27562,7 +27562,7 @@ func (ec *executionContext) marshalNManagedResource2ᚖkloudliteᚗioᚋappsᚋc
 	return ec._ManagedResource(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNManagedResourceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx context.Context, v interface{}) (entities.MRes, error) {
+func (ec *executionContext) unmarshalNManagedResourceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx context.Context, v interface{}) (entities.ManagedResource, error) {
 	res, err := ec.unmarshalInputManagedResourceIn(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -27597,7 +27597,7 @@ func (ec *executionContext) unmarshalNManagedResourceSpecMsvcRefIn2ᚖkloudlite�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx context.Context, sel ast.SelectionSet, v *entities.MSvc) graphql.Marshaler {
+func (ec *executionContext) marshalNManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedService) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -27607,7 +27607,7 @@ func (ec *executionContext) marshalNManagedService2ᚖkloudliteᚗioᚋappsᚋco
 	return ec._ManagedService(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNManagedServiceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx context.Context, v interface{}) (entities.MSvc, error) {
+func (ec *executionContext) unmarshalNManagedServiceIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx context.Context, v interface{}) (entities.ManagedService, error) {
 	res, err := ec.unmarshalInputManagedServiceIn(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
@@ -28924,7 +28924,7 @@ func (ec *executionContext) marshalOJson2map(ctx context.Context, sel ast.Select
 	return res
 }
 
-func (ec *executionContext) marshalOManagedResource2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMResᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.MRes) graphql.Marshaler {
+func (ec *executionContext) marshalOManagedResource2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResourceᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.ManagedResource) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -28951,7 +28951,7 @@ func (ec *executionContext) marshalOManagedResource2ᚕᚖkloudliteᚗioᚋapps�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx, sel, v[i])
+			ret[i] = ec.marshalNManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -28971,7 +28971,7 @@ func (ec *executionContext) marshalOManagedResource2ᚕᚖkloudliteᚗioᚋapps�
 	return ret
 }
 
-func (ec *executionContext) marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMRes(ctx context.Context, sel ast.SelectionSet, v *entities.MRes) graphql.Marshaler {
+func (ec *executionContext) marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedResource(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedResource) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -28993,7 +28993,7 @@ func (ec *executionContext) unmarshalOManagedResourceSpecIn2ᚖkloudliteᚗioᚋ
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOManagedService2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvcᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.MSvc) graphql.Marshaler {
+func (ec *executionContext) marshalOManagedService2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedServiceᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.ManagedService) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -29020,7 +29020,7 @@ func (ec *executionContext) marshalOManagedService2ᚕᚖkloudliteᚗioᚋapps�
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalNManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx, sel, v[i])
+			ret[i] = ec.marshalNManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -29040,7 +29040,7 @@ func (ec *executionContext) marshalOManagedService2ᚕᚖkloudliteᚗioᚋapps�
 	return ret
 }
 
-func (ec *executionContext) marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐMSvc(ctx context.Context, sel ast.SelectionSet, v *entities.MSvc) graphql.Marshaler {
+func (ec *executionContext) marshalOManagedService2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentities.ManagedService(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedService) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

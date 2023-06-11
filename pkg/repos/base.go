@@ -4,8 +4,8 @@ import "time"
 
 type BaseEntity struct {
 	Id           ID        `json:"id" bson:"id"`
-	CreationTime time.Time `json:"creation_time" bson:"creation_time"`
-	UpdateTime   time.Time `json:"update_time" bson:"update_time"`
+	CreationTime time.Time `json:"creationTime"`
+	UpdateTime   time.Time `json:"updateTime"`
 }
 
 func (c *BaseEntity) GetId() ID {

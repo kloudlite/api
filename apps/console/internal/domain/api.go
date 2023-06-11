@@ -127,11 +127,11 @@ type Domain interface {
 
 	ResyncRouter(ctx ConsoleContext, namespace, name string) error
 
-	ListManagedServices(ctx ConsoleContext, namespace string) ([]*entities.MSvc, error)
-	GetManagedService(ctx ConsoleContext, namespace, name string) (*entities.MSvc, error)
+	ListManagedServices(ctx ConsoleContext, namespace string) ([]*entities.ManagedService, error)
+	GetManagedService(ctx ConsoleContext, namespace, name string) (*entities.ManagedService, error)
 
-	CreateManagedService(ctx ConsoleContext, msvc entities.MSvc) (*entities.MSvc, error)
-	UpdateManagedService(ctx ConsoleContext, msvc entities.MSvc) (*entities.MSvc, error)
+	CreateManagedService(ctx ConsoleContext, msvc entities.ManagedService) (*entities.ManagedService, error)
+	UpdateManagedService(ctx ConsoleContext, msvc entities.ManagedService) (*entities.ManagedService, error)
 	DeleteManagedService(ctx ConsoleContext, namespace, name string) error
 
 	// Managed Service Templates
@@ -140,21 +140,21 @@ type Domain interface {
 	GetManagedSvcTemplate(category string, name string) (*entities.MsvcTemplateEntry, error)
 
 	OnApplyManagedServiceError(ctx ConsoleContext, errMsg string, namespace string, name string) error
-	OnDeleteManagedServiceMessage(ctx ConsoleContext, msvc entities.MSvc) error
-	OnUpdateManagedServiceMessage(ctx ConsoleContext, msvc entities.MSvc) error
+	OnDeleteManagedServiceMessage(ctx ConsoleContext, msvc entities.ManagedService) error
+	OnUpdateManagedServiceMessage(ctx ConsoleContext, msvc entities.ManagedService) error
 
 	ResyncManagedService(ctx ConsoleContext, namespace, name string) error
 
-	ListManagedResources(ctx ConsoleContext, namespace string) ([]*entities.MRes, error)
-	GetManagedResource(ctx ConsoleContext, namespace, name string) (*entities.MRes, error)
+	ListManagedResources(ctx ConsoleContext, namespace string) ([]*entities.ManagedResource, error)
+	GetManagedResource(ctx ConsoleContext, namespace, name string) (*entities.ManagedResource, error)
 
-	CreateManagedResource(ctx ConsoleContext, mres entities.MRes) (*entities.MRes, error)
-	UpdateManagedResource(ctx ConsoleContext, mres entities.MRes) (*entities.MRes, error)
+	CreateManagedResource(ctx ConsoleContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
+	UpdateManagedResource(ctx ConsoleContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	DeleteManagedResource(ctx ConsoleContext, namespace, name string) error
 
 	OnApplyManagedResourceError(ctx ConsoleContext, errMsg string, namespace string, name string) error
-	OnDeleteManagedResourceMessage(ctx ConsoleContext, mres entities.MRes) error
-	OnUpdateManagedResourceMessage(ctx ConsoleContext, mres entities.MRes) error
+	OnDeleteManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error
+	OnUpdateManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error
 
 	ResyncManagedResource(ctx ConsoleContext, namespace, name string) error
 }
