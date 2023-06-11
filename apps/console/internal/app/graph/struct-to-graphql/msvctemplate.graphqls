@@ -1,12 +1,12 @@
 type MsvcTemplate {
   category: String!
   displayName: String!
-  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry]!
+  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry!]!
 }
 
 input MsvcTemplateIn {
   category: String!
   displayName: String!
-  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryIn]!
+  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryIn!]!
 }
 

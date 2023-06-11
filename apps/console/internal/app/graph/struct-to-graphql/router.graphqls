@@ -1,169 +1,23 @@
-type Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec {
-  backendProtocol: String
-  basicAuth: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth
-  cors: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors
-  domains: [String]!
-  https: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttps
-  ingressClass: String
-  maxBodySizeInMB: Int
-  rateLimit: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimit
-  region: String
-  routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth {
-  enabled: Boolean!
-  secretName: String
-  username: String
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors {
-  allowCredentials: Boolean
-  enabled: Boolean
-  origins: [String]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttps {
-  clusterIssuer: String
-  enabled: Boolean!
-  forceRedirect: Boolean
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimit {
-  connections: Int
-  enabled: Boolean
-  rpm: Int
-  rps: Int
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes {
-  app: String
-  lambda: String
-  path: String!
-  port: Int!
-  rewrite: Boolean
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterStatus {
-  checks: Map
-  isReady: Boolean
-  lastReconcileTime: String
-  message: Map
-  resources: [Github_com__kloudlite__operator__apis__crds__v1_RouterStatusResources]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterStatusResources {
-  apiVersion: String
-  kind: String
-  name: String!
-  namespace: String!
-}
-
 type Router {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  enabled: Boolean
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides
   spec: Github_com__kloudlite__operator__apis__crds__v1_RouterSpec
-  status: Github_com__kloudlite__operator__apis__crds__v1_RouterStatus
-  syncStatus: Kloudlite_io__pkg__types_SyncStatus
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn {
-  enabled: Boolean!
-  secretName: String
-  username: String
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCorsIn {
-  allowCredentials: Boolean
-  enabled: Boolean
-  origins: [String]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttpsIn {
-  clusterIssuer: String
-  enabled: Boolean!
-  forceRedirect: Boolean
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecIn {
-  backendProtocol: String
-  basicAuth: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn
-  cors: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCorsIn
-  domains: [String]!
-  https: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttpsIn
-  ingressClass: String
-  maxBodySizeInMB: Int
-  rateLimit: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimitIn
-  region: String
-  routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimitIn {
-  connections: Int
-  enabled: Boolean
-  rpm: Int
-  rps: Int
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
-  app: String
-  lambda: String
-  path: String!
-  port: Int!
-  rewrite: Boolean
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterStatusIn {
-  checks: Map
-  isReady: Boolean
-  lastReconcileTime: String
-  message: Map
-  resources: [Github_com__kloudlite__operator__apis__crds__v1_RouterStatusResourcesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterStatusResourcesIn {
-  apiVersion: String
-  kind: String
-  name: String!
-  namespace: String!
+  status: Github_com__kloudlite__operator__pkg__operator_Status
+  syncStatus: Kloudlite_io__pkg__types_SyncStatus!
 }
 
 input RouterIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  enabled: Boolean
   kind: String!
-  metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides
-  spec: Github_com__kloudlite__operator__apis__crds__v1_RouterSpec
-  status: Github_com__kloudlite__operator__apis__crds__v1_RouterStatus
-  status: Github_com__kloudlite__operator__apis__crds__v1_RouterStatusIn
-  syncStatus: Kloudlite_io__pkg__types_SyncStatusIn
+  metadata: MetadataIn!
+  spec: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecIn
+  syncStatus: Kloudlite_io__pkg__types_SyncStatusIn!
 }
 

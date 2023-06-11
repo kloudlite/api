@@ -61,82 +61,84 @@ models:
     model:
       - github.com/99designs/gqlgen/graphql.Map
 
-  Metadata:
+  Metadata: &metadata-model
     model: k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta
+  MetadataIn: *metadata-model
 
-  MetadataIn:
-    model: k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta
-
-  Project:
+  Project: &project-model
     model: kloudlite.io/apps/console/internal/domain/entities.Project
-  ProjectIn:
-    model: kloudlite.io/apps/console/internal/domain/entities.Project
+  ProjectIn: *project-model
 
-  Workspace:
+  Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec: &project-spec-model
+    model: github.com/kloudlite/operator/apis/crds/v1.ProjectSpec
+  Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn: *project-spec-model
+
+  Workspace: &workspace-model
     model: kloudlite.io/apps/console/internal/domain/entities.Workspace
-  WorkspaceIn:
-    model: kloudlite.io/apps/console/internal/domain/entities.Workspace
+  WorkspaceIn: *workspace-model
 
-  Secret:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.Secret
-  SecretIn:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.Secret
+  Secret: &secret-model
+    model: kloudlite.io/apps/console/internal/domain/entities.Secret
+  SecretIn: *secret-model
 
-  Config:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.Config
-  ConfigIn:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.Config
-  App:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.App
-  AppIn:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.App
+  Config: &config-model
+    model: kloudlite.io/apps/console/internal/domain/entities.Config
+  ConfigIn: *config-model
 
-  Router:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.Router
-  RouterIn:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.Router
+  App: &app-model
+    model: kloudlite.io/apps/console/internal/domain/entities.App
+  AppIn: *app-model
 
-  Patch:
-    model:
-      - github.com/kloudlite/operator/pkg/json-patch.PatchOperation
-  PatchIn:
-    model:
-      - github.com/kloudlite/operator/pkg/json-patch.PatchOperation
-  Check:
-    model:
-      - github.com/kloudlite/operator/pkg/operator.Check
-  ManagedService:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.MSvc
-  ManagedServiceIn:
-    model:
-      - kloudlite.io/apps/console/internal/domain/entities.MSvc
+  Github_com__kloudlite__operator__apis__crds__v1_AppSpec: &app-spec-model
+    model: github.com/kloudlite/operator/apis/crds/v1.AppSpec
+  Github_com__kloudlite__operator__apis__crds__v1_AppSpecIn: *app-spec-model
 
-  ManagedResource:
-    model: kloudlite.io/apps/console/internal/domain/entities.MRes
-  ManagedResourceIn:
-    model: kloudlite.io/apps/console/internal/domain/entities.MRes
-
-  Status:
+  Github_com__kloudlite__operator__pkg__operator_Status:
     model: github.com/kloudlite/operator/pkg/operator.Status
 
-  Overrides:
-    model:
-      - github.com/kloudlite/operator/apis/crds/v1.JsonPatch
-  OverridesIn:
-    model:
-      - github.com/kloudlite/operator/apis/crds/v1.JsonPatch
-
-  SyncStatus:
+  Kloudlite_io__pkg__types_SyncStatus: &sync-status-model
     model: kloudlite.io/pkg/types.SyncStatus
+  Kloudlite_io__pkg__types_SyncStatusIn: *sync-status-model
+
+  Router: &router-model
+    model: kloudlite.io/apps/console/internal/domain/entities.Router
+  RouterIn: *router-model
+
+  Github_com__kloudlite__operator__apis__crds__v1_RouterSpec: &router-spec-model
+    model: github.com/kloudlite/operator/apis/crds/v1.RouterSpec
+
+  Github_com__kloudlite__operator__apis__crds__v1_RouterSpecIn: *router-spec-model
+
+  Patch: &patch-model
+    model: github.com/kloudlite/operator/pkg/json-patch.PatchOperation
+  PatchIn: *patch-model
+
+  Check:
+    model: github.com/kloudlite/operator/pkg/operator.Check
+
+  ManagedService: &managed-service-model
+    model: kloudlite.io/apps/console/internal/domain/entities.ManagedService
+  ManagedServiceIn: *managed-service-model
+
+  Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec: &managed-service-spec-model
+    model: github.com/kloudlite/operator/apis/crds/v1.ManagedServiceSpec
+  Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn: *managed-service-spec-model
+
+  ManagedResource: &managed-resource-model
+    model: kloudlite.io/apps/console/internal/domain/entities.ManagedResource
+  ManagedResourceIn: *managed-resource-model
+
+  Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec: &managed-resource-spec-model
+    model: github.com/kloudlite/operator/apis/crds/v1.ManagedResourceSpec
+  Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn: *managed-resource-spec-model
+
+  Github_com__kloudlite__operator__apis__crds__v1_EnvSpec: &env-spec-model
+    model: github.com/kloudlite/operator/apis/crds/v1.EnvSpec
+  Github_com__kloudlite__operator__apis__crds__v1_EnvSpecIn: *env-spec-model
+
+  Overrides: &overrides-model
+    model: github.com/kloudlite/operator/apis/crds/v1.JsonPatch
+  OverridesIn: *overrides-model
 
   SyncAction:
     model: kloudlite.io/pkg/types.SyncAction

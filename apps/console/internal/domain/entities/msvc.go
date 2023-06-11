@@ -6,7 +6,7 @@ import (
 	t "kloudlite.io/pkg/types"
 )
 
-type MSvc struct {
+type ManagedService struct {
 	repos.BaseEntity      `json:",inline"`
 	crdsv1.ManagedService `json:",inline" graphql:"uri=k8s://managedservices.crds.kloudlite.io"`
 	AccountName           string       `json:"accountName"`

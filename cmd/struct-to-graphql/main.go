@@ -58,7 +58,6 @@ import (
   {{- range $key, $value := .Imports}}
   {{$value}} {{$key | quote}}
   {{- end }}
-  // "reflect"
   parser "kloudlite.io/cmd/struct-to-graphql/pkg/parser"
   "kloudlite.io/pkg/k8s"
   "k8s.io/client-go/rest"
@@ -66,12 +65,8 @@ import (
   "golang.org/x/sync/errgroup"
   "context"
   "path"
-  // "github.com/pkg/errors"
-  // "strings"
   "flag"
   "fmt"
-  rApi "github.com/kloudlite/operator/pkg/operator"
-  // t "kloudlite.io/pkg/types"
 )
 
 func main() {
@@ -96,10 +91,6 @@ func main() {
     {{- range $key, $value :=  .Types}}
     "{{$key}}": {{$value}},
     {{- end }}
-  }
-
-  k8sTypes := map[string]any{
-    "Status": &rApi.Status{},
   }
 
   kCli, err := func() (k8s.ExtendedK8sClient, error) {
@@ -127,13 +118,13 @@ func main() {
     return os.WriteFile(path.Join(outDir, "scalars.graphqls"), scalarTypes, 0644)
   })
 
-  g.Go(func() error {
-    k8s_types, err := parser.KloudliteK8sTypes()
-    if err != nil {
-      panic(err)
-    }
-    return os.WriteFile(path.Join(outDir, "k8s_types.graphqls"), k8s_types, 0644)
-  })
+  // g.Go(func() error {
+  //   k8s_types, err := parser.KloudliteK8sTypes()
+  //   if err != nil {
+  //     panic(err)
+  //   }
+  //   return os.WriteFile(path.Join(outDir, "k8s_types.graphqls"), k8s_types, 0644)
+  // })
 
   p := parser.NewParser(kCli)
 
@@ -141,21 +132,6 @@ func main() {
     typeName := k
     typeValue := v
     // g.Go(func() error { 
-      p.LoadStruct(typeName, typeValue)
-    //   return nil
-    // })
-  }
-
-  f, err := os.Create(path.Join(outDir, "k8s-common-types" + ".graphqls"))
-  if err != nil {
-    panic(err)
-  }
-  defer f.Close()
-
-  for k, v := range k8sTypes {
-    typeName := k
-    typeValue := v
-    // g.Go(func() error {
       p.LoadStruct(typeName, typeValue)
     //   return nil
     // })

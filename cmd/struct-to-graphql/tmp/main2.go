@@ -15,8 +15,8 @@ import (
 )
 
 type Project struct {
-	repos.BaseEntity `json:",inline"`
-	crdsv1.Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
+	repos.BaseEntity `json:",inline" graphql:"noinput"`
+	crdsv1.Project   `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 	// SampleOne        int
 	// Sample2          int        `json:"sample2,omitempty"`
 	// Sample3          int        `json:",omitempty"`
@@ -38,10 +38,10 @@ type Project struct {
 	// }
 }
 
-type SampleType struct {
-	Item1 string
-	Item2 string `json:"item2,omitempty"`
-}
+// type SampleType struct {
+// 	Item1 string
+// 	Item2 string `json:"item2,omitempty"`
+// }
 
 func main() {
 	kCli, err := func() (k8s.ExtendedK8sClient, error) {

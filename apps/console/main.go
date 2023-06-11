@@ -32,7 +32,6 @@ func main() {
 				return logging.New(&logging.Options{Name: "console", Dev: isDev})
 			},
 		),
-
 		fx.Provide(func() (*rest.Config, error) {
 			if isDev {
 				return &rest.Config{

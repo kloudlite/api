@@ -14,7 +14,7 @@ import (
 )
 
 // Spec is the resolver for the spec field.
-func (r *managedServiceResolver) Spec(ctx context.Context, obj *entities.MSvc) (*model.ManagedServiceSpec, error) {
+func (r *managedServiceResolver) Spec(ctx context.Context, obj *entities.ManagedService) (*model.ManagedServiceSpec, error) {
 	var m model.ManagedServiceSpec
 	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
 		return nil, err
@@ -23,7 +23,7 @@ func (r *managedServiceResolver) Spec(ctx context.Context, obj *entities.MSvc) (
 }
 
 // Spec is the resolver for the spec field.
-func (r *managedServiceInResolver) Spec(ctx context.Context, obj *entities.MSvc, data *model.ManagedServiceSpecIn) error {
+func (r *managedServiceInResolver) Spec(ctx context.Context, obj *entities.ManagedService, data *model.ManagedServiceSpecIn) error {
 	if err := fn.JsonConversion(data, &obj.Spec); err != nil {
 		return err
 	}

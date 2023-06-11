@@ -6,7 +6,7 @@ import (
 	t "kloudlite.io/pkg/types"
 )
 
-type MRes struct {
+type ManagedResource struct {
 	repos.BaseEntity       `json:",inline"`
 	crdsv1.ManagedResource `json:",inline" graphql:"uri=k8s://managedresources.crds.kloudlite.io"`
 	AccountName            string       `json:"accountName"`

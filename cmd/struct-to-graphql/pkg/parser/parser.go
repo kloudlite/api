@@ -11,10 +11,10 @@ import (
 	"strings"
 	"time"
 
+	rApi "github.com/kloudlite/operator/pkg/operator"
 	"github.com/sanity-io/litter"
 	v1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"
 )
 
@@ -119,8 +119,9 @@ func sanitizePackagePath(t reflect.Type) string {
 }
 
 func fixPackagePath(pkgPath string) string {
-	pkgPath = strings.ReplaceAll(pkgPath, "/", "__")
 	pkgPath = strings.ReplaceAll(pkgPath, ".", "_")
+	pkgPath = strings.ReplaceAll(pkgPath, "/", "__")
+	pkgPath = strings.ReplaceAll(pkgPath, "-", "___")
 
 	return pkgPath
 }
@@ -152,43 +153,54 @@ func parseJsonTag(field reflect.StructField) JsonTag {
 }
 
 type GraphqlTag struct {
-	Uri        *string
-	Enum       []string
-	CommonType *bool
+	Uri     *string
+	Enum    []string
+	NoInput bool
 }
 
-func parseGraphqlTag(field reflect.StructField) GraphqlTag {
+func parseGraphqlTag(field reflect.StructField) (GraphqlTag, error) {
 	tag := field.Tag.Get("graphql")
 	if tag == "" {
-		return GraphqlTag{}
+		return GraphqlTag{}, nil
 	}
 
 	var gt GraphqlTag
 	sp := strings.Split(tag, ",")
 	for i := range sp {
 		kv := strings.Split(sp[i], "=")
-		if len(kv) != 2 {
-			return GraphqlTag{}
-		}
+		// fmt.Println(kv)
+		// if len(kv) != 2 {
+		// 	return GraphqlTag{}
+		// }
 
 		switch kv[0] {
 		case "uri":
 			{
+				if len(kv) != 2 {
+					return GraphqlTag{}, fmt.Errorf("invalid graphql tag %s, must be of form key=value", tag)
+				}
 				gt.Uri = &kv[1]
 			}
 		case "enum":
 			{
+				if len(kv) != 2 {
+					return GraphqlTag{}, fmt.Errorf("invalid graphql tag %s, must be of form key=value", tag)
+				}
 				enumVals := strings.Split(kv[1], ";")
 				gt.Enum = enumVals
 			}
-		case "common":
+		case "noinput":
 			{
-				gt.CommonType = fn.New(kv[1] == "true")
+				gt.NoInput = true
+			}
+		default:
+			{
+				return GraphqlTag{}, fmt.Errorf("unknown graphql tag %s", kv[0])
 			}
 		}
 	}
 
-	return gt
+	return gt, nil
 }
 
 func toFieldType(fieldType string, isRequired bool) string {
@@ -257,7 +269,10 @@ func (p *parser) GenerateGraphQLSchema(structName string, name string, t reflect
 			}
 		}
 
-		gt := parseGraphqlTag(field)
+		gt, err := parseGraphqlTag(field)
+		if err != nil {
+			panic(err)
+		}
 
 		f := Field{
 			ParentName:  name,
@@ -303,16 +318,23 @@ func (p *parser) GenerateGraphQLSchema(structName string, name string, t reflect
 
 		if fieldType != "" {
 			fields = append(fields, fmt.Sprintf("%s: %s", jt.Value, fieldType))
-			inputFields = append(inputFields, fmt.Sprintf("%s: %s", jt.Value, inputFieldType))
+			if !gt.NoInput {
+				inputFields = append(inputFields, fmt.Sprintf("%s: %s", jt.Value, inputFieldType))
+			}
 			continue
 		}
 	}
 
-	p.structs[structName].Types[name] = fields
-	p.structs[structName].Inputs[name+"In"] = inputFields
+	if len(fields) > 0 {
+		p.structs[structName].Types[name] = fields
+	}
+
+	if len(inputFields) > 0 {
+		p.structs[structName].Inputs[name+"In"] = inputFields
+	}
 }
 
-func (s *Struct) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...int) {
+func (p *parser) NavigateTree(s *Struct, name string, tree *v1.JSONSchemaProps, depth ...int) {
 	currDepth := func() int {
 		if len(depth) == 0 {
 			return 1
@@ -343,7 +365,7 @@ func (s *Struct) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...in
 			if v.Items.Schema != nil && v.Items.Schema.Type == "object" {
 				fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", typeName+genTypeName(k)), m[k]))
 				inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%sIn]", typeName+genTypeName(k)), m[k]))
-				s.NavigateTree(typeName+genTypeName(k), v.Items.Schema, currDepth+1)
+				p.NavigateTree(s, typeName+genTypeName(k), v.Items.Schema, currDepth+1)
 				continue
 			}
 
@@ -359,13 +381,38 @@ func (s *Struct) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...in
 					fields = append(fields, genFieldEntry(k, "Metadata! @goField(name: \"objectMeta\")", false))
 					inputFields = append(inputFields, genFieldEntry(k, "MetadataIn!", false))
 
+					metadata := struct {
+						Name        string            `json:"name"`
+						Namespace   string            `json:"namespace"`
+						Labels      map[string]string `json:"labels,omitempty"`
+						Annotations map[string]string `json:"annotations,omitempty"`
+						Generation  int64             `json:"generation"`
+					}{}
+					p.GenerateGraphQLSchema(commonLabel, "Metadata", reflect.TypeOf(metadata))
 					continue
 				}
 
-				// if k == "status" {
-				// 	fields = append(fields, genFieldEntry(k, "Status", m[k]))
-				// 	continue
-				// }
+				if k == "status" {
+					pkgPath := fixPackagePath("github.com/kloudlite/operator/pkg/operator")
+
+					gType := genTypeName(pkgPath + "_" + "Status")
+
+					fields = append(fields, genFieldEntry(k, gType, m[k]))
+
+					p2 := newParser(p.kCli)
+					p2.GenerateGraphQLSchema(commonLabel, gType, reflect.TypeOf(rApi.Status{}))
+
+					for _, v := range p2.structs {
+						for k, v2 := range v.Types {
+							p.structs[commonLabel].Types[k] = v2
+						}
+						for k, v2 := range v.Enums {
+							p.structs[commonLabel].Enums[k] = v2
+						}
+					}
+
+					continue
+				}
 			}
 
 			if len(v.Properties) == 0 {
@@ -376,7 +423,7 @@ func (s *Struct) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...in
 
 			fields = append(fields, genFieldEntry(k, typeName+genTypeName(k), m[k]))
 			inputFields = append(inputFields, genFieldEntry(k, typeName+genTypeName(k)+"In", m[k]))
-			s.NavigateTree(typeName+genTypeName(k), &v, currDepth+1)
+			p.NavigateTree(s, typeName+genTypeName(k), &v, currDepth+1)
 			continue
 		}
 
@@ -388,8 +435,8 @@ func (s *Struct) NavigateTree(name string, tree *v1.JSONSchemaProps, depth ...in
 	s.Inputs[typeName+"In"] = inputFields
 }
 
-func (s *Struct) GenerateFromJsonSchema(name string, schema *v1.JSONSchemaProps) {
-	s.NavigateTree(name, schema)
+func (p *parser) GenerateFromJsonSchema(s *Struct, name string, schema *v1.JSONSchemaProps) {
+	p.NavigateTree(s, name, schema)
 }
 
 func (p *parser) LoadStruct(name string, data any) {
