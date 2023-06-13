@@ -54,7 +54,7 @@ tasks:
         > ./internal/app/_struct-to-graphql/main.go
       - |+
         pushd ./internal/app/_struct-to-graphql
-        go run main.go --out-dir ../graph/struct-to-graphql
+        go run main.go --out-dir ../graph/struct-to-graphql --with-pagination
         popd
       - rm -rf ./internal/app/_struct-to-graphql
 

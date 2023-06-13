@@ -15,6 +15,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"kloudlite.io/pkg/errors"
 	fn "kloudlite.io/pkg/functions"
+	t "kloudlite.io/pkg/types"
 )
 
 type dbRepo[T Entity] struct {
@@ -134,25 +135,80 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 	return t[0], nil
 }
 
-func (repo *dbRepo[T]) FindPaginated(ctx context.Context, query Query, page int64, size int64, opts ...Opts) (PaginatedRecord[T], error) {
-	results := make([]T, 0)
-	var offset int64 = (page - 1) * size
-	curr, e := repo.db.Collection(repo.collectionName).Find(
-		ctx, query.Filter, &options.FindOptions{
-			Limit: &size,
-			Skip:  &offset,
-			Sort:  query.Sort,
+func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination *t.CursorPagination) (*PaginatedRecord[T], error) {
+	if pagination == nil {
+		pagination = &t.CursorPagination{First: 10, After: ""}
+	}
+
+	queryFilter := Filter{}
+
+	for k, v := range filter {
+		queryFilter[k] = v
+	}
+
+	queryFilter["creationTime"] = bson.M{"$gte": pagination.After}
+
+	results := make([]T, 0, pagination.First+1)
+	curr, err := repo.db.Collection(repo.collectionName).Find(
+		ctx, filter, &options.FindOptions{
+			Limit: fn.New(pagination.First + 1),
+			Sort:  map[string]any{"creationTime": 1},
 		},
 	)
-	e = curr.All(ctx, results)
+	if err != nil {
+		return nil, err
+	}
 
-	total, e := repo.db.Collection(repo.collectionName).CountDocuments(ctx, query.Filter)
+	if err = curr.All(ctx, &results); err != nil {
+		return nil, err
+	}
 
-	return PaginatedRecord[T]{
-		Results:    results,
+	total, err := repo.db.Collection(repo.collectionName).CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, err
+	}
+
+	pageInfo := PageInfo{}
+
+	if len(results) > 0 {
+		pageInfo.StartCursor = results[0].GetCreationTime().Format(time.RFC3339)
+		pageInfo.EndCursor = results[len(results)-1].GetCreationTime().Format(time.RFC3339)
+		pageInfo.HasNextPage = len(results) > int(pagination.First)
+	}
+
+	results = append(results[:len(results)-1])
+
+	edges := make([]RecordEdge[T], len(results))
+	for i := range results {
+		edges[i] = RecordEdge[T]{Node: results[i], Cursor: results[i].GetCreationTime().Format(time.RFC3339)}
+	}
+
+	return &PaginatedRecord[T]{
+		Edges:      edges,
+		PageInfo:   pageInfo,
 		TotalCount: total,
-	}, e
+	}, nil
 }
+
+// func (repo *dbRepo[T]) FindPaginated(ctx context.Context, query Query, page int64, size int64, opts ...Opts) (PaginatedRecord[T], error) {
+// 	results := make([]T, 0)
+// 	var offset int64 = (page - 1) * size
+// 	curr, e := repo.db.Collection(repo.collectionName).Find(
+// 		ctx, query.Filter, &options.FindOptions{
+// 			Limit: &size,
+// 			Skip:  &offset,
+// 			Sort:  query.Sort,
+// 		},
+// 	)
+// 	e = curr.All(ctx, results)
+//
+// 	total, e := repo.db.Collection(repo.collectionName).CountDocuments(ctx, query.Filter)
+//
+// 	return PaginatedRecord[T]{
+// 		Results:    results,
+// 		TotalCount: total,
+// 	}, e
+// }
 
 func (repo *dbRepo[T]) FindById(ctx context.Context, id ID) (T, error) {
 	var result T
@@ -357,6 +413,11 @@ func (repo *dbRepo[T]) IndexFields(ctx context.Context, indices []IndexField) er
 	if len(indices) == 0 {
 		return nil
 	}
+
+	indices = append(indices, IndexField{
+		Field:  []IndexKey{{Key: "creationTime", Value: IndexAsc}},
+		Unique: false,
+	})
 	// var models []mongo.IndexModel
 	for _, f := range indices {
 		b := bson.D{}

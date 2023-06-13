@@ -6,6 +6,38 @@ global:
   name: sample
 ---
 
+label: List Projects 2
+query: |+
+  query Core_listProjects($clusterName: String, $first: Int, $after: String) {
+    core_listProjects(clusterName: $clusterName, first: $first, after: $after) {
+      edges {
+        cursor
+        node {
+          accountName
+          apiVersion
+          kind
+          metadata {
+            name
+            namespace
+          }
+        }
+      }
+      pageInfo {
+        endCursor
+        hasNextPage
+        hasPreviousPage
+        startCursor
+      }
+      totalCount
+    }
+  }
+variables:
+  clusterName: "{{.clusterName}}"
+  first: 10
+  after: ""
+
+---
+
 label: List Projects
 query: |+
   query Core_listProjects {
