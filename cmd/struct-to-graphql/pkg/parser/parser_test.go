@@ -13,6 +13,7 @@ import (
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
 	"k8s.io/client-go/rest"
 	"kloudlite.io/pkg/k8s"
+	"kloudlite.io/pkg/types"
 )
 
 func Test_GeneratedGraphqlSchema(t *testing.T) {
@@ -30,8 +31,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		kCli    k8s.ExtendedK8sClient
 	}
 	type args struct {
-		name string
-		data any
+		name           string
+		data           any
+		withPagination bool
 	}
 	tests := []struct {
 		name   string
@@ -661,6 +663,96 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				},
 			},
 		},
+		{
+			name: "test case 17 (with pagination enabled)",
+			fields: fields{
+				structs: map[string]*Struct{},
+				kCli:    kCli,
+			},
+			args: args{
+				name: "User",
+				data: struct {
+					ID       int
+					Username string
+					Gender   string
+				}{},
+				withPagination: true,
+			},
+			want: map[string]*Struct{
+				"User": {
+					Types: map[string][]string{
+						"User": {
+							"ID: Int!",
+							"Username: String!",
+							"Gender: String!",
+						},
+						"UserPaginatedRecords": {
+							"totalCount: Int!",
+							"edges: [UserEdge!]!",
+							"pageInfo: PageInfo!",
+						},
+						"UserEdge": {
+							"node: User!",
+							"cursor: String!",
+						},
+					},
+					Inputs: map[string][]string{
+						"UserIn": {
+							"ID: Int!",
+							"Username: String!",
+							"Gender: String!",
+						},
+					},
+					Enums: map[string][]string{},
+				},
+				"common-types": {
+					Types: map[string][]string{
+						"PageInfo": {
+							"hasNextPage: Boolean!",
+							"hasPreviousPage: Boolean!",
+							"startCursor: String",
+							"endCursor: String",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "test case 18 (with graphql (noinput))",
+			fields: fields{
+				structs: map[string]*Struct{},
+				kCli:    kCli,
+			},
+			args: args{
+				name: "User",
+				data: struct {
+					SyncStatus types.SyncStatus `json:"syncStatus" graphql:"noinput"`
+				}{},
+			},
+			want: map[string]*Struct{
+				"User": {
+					Types: map[string][]string{
+						"User": {
+							"syncStatus: Kloudlite_io__pkg__types_SyncStatus!",
+						},
+					},
+					Inputs: map[string][]string{},
+					Enums:  map[string][]string{},
+				},
+				"common-types": {
+					Types: map[string][]string{
+						"Kloudlite_io__pkg__types_SyncStatus": {
+							"action: String!",
+							"error: String",
+							"generation: Int!",
+							"lastSyncedAt: Date",
+							"state: String",
+							"syncScheduledAt: Date",
+						},
+					},
+				},
+			},
+		},
 	}
 
 	for _, _tt := range tests {
@@ -674,6 +766,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 
 			p.LoadStruct(tt.args.name, tt.args.data)
 			buf := new(bytes.Buffer)
+			if tt.args.withPagination {
+				p.WithPagination()
+			}
 			p.PrintSchema(buf)
 			got := buf.String()
 
@@ -684,13 +779,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			p2.PrintSchema(buf2)
 			want := buf2.String()
 
-			// if !td.CmpString(t, got, want) {
-			// 	t.Errorf("Failed")
-			// 	// t.Errorf("GeneratedGraphqlSchema() = \n***\n%v\n***\n but want \n***\n%v\n***\n", got, want)
-			// }
-
 			if got != want {
-				// t.Errorf("Result not as expected:\n%v", diff.LineDiff(got, want))
 				dir := "/tmp/x"
 				g, err2 := os.Create(filepath.Join(dir, "./got.txt"))
 				if err2 != nil {
@@ -711,12 +800,6 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				}
 
 				t.Errorf(string(b))
-
-				// dmp := diffmatchpatch.New()
-				// diffs := dmp.DiffMain(got, want, false)
-				// t.Errorf(dmp.Diff)
-				// t.Errorf(dmp.DiffPrettyText(diffs))
-				// t.Errorf("GeneratedGraphqlSchema() = \n***\n%v\n***\n but want \n***\n%v\n***\n", got, want)
 			}
 		})
 	}

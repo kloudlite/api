@@ -2,11 +2,25 @@ type Workspace {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  creationTime: Date!
+  id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
   spec: Github_com__kloudlite__operator__apis__crds__v1_EnvSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
+  updateTime: Date!
+}
+
+type WorkspaceEdge {
+  cursor: String!
+  node: Workspace!
+}
+
+type WorkspacePaginatedRecords {
+  edges: [WorkspaceEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 input WorkspaceIn {
@@ -16,6 +30,5 @@ input WorkspaceIn {
   kind: String!
   metadata: MetadataIn!
   spec: Github_com__kloudlite__operator__apis__crds__v1_EnvSpecIn
-  syncStatus: Kloudlite_io__pkg__types_SyncStatusIn!
 }
 

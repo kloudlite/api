@@ -7,22 +7,67 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/console/internal/app/graph/generated"
+	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/apps/console/internal/domain/entities"
+	fn "kloudlite.io/pkg/functions"
 )
+
+// CreationTime is the resolver for the creationTime field.
+func (r *workspaceResolver) CreationTime(ctx context.Context, obj *entities.Workspace) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("resource is nil")
+	}
+	return obj.BaseEntity.CreationTime.Format(time.RFC3339), nil
+}
+
+// ID is the resolver for the id field.
+func (r *workspaceResolver) ID(ctx context.Context, obj *entities.Workspace) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("resource is nil")
+	}
+	return string(obj.Id), nil
+}
+
+// Spec is the resolver for the spec field.
+func (r *workspaceResolver) Spec(ctx context.Context, obj *entities.Workspace) (*model.GithubComKloudliteOperatorApisCrdsV1EnvSpec, error) {
+	m := &model.GithubComKloudliteOperatorApisCrdsV1EnvSpec{}
+	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
+		return nil, err
+	}
+	return m, nil
+}
+
+// UpdateTime is the resolver for the updateTime field.
+func (r *workspaceResolver) UpdateTime(ctx context.Context, obj *entities.Workspace) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("resource is nil")
+	}
+	return obj.BaseEntity.UpdateTime.Format(time.RFC3339), nil
+}
 
 // Metadata is the resolver for the metadata field.
 func (r *workspaceInResolver) Metadata(ctx context.Context, obj *entities.Workspace, data *v1.ObjectMeta) error {
-	if data != nil {
-		obj.ObjectMeta = *data
-		return nil
+	if data == nil {
+		return fmt.Errorf("data is nil")
 	}
-	return fmt.Errorf("data is nil")
+	obj.ObjectMeta = *data
+	return nil
 }
+
+// Spec is the resolver for the spec field.
+func (r *workspaceInResolver) Spec(ctx context.Context, obj *entities.Workspace, data *model.GithubComKloudliteOperatorApisCrdsV1EnvSpecIn) error {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
+}
+
+// Workspace returns generated.WorkspaceResolver implementation.
+func (r *Resolver) Workspace() generated.WorkspaceResolver { return &workspaceResolver{r} }
 
 // WorkspaceIn returns generated.WorkspaceInResolver implementation.
 func (r *Resolver) WorkspaceIn() generated.WorkspaceInResolver { return &workspaceInResolver{r} }
 
+type workspaceResolver struct{ *Resolver }
 type workspaceInResolver struct{ *Resolver }

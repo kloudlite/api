@@ -71,7 +71,9 @@ import (
 
 func main() {
   var outDir string
+  var withPagination bool
   flag.StringVar(&outDir, "out-dir", "struct-to-graphql", "--out-dir <dir-name>")
+	flag.BoolVar(&withPagination, "with-pagination", false, "--with-pagination")
   flag.Parse()
 
   stat, err := os.Stat(outDir)
@@ -140,6 +142,10 @@ func main() {
   if err := g.Wait(); err != nil {
     panic(err)
   }
+
+	if withPagination {
+		p.WithPagination()
+	}
 
   if err := p.DumpSchema(outDir); err != nil {
     panic(err)

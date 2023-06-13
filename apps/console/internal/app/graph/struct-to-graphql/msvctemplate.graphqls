@@ -4,9 +4,14 @@ type MsvcTemplate {
   items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry!]!
 }
 
-input MsvcTemplateIn {
-  category: String!
-  displayName: String!
-  items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryIn!]!
+type MsvcTemplateEdge {
+  cursor: String!
+  node: MsvcTemplate!
+}
+
+type MsvcTemplatePaginatedRecords {
+  edges: [MsvcTemplateEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 

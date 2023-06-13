@@ -7,37 +7,6 @@ import (
 	"strings"
 )
 
-func getGraphqlType(parentName string, fieldName string, t reflect.Type, jt JsonTag, gt GraphqlTag) (ctype string) {
-	switch t.Kind() {
-	// case reflect.String:
-	// 	{
-	// 		pkgPath := sanitizePackagePath(t)
-	// 		if gt.Enum != nil {
-	// 			if pkgPath == "" {
-	// 				return parentName + fieldName
-	// 			}
-	// 			return pkgPath + "_" + t.Name()
-	// 		}
-	// 		return "String"
-	// 	}
-	case reflect.Struct:
-		{
-			pkgPath := sanitizePackagePath(t)
-
-			childType := func() string {
-				if pkgPath != "" {
-					return genTypeName(pkgPath + "_" + t.Name())
-				}
-				return genTypeName(parentName + fieldName)
-			}()
-
-			return childType
-		}
-	default:
-		panic(fmt.Sprintf("unsupported type %s", t.Kind()))
-	}
-}
-
 func (f *Field) handleString() (fieldType string, inputType string) {
 	childType := f.ParentName + f.Name
 	if f.Enum != nil {
@@ -99,12 +68,20 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 		return "", ""
 	}
 
-	if f.Inline {
-		p2 := newParser(f.Parser.kCli)
-		p2.structs[f.StructName] = newStruct()
-		p2.GenerateGraphQLSchema(f.StructName, childType, f.Type)
+	p2 := newParser(f.Parser.kCli)
 
-		fields2, inputFields2 := f.Parser.structs[f.StructName].mergeParser(p2.structs[f.StructName], childType)
+	structName := func() string {
+		if pkgPath == "" {
+			return f.StructName
+		}
+		return commonLabel
+	}()
+
+	p2.structs[structName] = newStruct()
+	p2.GenerateGraphQLSchema(structName, childType, f.Type)
+
+	if f.Inline {
+		fields2, inputFields2 := f.Parser.structs[f.StructName].mergeParser(p2.structs[structName], childType)
 		*f.Fields = append(*f.Fields, fields2...)
 
 		if !f.GraphqlTag.NoInput {
@@ -119,11 +96,24 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 		inputFieldType = toFieldType(childType+"In", !f.OmitEmpty)
 	}
 
-	if pkgPath == "" {
-		f.Parser.GenerateGraphQLSchema(f.StructName, childType, f.Type)
-		return
+	for k, v := range p2.structs {
+		if _, ok := f.Parser.structs[k]; !ok {
+			f.Parser.structs[k] = newStruct()
+		}
+
+		for k2, v2 := range v.Types {
+			f.Parser.structs[k].Types[k2] = v2
+		}
+		for k2, v2 := range v.Enums {
+			f.Parser.structs[k].Enums[k2] = v2
+		}
+
+		if !f.GraphqlTag.NoInput {
+			for k2, v2 := range v.Inputs {
+				f.Parser.structs[k].Inputs[k2] = v2
+			}
+		}
 	}
-	f.Parser.GenerateGraphQLSchema(commonLabel, childType, f.Type)
 
 	return fieldType, inputFieldType
 }
@@ -136,7 +126,6 @@ func (f *Field) handleSlice() (fieldType string, inputFieldType string) {
 			PkgPath:     f.Type.Elem().PkgPath(),
 			Type:        f.Type.Elem(),
 			StructName:  f.StructName,
-			kcli:        nil,
 			Fields:      f.Fields,
 			InputFields: f.InputFields,
 			Parser:      f.Parser,

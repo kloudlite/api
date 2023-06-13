@@ -242,6 +242,8 @@ type Github_com__kloudlite__operator__pkg__operator_Check {
 }
 
 type Github_com__kloudlite__operator__pkg__operator_ResourceRef {
+  apiVersion: String
+  kind: String
   name: String!
   namespace: String!
 }
@@ -309,6 +311,13 @@ type Metadata {
   labels: Map
   name: String!
   namespace: String!
+}
+
+type PageInfo {
+  endCursor: String
+  hasNextPage: Boolean!
+  hasPreviousPage: Boolean!
+  startCursor: String
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn {
@@ -546,66 +555,6 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
   path: String!
   port: Int!
   rewrite: Boolean
-}
-
-input Github_com__kloudlite__operator__pkg__operator_CheckIn {
-  generation: Int
-  message: String
-  status: Boolean!
-}
-
-input Github_com__kloudlite__operator__pkg__operator_ResourceRefIn {
-  name: String!
-  namespace: String!
-}
-
-input Github_com__kloudlite__operator__pkg__raw___json_RawJsonIn {
-  RawMessage: Any
-}
-
-input Kloudlite_io__apps__console__internal__domain__entities_InputFieldIn {
-  defaultValue: Any!
-  inputType: String!
-  label: String!
-  max: Float
-  min: Float
-  name: String!
-  required: Boolean
-  unit: String
-}
-
-input Kloudlite_io__apps__console__internal__domain__entities_MresTemplateIn {
-  description: String!
-  displayName: String!
-  fields: [Kloudlite_io__apps__console__internal__domain__entities_InputFieldIn!]!
-  name: String!
-  outputs: [Kloudlite_io__apps__console__internal__domain__entities_OutputFieldIn!]!
-}
-
-input Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryIn {
-  active: Boolean!
-  description: String!
-  displayName: String!
-  fields: [Kloudlite_io__apps__console__internal__domain__entities_InputFieldIn!]!
-  logoUrl: String!
-  name: String!
-  outputs: [Kloudlite_io__apps__console__internal__domain__entities_OutputFieldIn!]!
-  resources: [Kloudlite_io__apps__console__internal__domain__entities_MresTemplateIn!]!
-}
-
-input Kloudlite_io__apps__console__internal__domain__entities_OutputFieldIn {
-  description: String!
-  label: String!
-  name: String!
-}
-
-input Kloudlite_io__pkg__types_SyncStatusIn {
-  action: String!
-  error: String
-  generation: Int!
-  lastSyncedAt: Date
-  state: String
-  syncScheduledAt: Date
 }
 
 input MetadataIn {

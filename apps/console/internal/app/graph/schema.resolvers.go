@@ -9,73 +9,86 @@ import (
 	"fmt"
 
 	"kloudlite.io/apps/console/internal/app/graph/generated"
+	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/apps/console/internal/domain"
 	"kloudlite.io/apps/console/internal/domain/entities"
 )
 
 // CoreCreateProject is the resolver for the core_createProject field.
 func (r *mutationResolver) CoreCreateProject(ctx context.Context, project entities.Project) (*entities.Project, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateProject - core_createProject"))
+	return r.Domain.CreateProject(toConsoleContext(ctx), project)
 }
 
 // CoreUpdateProject is the resolver for the core_updateProject field.
 func (r *mutationResolver) CoreUpdateProject(ctx context.Context, project entities.Project) (*entities.Project, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateProject - core_updateProject"))
+	return r.Domain.UpdateProject(toConsoleContext(ctx), project)
 }
 
 // CoreDeleteProject is the resolver for the core_deleteProject field.
 func (r *mutationResolver) CoreDeleteProject(ctx context.Context, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteProject - core_deleteProject"))
+	if err := r.Domain.DeleteProject(toConsoleContext(ctx), name); err != nil {
+		return false, nil
+	}
+	return true, nil
 }
 
 // CoreCreateWorkspace is the resolver for the core_createWorkspace field.
 func (r *mutationResolver) CoreCreateWorkspace(ctx context.Context, env entities.Workspace) (*entities.Workspace, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateWorkspace - core_createWorkspace"))
+	return r.Domain.CreateWorkspace(toConsoleContext(ctx), env)
 }
 
 // CoreUpdateWorkspace is the resolver for the core_updateWorkspace field.
 func (r *mutationResolver) CoreUpdateWorkspace(ctx context.Context, env entities.Workspace) (*entities.Workspace, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateWorkspace - core_updateWorkspace"))
+	return r.Domain.UpdateWorkspace(toConsoleContext(ctx), env)
 }
 
 // CoreDeleteWorkspace is the resolver for the core_deleteWorkspace field.
 func (r *mutationResolver) CoreDeleteWorkspace(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteWorkspace - core_deleteWorkspace"))
+	if err := r.Domain.DeleteWorkspace(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateApp is the resolver for the core_createApp field.
 func (r *mutationResolver) CoreCreateApp(ctx context.Context, app entities.App) (*entities.App, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateApp - core_createApp"))
+	return r.Domain.CreateApp(toConsoleContext(ctx), app)
 }
 
 // CoreUpdateApp is the resolver for the core_updateApp field.
 func (r *mutationResolver) CoreUpdateApp(ctx context.Context, app entities.App) (*entities.App, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateApp - core_updateApp"))
+	return r.Domain.UpdateApp(toConsoleContext(ctx), app)
 }
 
 // CoreDeleteApp is the resolver for the core_deleteApp field.
 func (r *mutationResolver) CoreDeleteApp(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteApp - core_deleteApp"))
+	if err := r.Domain.DeleteApp(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateConfig is the resolver for the core_createConfig field.
 func (r *mutationResolver) CoreCreateConfig(ctx context.Context, config entities.Config) (*entities.Config, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateConfig - core_createConfig"))
+	return r.Domain.CreateConfig(toConsoleContext(ctx), config)
 }
 
 // CoreUpdateConfig is the resolver for the core_updateConfig field.
 func (r *mutationResolver) CoreUpdateConfig(ctx context.Context, config entities.Config) (*entities.Config, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateConfig - core_updateConfig"))
+	return r.Domain.UpdateConfig(toConsoleContext(ctx), config)
 }
 
 // CoreDeleteConfig is the resolver for the core_deleteConfig field.
 func (r *mutationResolver) CoreDeleteConfig(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteConfig - core_deleteConfig"))
+	if err := r.Domain.DeleteConfig(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateSecret is the resolver for the core_createSecret field.
 func (r *mutationResolver) CoreCreateSecret(ctx context.Context, secret entities.Secret) (*entities.Secret, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateSecret - core_createSecret"))
+	return r.Domain.CreateSecret(toConsoleContext(ctx), secret)
 }
 
 // CoreUpdateSecret is the resolver for the core_updateSecret field.
@@ -85,187 +98,309 @@ func (r *mutationResolver) CoreUpdateSecret(ctx context.Context, secret entities
 
 // CoreDeleteSecret is the resolver for the core_deleteSecret field.
 func (r *mutationResolver) CoreDeleteSecret(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteSecret - core_deleteSecret"))
+	if err := r.Domain.DeleteSecret(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateRouter is the resolver for the core_createRouter field.
 func (r *mutationResolver) CoreCreateRouter(ctx context.Context, router entities.Router) (*entities.Router, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateRouter - core_createRouter"))
+	return r.Domain.CreateRouter(toConsoleContext(ctx), router)
 }
 
 // CoreUpdateRouter is the resolver for the core_updateRouter field.
 func (r *mutationResolver) CoreUpdateRouter(ctx context.Context, router entities.Router) (*entities.Router, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateRouter - core_updateRouter"))
+	return r.Domain.UpdateRouter(toConsoleContext(ctx), router)
 }
 
 // CoreDeleteRouter is the resolver for the core_deleteRouter field.
 func (r *mutationResolver) CoreDeleteRouter(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteRouter - core_deleteRouter"))
+	if err := r.Domain.DeleteRouter(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateManagedService is the resolver for the core_createManagedService field.
 func (r *mutationResolver) CoreCreateManagedService(ctx context.Context, msvc entities.ManagedService) (*entities.ManagedService, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateManagedService - core_createManagedService"))
+	return r.Domain.CreateManagedService(toConsoleContext(ctx), msvc)
 }
 
 // CoreUpdateManagedService is the resolver for the core_updateManagedService field.
 func (r *mutationResolver) CoreUpdateManagedService(ctx context.Context, msvc entities.ManagedService) (*entities.ManagedService, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateManagedService - core_updateManagedService"))
+	return r.Domain.UpdateManagedService(toConsoleContext(ctx), msvc)
 }
 
 // CoreDeleteManagedService is the resolver for the core_deleteManagedService field.
 func (r *mutationResolver) CoreDeleteManagedService(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteManagedService - core_deleteManagedService"))
+	if err := r.Domain.DeleteManagedService(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateManagedResource is the resolver for the core_createManagedResource field.
 func (r *mutationResolver) CoreCreateManagedResource(ctx context.Context, mres entities.ManagedResource) (*entities.ManagedResource, error) {
-	panic(fmt.Errorf("not implemented: CoreCreateManagedResource - core_createManagedResource"))
+	return r.Domain.CreateManagedResource(toConsoleContext(ctx), mres)
 }
 
 // CoreUpdateManagedResource is the resolver for the core_updateManagedResource field.
 func (r *mutationResolver) CoreUpdateManagedResource(ctx context.Context, mres entities.ManagedResource) (*entities.ManagedResource, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateManagedResource - core_updateManagedResource"))
+	return r.Domain.UpdateManagedResource(toConsoleContext(ctx), mres)
 }
 
 // CoreDeleteManagedResource is the resolver for the core_deleteManagedResource field.
 func (r *mutationResolver) CoreDeleteManagedResource(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreDeleteManagedResource - core_deleteManagedResource"))
+	if err := r.Domain.DeleteManagedResource(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCheckNameAvailability is the resolver for the core_checkNameAvailability field.
 func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, resType domain.ResType, name string) (*domain.CheckNameAvailabilityOutput, error) {
-	panic(fmt.Errorf("not implemented: CoreCheckNameAvailability - core_checkNameAvailability"))
+	return r.Domain.CheckNameAvailability(ctx, resType, toConsoleContext(ctx).GetAccountName(), name)
 }
 
 // CoreListProjects is the resolver for the core_listProjects field.
-func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *string) ([]*entities.Project, error) {
-	panic(fmt.Errorf("not implemented: CoreListProjects - core_listProjects"))
+func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *string, first *int, after *string) (*model.ProjectPaginatedRecords, error) {
+	cc := toConsoleContext(ctx)
+	p, err := r.Domain.ListProjects(ctx, cc.UserId, cc.AccountName, clusterName, nil)
+	if err != nil {
+		return nil, err
+	}
+
+	pe := make([]*model.ProjectEdge, len(p.Edges))
+	for i := range p.Edges {
+		pe[i] = &model.ProjectEdge{
+			Node:   p.Edges[i].Node,
+			Cursor: p.Edges[i].Cursor.(string),
+		}
+	}
+
+	m := model.ProjectPaginatedRecords{
+		Edges: pe,
+		PageInfo: &model.PageInfo{
+			EndCursor:       &p.PageInfo.EndCursor,
+			HasNextPage:     p.PageInfo.HasNextPage,
+			HasPreviousPage: p.PageInfo.HasPrevPage,
+			StartCursor:     &p.PageInfo.StartCursor,
+		},
+		TotalCount: int(p.TotalCount),
+	}
+
+	return &m, nil
 }
 
 // CoreGetProject is the resolver for the core_getProject field.
 func (r *queryResolver) CoreGetProject(ctx context.Context, name string) (*entities.Project, error) {
-	panic(fmt.Errorf("not implemented: CoreGetProject - core_getProject"))
+	return r.Domain.GetProject(toConsoleContext(ctx), name)
 }
 
 // CoreResyncProject is the resolver for the core_resyncProject field.
 func (r *queryResolver) CoreResyncProject(ctx context.Context, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncProject - core_resyncProject"))
+	if err := r.Domain.ResyncProject(toConsoleContext(ctx), name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListWorkspaces is the resolver for the core_listWorkspaces field.
-func (r *queryResolver) CoreListWorkspaces(ctx context.Context, namespace string) ([]*entities.Workspace, error) {
-	panic(fmt.Errorf("not implemented: CoreListWorkspaces - core_listWorkspaces"))
+func (r *queryResolver) CoreListWorkspaces(ctx context.Context, namespace string) (*model.WorkspacePaginatedRecords, error) {
+	_, err := r.Domain.ListWorkspaces(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.WorkspacePaginatedRecords{}, nil
 }
 
 // CoreGetWorkspace is the resolver for the core_getWorkspace field.
 func (r *queryResolver) CoreGetWorkspace(ctx context.Context, namespace string, name string) (*entities.Workspace, error) {
-	panic(fmt.Errorf("not implemented: CoreGetWorkspace - core_getWorkspace"))
+	return r.Domain.GetWorkspace(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncWorkspace is the resolver for the core_resyncWorkspace field.
 func (r *queryResolver) CoreResyncWorkspace(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncWorkspace - core_resyncWorkspace"))
+	if err := r.Domain.ResyncWorkspace(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListApps is the resolver for the core_listApps field.
-func (r *queryResolver) CoreListApps(ctx context.Context, namespace string) ([]*entities.App, error) {
-	panic(fmt.Errorf("not implemented: CoreListApps - core_listApps"))
+func (r *queryResolver) CoreListApps(ctx context.Context, namespace string) (*model.AppPaginatedRecords, error) {
+	_, err := r.Domain.ListApps(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+	return &model.AppPaginatedRecords{}, nil
+
+	// if a == nil {
+	// 	return make([]*entities.App, 0), nil
+	// }
+	// return a, nil
 }
 
 // CoreGetApp is the resolver for the core_getApp field.
 func (r *queryResolver) CoreGetApp(ctx context.Context, namespace string, name string) (*entities.App, error) {
-	panic(fmt.Errorf("not implemented: CoreGetApp - core_getApp"))
+	return r.Domain.GetApp(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncApp is the resolver for the core_resyncApp field.
 func (r *queryResolver) CoreResyncApp(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncApp - core_resyncApp"))
+	if err := r.Domain.ResyncApp(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListConfigs is the resolver for the core_listConfigs field.
-func (r *queryResolver) CoreListConfigs(ctx context.Context, namespace string) ([]*entities.Config, error) {
-	panic(fmt.Errorf("not implemented: CoreListConfigs - core_listConfigs"))
+func (r *queryResolver) CoreListConfigs(ctx context.Context, namespace string) (*model.ConfigPaginatedRecords, error) {
+	_, err := r.Domain.ListConfigs(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.ConfigPaginatedRecords{}, nil
+	// if c == nil {
+	// 	return make([]*entities.Config, 0), nil
+	// }
+	// return c, nil
 }
 
 // CoreGetConfig is the resolver for the core_getConfig field.
 func (r *queryResolver) CoreGetConfig(ctx context.Context, namespace string, name string) (*entities.Config, error) {
-	panic(fmt.Errorf("not implemented: CoreGetConfig - core_getConfig"))
+	return r.Domain.GetConfig(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncConfig is the resolver for the core_resyncConfig field.
 func (r *queryResolver) CoreResyncConfig(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncConfig - core_resyncConfig"))
+	if err := r.Domain.ResyncConfig(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListSecrets is the resolver for the core_listSecrets field.
-func (r *queryResolver) CoreListSecrets(ctx context.Context, namespace string) ([]*entities.Secret, error) {
-	panic(fmt.Errorf("not implemented: CoreListSecrets - core_listSecrets"))
+func (r *queryResolver) CoreListSecrets(ctx context.Context, namespace string) (*model.SecretPaginatedRecords, error) {
+	_, err := r.Domain.ListSecrets(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.SecretPaginatedRecords{}, nil
+
+	// if s == nil {
+	// 	return make([]*entities.Secret, 0), nil
+	// }
+	// return s, nil
 }
 
 // CoreGetSecret is the resolver for the core_getSecret field.
 func (r *queryResolver) CoreGetSecret(ctx context.Context, namespace string, name string) (*entities.Secret, error) {
-	panic(fmt.Errorf("not implemented: CoreGetSecret - core_getSecret"))
+	return r.Domain.GetSecret(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncSecret is the resolver for the core_resyncSecret field.
 func (r *queryResolver) CoreResyncSecret(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncSecret - core_resyncSecret"))
+	if err := r.Domain.ResyncSecret(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListRouters is the resolver for the core_listRouters field.
-func (r *queryResolver) CoreListRouters(ctx context.Context, namespace string) ([]*entities.Router, error) {
-	panic(fmt.Errorf("not implemented: CoreListRouters - core_listRouters"))
+func (r *queryResolver) CoreListRouters(ctx context.Context, namespace string) (*model.RouterPaginatedRecords, error) {
+	_, err := r.Domain.ListRouters(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+	return &model.RouterPaginatedRecords{}, nil
+
+	// if routers == nil {
+	// 	return make([]*entities.Router, 0), nil
+	// }
+	// return routers, nil
 }
 
 // CoreGetRouter is the resolver for the core_getRouter field.
 func (r *queryResolver) CoreGetRouter(ctx context.Context, namespace string, name string) (*entities.Router, error) {
-	panic(fmt.Errorf("not implemented: CoreGetRouter - core_getRouter"))
+	return r.Domain.GetRouter(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncRouter is the resolver for the core_resyncRouter field.
 func (r *queryResolver) CoreResyncRouter(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncRouter - core_resyncRouter"))
+	if err := r.Domain.ResyncRouter(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListManagedServiceTemplates is the resolver for the core_listManagedServiceTemplates field.
-func (r *queryResolver) CoreListManagedServiceTemplates(ctx context.Context) (interface{}, error) {
-	panic(fmt.Errorf("not implemented: CoreListManagedServiceTemplates - core_listManagedServiceTemplates"))
+func (r *queryResolver) CoreListManagedServiceTemplates(ctx context.Context) ([]*entities.MsvcTemplate, error) {
+	return r.Domain.ListManagedSvcTemplates()
 }
 
 // CoreGetManagedServiceTemplate is the resolver for the core_getManagedServiceTemplate field.
-func (r *queryResolver) CoreGetManagedServiceTemplate(ctx context.Context, category string, name string) (interface{}, error) {
-	panic(fmt.Errorf("not implemented: CoreGetManagedServiceTemplate - core_getManagedServiceTemplate"))
+func (r *queryResolver) CoreGetManagedServiceTemplate(ctx context.Context, category string, name string) (*entities.MsvcTemplateEntry, error) {
+	return r.Domain.GetManagedSvcTemplate(category, name)
 }
 
 // CoreListManagedServices is the resolver for the core_listManagedServices field.
-func (r *queryResolver) CoreListManagedServices(ctx context.Context, namespace string) ([]*entities.ManagedService, error) {
-	panic(fmt.Errorf("not implemented: CoreListManagedServices - core_listManagedServices"))
+func (r *queryResolver) CoreListManagedServices(ctx context.Context, namespace string) (*model.ManagedServicePaginatedRecords, error) {
+	_, err := r.Domain.ListManagedServices(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.ManagedServicePaginatedRecords{}, nil
+	// if m == nil {
+	// 	return make([]*entities.ManagedService, 0), nil
+	// }
+	// return m, nil
 }
 
 // CoreGetManagedService is the resolver for the core_getManagedService field.
 func (r *queryResolver) CoreGetManagedService(ctx context.Context, namespace string, name string) (*entities.ManagedService, error) {
-	panic(fmt.Errorf("not implemented: CoreGetManagedService - core_getManagedService"))
+	return r.Domain.GetManagedService(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncManagedService is the resolver for the core_resyncManagedService field.
 func (r *queryResolver) CoreResyncManagedService(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncManagedService - core_resyncManagedService"))
+	if err := r.Domain.ResyncManagedService(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreListManagedResources is the resolver for the core_listManagedResources field.
-func (r *queryResolver) CoreListManagedResources(ctx context.Context, namespace string) ([]*entities.ManagedResource, error) {
-	panic(fmt.Errorf("not implemented: CoreListManagedResources - core_listManagedResources"))
+func (r *queryResolver) CoreListManagedResources(ctx context.Context, namespace string) (*model.ManagedResourcePaginatedRecords, error) {
+	_, err := r.Domain.ListManagedResources(toConsoleContext(ctx), namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.ManagedResourcePaginatedRecords{}, nil
+
+	// if m == nil {
+	// 	return make([]*entities.ManagedResource, 0), nil
+	// }
+	// return m, nil
 }
 
 // CoreGetManagedResource is the resolver for the core_getManagedResource field.
 func (r *queryResolver) CoreGetManagedResource(ctx context.Context, namespace string, name string) (*entities.ManagedResource, error) {
-	panic(fmt.Errorf("not implemented: CoreGetManagedResource - core_getManagedResource"))
+	return r.Domain.GetManagedResource(toConsoleContext(ctx), namespace, name)
 }
 
 // CoreResyncManagedResource is the resolver for the core_resyncManagedResource field.
 func (r *queryResolver) CoreResyncManagedResource(ctx context.Context, namespace string, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: CoreResyncManagedResource - core_resyncManagedResource"))
+	if err := r.Domain.ResyncManagedResource(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // Mutation returns generated.MutationResolver implementation.
