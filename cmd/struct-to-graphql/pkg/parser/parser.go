@@ -24,6 +24,7 @@ type Parser interface {
 	PrintSchema(w io.Writer)
 	DebugSchema(w io.Writer)
 	DumpSchema(dir string) error
+	WithPagination()
 }
 
 type GraphqlType string
@@ -85,7 +86,6 @@ type Field struct {
 	PkgPath     string
 	Type        reflect.Type
 	StructName  string
-	kcli        k8s.ExtendedK8sClient
 	Fields      *[]string
 	InputFields *[]string
 
@@ -318,10 +318,9 @@ func (p *parser) GenerateGraphQLSchema(structName string, name string, t reflect
 
 		if fieldType != "" {
 			fields = append(fields, fmt.Sprintf("%s: %s", jt.Value, fieldType))
-			if !gt.NoInput {
-				inputFields = append(inputFields, fmt.Sprintf("%s: %s", jt.Value, inputFieldType))
-			}
-			continue
+		}
+		if inputFieldType != "" && !gt.NoInput {
+			inputFields = append(inputFields, fmt.Sprintf("%s: %s", jt.Value, inputFieldType))
 		}
 	}
 
@@ -506,6 +505,39 @@ func (p *parser) PrintSchema(w io.Writer) {
 
 	for _, v := range keys {
 		p.structs[v].WriteSchema(w)
+	}
+}
+
+func (p *parser) WithPagination() {
+	for k, v := range p.structs {
+		if k == commonLabel {
+			continue
+		}
+		paginatedTypes := map[string][]string{
+			fmt.Sprintf("%sPaginatedRecords", k): {
+				"totalCount: Int!",
+				fmt.Sprintf("edges: [%sEdge!]!", k),
+				fmt.Sprintf("pageInfo: PageInfo!"),
+			},
+			fmt.Sprintf("%sEdge", k): {
+				fmt.Sprintf("node: %v!", k),
+				"cursor: String!",
+			},
+		}
+		for i := range paginatedTypes {
+			v.Types[i] = paginatedTypes[i]
+		}
+	}
+
+	if _, ok := p.structs[commonLabel]; !ok {
+		p.structs[commonLabel] = newStruct()
+	}
+
+	p.structs[commonLabel].Types["PageInfo"] = []string{
+		"hasNextPage: Boolean!",
+		"hasPreviousPage: Boolean!",
+		"startCursor: String",
+		"endCursor: String",
 	}
 }
 

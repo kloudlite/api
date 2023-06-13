@@ -2,12 +2,26 @@ type ManagedService {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  creationTime: Date!
   enabled: Boolean
+  id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
   spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
+  updateTime: Date!
+}
+
+type ManagedServiceEdge {
+  cursor: String!
+  node: ManagedService!
+}
+
+type ManagedServicePaginatedRecords {
+  edges: [ManagedServiceEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
 }
 
 input ManagedServiceIn {
@@ -18,6 +32,5 @@ input ManagedServiceIn {
   kind: String!
   metadata: MetadataIn!
   spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn
-  syncStatus: Kloudlite_io__pkg__types_SyncStatusIn!
 }
 
