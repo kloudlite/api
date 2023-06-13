@@ -7,11 +7,11 @@ import (
 )
 
 type ManagedService struct {
-	repos.BaseEntity      `json:",inline"`
+	repos.BaseEntity      `json:",inline" graphql:"noinput"`
 	crdsv1.ManagedService `json:",inline" graphql:"uri=k8s://managedservices.crds.kloudlite.io"`
 	AccountName           string       `json:"accountName"`
 	ClusterName           string       `json:"clusterName"`
-	SyncStatus            t.SyncStatus `json:"syncStatus"`
+	SyncStatus            t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
 var MsvcIndexes = []repos.IndexField{

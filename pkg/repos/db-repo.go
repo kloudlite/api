@@ -2,6 +2,7 @@ package repos
 
 import (
 	"context"
+	t "kloudlite.io/pkg/types"
 	"time"
 )
 
@@ -25,8 +26,21 @@ type Query struct {
 
 type ID string
 
+type PageInfo struct {
+	StartCursor string
+	EndCursor   string
+	HasNextPage bool
+	HasPrevPage bool
+}
+
+type RecordEdge[T Entity] struct {
+	Node   T
+	Cursor any
+}
+
 type PaginatedRecord[T Entity] struct {
-	Results    []T
+	Edges      []RecordEdge[T]
+	PageInfo   PageInfo
 	TotalCount int64
 }
 
@@ -38,7 +52,7 @@ type DbRepo[T Entity] interface {
 	NewId() ID
 	Find(ctx context.Context, query Query) ([]T, error)
 	FindOne(ctx context.Context, filter Filter) (T, error)
-	FindPaginated(ctx context.Context, query Query, page int64, size int64, opts ...Opts) (PaginatedRecord[T], error)
+	FindPaginated(ctx context.Context, filter Filter, pagination *t.CursorPagination) (*PaginatedRecord[T], error)
 	FindById(ctx context.Context, id ID) (T, error)
 	Create(ctx context.Context, data T) (T, error)
 	Exists(ctx context.Context, filter Filter) (bool, error)

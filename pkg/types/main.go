@@ -6,3 +6,8 @@ type Pagination struct {
 	Page    int `json:"page,omitempty"`
 	PerPage int `json:"per_page,omitempty"`
 }
+
+type CursorPagination struct {
+	First int64  `json:"first,omitempty"`
+	After string `json:"after,omitempty"`
+}
