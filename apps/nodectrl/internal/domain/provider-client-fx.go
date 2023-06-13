@@ -44,6 +44,7 @@ var ProviderClientFx = fx.Module("provider-client-fx",
 			}
 
 			return aws.NewAwsProviderClient(node, cpd, apc)
+
 		case "azure":
 			panic("not implemented")
 		case "do":

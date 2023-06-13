@@ -18,8 +18,7 @@ type AwsS3 interface {
 }
 
 func (a awsS3) DeleteFile(fileKey string) error {
-	fmt.Printf("\n[#] deleting file %s\n", fileKey)
-	defer fmt.Printf("\n[#] deleted file %s\n", fileKey)
+	fmt.Printf("[#] deleting file %s\n", fileKey)
 
 	// Delete the file from the bucket
 	_, err := a.svc.DeleteObject(&s3.DeleteObjectInput{
@@ -34,8 +33,7 @@ func (a awsS3) DeleteFile(fileKey string) error {
 }
 
 func (a awsS3) createBucket() error {
-	fmt.Printf("\n[#] creating bucket %s\n", a.bucketName)
-	defer fmt.Printf("\n[#] created bucket %s\n", a.bucketName)
+	fmt.Printf("[#] creating bucket %s\n", a.bucketName)
 
 	_, err := a.svc.CreateBucket(&s3.CreateBucketInput{
 		Bucket: aws.String(a.bucketName),
@@ -96,8 +94,7 @@ type awsS3 struct {
 
 // downloadFile implements AwsS3.
 func (a awsS3) DownloadFile(filePath, fileKey string) error {
-	fmt.Printf("\n[#] downloading file %s\n", fileKey)
-	defer fmt.Printf("\n[#] downloaded file %s\n", fileKey)
+	fmt.Printf("[#] downloading file %s\n", fileKey)
 
 	file, err := os.Create(filePath)
 	if err != nil {
@@ -124,8 +121,7 @@ func (a awsS3) DownloadFile(filePath, fileKey string) error {
 
 // uploadFile implements AwsS3.
 func (a awsS3) UploadFile(filePath, fileKey string) error {
-	fmt.Printf("\n[#] uploading file %s\n", fileKey)
-	defer fmt.Printf("\n[#] uploaded file %s\n", fileKey)
+	fmt.Printf("[#] uploading file %s\n", fileKey)
 
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -155,6 +151,7 @@ func NewAwsS3Client(accessKey, accessSec, bucketName string) (AwsS3, error) {
 		svc:        svc,
 		bucketName: bucketName,
 	}
+
 	if err := a.createBucketIfNotCreated(); err != nil {
 		return nil, err
 	}
