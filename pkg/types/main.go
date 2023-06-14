@@ -45,7 +45,7 @@ type CursorPagination struct {
 	After Cursor `json:"after,omitempty"`
 }
 
-func BuildCursorPagination(first *int, after *string) *CursorPagination {
+func BuildCursorPagination(first *int, after *string) CursorPagination {
 	c := CursorPagination{}
 
 	c.First = func() int64 {
@@ -66,5 +66,5 @@ func BuildCursorPagination(first *int, after *string) *CursorPagination {
 		return aft
 	}()
 
-	return &c
+	return c
 }

@@ -36,10 +36,22 @@ type ConsoleCheckNameAvailabilityOutput @shareable {
 #   endCursor: String
 # }
 
+input PaginationQuery {
+  first: Int = 10
+  after: String
+
+  last: Int
+  before: String
+
+  orderBy: String = "_id"
+  sortBy: String = "asc"
+}
+
+
 type Query {
   core_checkNameAvailability(resType: ConsoleResType!, name: String!): ConsoleCheckNameAvailabilityOutput! @isLoggedIn @hasAccount
 
-  core_listProjects(clusterName: String, first: Int, after: String): ProjectPaginatedRecords @isLoggedIn @hasAccount
+  core_listProjects(clusterName: String, pq: PaginationQuery): ProjectPaginatedRecords @isLoggedIn @hasAccount
   core_getProject(name: String!): Project @isLoggedIn @hasAccountAndCluster
   core_resyncProject(name: String!): Boolean! @isLoggedIn @hasAccountAndCluster
 

@@ -18,7 +18,7 @@ import (
 )
 
 // query
-func (d *domain) ListProjects(ctx context.Context, userId repos.ID, accountName string, clusterName *string, pagination *t.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error) {
+func (d *domain) ListProjects(ctx context.Context, userId repos.ID, accountName string, clusterName *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error) {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(userId),
 		ResourceRefs: []string{

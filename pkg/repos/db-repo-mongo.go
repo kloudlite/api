@@ -136,14 +136,7 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 	return t[0], nil
 }
 
-func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination *t.CursorPagination) (*PaginatedRecord[T], error) {
-	if pagination == nil {
-		pagination = &t.CursorPagination{First: 10, After: t.Cursor{
-			SortBy: t.CursorSortBy{Field: "creationTime", Order: 1},
-			Value:  "",
-		}}
-	}
-
+func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination t.CursorPagination) (*PaginatedRecord[T], error) {
 	queryFilter := Filter{}
 
 	for k, v := range filter {

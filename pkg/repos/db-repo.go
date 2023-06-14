@@ -53,7 +53,7 @@ type DbRepo[T Entity] interface {
 	NewId() ID
 	Find(ctx context.Context, query Query) ([]T, error)
 	FindOne(ctx context.Context, filter Filter) (T, error)
-	FindPaginated(ctx context.Context, filter Filter, pagination *t.CursorPagination) (*PaginatedRecord[T], error)
+	FindPaginated(ctx context.Context, filter Filter, pagination t.CursorPagination) (*PaginatedRecord[T], error)
 	FindById(ctx context.Context, id ID) (T, error)
 	Create(ctx context.Context, data T) (T, error)
 	Exists(ctx context.Context, filter Filter) (bool, error)
