@@ -57,12 +57,9 @@ require (
 	github.com/google/gnostic v0.6.9 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
-<<<<<<< HEAD
 	golang.org/x/net v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
-=======
 	github.com/sergi/go-diff v1.3.1 // indirect
->>>>>>> f58a711 ([cmd/struct-to-graphql] tests are passing, reaching stability)
 )
 
 require (
