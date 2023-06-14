@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"sort"
@@ -383,12 +383,92 @@ func TestGenerateGraphQLSchema(t *testing.T) {
 				}{},
 				kCli: kCli,
 			},
-			want: map[string][]string{"Project": {"accountName: String!", "apiVersion: String", "clusterName: String!", "creation_time: Date", "id: String!", "kind: String", "metadata: Metadata! @goField(name: \"objectMeta\")", "spec: ProjectSpec", "status: ProjectStatus", "syncStatus: ProjectSyncStatus", "update_time: Date"}, "ProjectSpec": {"accountName: String!", "clusterName: String!", "displayName: String", "logo: String", "targetNamespace: String!"}, "ProjectStatus": {"checks: Map", "generatedVars: Map", "lastReconcileTime: String", "message: Map", "messages: [ProjectStatusMessages]", "opsConditions: [ProjectStatusOpsConditions]", "childConditions: [ProjectStatusChildConditions]", "conditions: [ProjectStatusConditions]", "displayVars: Map", "isReady: Boolean", "resources: [ProjectStatusResources]"}, "ProjectStatusChildConditions": {"lastTransitionTime: String!", "message: String!", "observedGeneration: Int", "reason: String!", "status: String!", "type: String!"}, "ProjectStatusConditions": {"status: String!", "type: String!", "lastTransitionTime: String!", "message: String!", "observedGeneration: Int", "reason: String!"}, "ProjectStatusMessages": {"reason: String", "state: String", "container: String", "exitCode: Int", "message: String", "pod: String"}, "ProjectStatusOpsConditions": {"lastTransitionTime: String!", "message: String!", "observedGeneration: Int", "reason: String!", "status: String!", "type: String!"}, "ProjectStatusResources": {"namespace: String!", "apiVersion: String", "kind: String", "name: String!"}, "ProjectSyncStatus": {"action: String!", "error: String", "generation: Int!", "lastSyncedAt: Date", "state: String", "syncScheduledAt: Date"}},
+			want: map[string][]string{
+				"Project": {
+					"Project: Project",
+					"accountName: String!",
+					"clusterName: String!",
+					"creation_time: Date",
+					"id: String!",
+					"syncStatus: ProjectSyncStatus",
+					"update_time: Date",
+				},
+				"ProjectSyncStatus": {
+					"action: ProjectSyncStatusAction!",
+					"error: String",
+					"generation: Int!",
+					"lastSyncedAt: Date",
+					"state: ProjectSyncStatusState",
+					"syncScheduledAt: Date",
+				},
+				"ProjectSyncStatusAction": {
+					"APPLY",
+					"DELETE",
+				},
+				"ProjectSyncStatusState": {
+					"IDLE",
+					"IN_PROGRESS",
+					"NOT_READY",
+					"READY",
+				},
+			},
+		},
+
+		{
+			name: "Test Case 18",
+			args: args{
+				name: "Project",
+				data: struct {
+					repos.BaseEntity `json:",inline"`
+					crdsv1.Project   `json:",inline" json-schema:"k8s://projects.crds.kloudlite.io"`
+					AccountName      string           `json:"accountName"`
+					ClusterName      string           `json:"clusterName"`
+					SyncStatus       types.SyncStatus `json:"syncStatus" graphql:"common=true"`
+				}{},
+				kCli: kCli,
+			},
+			want: map[string][]string{
+				"Project": {
+					"Project: Project",
+					"accountName: String!",
+					"clusterName: String!",
+					"creation_time: Date",
+					"id: String!",
+					"syncStatus: SyncStatus",
+					"update_time: Date",
+				},
+			},
+		},
+
+		{
+			name: "Test Case 19",
+			args: args{
+				name: "TestSchema19",
+				data: struct {
+					ID       int    `json:"id,omitempty"`
+					Username string `json:"username,omitempty"`
+					Gender   string `json:"gender" json-schema:"enum=male,female"`
+				}{},
+				kCli: nil,
+			},
+			want: map[string][]string{
+				"TestSchema19Gender": {
+					"male",
+					"female",
+				},
+				"TestSchema19": {
+					"id: Int",
+					"username: String",
+					"gender: TestSchema19Gender!",
+				},
+			},
+			wantErr: false,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			got, err := GenerateGraphQLSchema(tt.args.name, tt.args.data, tt.args.kCli)
+
 			if (err != nil) != tt.wantErr {
 				t.Errorf("GenerateGraphQLSchema() error = %v, wantErr %v", err, tt.wantErr)
 				return

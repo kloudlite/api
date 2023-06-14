@@ -1,0 +1,53 @@
+type MsvcTemplateItemsOutputs {
+	description: String!
+	label: String!
+	name: String!
+}
+
+type MsvcTemplateItemsResourcesFields {
+	defaultValue: Any
+	inputType: String!
+	label: String!
+	max: Float
+	min: Float
+	name: String!
+	required: Boolean
+	unit: String
+}
+
+type MsvcTemplateItemsResourcesOutputs {
+	description: String!
+	label: String!
+	name: String!
+}
+
+type MsvcTemplateItemsResources {
+	description: String!
+	displayName: String!
+	name: String!
+}
+
+type MsvcTemplateItems {
+	active: Boolean!
+	description: String!
+	displayName: String!
+	logoUrl: String!
+	name: String!
+}
+
+type MsvcTemplate {
+	category: String!
+	displayName: String!
+}
+
+type MsvcTemplateItemsFields {
+	defaultValue: Any
+	inputType: String!
+	label: String!
+	max: Float
+	min: Float
+	name: String!
+	required: Boolean
+	unit: String
+}
+

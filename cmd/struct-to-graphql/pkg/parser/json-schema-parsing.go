@@ -1,4 +1,4 @@
-package main
+package parser
 
 import (
 	"fmt"
@@ -52,64 +52,67 @@ func navigateTree(tree *v1.JSONSchemaProps, name string, schemaMap map[string][]
 	typeName := genTypeName(name)
 
 	fields := make([]string, 0, len(tree.Properties))
+	inputFields := make([]string, 0, len(tree.Properties))
 
 	for k, v := range tree.Properties {
 		// fmt.Printf("[properties] %q type: %s\n", k, v.Type)
 
+		if k == "apiVersion" || k == "kind" {
+			fields = append(fields, genFieldEntry(k, "String!", m[k]))
+			inputFields = append(inputFields, genFieldEntry(k, "String!", m[k]))
+			continue
+		}
+
 		if v.Type == "array" {
 			if v.Items.Schema != nil && v.Items.Schema.Type == "object" {
 				fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", typeName+genTypeName(k)), m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%sIn]", typeName+genTypeName(k)), m[k]))
 				// iVar += genFieldEntry(k, fmt.Sprintf("[%s]", typeName+genTypeName(k)+"In"), m[k])
 
 				navigateTree(v.Items.Schema, typeName+genTypeName(k), schemaMap, currDepth+1)
 				continue
 			}
+
 			fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", genTypeName(v.Items.Schema.Type)), m[k]))
+			inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%s]", genTypeName(v.Items.Schema.Type)), m[k]))
 			continue
 		}
 
 		if v.Type == "object" {
 			if currDepth == 1 {
+				// these types are common across all the types that will be generated
 				if k == "metadata" {
-					fields = append(fields, genFieldEntry(k, "Metadata! @goField(name: \"objectMeta\")", m[k]))
+					fields = append(fields, genFieldEntry(k, "Metadata! @goField(name: \"objectMeta\")", false))
+					inputFields = append(fields, genFieldEntry(k, "MetadataIn!", false))
 					continue
 				}
 
-				// if k == "status" {
-				// 	fields = append(fields, genFieldEntry(k, "Status", m[k]))
-				// 	// INFO: removed as status is never going to be set via GraphQL
-				// 	// iVar += genFieldEntry(k, "StatusIn", m[k])
-				// 	continue
-				// }
-
-				// if k == "overrides" {
-				// 	tVar += genFieldEntry(k, "Overrides", m[k])
-				// 	iVar += genFieldEntry(k, "OverridesIn", m[k])
-				// 	continue
-				// }
-
-				// if !hasAddedSyncStatus {
-				// 	// TODO: added a custom sync status for everything k8s related
-				// 	tVar += genFieldEntry("syncStatus", "SyncStatus", false)
-				// 	hasAddedSyncStatus = true
-				// }
+				if k == "status" {
+					fields = append(fields, genFieldEntry(k, "Status", m[k]))
+					continue
+				}
 			}
 
 			if len(v.Properties) == 0 {
 				fields = append(fields, genFieldEntry(k, "Map", m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, "Map", m[k]))
 				continue
 			}
 
 			fields = append(fields, genFieldEntry(k, typeName+genTypeName(k), m[k]))
+			inputFields = append(inputFields, genFieldEntry(k, typeName+genTypeName(k)+"In", m[k]))
 			navigateTree(&v, typeName+genTypeName(k), schemaMap, currDepth+1)
 			continue
 		}
 
 		fields = append(fields, genFieldEntry(k, gqlTypeMap(v.Type), m[k]))
+		inputFields = append(inputFields, genFieldEntry(k, gqlTypeMap(v.Type), m[k]))
 	}
 
 	sort.Strings(fields)
-	schemaMap[name] = fields
+	schemaMap[fmt.Sprintf("type %s", name)] = fields
+	sort.Strings(inputFields)
+	schemaMap[fmt.Sprintf("input %sIn", name)] = inputFields
 }
 
 func Convert(schema *v1.JSONSchemaProps, name string, schemaMap map[string][]string) error {
