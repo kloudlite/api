@@ -19,7 +19,7 @@ import (
 type AwsProviderConfig struct {
 	AccessKey    string `yaml:"accessKey"`
 	AccessSecret string `yaml:"accessSecret"`
-	AccountId    string `yaml:"accountId"`
+	AccountName  string `yaml:"accountName"`
 }
 
 type AWSNode struct {
@@ -535,8 +535,10 @@ func (a awsClient) DeleteNode(ctx context.Context) error {
 }
 
 func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsProviderConfig) (common.ProviderClient, error) {
-	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, apc.AccountId)
+
+	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, apc.AccountName)
 	if err != nil {
+		fmt.Println(utils.ColorText(fmt.Sprintf("Error: %v", err.Error()), 1))
 		return nil, err
 	}
 
@@ -546,7 +548,7 @@ func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsPr
 
 		accessKey:    apc.AccessKey,
 		accessSecret: apc.AccessSecret,
-		accountId:    apc.AccountId,
+		accountId:    apc.AccountName,
 
 		tfTemplates: cpd.TfTemplates,
 		labels:      cpd.Labels,
@@ -554,3 +556,4 @@ func NewAwsProviderClient(node AWSNode, cpd common.CommonProviderData, apc AwsPr
 		SSHPath:     cpd.SSHPath,
 	}, nil
 }
+
