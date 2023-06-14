@@ -9,6 +9,7 @@ import (
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/fx"
 
 	"go.mongodb.org/mongo-driver/mongo"
@@ -137,7 +138,10 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 
 func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination *t.CursorPagination) (*PaginatedRecord[T], error) {
 	if pagination == nil {
-		pagination = &t.CursorPagination{First: 10, After: ""}
+		pagination = &t.CursorPagination{First: 10, After: t.Cursor{
+			SortBy: t.CursorSortBy{Field: "creationTime", Order: 1},
+			Value:  "",
+		}}
 	}
 
 	queryFilter := Filter{}
@@ -146,20 +150,37 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		queryFilter[k] = v
 	}
 
-	queryFilter["creationTime"] = bson.M{"$gte": pagination.After}
+	if pagination.After.Value != "" {
+		objectID, err := primitive.ObjectIDFromHex(pagination.After.Value)
+		if err != nil {
+			return nil, err
+		}
+		queryFilter["_id"] = bson.M{"$gt": objectID}
+	}
 
-	results := make([]T, 0, pagination.First+1)
+	// var results []T
 	curr, err := repo.db.Collection(repo.collectionName).Find(
-		ctx, filter, &options.FindOptions{
+		ctx, queryFilter, &options.FindOptions{
 			Limit: fn.New(pagination.First + 1),
-			Sort:  map[string]any{"creationTime": 1},
+			Sort:  bson.M{pagination.After.SortBy.Field: pagination.After.SortBy.Order},
 		},
 	)
 	if err != nil {
 		return nil, err
 	}
 
-	if err = curr.All(ctx, &results); err != nil {
+	var _results []map[string]any
+	if err = curr.All(ctx, &_results); err != nil {
+		return nil, err
+	}
+
+	var results []T
+	b, err := json.Marshal(_results)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(b, &results); err != nil {
 		return nil, err
 	}
 
@@ -171,16 +192,32 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	pageInfo := PageInfo{}
 
 	if len(results) > 0 {
-		pageInfo.StartCursor = results[0].GetCreationTime().Format(time.RFC3339)
-		pageInfo.EndCursor = results[len(results)-1].GetCreationTime().Format(time.RFC3339)
+		pageInfo.StartCursor = t.CursorToBase64(t.Cursor{
+			SortBy: pagination.After.SortBy,
+			Value:  string(results[0].GetPrimitiveID()),
+		})
+
+		pageInfo.EndCursor = t.CursorToBase64(t.Cursor{
+			SortBy: pagination.After.SortBy,
+			Value:  string(results[len(results)-1].GetPrimitiveID()),
+		})
 		pageInfo.HasNextPage = len(results) > int(pagination.First)
 	}
 
-	results = append(results[:len(results)-1])
+	if len(results) > int(pagination.First) {
+		// because i limited results to pagination.First + 1
+		results = append(results[:len(results)-1])
+	}
 
 	edges := make([]RecordEdge[T], len(results))
 	for i := range results {
-		edges[i] = RecordEdge[T]{Node: results[i], Cursor: results[i].GetCreationTime().Format(time.RFC3339)}
+		edges[i] = RecordEdge[T]{
+			Node: results[i],
+			Cursor: t.CursorToBase64(t.Cursor{
+				SortBy: pagination.After.SortBy,
+				Value:  string(results[i].GetPrimitiveID()),
+			}),
+		}
 	}
 
 	return &PaginatedRecord[T]{
