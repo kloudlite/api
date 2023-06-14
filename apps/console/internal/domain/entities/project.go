@@ -7,7 +7,7 @@ import (
 )
 
 type Project struct {
-	repos.BaseEntity `json:",inline" graphql:"noinput"`
+	repos.BaseEntity `json:",inline" graphql:"noinput" bson:",inline"`
 	crdsv1.Project   `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 	AccountName      string       `json:"accountName"`
 	ClusterName      string       `json:"clusterName"`

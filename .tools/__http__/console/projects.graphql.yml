@@ -13,6 +13,7 @@ query: |+
       edges {
         cursor
         node {
+          creationTime
           accountName
           apiVersion
           kind
@@ -32,9 +33,8 @@ query: |+
     }
   }
 variables:
-  clusterName: "{{.clusterName}}"
-  first: 10
-  after: ""
+  first: 1
+  after: eyJzb3J0QnkiOnsiZmllbGQiOiJfaWQiLCJvcmRlciI6MX0sInZhbHVlIjoiNjQ2NGM1OGQzN2MyMDJjMzgzNGYwNTBjIn0=
 
 ---
 

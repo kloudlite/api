@@ -3,9 +3,14 @@ package repos
 import "time"
 
 type BaseEntity struct {
+	PrimitiveId  ID        `json:"_id" bson:"_id"`
 	Id           ID        `json:"id" bson:"id"`
 	CreationTime time.Time `json:"creationTime"`
 	UpdateTime   time.Time `json:"updateTime"`
+}
+
+func (c *BaseEntity) GetPrimitiveID() ID {
+	return c.PrimitiveId
 }
 
 func (c *BaseEntity) GetId() ID {

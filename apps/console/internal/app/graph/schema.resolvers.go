@@ -12,6 +12,7 @@ import (
 	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/apps/console/internal/domain"
 	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/pkg/types"
 )
 
 // CoreCreateProject is the resolver for the core_createProject field.
@@ -166,7 +167,7 @@ func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, resType d
 // CoreListProjects is the resolver for the core_listProjects field.
 func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *string, first *int, after *string) (*model.ProjectPaginatedRecords, error) {
 	cc := toConsoleContext(ctx)
-	p, err := r.Domain.ListProjects(ctx, cc.UserId, cc.AccountName, clusterName, nil)
+	p, err := r.Domain.ListProjects(ctx, cc.UserId, cc.AccountName, clusterName, types.BuildCursorPagination(first, after))
 	if err != nil {
 		return nil, err
 	}
@@ -175,7 +176,7 @@ func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *strin
 	for i := range p.Edges {
 		pe[i] = &model.ProjectEdge{
 			Node:   p.Edges[i].Node,
-			Cursor: p.Edges[i].Cursor.(string),
+			Cursor: p.Edges[i].Cursor,
 		}
 	}
 

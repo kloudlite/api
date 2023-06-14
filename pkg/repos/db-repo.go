@@ -7,6 +7,7 @@ import (
 )
 
 type Entity interface {
+	GetPrimitiveID() ID
 	GetId() ID
 	SetId(id ID)
 	GetCreationTime() time.Time
@@ -35,7 +36,7 @@ type PageInfo struct {
 
 type RecordEdge[T Entity] struct {
 	Node   T
-	Cursor any
+	Cursor string
 }
 
 type PaginatedRecord[T Entity] struct {
