@@ -172,10 +172,10 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		ctx, queryFilter, &options.FindOptions{
 			// Limit: fn.New(pagination.First + 1),
 			Limit: func() *int64 {
-				if pagination.After != nil {
-					return fn.New(pagination.First + 1)
+				if pagination.Last != nil {
+					return fn.New(*pagination.Last + 1)
 				}
-				return fn.New(pagination.Last + 1)
+				return fn.New(*pagination.First + 1)
 			}(),
 			Sort: bson.M{pagination.OrderBy: func() int {
 				if pagination.SortDirection == t.SortDirectionDesc {
@@ -216,15 +216,20 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 		pageInfo.EndCursor = t.CursorToBase64(t.Cursor(string(results[len(results)-1].GetPrimitiveID())))
 
-		pageInfo.HasNextPage = len(results) > int(pagination.First)
-		pageInfo.HasPrevPage = len(results) > int(pagination.Last)
+		if pagination.First != nil {
+			pageInfo.HasNextPage = len(results) > int(*pagination.First)
+		}
+
+		if pagination.Last != nil {
+			pageInfo.HasPrevPage = len(results) > int(*pagination.Last)
+		}
 	}
 
-	if len(results) > int(pagination.First) {
-		results = append(results[:pagination.First])
+	if pageInfo.HasNextPage {
+		results = append(results[:*pagination.First])
 	}
-	if len(results) > int(pagination.Last) {
-		results = append(results[:pagination.Last])
+	if pageInfo.HasPrevPage {
+		results = append(results[:*pagination.Last])
 	}
 
 	edges := make([]RecordEdge[T], len(results))

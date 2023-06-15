@@ -2,6 +2,7 @@ package types
 
 import (
 	"encoding/base64"
+	fn "kloudlite.io/pkg/functions"
 )
 
 type M map[string]interface{}
@@ -36,10 +37,10 @@ func CursorFromBase64(b string) (Cursor, error) {
 }
 
 type CursorPagination struct {
-	First int64   `json:"first"`
+	First *int64  `json:"first"`
 	After *string `json:"after,omitempty"`
 
-	Last   int64   `json:"last,omitempty"`
+	Last   *int64  `json:"last,omitempty"`
 	Before *string `json:"before,omitempty"`
 
 	OrderBy       string        `json:"orderBy,omitempty"`
@@ -52,6 +53,13 @@ const (
 	SortDirectionAsc  SortDirection = "ASC"
 	SortDirectionDesc SortDirection = "DESC"
 )
+
+var DefaultCursorPagination = CursorPagination{
+	First:         fn.New(int64(10)),
+	After:         nil,
+	OrderBy:       "_id",
+	SortDirection: SortDirectionAsc,
+}
 
 // func BuildCursorPagination(first *int, after *string) CursorPagination {
 // 	c := CursorPagination{}
