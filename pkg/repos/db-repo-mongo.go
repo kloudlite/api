@@ -143,19 +143,46 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		queryFilter[k] = v
 	}
 
-	if pagination.After.Value != "" {
-		objectID, err := primitive.ObjectIDFromHex(pagination.After.Value)
+	if pagination.After != nil {
+		aft, err := t.CursorFromBase64(*pagination.After)
+		if err != nil {
+			return nil, err
+		}
+		objectID, err := primitive.ObjectIDFromHex(string(aft))
 		if err != nil {
 			return nil, err
 		}
 		queryFilter["_id"] = bson.M{"$gt": objectID}
 	}
 
+	if pagination.Before != nil {
+		bef, err := t.CursorFromBase64(*pagination.Before)
+		if err != nil {
+			return nil, err
+		}
+		objectID, err := primitive.ObjectIDFromHex(string(bef))
+		if err != nil {
+			return nil, err
+		}
+		queryFilter["_id"] = bson.M{"$lt": objectID}
+	}
+
 	// var results []T
 	curr, err := repo.db.Collection(repo.collectionName).Find(
 		ctx, queryFilter, &options.FindOptions{
-			Limit: fn.New(pagination.First + 1),
-			Sort:  bson.M{pagination.After.SortBy.Field: pagination.After.SortBy.Order},
+			// Limit: fn.New(pagination.First + 1),
+			Limit: func() *int64 {
+				if pagination.After != nil {
+					return fn.New(pagination.First + 1)
+				}
+				return fn.New(pagination.Last + 1)
+			}(),
+			Sort: bson.M{pagination.OrderBy: func() int {
+				if pagination.SortDirection == t.SortDirectionDesc {
+					return -1
+				}
+				return 1
+			}()},
 		},
 	)
 	if err != nil {
@@ -185,31 +212,30 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	pageInfo := PageInfo{}
 
 	if len(results) > 0 {
-		pageInfo.StartCursor = t.CursorToBase64(t.Cursor{
-			SortBy: pagination.After.SortBy,
-			Value:  string(results[0].GetPrimitiveID()),
-		})
+		pageInfo.StartCursor = t.CursorToBase64(t.Cursor(string(results[0].GetPrimitiveID())))
 
-		pageInfo.EndCursor = t.CursorToBase64(t.Cursor{
-			SortBy: pagination.After.SortBy,
-			Value:  string(results[len(results)-1].GetPrimitiveID()),
-		})
+		pageInfo.EndCursor = t.CursorToBase64(t.Cursor(string(results[len(results)-1].GetPrimitiveID())))
+
 		pageInfo.HasNextPage = len(results) > int(pagination.First)
+		pageInfo.HasPrevPage = len(results) > int(pagination.Last)
 	}
 
 	if len(results) > int(pagination.First) {
-		// because i limited results to pagination.First + 1
-		results = append(results[:len(results)-1])
+		results = append(results[:pagination.First])
+	}
+	if len(results) > int(pagination.Last) {
+		results = append(results[:pagination.Last])
 	}
 
 	edges := make([]RecordEdge[T], len(results))
 	for i := range results {
 		edges[i] = RecordEdge[T]{
-			Node: results[i],
-			Cursor: t.CursorToBase64(t.Cursor{
-				SortBy: pagination.After.SortBy,
-				Value:  string(results[i].GetPrimitiveID()),
-			}),
+			Node:   results[i],
+			Cursor: t.CursorToBase64(t.Cursor(results[i].GetPrimitiveID())),
+			//Cursor: t.CursorToBase64(t.Cursor{
+			//	SortBy: t.CursorSortBy{Field: pagination.OrderBy, Direction: pagination.SortDirection},
+			//	Value:  string(results[i].GetPrimitiveID()),
+			//}),
 		}
 	}
 

@@ -100,11 +100,11 @@ func (r *kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEnt
 }
 
 // Action is the resolver for the action field.
-func (r *kloudlite_io__pkg__types_SyncStatusResolver) Action(ctx context.Context, obj *types.SyncStatus) (string, error) {
+func (r *kloudlite_io__pkg__types_SyncStatusResolver) Action(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusAction, error) {
 	if obj == nil {
 		return "", fmt.Errorf("syncStatus is nil")
 	}
-	return string(obj.Action), nil
+	return model.KloudliteIoPkgTypesSyncStatusAction(obj.Action), nil
 }
 
 // LastSyncedAt is the resolver for the lastSyncedAt field.
@@ -116,11 +116,11 @@ func (r *kloudlite_io__pkg__types_SyncStatusResolver) LastSyncedAt(ctx context.C
 }
 
 // State is the resolver for the state field.
-func (r *kloudlite_io__pkg__types_SyncStatusResolver) State(ctx context.Context, obj *types.SyncStatus) (*string, error) {
+func (r *kloudlite_io__pkg__types_SyncStatusResolver) State(ctx context.Context, obj *types.SyncStatus) (*model.KloudliteIoPkgTypesSyncStatusState, error) {
 	if obj == nil {
 		return nil, fmt.Errorf("syncStatus is nil")
 	}
-	return fn.New(string(obj.State)), nil
+	return fn.New(model.KloudliteIoPkgTypesSyncStatusState(obj.State)), nil
 }
 
 // SyncScheduledAt is the resolver for the syncScheduledAt field.

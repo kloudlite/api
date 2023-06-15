@@ -1,3 +1,14 @@
+type Github_com__kloudlite__operator__apis__crds__v1_AppOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
+}
+
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpec {
   containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers]!
   displayName: String
@@ -139,9 +150,31 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations {
   value: String
 }
 
+type Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
+}
+
 type Github_com__kloudlite__operator__apis__crds__v1_EnvSpec {
   projectName: String!
   targetNamespace: String!
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec {
@@ -158,6 +191,17 @@ type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef 
   apiVersion: String!
   kind: String
   name: String!
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec {
@@ -187,6 +231,17 @@ type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec {
   displayName: String
   logo: String
   targetNamespace: String!
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec {
@@ -233,6 +288,17 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes {
   path: String!
   port: Int!
   rewrite: Boolean
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches]
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches {
+  op: String!
+  path: String!
+  value: Any
 }
 
 type Github_com__kloudlite__operator__pkg__operator_Check {
@@ -297,20 +363,20 @@ type Kloudlite_io__apps__console__internal__domain__entities_OutputField {
 }
 
 type Kloudlite_io__pkg__types_SyncStatus {
-  action: String!
+  action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
   generation: Int!
   lastSyncedAt: Date
-  state: String
+  state: Kloudlite_io__pkg__types_SyncStatusState
   syncScheduledAt: Date
 }
 
 type Metadata {
   annotations: Map
-  generation: Int!
+  generation: Int
   labels: Map
   name: String!
-  namespace: String!
+  namespace: String
 }
 
 type PageInfo {
@@ -318,6 +384,17 @@ type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   startCursor: String
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_AppOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn]
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn {
@@ -461,9 +538,31 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn {
   value: String
 }
 
+input Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn]
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
+}
+
 input Github_com__kloudlite__operator__apis__crds__v1_EnvSpecIn {
   projectName: String!
   targetNamespace: String!
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn]
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn {
@@ -480,6 +579,17 @@ input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef
   apiVersion: String!
   kind: String
   name: String!
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn]
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn {
@@ -509,6 +619,17 @@ input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn {
   displayName: String
   logo: String
   targetNamespace: String!
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn]
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn {
@@ -557,11 +678,34 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
   rewrite: Boolean
 }
 
+input Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn {
+  applied: Boolean
+  patches: [Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn]
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn {
+  op: String!
+  path: String!
+  value: Any
+}
+
 input MetadataIn {
   annotations: Map
-  generation: Int!
+  generation: Int
   labels: Map
   name: String!
-  namespace: String!
+  namespace: String
+}
+
+enum Kloudlite_io__pkg__types_SyncStatusAction {
+  APPLY
+  DELETE
+}
+
+enum Kloudlite_io__pkg__types_SyncStatusState {
+  IDLE
+  IN_PROGRESS
+  NOT_READY
+  READY
 }
 

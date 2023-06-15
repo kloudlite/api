@@ -8,8 +8,8 @@ global:
 
 label: List Projects 2
 query: |+
-  query Core_listProjects($clusterName: String, $first: Int, $after: String) {
-    core_listProjects(clusterName: $clusterName, first: $first, after: $after) {
+  query Core_listProjects($clusterName: String, $pq: PaginationQueryArgs) {
+    core_listProjects(clusterName: $clusterName, pq: $pq) {
       edges {
         cursor
         node {
@@ -33,14 +33,14 @@ query: |+
     }
   }
 variables:
-  first: 3
-  # after: eyJzb3J0QnkiOnsiZmllbGQiOiJfaWQiLCJvcmRlciI6MX0sInZhbHVlIjoiNjQ2NGM1OGQzN2MyMDJjMzgzNGYwNTBjIn0=
-  # after: eyJzb3J0QnkiOnsiZmllbGQiOiJtZXRhZGF0YS5uYW1lIiwib3JkZXIiOjF9LCJ2YWx1ZSI6IjY0NjRjNThkMzdjMjAyYzM4MzRmMDUwYyJ9
-  # after: eyJzb3J0QnkiOnsiZmllbGQiOiJtZXRhZGF0YS5uYW1lIiwib3JkZXIiOjF9LCJ2YWx1ZSI6IiJ9Cg==
-  after: eyJzb3J0QnkiOnsiZmllbGQiOiJtZXRhZGF0YS5uYW1lIiwib3JkZXIiOjF9LCJ2YWx1ZSI6IjY0NmRlODFkZDEzNjRmMGYwZWJhODJlYSJ9
-    
-# {"sortBy":{"field":"metadata.name","order":1},"value":"6464c58d37c202c3834f050c"}
-# {"sortBy":{"field":"metadata.name","order":1},"value":""}
+  # pq:
+  #   first: 2
+  #   # before: NjQ2ZjAzYzdhMWE2OTI2MDhhODdlN2U5
+  #   # before: NjQ2ZjAzYzdhMWE2OTI2MDhhODdlN2U5
+  #   # after: NjQ2ZGU4MWRkMTM2NGYwZjBlYmE4MmVh
+  #
+  #   orderBy: metadata.name
+  #   sortBy: ASC
 
 ---
 
@@ -101,8 +101,13 @@ query: |+
   }
 variables:
   project:
+    apiVersion: core.kloudlite.io/v1alpha1
+    kind: Project
+    accountName: "{{.accountName}}"
+    clusterName: "{{.clusterName}}"
     metadata:
-      name: "{{.name}}"
+      name: "{{.name}}X"
+      generation: 1
     spec:
       clusterName: "{{.clusterName}}"
       accountName: "{{.accountName}}"

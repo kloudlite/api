@@ -133,3 +133,8 @@ models:
   ConsoleCheckNameAvailabilityOutput:
     model: kloudlite.io/apps/console/internal/domain.CheckNameAvailabilityOutput
 
+  PaginationQueryArgs:
+    model: kloudlite.io/pkg/types.CursorPagination
+
+  PaginationQueryArgs:
+    model: kloudlite.io/pkg/types.CursorPagination

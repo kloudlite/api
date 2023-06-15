@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+
+	"kloudlite.io/pkg/types"
 	t "kloudlite.io/pkg/types"
 
 	"kloudlite.io/apps/console/internal/domain/entities"
@@ -62,7 +64,7 @@ type Domain interface {
 
 	ResyncProject(ctx ConsoleContext, name string) error
 
-	ListWorkspaces(ctx ConsoleContext, namespace string) ([]*entities.Workspace, error)
+	ListWorkspaces(ctx ConsoleContext, namespace string, pq t.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
 	GetWorkspace(ctx ConsoleContext, namespace, name string) (*entities.Workspace, error)
 
 	CreateWorkspace(ctx ConsoleContext, env entities.Workspace) (*entities.Workspace, error)
@@ -75,7 +77,7 @@ type Domain interface {
 
 	ResyncWorkspace(ctx ConsoleContext, namespace, name string) error
 
-	ListApps(ctx ConsoleContext, namespace string) ([]*entities.App, error)
+	ListApps(ctx ConsoleContext, namespace string, pq types.CursorPagination) (*repos.PaginatedRecord[*entities.App], error)
 	GetApp(ctx ConsoleContext, namespace, name string) (*entities.App, error)
 
 	CreateApp(ctx ConsoleContext, app entities.App) (*entities.App, error)
@@ -88,7 +90,7 @@ type Domain interface {
 
 	ResyncApp(ctx ConsoleContext, namespace, name string) error
 
-	ListConfigs(ctx ConsoleContext, namespace string) ([]*entities.Config, error)
+	ListConfigs(ctx ConsoleContext, namespace string, pq types.CursorPagination) (*repos.PaginatedRecord[*entities.Config], error)
 	GetConfig(ctx ConsoleContext, namespace, name string) (*entities.Config, error)
 
 	CreateConfig(ctx ConsoleContext, config entities.Config) (*entities.Config, error)
@@ -101,7 +103,7 @@ type Domain interface {
 
 	ResyncConfig(ctx ConsoleContext, namespace, name string) error
 
-	ListSecrets(ctx ConsoleContext, namespace string) ([]*entities.Secret, error)
+	ListSecrets(ctx ConsoleContext, namespace string, pq types.CursorPagination) (*repos.PaginatedRecord[*entities.Secret], error)
 	GetSecret(ctx ConsoleContext, namespace, name string) (*entities.Secret, error)
 
 	CreateSecret(ctx ConsoleContext, secret entities.Secret) (*entities.Secret, error)
@@ -114,7 +116,7 @@ type Domain interface {
 
 	ResyncSecret(ctx ConsoleContext, namespace, name string) error
 
-	ListRouters(ctx ConsoleContext, namespace string) ([]*entities.Router, error)
+	ListRouters(ctx ConsoleContext, namespace string, pq types.CursorPagination) (*repos.PaginatedRecord[*entities.Router], error)
 	GetRouter(ctx ConsoleContext, namespace, name string) (*entities.Router, error)
 
 	CreateRouter(ctx ConsoleContext, router entities.Router) (*entities.Router, error)
@@ -127,7 +129,7 @@ type Domain interface {
 
 	ResyncRouter(ctx ConsoleContext, namespace, name string) error
 
-	ListManagedServices(ctx ConsoleContext, namespace string) ([]*entities.ManagedService, error)
+	ListManagedServices(ctx ConsoleContext, namespace string, pq types.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedService], error)
 	GetManagedService(ctx ConsoleContext, namespace, name string) (*entities.ManagedService, error)
 
 	CreateManagedService(ctx ConsoleContext, msvc entities.ManagedService) (*entities.ManagedService, error)
@@ -145,7 +147,7 @@ type Domain interface {
 
 	ResyncManagedService(ctx ConsoleContext, namespace, name string) error
 
-	ListManagedResources(ctx ConsoleContext, namespace string) ([]*entities.ManagedResource, error)
+	ListManagedResources(ctx ConsoleContext, namespace string, pq types.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
 	GetManagedResource(ctx ConsoleContext, namespace, name string) (*entities.ManagedResource, error)
 
 	CreateManagedResource(ctx ConsoleContext, mres entities.ManagedResource) (*entities.ManagedResource, error)

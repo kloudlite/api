@@ -9,15 +9,15 @@ import (
 	t "kloudlite.io/pkg/types"
 )
 
-func (d *domain) ListManagedServices(ctx ConsoleContext, namespace string) ([]*entities.ManagedService, error) {
+func (d *domain) ListManagedServices(ctx ConsoleContext, namespace string, pq t.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedService], error) {
 	if err := d.canReadResourcesInWorkspace(ctx, namespace); err != nil {
 		return nil, err
 	}
-	return d.msvcRepo.Find(ctx, repos.Query{Filter: repos.Filter{
+	return d.msvcRepo.FindPaginated(ctx, repos.Filter{
 		"accountName":        ctx.AccountName,
 		"clusterName":        ctx.ClusterName,
 		"metadata.namespace": namespace,
-	}})
+	}, pq)
 }
 
 func (d *domain) findMSvc(ctx ConsoleContext, namespace string, name string) (*entities.ManagedService, error) {

@@ -39,6 +39,7 @@ func main() {
 					Host: "localhost:8080",
 				}, nil
 			}
+
 			return k8s.RestInclusterConfig()
 		}),
 		framework.Module,

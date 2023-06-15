@@ -11,15 +11,15 @@ import (
 
 // query
 
-func (d *domain) ListManagedResources(ctx ConsoleContext, namespace string) ([]*entities.ManagedResource, error) {
+func (d *domain) ListManagedResources(ctx ConsoleContext, namespace string, pq t.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error) {
 	if err := d.canReadResourcesInWorkspace(ctx, namespace); err != nil {
 		return nil, err
 	}
-	return d.mresRepo.Find(ctx, repos.Query{Filter: repos.Filter{
+	return d.mresRepo.FindPaginated(ctx, repos.Filter{
 		"accountName":        ctx.AccountName,
 		"clusterName":        ctx.ClusterName,
 		"metadata.namespace": namespace,
-	}})
+	}, pq)
 }
 
 func (d *domain) findMRes(ctx ConsoleContext, namespace string, name string) (*entities.ManagedResource, error) {

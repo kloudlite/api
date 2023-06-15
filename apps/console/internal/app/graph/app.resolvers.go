@@ -26,6 +26,16 @@ func (r *appResolver) ID(ctx context.Context, obj *entities.App) (string, error)
 	return string(obj.Id), nil
 }
 
+// Overrides is the resolver for the overrides field.
+func (r *appResolver) Overrides(ctx context.Context, obj *entities.App) (*model.GithubComKloudliteOperatorApisCrdsV1AppOverrides, error) {
+	panic(fmt.Errorf("not implemented: Overrides - overrides"))
+}
+
+// Restart is the resolver for the restart field.
+func (r *appResolver) Restart(ctx context.Context, obj *entities.App) (*bool, error) {
+	panic(fmt.Errorf("not implemented: Restart - restart"))
+}
+
 // Spec is the resolver for the spec field.
 func (r *appResolver) Spec(ctx context.Context, obj *entities.App) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpec, error) {
 	m := model.GithubComKloudliteOperatorApisCrdsV1AppSpec{}
@@ -44,6 +54,16 @@ func (r *appResolver) UpdateTime(ctx context.Context, obj *entities.App) (string
 func (r *appInResolver) Metadata(ctx context.Context, obj *entities.App, data *v1.ObjectMeta) error {
 	obj.ObjectMeta = *data
 	return nil
+}
+
+// Overrides is the resolver for the overrides field.
+func (r *appInResolver) Overrides(ctx context.Context, obj *entities.App, data *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesIn) error {
+	panic(fmt.Errorf("not implemented: Overrides - overrides"))
+}
+
+// Restart is the resolver for the restart field.
+func (r *appInResolver) Restart(ctx context.Context, obj *entities.App, data *bool) error {
+	panic(fmt.Errorf("not implemented: Restart - restart"))
 }
 
 // Spec is the resolver for the spec field.

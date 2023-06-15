@@ -155,6 +155,7 @@ func parseJsonTag(field reflect.StructField) JsonTag {
 type GraphqlTag struct {
 	Uri     *string
 	Enum    []string
+	Ignore  bool
 	NoInput bool
 }
 
@@ -168,10 +169,6 @@ func parseGraphqlTag(field reflect.StructField) (GraphqlTag, error) {
 	sp := strings.Split(tag, ",")
 	for i := range sp {
 		kv := strings.Split(sp[i], "=")
-		// fmt.Println(kv)
-		// if len(kv) != 2 {
-		// 	return GraphqlTag{}
-		// }
 
 		switch kv[0] {
 		case "uri":
@@ -192,6 +189,11 @@ func parseGraphqlTag(field reflect.StructField) (GraphqlTag, error) {
 		case "noinput":
 			{
 				gt.NoInput = true
+			}
+
+		case "ignore":
+			{
+				gt.Ignore = true
 			}
 		default:
 			{
@@ -254,6 +256,15 @@ func (p *parser) GenerateGraphQLSchema(structName string, name string, t reflect
 			continue
 		}
 
+		gt, err := parseGraphqlTag(field)
+		if err != nil {
+			panic(err)
+		}
+
+		if gt.Ignore {
+			continue
+		}
+
 		fieldType := ""
 		inputFieldType := ""
 
@@ -267,11 +278,6 @@ func (p *parser) GenerateGraphQLSchema(structName string, name string, t reflect
 				fieldType = toFieldType(v, !jt.OmitEmpty)
 				inputFieldType = toFieldType(v, !jt.OmitEmpty)
 			}
-		}
-
-		gt, err := parseGraphqlTag(field)
-		if err != nil {
-			panic(err)
 		}
 
 		f := Field{
@@ -382,10 +388,10 @@ func (p *parser) NavigateTree(s *Struct, name string, tree *v1.JSONSchemaProps, 
 
 					metadata := struct {
 						Name        string            `json:"name"`
-						Namespace   string            `json:"namespace"`
+						Namespace   string            `json:"namespace,omitempty"`
 						Labels      map[string]string `json:"labels,omitempty"`
 						Annotations map[string]string `json:"annotations,omitempty"`
-						Generation  int64             `json:"generation"`
+						Generation  int64             `json:"generation,omitempty"`
 					}{}
 					p.GenerateGraphQLSchema(commonLabel, "Metadata", reflect.TypeOf(metadata))
 					continue
