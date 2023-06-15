@@ -19,7 +19,7 @@ import (
 
 type Project struct {
 	repos.BaseEntity `json:",inline"`
-	crdsv1.Project   `json:",inline" json-schema:"k8s://projects.crds.kloudlite.io"`
+	crdsv1.Project   `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 	AccountName      string       `json:"accountName"`
 	ClusterName      string       `json:"clusterName"`
 	SyncStatus       t.SyncStatus `json:"syncStatus"`

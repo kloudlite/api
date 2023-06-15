@@ -17,11 +17,6 @@ type CursorSortBy struct {
 	Direction SortDirection `json:"sortDirection"`
 }
 
-//type Cursor struct {
-//	SortBy CursorSortBy `json:"sortBy,omitempty"`
-//	Value  string       `json:"value,omitempty"`
-//}
-
 type Cursor string
 
 func CursorToBase64(c Cursor) string {
@@ -60,27 +55,3 @@ var DefaultCursorPagination = CursorPagination{
 	OrderBy:       "_id",
 	SortDirection: SortDirectionAsc,
 }
-
-// func BuildCursorPagination(first *int, after *string) CursorPagination {
-// 	c := CursorPagination{}
-//
-// 	c.First = func() int64 {
-// 		if first == nil {
-// 			return 10
-// 		}
-// 		return int64(*first)
-// 	}()
-//
-// 	c.After = func() Cursor {
-// 		if after == nil {
-// 			return Cursor{
-// 				SortBy: CursorSortBy{Field: "_id", Order: 1},
-// 				Value:  "",
-// 			}
-// 		}
-// 		aft, _ := CursorFromBase64(*after)
-// 		return aft
-// 	}()
-//
-// 	return c
-// }

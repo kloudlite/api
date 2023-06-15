@@ -237,10 +237,6 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		edges[i] = RecordEdge[T]{
 			Node:   results[i],
 			Cursor: t.CursorToBase64(t.Cursor(results[i].GetPrimitiveID())),
-			//Cursor: t.CursorToBase64(t.Cursor{
-			//	SortBy: t.CursorSortBy{Field: pagination.OrderBy, Direction: pagination.SortDirection},
-			//	Value:  string(results[i].GetPrimitiveID()),
-			//}),
 		}
 	}
 
@@ -250,26 +246,6 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		TotalCount: total,
 	}, nil
 }
-
-// func (repo *dbRepo[T]) FindPaginated(ctx context.Context, query Query, page int64, size int64, opts ...Opts) (PaginatedRecord[T], error) {
-// 	results := make([]T, 0)
-// 	var offset int64 = (page - 1) * size
-// 	curr, e := repo.db.Collection(repo.collectionName).Find(
-// 		ctx, query.Filter, &options.FindOptions{
-// 			Limit: &size,
-// 			Skip:  &offset,
-// 			Sort:  query.Sort,
-// 		},
-// 	)
-// 	e = curr.All(ctx, results)
-//
-// 	total, e := repo.db.Collection(repo.collectionName).CountDocuments(ctx, query.Filter)
-//
-// 	return PaginatedRecord[T]{
-// 		Results:    results,
-// 		TotalCount: total,
-// 	}, e
-// }
 
 func (repo *dbRepo[T]) FindById(ctx context.Context, id ID) (T, error) {
 	var result T
@@ -520,27 +496,7 @@ func (repo *dbRepo[T]) IndexFields(ctx context.Context, indices []IndexField) er
 				return err
 			}
 		}
-
-		// models = append(
-		// 	models, mongo.IndexModel{
-		// 		Keys: b,
-		// 		Options: &options.IndexOptions{
-		// 			Unique: &f.Unique,
-		// 		},
-		// 	},
-		// )
 	}
-
-	// for i := range models {
-	// 	_, err := repo.db.Collection(repo.collectionName).Indexes().CreateOne(ctx, models[i])
-	// 	if err != nil{
-	// 		repo.db.Collection(repo.collectionName).Indexes().CreateOne(ctx, models[i]., opts ...*options.CreateIndexesOptions)
-	// 	}
-	// 	//body
-	// }
-
-	// _, err := repo.db.Collection(repo.collectionName).Indexes().CreateMany(ctx, models)
-	// return err
 	return nil
 }
 
