@@ -69,13 +69,19 @@ type ComplexityRoot struct {
 		OAuthLogin                  func(childComplexity int, provider string, code string, state *string) int
 	}
 
+	OAuthProviderStatus struct {
+		Enabled  func(childComplexity int) int
+		Provider func(childComplexity int) int
+	}
+
 	Query struct {
-		AuthFindByEmail    func(childComplexity int, email string) int
-		AuthGetRemoteLogin func(childComplexity int, loginID string, secret string) int
-		AuthMe             func(childComplexity int) int
-		OAuthRequestLogin  func(childComplexity int, provider string, state *string) int
-		__resolve__service func(childComplexity int) int
-		__resolve_entities func(childComplexity int, representations []map[string]interface{}) int
+		AuthFindByEmail        func(childComplexity int, email string) int
+		AuthGetRemoteLogin     func(childComplexity int, loginID string, secret string) int
+		AuthListOAuthProviders func(childComplexity int) int
+		AuthMe                 func(childComplexity int) int
+		OAuthRequestLogin      func(childComplexity int, provider string, state *string) int
+		__resolve__service     func(childComplexity int) int
+		__resolve_entities     func(childComplexity int, representations []map[string]interface{}) int
 	}
 
 	RemoteLogin struct {
@@ -135,6 +141,7 @@ type QueryResolver interface {
 	AuthFindByEmail(ctx context.Context, email string) (*model.User, error)
 	OAuthRequestLogin(ctx context.Context, provider string, state *string) (string, error)
 	AuthGetRemoteLogin(ctx context.Context, loginID string, secret string) (*model.RemoteLogin, error)
+	AuthListOAuthProviders(ctx context.Context) ([]*model.OAuthProviderStatus, error)
 }
 
 type executableSchema struct {
@@ -329,6 +336,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.OAuthLogin(childComplexity, args["provider"].(string), args["code"].(string), args["state"].(*string)), true
 
+	case "OAuthProviderStatus.enabled":
+		if e.complexity.OAuthProviderStatus.Enabled == nil {
+			break
+		}
+
+		return e.complexity.OAuthProviderStatus.Enabled(childComplexity), true
+
+	case "OAuthProviderStatus.provider":
+		if e.complexity.OAuthProviderStatus.Provider == nil {
+			break
+		}
+
+		return e.complexity.OAuthProviderStatus.Provider(childComplexity), true
+
 	case "Query.auth_findByEmail":
 		if e.complexity.Query.AuthFindByEmail == nil {
 			break
@@ -352,6 +373,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.AuthGetRemoteLogin(childComplexity, args["loginId"].(string), args["secret"].(string)), true
+
+	case "Query.auth_listOAuthProviders":
+		if e.complexity.Query.AuthListOAuthProviders == nil {
+			break
+		}
+
+		return e.complexity.Query.AuthListOAuthProviders(childComplexity), true
 
 	case "Query.auth_me":
 		if e.complexity.Query.AuthMe == nil {
@@ -530,7 +558,8 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	rc := graphql.GetOperationContext(ctx)
-	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
+  ec := executionContext{rc, e}
+
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap()
 	first := true
 
@@ -555,6 +584,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 					return nil
 				}
 			}
+      first = false
+			ctx = graphql.WithUnmarshalerMap(ctx, inputUnmarshalMap)
+			data := ec._Query(ctx, rc.Operation.SelectionSet)
 			var buf bytes.Buffer
 			data.MarshalGQL(&buf)
 			response.Data = buf.Bytes()
@@ -634,16 +666,22 @@ scalar ProviderDetail
 scalar URL
 scalar Any
 
+type RemoteLogin {
+    status: String!
+    authHeader: String
+}
+
+type OAuthProviderStatus {
+  provider: String!
+  enabled: Boolean!
+}
+
 type Query {
   auth_me: User # public-access
   auth_findByEmail(email: String!): User # public-access # Deprecate
   oAuth_requestLogin(provider: String!, state: String): URL! # public-access
   auth_getRemoteLogin(loginId: String!, secret: String!): RemoteLogin # public-access
-}
-
-type RemoteLogin {
-    status: String!
-    authHeader: String
+  auth_listOAuthProviders: [OAuthProviderStatus!]
 }
 
 type Mutation {
@@ -688,13 +726,14 @@ type User @key(fields: "id") {
 }
 `, BuiltIn: false},
 	{Name: "../../federation/directives.graphql", Input: `
-	directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE
+	scalar _Any
+	scalar _FieldSet
 	directive @requires(fields: _FieldSet!) on FIELD_DEFINITION
 	directive @provides(fields: _FieldSet!) on FIELD_DEFINITION
 	directive @extends on OBJECT | INTERFACE
+
+	directive @key(fields: _FieldSet!) repeatable on OBJECT | INTERFACE
 	directive @external on FIELD_DEFINITION
-	scalar _Any
-	scalar _FieldSet
 `, BuiltIn: true},
 	{Name: "../../federation/entity.graphql", Input: `
 # a union of all types that use the @key directive
@@ -1212,7 +1251,7 @@ func (ec *executionContext) fieldContext_Entity_findUserByID(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Entity_findUserByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+    return
 	}
 	return fc, nil
 }
@@ -1267,7 +1306,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_setRemoteAuthHeader(ctx c
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_setRemoteAuthHeader_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1322,7 +1361,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_createRemoteLogin(ctx con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_createRemoteLogin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1386,7 +1425,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_login(ctx context.Context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1450,7 +1489,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_signup(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_signup_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1573,7 +1612,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_setMetadata(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_setMetadata_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1708,7 +1747,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_verifyEmail(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_verifyEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1763,7 +1802,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_resetPassword(ctx context
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_resetPassword_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1818,7 +1857,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_requestResetPassword(ctx 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_requestResetPassword_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1873,7 +1912,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_changeEmail(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_changeEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -1896,17 +1935,9 @@ func (ec *executionContext) _Mutation_auth_resendVerificationEmail(ctx context.C
 	})
 	if err != nil {
 		ec.Error(ctx, err)
-		return graphql.Null
+		return fc, err
 	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+	return fc, nil
 }
 
 func (ec *executionContext) fieldContext_Mutation_auth_resendVerificationEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1972,7 +2003,7 @@ func (ec *executionContext) fieldContext_Mutation_auth_changePassword(ctx contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_auth_changePassword_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -2015,6 +2046,7 @@ func (ec *executionContext) fieldContext_Mutation_oAuth_login(ctx context.Contex
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+
 			switch field.Name {
 			case "id":
 				return ec.fieldContext_Session_id(ctx, field)
@@ -2039,7 +2071,7 @@ func (ec *executionContext) fieldContext_Mutation_oAuth_login(ctx context.Contex
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_oAuth_login_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -2094,7 +2126,95 @@ func (ec *executionContext) fieldContext_Mutation_oAuth_addLogin(ctx context.Con
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_oAuth_addLogin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OAuthProviderStatus_provider(ctx context.Context, field graphql.CollectedField, obj *model.OAuthProviderStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OAuthProviderStatus_provider(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Provider, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OAuthProviderStatus_provider(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OAuthProviderStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _OAuthProviderStatus_enabled(ctx context.Context, field graphql.CollectedField, obj *model.OAuthProviderStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_OAuthProviderStatus_enabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_OAuthProviderStatus_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "OAuthProviderStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -2107,10 +2227,11 @@ func (ec *executionContext) _Query_auth_me(ctx context.Context, field graphql.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	defer func() {
 		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
 		}
 	}()
+
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
 		return ec.resolvers.Query().AuthMe(rctx)
@@ -2235,7 +2356,7 @@ func (ec *executionContext) fieldContext_Query_auth_findByEmail(ctx context.Cont
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_auth_findByEmail_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -2290,7 +2411,7 @@ func (ec *executionContext) fieldContext_Query_oAuth_requestLogin(ctx context.Co
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_oAuth_requestLogin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -2348,7 +2469,54 @@ func (ec *executionContext) fieldContext_Query_auth_getRemoteLogin(ctx context.C
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_auth_getRemoteLogin_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_auth_listOAuthProviders(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_auth_listOAuthProviders(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Query().AuthListOAuthProviders(rctx)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.OAuthProviderStatus)
+	fc.Result = res
+	return ec.marshalOOAuthProviderStatus2ᚕᚖkloudliteᚗioᚋappsᚋauthᚋinternalᚋappᚋgraphᚋmodelᚐOAuthProviderStatusᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_auth_listOAuthProviders(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "provider":
+				return ec.fieldContext_OAuthProviderStatus_provider(ctx, field)
+			case "enabled":
+				return ec.fieldContext_OAuthProviderStatus_enabled(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type OAuthProviderStatus", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -2403,7 +2571,7 @@ func (ec *executionContext) fieldContext_Query__entities(ctx context.Context, fi
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query__entities_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -2525,7 +2693,7 @@ func (ec *executionContext) fieldContext_Query___type(ctx context.Context, field
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query___type_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -4821,7 +4989,7 @@ func (ec *executionContext) fieldContext___Type_fields(ctx context.Context, fiel
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field___Type_fields_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -5009,7 +5177,7 @@ func (ec *executionContext) fieldContext___Type_enumValues(ctx context.Context, 
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field___Type_enumValues_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
-		return fc, err
+		return
 	}
 	return fc, nil
 }
@@ -5281,101 +5449,170 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Mutation")
 		case "auth_setRemoteAuthHeader":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+      out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_setRemoteAuthHeader(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_createRemoteLogin":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+      out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_createRemoteLogin(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_login":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_login(ctx, field)
 			})
+
 		case "auth_signup":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_signup(ctx, field)
 			})
+
 		case "auth_logout":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_logout(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_setMetadata":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+
+      out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_setMetadata(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_clearMetadata":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+
+      out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_clearMetadata(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_verifyEmail":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_verifyEmail(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_resetPassword":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_resetPassword(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_requestResetPassword":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_requestResetPassword(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "auth_loginWithInviteToken":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_auth_loginWithInviteToken(ctx, field)
+			})
+
 		case "auth_changeEmail":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_changeEmail(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_resendVerificationEmail":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_resendVerificationEmail(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "auth_changePassword":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_auth_changePassword(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "oAuth_login":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_oAuth_login(ctx, field)
 			})
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "oAuth_addLogin":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+
+      out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_oAuth_addLogin(ctx, field)
 			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
+var oAuthProviderStatusImplementors = []string{"OAuthProviderStatus"}
+
+func (ec *executionContext) _OAuthProviderStatus(ctx context.Context, sel ast.SelectionSet, obj *model.OAuthProviderStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, oAuthProviderStatusImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("OAuthProviderStatus")
+		case "provider":
+
+			out.Values[i] = ec._OAuthProviderStatus_provider(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "enabled":
+
+			out.Values[i] = ec._OAuthProviderStatus_enabled(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5499,7 +5736,30 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 			}
 
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "auth_listOAuthProviders":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_auth_listOAuthProviders(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+
 		case "_entities":
 			field := field
 
@@ -5545,13 +5805,17 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "__type":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___type(ctx, field)
 			})
+
 		case "__schema":
+
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Query___schema(ctx, field)
 			})
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5587,12 +5851,16 @@ func (ec *executionContext) _RemoteLogin(ctx context.Context, sel ast.SelectionS
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("RemoteLogin")
 		case "status":
+
 			out.Values[i] = ec._RemoteLogin_status(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "authHeader":
+
 			out.Values[i] = ec._RemoteLogin_authHeader(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5628,27 +5896,37 @@ func (ec *executionContext) _Session(ctx context.Context, sel ast.SelectionSet, 
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Session")
 		case "id":
+
 			out.Values[i] = ec._Session_id(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "userId":
+
 			out.Values[i] = ec._Session_userId(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "userEmail":
+
 			out.Values[i] = ec._Session_userEmail(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "loginMethod":
+
 			out.Values[i] = ec._Session_loginMethod(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "userVerified":
+
 			out.Values[i] = ec._Session_userVerified(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5687,45 +5965,67 @@ func (ec *executionContext) _User(ctx context.Context, sel ast.SelectionSet, obj
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("User")
 		case "id":
+
 			out.Values[i] = ec._User_id(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "name":
+
 			out.Values[i] = ec._User_name(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "email":
+
 			out.Values[i] = ec._User_email(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "avatar":
+
 			out.Values[i] = ec._User_avatar(ctx, field, obj)
+
 		case "invite":
+
 			out.Values[i] = ec._User_invite(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "verified":
+
 			out.Values[i] = ec._User_verified(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "metadata":
+
 			out.Values[i] = ec._User_metadata(ctx, field, obj)
+
 		case "joined":
+
 			out.Values[i] = ec._User_joined(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "providerGitlab":
+
 			out.Values[i] = ec._User_providerGitlab(ctx, field, obj)
+
 		case "providerGithub":
+
 			out.Values[i] = ec._User_providerGithub(ctx, field, obj)
+
 		case "providerGoogle":
+
 			out.Values[i] = ec._User_providerGoogle(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5761,7 +6061,9 @@ func (ec *executionContext) __Service(ctx context.Context, sel ast.SelectionSet,
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("_Service")
 		case "sdl":
+
 			out.Values[i] = ec.__Service_sdl(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5797,24 +6099,34 @@ func (ec *executionContext) ___Directive(ctx context.Context, sel ast.SelectionS
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("__Directive")
 		case "name":
+
 			out.Values[i] = ec.___Directive_name(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "description":
+
 			out.Values[i] = ec.___Directive_description(ctx, field, obj)
+
 		case "locations":
+
 			out.Values[i] = ec.___Directive_locations(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "args":
+
 			out.Values[i] = ec.___Directive_args(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "isRepeatable":
+
 			out.Values[i] = ec.___Directive_isRepeatable(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -5853,19 +6165,27 @@ func (ec *executionContext) ___EnumValue(ctx context.Context, sel ast.SelectionS
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("__EnumValue")
 		case "name":
+
 			out.Values[i] = ec.___EnumValue_name(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "description":
+
 			out.Values[i] = ec.___EnumValue_description(ctx, field, obj)
+
 		case "isDeprecated":
+
 			out.Values[i] = ec.___EnumValue_isDeprecated(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "deprecationReason":
+
 			out.Values[i] = ec.___EnumValue_deprecationReason(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5901,29 +6221,41 @@ func (ec *executionContext) ___Field(ctx context.Context, sel ast.SelectionSet, 
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("__Field")
 		case "name":
+
 			out.Values[i] = ec.___Field_name(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "description":
+
 			out.Values[i] = ec.___Field_description(ctx, field, obj)
+
 		case "args":
+
 			out.Values[i] = ec.___Field_args(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "type":
+
 			out.Values[i] = ec.___Field_type(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "isDeprecated":
+
 			out.Values[i] = ec.___Field_isDeprecated(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "deprecationReason":
+
 			out.Values[i] = ec.___Field_deprecationReason(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -5959,19 +6291,27 @@ func (ec *executionContext) ___InputValue(ctx context.Context, sel ast.Selection
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("__InputValue")
 		case "name":
+
 			out.Values[i] = ec.___InputValue_name(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "description":
+
 			out.Values[i] = ec.___InputValue_description(ctx, field, obj)
+
 		case "type":
+
 			out.Values[i] = ec.___InputValue_type(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "defaultValue":
+
 			out.Values[i] = ec.___InputValue_defaultValue(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6007,23 +6347,35 @@ func (ec *executionContext) ___Schema(ctx context.Context, sel ast.SelectionSet,
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("__Schema")
 		case "description":
+
 			out.Values[i] = ec.___Schema_description(ctx, field, obj)
+
 		case "types":
+
 			out.Values[i] = ec.___Schema_types(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "queryType":
+
 			out.Values[i] = ec.___Schema_queryType(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "mutationType":
+
 			out.Values[i] = ec.___Schema_mutationType(ctx, field, obj)
+
 		case "subscriptionType":
+
 			out.Values[i] = ec.___Schema_subscriptionType(ctx, field, obj)
+
 		case "directives":
+
 			out.Values[i] = ec.___Schema_directives(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -6062,28 +6414,48 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("__Type")
 		case "kind":
+
 			out.Values[i] = ec.___Type_kind(ctx, field, obj)
+
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "name":
+
 			out.Values[i] = ec.___Type_name(ctx, field, obj)
+
 		case "description":
+
 			out.Values[i] = ec.___Type_description(ctx, field, obj)
+
 		case "fields":
+
 			out.Values[i] = ec.___Type_fields(ctx, field, obj)
+
 		case "interfaces":
+
 			out.Values[i] = ec.___Type_interfaces(ctx, field, obj)
+
 		case "possibleTypes":
+
 			out.Values[i] = ec.___Type_possibleTypes(ctx, field, obj)
+
 		case "enumValues":
+
 			out.Values[i] = ec.___Type_enumValues(ctx, field, obj)
+
 		case "inputFields":
+
 			out.Values[i] = ec.___Type_inputFields(ctx, field, obj)
+
 		case "ofType":
+
 			out.Values[i] = ec.___Type_ofType(ctx, field, obj)
+
 		case "specifiedByURL":
+
 			out.Values[i] = ec.___Type_specifiedByURL(ctx, field, obj)
+
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -6176,6 +6548,16 @@ func (ec *executionContext) marshalNJson2map(ctx context.Context, sel ast.Select
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) marshalNOAuthProviderStatus2ᚖkloudliteᚗioᚋappsᚋauthᚋinternalᚋappᚋgraphᚋmodelᚐOAuthProviderStatus(ctx context.Context, sel ast.SelectionSet, v *model.OAuthProviderStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._OAuthProviderStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNSession2kloudliteᚗioᚋappsᚋauthᚋinternalᚋappᚋgraphᚋmodelᚐSession(ctx context.Context, sel ast.SelectionSet, v model.Session) graphql.Marshaler {
@@ -6639,6 +7021,53 @@ func (ec *executionContext) marshalOJson2map(ctx context.Context, sel ast.Select
 	}
 	res := graphql.MarshalMap(v)
 	return res
+}
+
+func (ec *executionContext) marshalOOAuthProviderStatus2ᚕᚖkloudliteᚗioᚋappsᚋauthᚋinternalᚋappᚋgraphᚋmodelᚐOAuthProviderStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.OAuthProviderStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNOAuthProviderStatus2ᚖkloudliteᚗioᚋappsᚋauthᚋinternalᚋappᚋgraphᚋmodelᚐOAuthProviderStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) unmarshalOProviderDetail2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {

@@ -6,6 +6,11 @@ import (
 	"kloudlite.io/pkg/repos"
 )
 
+type OAuthProviderStatus struct {
+	Provider string `json:"provider"`
+	Enabled  bool   `json:"enabled"`
+}
+
 type RemoteLogin struct {
 	Status     string  `json:"status"`
 	AuthHeader *string `json:"authHeader,omitempty"`
