@@ -7,6 +7,8 @@ import (
 	"path"
 	"time"
 
+	"gopkg.in/yaml.v2"
+
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 	awss3 "kloudlite.io/pkg/aws-s3"
@@ -49,11 +51,61 @@ type TokenAndKubeconfig struct {
 	MasterToken string `json:"masterToken"`
 }
 
+type NodeConfig struct {
+	ServerIP string            `yaml:"serverIp"`
+	Token    string            `yaml:"token"`
+	NodeName string            `yaml:"nodeName"`
+	Taints   []string          `yaml:"taints"`
+	Labels   map[string]string `yaml:"labels"`
+}
+
+func (a AwsClient) ensurePaths() error {
+	const sshDir = "/tmp/ssh"
+	sshPath := path.Join(sshDir, a.accountName)
+	if _, err := os.Stat(sshDir); err != nil {
+		if err := os.Mkdir(sshDir, os.ModePerm); err != nil {
+			return err
+		}
+	}
+
+	if _, err := os.Stat(sshPath); err != nil {
+		if err := os.Mkdir(sshPath, os.ModePerm); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (a AwsClient) writeNodeConfig(kc TokenAndKubeconfig) error {
+	if err := a.ensurePaths(); err != nil {
+		return err
+	}
+
+	const sshDir = "/tmp/ssh"
+	sshPath := path.Join(sshDir, a.accountName)
+	dataPath := path.Join(sshPath, "data.yaml")
+
+	nc := NodeConfig{
+		ServerIP: kc.ServerIp,
+		Token:    kc.Token,
+		NodeName: a.node.NodeId,
+		Taints:   []string{},
+		Labels:   map[string]string{},
+	}
+
+	out, err := yaml.Marshal(nc)
+	if err != nil {
+		return err
+	}
+
+	return os.WriteFile(dataPath, out, os.ModePerm)
+}
+
 func (a AwsClient) SetupSSH() error {
 	const sshDir = "/tmp/ssh"
-
-	if _, err := os.Stat(sshDir); err != nil {
-		return os.Mkdir(sshDir, os.ModePerm)
+	if err := a.ensurePaths(); err != nil {
+		return err
 	}
 
 	destDir := path.Join(sshDir, a.accountName)
@@ -145,18 +197,28 @@ func (a AwsClient) SaveToDbGuranteed(ctx context.Context) {
 	}
 }
 
+func (a AwsClient) getAwsTemplatePath() string {
+	return path.Join(a.tfTemplates, func() string {
+		switch a.node.NodeType {
+		case "spot":
+			return "aws-spot"
+		default:
+			return "aws"
+		}
+	}(),
+	)
+}
+
 // NewNode implements ProviderClient
 func (a AwsClient) NewNode(ctx context.Context) error {
 	sshPath := path.Join("/tmp/ssh", a.accountName)
 	values := parseValues(a, sshPath)
 
-	if true {
-		if err := utils.MakeTfWorkFileReady(a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.awsS3Client, true); err != nil {
-			return err
-		}
-
-		defer a.SaveToDbGuranteed(ctx)
+	if err := utils.MakeTfWorkFileReady(a.node.NodeId, a.getAwsTemplatePath(), a.awsS3Client, true); err != nil {
+		return err
 	}
+
+	defer a.SaveToDbGuranteed(ctx)
 
 	// upload the final state to the db, upsert if db is already present
 
@@ -192,7 +254,7 @@ func (a AwsClient) DeleteNode(ctx context.Context) error {
 			- delete final state
 	*/
 
-	if err := utils.MakeTfWorkFileReady(a.node.NodeId, path.Join(a.tfTemplates, "aws"), a.awsS3Client, false); err != nil {
+	if err := utils.MakeTfWorkFileReady(a.node.NodeId, a.getAwsTemplatePath(), a.awsS3Client, false); err != nil {
 		return err
 	}
 

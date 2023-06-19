@@ -7,6 +7,7 @@ import (
 	"path"
 	"time"
 
+	guuid "github.com/google/uuid"
 	"gopkg.in/yaml.v2"
 
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
@@ -22,13 +23,16 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 		check for rediness
 		install maaster
 	*/
+	if err := a.ensureForMasters(); err != nil {
+		return err
+	}
 
 	if err := func() error {
 		switch a.node.NodeType {
-		case "ec2":
-			return nil
+		case "spot":
+			return fmt.Errorf("spot is not supported as a master")
 		default:
-			return fmt.Errorf("this type of node is not supported for now (%q)", a.node.NodeType)
+			return nil
 		}
 	}(); err != nil {
 		return err

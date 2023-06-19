@@ -13,8 +13,25 @@ import (
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
 )
 
+func (a AwsClient) ensureForMasters() error {
+	switch a.node.NodeType {
+	case "spot":
+		return fmt.Errorf("spot is not supported as a master")
+	default:
+		return nil
+	}
+}
+
 // AddMaster implements common.ProviderClient.
 func (a AwsClient) AddMaster(ctx context.Context) error {
+	if err := a.ensureForMasters(); err != nil {
+		return err
+	}
+
+	if err := a.ensurePaths(); err != nil {
+		return err
+	}
+
 	// fetch token
 	sshPath := path.Join("/tmp/ssh", a.accountName)
 
@@ -22,12 +39,6 @@ func (a AwsClient) AddMaster(ctx context.Context) error {
 
 	if err := a.awsS3Client.IsFileExists(tokenFileName); err != nil {
 		return err
-	}
-
-	if _, err := os.Stat(sshPath); err != nil {
-		if e := os.Mkdir(sshPath, os.ModePerm); e != nil {
-			return e
-		}
 	}
 
 	tokenPath := path.Join(sshPath, "config.yaml")
@@ -52,11 +63,6 @@ func (a AwsClient) AddMaster(ctx context.Context) error {
 		return err
 	}
 	defer a.saveForSure()
-
-	// create node and wait for ready
-	if err := a.NewNode(ctx); err != nil {
-		return err
-	}
 
 	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
 	if err != nil {

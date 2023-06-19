@@ -46,6 +46,12 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		return err
 	}
 
+	if a.node.NodeType == "spot" {
+		if err := a.writeNodeConfig(kc); err != nil {
+			return err
+		}
+	}
+
 	// setup ssh
 
 	if err := a.SetupSSH(); err != nil {
@@ -56,6 +62,10 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 	// create node and wait for ready
 	if err := a.NewNode(ctx); err != nil {
 		return err
+	}
+
+	if a.node.NodeType == "spot" {
+		return nil
 	}
 
 	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
