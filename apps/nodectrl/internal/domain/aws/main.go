@@ -20,7 +20,6 @@ type AwsProviderConfig struct {
 	AccessKey    string `yaml:"accessKey"`
 	AccessSecret string `yaml:"accessSecret"`
 	AccountName  string `yaml:"accountName"`
-	AccountId    string `yaml:"accountId"`
 }
 
 type AWSNode struct {

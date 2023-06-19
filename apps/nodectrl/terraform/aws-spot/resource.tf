@@ -19,6 +19,8 @@ output "node-name" {
 }
 
 
+data "aws_caller_identity" "current" {}
+
 resource "aws_security_group" "sg" {
 
   name = "sg-${var.node_id}"
@@ -148,7 +150,7 @@ resource "aws_launch_template" "spot-template" {
 
 
 resource "aws_spot_fleet_request" "byoc-spot-node" {
-  iam_fleet_role = "arn:aws:iam::${var.account_id}:role/aws-ec2-spot-fleet-tagging-role"
+  iam_fleet_role = "arn:aws:iam::${data.aws_caller_identity.current.account_id}:role/aws-ec2-spot-fleet-tagging-role"
 
   target_capacity = 1
 

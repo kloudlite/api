@@ -17,7 +17,3 @@ variable "node_id" {
 variable "keys-path" {
   default = ""
 }
-
-variable "account_id" {
-  default = ""
-}

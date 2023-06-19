@@ -31,7 +31,6 @@ type awsSpotClient struct {
 	accessKey    string
 	accessSecret string
 	accountName  string
-	accountId    string
 
 	tfTemplates string
 	labels      map[string]string
@@ -346,7 +345,6 @@ func parseValues(a awsSpotClient, sshPath string) map[string]string {
 	values["region"] = a.node.Region
 	values["node_id"] = a.node.NodeId
 	values["keys-path"] = sshPath
-	values["account_id"] = a.accountId
 
 	// TODO: ami according to region
 	// ami is fixed for now
@@ -464,7 +462,6 @@ func NewAwsSpotProviderClient(node aws.AWSNode, cpd common.CommonProviderData, a
 		accessKey:    apc.AccessKey,
 		accessSecret: apc.AccessSecret,
 		accountName:  apc.AccountName,
-		accountId:    apc.AccountId,
 
 		tfTemplates: cpd.TfTemplates,
 		labels:      cpd.Labels,
