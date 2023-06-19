@@ -6,6 +6,7 @@ import (
 	"go.uber.org/fx"
 
 	"kloudlite.io/apps/nodectrl/internal/domain/aws"
+	awsspot "kloudlite.io/apps/nodectrl/internal/domain/aws-spot"
 	"kloudlite.io/apps/nodectrl/internal/domain/common"
 	"kloudlite.io/apps/nodectrl/internal/domain/do"
 	"kloudlite.io/apps/nodectrl/internal/domain/utils"
@@ -44,6 +45,22 @@ var ProviderClientFx = fx.Module("provider-client-fx",
 			}
 
 			return aws.NewAwsProviderClient(node, cpd, apc)
+
+		case "aws-spot":
+
+			node := awsspot.AwsASpotNode{}
+
+			if err := utils.Base64YamlDecode(env.NodeConfig, &node); err != nil {
+				return nil, err
+			}
+
+			apc := aws.AwsProviderConfig{}
+
+			if err := utils.Base64YamlDecode(env.AWSProviderConfig, &apc); err != nil {
+				return nil, err
+			}
+
+			return awsspot.NewAwsSpotProviderClient(node, cpd, apc)
 		case "azure":
 			panic("not implemented")
 		case "do":
