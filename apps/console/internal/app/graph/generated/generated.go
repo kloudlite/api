@@ -84,8 +84,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Kind         func(childComplexity int) int
 		ObjectMeta   func(childComplexity int) int
-		Overrides    func(childComplexity int) int
-		Restart      func(childComplexity int) int
 		Spec         func(childComplexity int) int
 		Status       func(childComplexity int) int
 		SyncStatus   func(childComplexity int) int
@@ -113,7 +111,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Kind         func(childComplexity int) int
 		ObjectMeta   func(childComplexity int) int
-		Overrides    func(childComplexity int) int
 		Status       func(childComplexity int) int
 		SyncStatus   func(childComplexity int) int
 		UpdateTime   func(childComplexity int) int
@@ -133,17 +130,6 @@ type ComplexityRoot struct {
 	ConsoleCheckNameAvailabilityOutput struct {
 		Result         func(childComplexity int) int
 		SuggestedNames func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_AppOverrides struct {
-		Applied func(childComplexity int) int
-		Patches func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches struct {
-		Op    func(childComplexity int) int
-		Path  func(childComplexity int) int
-		Value func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_AppSpec struct {
@@ -287,31 +273,9 @@ type ComplexityRoot struct {
 		Value             func(childComplexity int) int
 	}
 
-	Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides struct {
-		Applied func(childComplexity int) int
-		Patches func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches struct {
-		Op    func(childComplexity int) int
-		Path  func(childComplexity int) int
-		Value func(childComplexity int) int
-	}
-
 	Github_com__kloudlite__operator__apis__crds__v1_EnvSpec struct {
 		ProjectName     func(childComplexity int) int
 		TargetNamespace func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides struct {
-		Applied func(childComplexity int) int
-		Patches func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches struct {
-		Op    func(childComplexity int) int
-		Path  func(childComplexity int) int
-		Value func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec struct {
@@ -328,17 +292,6 @@ type ComplexityRoot struct {
 		APIVersion func(childComplexity int) int
 		Kind       func(childComplexity int) int
 		Name       func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides struct {
-		Applied func(childComplexity int) int
-		Patches func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches struct {
-		Op    func(childComplexity int) int
-		Path  func(childComplexity int) int
-		Value func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec struct {
@@ -368,17 +321,6 @@ type ComplexityRoot struct {
 		DisplayName     func(childComplexity int) int
 		Logo            func(childComplexity int) int
 		TargetNamespace func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides struct {
-		Applied func(childComplexity int) int
-		Patches func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches struct {
-		Op    func(childComplexity int) int
-		Path  func(childComplexity int) int
-		Value func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_RouterSpec struct {
@@ -425,17 +367,6 @@ type ComplexityRoot struct {
 		Path    func(childComplexity int) int
 		Port    func(childComplexity int) int
 		Rewrite func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides struct {
-		Applied func(childComplexity int) int
-		Patches func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches struct {
-		Op    func(childComplexity int) int
-		Path  func(childComplexity int) int
-		Value func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__pkg__operator_Check struct {
@@ -517,7 +448,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Kind         func(childComplexity int) int
 		ObjectMeta   func(childComplexity int) int
-		Overrides    func(childComplexity int) int
 		Spec         func(childComplexity int) int
 		Status       func(childComplexity int) int
 		SyncStatus   func(childComplexity int) int
@@ -544,7 +474,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Kind         func(childComplexity int) int
 		ObjectMeta   func(childComplexity int) int
-		Overrides    func(childComplexity int) int
 		Spec         func(childComplexity int) int
 		Status       func(childComplexity int) int
 		SyncStatus   func(childComplexity int) int
@@ -682,10 +611,10 @@ type ComplexityRoot struct {
 		AccountName  func(childComplexity int) int
 		ClusterName  func(childComplexity int) int
 		CreationTime func(childComplexity int) int
+		Enabled      func(childComplexity int) int
 		ID           func(childComplexity int) int
 		Kind         func(childComplexity int) int
 		ObjectMeta   func(childComplexity int) int
-		Overrides    func(childComplexity int) int
 		Spec         func(childComplexity int) int
 		Status       func(childComplexity int) int
 		SyncStatus   func(childComplexity int) int
@@ -713,8 +642,6 @@ type ComplexityRoot struct {
 		ID           func(childComplexity int) int
 		Kind         func(childComplexity int) int
 		ObjectMeta   func(childComplexity int) int
-		Overrides    func(childComplexity int) int
-		ProjectName  func(childComplexity int) int
 		Status       func(childComplexity int) int
 		StringData   func(childComplexity int) int
 		SyncStatus   func(childComplexity int) int
@@ -768,8 +695,6 @@ type AppResolver interface {
 
 	ID(ctx context.Context, obj *entities.App) (string, error)
 
-	Overrides(ctx context.Context, obj *entities.App) (*model.GithubComKloudliteOperatorApisCrdsV1AppOverrides, error)
-	Restart(ctx context.Context, obj *entities.App) (*bool, error)
 	Spec(ctx context.Context, obj *entities.App) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpec, error)
 
 	UpdateTime(ctx context.Context, obj *entities.App) (string, error)
@@ -779,8 +704,6 @@ type ConfigResolver interface {
 	Data(ctx context.Context, obj *entities.Config) (map[string]interface{}, error)
 
 	ID(ctx context.Context, obj *entities.Config) (string, error)
-
-	Overrides(ctx context.Context, obj *entities.Config) (*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverrides, error)
 
 	UpdateTime(ctx context.Context, obj *entities.Config) (string, error)
 }
@@ -809,7 +732,6 @@ type ManagedResourceResolver interface {
 
 	ID(ctx context.Context, obj *entities.ManagedResource) (string, error)
 
-	Overrides(ctx context.Context, obj *entities.ManagedResource) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides, error)
 	Spec(ctx context.Context, obj *entities.ManagedResource) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpec, error)
 
 	UpdateTime(ctx context.Context, obj *entities.ManagedResource) (string, error)
@@ -819,7 +741,6 @@ type ManagedServiceResolver interface {
 
 	ID(ctx context.Context, obj *entities.ManagedService) (string, error)
 
-	Overrides(ctx context.Context, obj *entities.ManagedService) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides, error)
 	Spec(ctx context.Context, obj *entities.ManagedService) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpec, error)
 
 	UpdateTime(ctx context.Context, obj *entities.ManagedService) (string, error)
@@ -894,9 +815,9 @@ type QueryResolver interface {
 }
 type RouterResolver interface {
 	CreationTime(ctx context.Context, obj *entities.Router) (string, error)
+
 	ID(ctx context.Context, obj *entities.Router) (string, error)
 
-	Overrides(ctx context.Context, obj *entities.Router) (*model.GithubComKloudliteOperatorApisCrdsV1RouterOverrides, error)
 	Spec(ctx context.Context, obj *entities.Router) (*model.GithubComKloudliteOperatorApisCrdsV1RouterSpec, error)
 
 	UpdateTime(ctx context.Context, obj *entities.Router) (string, error)
@@ -906,9 +827,6 @@ type SecretResolver interface {
 	Data(ctx context.Context, obj *entities.Secret) (map[string]interface{}, error)
 
 	ID(ctx context.Context, obj *entities.Secret) (string, error)
-
-	Overrides(ctx context.Context, obj *entities.Secret) (*model.GithubComKloudliteOperatorApisCrdsV1SecretOverrides, error)
-	ProjectName(ctx context.Context, obj *entities.Secret) (*string, error)
 
 	StringData(ctx context.Context, obj *entities.Secret) (map[string]interface{}, error)
 
@@ -926,24 +844,19 @@ type WorkspaceResolver interface {
 
 type AppInResolver interface {
 	Metadata(ctx context.Context, obj *entities.App, data *v1.ObjectMeta) error
-	Overrides(ctx context.Context, obj *entities.App, data *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesIn) error
-	Restart(ctx context.Context, obj *entities.App, data *bool) error
 	Spec(ctx context.Context, obj *entities.App, data *model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn) error
 }
 type ConfigInResolver interface {
 	Data(ctx context.Context, obj *entities.Config, data map[string]interface{}) error
 
 	Metadata(ctx context.Context, obj *entities.Config, data *v1.ObjectMeta) error
-	Overrides(ctx context.Context, obj *entities.Config, data *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesIn) error
 }
 type ManagedResourceInResolver interface {
 	Metadata(ctx context.Context, obj *entities.ManagedResource, data *v1.ObjectMeta) error
-	Overrides(ctx context.Context, obj *entities.ManagedResource, data *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesIn) error
 	Spec(ctx context.Context, obj *entities.ManagedResource, data *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpecIn) error
 }
 type ManagedServiceInResolver interface {
 	Metadata(ctx context.Context, obj *entities.ManagedService, data *v1.ObjectMeta) error
-	Overrides(ctx context.Context, obj *entities.ManagedService, data *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesIn) error
 	Spec(ctx context.Context, obj *entities.ManagedService, data *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecIn) error
 }
 type MetadataInResolver interface {
@@ -960,15 +873,12 @@ type ProjectInResolver interface {
 }
 type RouterInResolver interface {
 	Metadata(ctx context.Context, obj *entities.Router, data *v1.ObjectMeta) error
-	Overrides(ctx context.Context, obj *entities.Router, data *model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesIn) error
 	Spec(ctx context.Context, obj *entities.Router, data *model.GithubComKloudliteOperatorApisCrdsV1RouterSpecIn) error
 }
 type SecretInResolver interface {
 	Data(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error
 
 	Metadata(ctx context.Context, obj *entities.Secret, data *v1.ObjectMeta) error
-	Overrides(ctx context.Context, obj *entities.Secret, data *model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesIn) error
-	ProjectName(ctx context.Context, obj *entities.Secret, data *string) error
 	StringData(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error
 	Type(ctx context.Context, obj *entities.Secret, data *string) error
 }
@@ -1047,20 +957,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.App.ObjectMeta(childComplexity), true
-
-	case "App.overrides":
-		if e.complexity.App.Overrides == nil {
-			break
-		}
-
-		return e.complexity.App.Overrides(childComplexity), true
-
-	case "App.restart":
-		if e.complexity.App.Restart == nil {
-			break
-		}
-
-		return e.complexity.App.Restart(childComplexity), true
 
 	case "App.spec":
 		if e.complexity.App.Spec == nil {
@@ -1188,13 +1084,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Config.ObjectMeta(childComplexity), true
 
-	case "Config.overrides":
-		if e.complexity.Config.Overrides == nil {
-			break
-		}
-
-		return e.complexity.Config.Overrides(childComplexity), true
-
 	case "Config.status":
 		if e.complexity.Config.Status == nil {
 			break
@@ -1264,41 +1153,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ConsoleCheckNameAvailabilityOutput.SuggestedNames(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_AppOverrides.applied":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverrides.Applied == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverrides.Applied(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_AppOverrides.patches":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverrides.Patches == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverrides.Patches(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.op":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.Op == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.Op(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.path":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.Path == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.Path(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.value":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.Value == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches.Value(childComplexity), true
 
 	case "Github_com__kloudlite__operator__apis__crds__v1_AppSpec.containers":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppSpec.Containers == nil {
@@ -1867,41 +1721,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations.Value(childComplexity), true
 
-	case "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides.applied":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides.Applied == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides.Applied(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides.patches":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides.Patches == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides.Patches(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.op":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.Op == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.Op(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.path":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.Path == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.Path(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.value":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.Value == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches.Value(childComplexity), true
-
 	case "Github_com__kloudlite__operator__apis__crds__v1_EnvSpec.projectName":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_EnvSpec.ProjectName == nil {
 			break
@@ -1915,41 +1734,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_EnvSpec.TargetNamespace(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides.applied":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides.Applied == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides.Applied(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides.patches":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides.Patches == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides.Patches(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.op":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.Op == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.Op(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.path":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.Path == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.Path(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.value":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.Value == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches.Value(childComplexity), true
 
 	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec.inputs":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec.Inputs == nil {
@@ -1999,41 +1783,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef.Name(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides.applied":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides.Applied == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides.Applied(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides.patches":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides.Patches == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides.Patches(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.op":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.Op == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.Op(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.path":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.Path == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.Path(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.value":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.Value == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches.Value(childComplexity), true
 
 	case "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec.inputs":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec.Inputs == nil {
@@ -2153,41 +1902,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.TargetNamespace(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides.applied":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides.Applied == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides.Applied(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides.patches":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides.Patches == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides.Patches(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.op":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.Op == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.Op(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.path":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.Path == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.Path(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.value":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.Value == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches.Value(childComplexity), true
 
 	case "Github_com__kloudlite__operator__apis__crds__v1_RouterSpec.backendProtocol":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterSpec.BackendProtocol == nil {
@@ -2384,41 +2098,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes.Rewrite(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides.applied":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides.Applied == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides.Applied(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides.patches":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides.Patches == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides.Patches(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.op":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.Op == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.Op(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.path":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.Path == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.Path(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.value":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.Value == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches.Value(childComplexity), true
 
 	case "Github_com__kloudlite__operator__pkg__operator_Check.generation":
 		if e.complexity.Github_com__kloudlite__operator__pkg__operator_Check.Generation == nil {
@@ -2777,13 +2456,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManagedResource.ObjectMeta(childComplexity), true
 
-	case "ManagedResource.overrides":
-		if e.complexity.ManagedResource.Overrides == nil {
-			break
-		}
-
-		return e.complexity.ManagedResource.Overrides(childComplexity), true
-
 	case "ManagedResource.spec":
 		if e.complexity.ManagedResource.Spec == nil {
 			break
@@ -2902,13 +2574,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManagedService.ObjectMeta(childComplexity), true
-
-	case "ManagedService.overrides":
-		if e.complexity.ManagedService.Overrides == nil {
-			break
-		}
-
-		return e.complexity.ManagedService.Overrides(childComplexity), true
 
 	case "ManagedService.spec":
 		if e.complexity.ManagedService.Spec == nil {
@@ -3846,6 +3511,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Router.CreationTime(childComplexity), true
 
+	case "Router.enabled":
+		if e.complexity.Router.Enabled == nil {
+			break
+		}
+
+		return e.complexity.Router.Enabled(childComplexity), true
+
 	case "Router.id":
 		if e.complexity.Router.ID == nil {
 			break
@@ -3866,13 +3538,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Router.ObjectMeta(childComplexity), true
-
-	case "Router.overrides":
-		if e.complexity.Router.Overrides == nil {
-			break
-		}
-
-		return e.complexity.Router.Overrides(childComplexity), true
 
 	case "Router.spec":
 		if e.complexity.Router.Spec == nil {
@@ -3999,20 +3664,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Secret.ObjectMeta(childComplexity), true
-
-	case "Secret.overrides":
-		if e.complexity.Secret.Overrides == nil {
-			break
-		}
-
-		return e.complexity.Secret.Overrides(childComplexity), true
-
-	case "Secret.projectName":
-		if e.complexity.Secret.ProjectName == nil {
-			break
-		}
-
-		return e.complexity.Secret.ProjectName(childComplexity), true
 
 	case "Secret.status":
 		if e.complexity.Secret.Status == nil {
@@ -4213,8 +3864,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputAppIn,
 		ec.unmarshalInputConfigIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn,
@@ -4235,30 +3884,20 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecInterceptIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_EnvSpecIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKindIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRefIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKindIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecCorsIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecHttpsIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimitIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn,
 		ec.unmarshalInputManagedResourceIn,
 		ec.unmarshalInputManagedServiceIn,
 		ec.unmarshalInputMetadataIn,
@@ -4464,8 +4103,6 @@ type Mutation {
   id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_AppOverrides
-  restart: Boolean
   spec: Github_com__kloudlite__operator__apis__crds__v1_AppSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -4490,24 +4127,11 @@ input AppIn {
   enabled: Boolean
   kind: String!
   metadata: MetadataIn!
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_AppOverridesIn
-  restart: Boolean
   spec: Github_com__kloudlite__operator__apis__crds__v1_AppSpecIn
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__operator__apis__crds__v1_AppOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpec {
+	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__operator__apis__crds__v1_AppSpec {
   containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers]!
   displayName: String
   freeze: Boolean
@@ -4648,31 +4272,9 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations {
   value: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
-}
-
 type Github_com__kloudlite__operator__apis__crds__v1_EnvSpec {
   projectName: String!
   targetNamespace: String!
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec {
@@ -4689,17 +4291,6 @@ type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef 
   apiVersion: String!
   kind: String
   name: String!
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec {
@@ -4729,17 +4320,6 @@ type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec {
   displayName: String
   logo: String
   targetNamespace: String!
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec {
@@ -4786,17 +4366,6 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes {
   path: String!
   port: Int!
   rewrite: Boolean
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches]
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches {
-  op: String!
-  path: String!
-  value: Any
 }
 
 type Github_com__kloudlite__operator__pkg__operator_Check {
@@ -4882,17 +4451,6 @@ type PageInfo {
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
   startCursor: String
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_AppOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn {
@@ -5036,31 +4594,9 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn {
   value: String
 }
 
-input Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
-}
-
 input Github_com__kloudlite__operator__apis__crds__v1_EnvSpecIn {
   projectName: String!
   targetNamespace: String!
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn {
@@ -5077,17 +4613,6 @@ input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef
   apiVersion: String!
   kind: String
   name: String!
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn {
@@ -5117,17 +4642,6 @@ input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn {
   displayName: String
   logo: String
   targetNamespace: String!
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn {
@@ -5176,17 +4690,6 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
   rewrite: Boolean
 }
 
-input Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn {
-  applied: Boolean
-  patches: [Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn]
-}
-
-input Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn {
-  op: String!
-  path: String!
-  value: Any
-}
-
 input MetadataIn {
   annotations: Map
   generation: Int
@@ -5218,7 +4721,6 @@ enum Kloudlite_io__pkg__types_SyncStatusState {
   id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
   updateTime: Date!
@@ -5243,7 +4745,6 @@ input ConfigIn {
   enabled: Boolean
   kind: String!
   metadata: MetadataIn!
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn
 }
 
 `, BuiltIn: false},
@@ -5263,7 +4764,6 @@ directive @goField(
   id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides
   spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -5288,7 +4788,6 @@ input ManagedResourceIn {
   enabled: Boolean
   kind: String!
   metadata: MetadataIn!
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn
   spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn
 }
 
@@ -5302,7 +4801,6 @@ input ManagedResourceIn {
   id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides
   spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -5327,7 +4825,6 @@ input ManagedServiceIn {
   enabled: Boolean
   kind: String!
   metadata: MetadataIn!
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn
   spec: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn
 }
 
@@ -5390,10 +4887,10 @@ input ProjectIn {
   apiVersion: String!
   clusterName: String!
   creationTime: Date!
+  enabled: Boolean
   id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides
   spec: Github_com__kloudlite__operator__apis__crds__v1_RouterSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -5415,9 +4912,9 @@ input RouterIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  enabled: Boolean
   kind: String!
   metadata: MetadataIn!
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn
   spec: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecIn
 }
 
@@ -5437,8 +4934,6 @@ scalar Date
   id: String!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides
-  projectName: String
   status: Github_com__kloudlite__operator__pkg__operator_Status
   stringData: Map
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -5465,8 +4960,6 @@ input SecretIn {
   enabled: Boolean
   kind: String!
   metadata: MetadataIn!
-  overrides: Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn
-  projectName: String
   stringData: Map
   type: String
 }
@@ -6981,94 +6474,6 @@ func (ec *executionContext) fieldContext_App_metadata(ctx context.Context, field
 	return fc, nil
 }
 
-func (ec *executionContext) _App_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.App) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_App_overrides(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.App().Overrides(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1AppOverrides)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverrides(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_App_overrides(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "App",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applied":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_applied(ctx, field)
-			case "patches":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_patches(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_AppOverrides", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _App_restart(ctx context.Context, field graphql.CollectedField, obj *entities.App) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_App_restart(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.App().Restart(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_App_restart(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "App",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _App_spec(ctx context.Context, field graphql.CollectedField, obj *entities.App) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_App_spec(ctx, field)
 	if err != nil {
@@ -7388,10 +6793,6 @@ func (ec *executionContext) fieldContext_AppEdge_node(ctx context.Context, field
 				return ec.fieldContext_App_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_App_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_App_overrides(ctx, field)
-			case "restart":
-				return ec.fieldContext_App_restart(ctx, field)
 			case "spec":
 				return ec.fieldContext_App_spec(ctx, field)
 			case "status":
@@ -7957,53 +7358,6 @@ func (ec *executionContext) fieldContext_Config_metadata(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Config_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.Config) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Config_overrides(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Config().Overrides(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverrides)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverrides(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Config_overrides(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Config",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applied":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_applied(ctx, field)
-			case "patches":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_patches(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Config_status(ctx context.Context, field graphql.CollectedField, obj *entities.Config) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Config_status(ctx, field)
 	if err != nil {
@@ -8260,8 +7614,6 @@ func (ec *executionContext) fieldContext_ConfigEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Config_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Config_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Config_overrides(ctx, field)
 			case "status":
 				return ec.fieldContext_Config_status(ctx, field)
 			case "syncStatus":
@@ -8503,225 +7855,6 @@ func (ec *executionContext) fieldContext_ConsoleCheckNameAvailabilityOutput_sugg
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_applied(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_applied(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Applied, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_applied(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_AppOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_patches(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_patches(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Patches, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatches(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_patches(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_AppOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "op":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_op(ctx, field)
-			case "path":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_path(ctx, field)
-			case "value":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_value(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_op(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_op(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Op, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_op(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_path(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_path(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Path, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_path(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_value(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12289,225 +11422,6 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 	return fc, nil
 }
 
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_applied(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_applied(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Applied, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_applied(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_patches(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_patches(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Patches, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_patches(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "op":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_op(ctx, field)
-			case "path":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_path(ctx, field)
-			case "value":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_value(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_op(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_op(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Op, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_op(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_path(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_path(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Path, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_path(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_value(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_EnvSpec_projectName(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvSpec) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_EnvSpec_projectName(ctx, field)
 	if err != nil {
@@ -12591,225 +11505,6 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_applied(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_applied(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Applied, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_applied(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_patches(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_patches(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Patches, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_patches(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "op":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_op(ctx, field)
-			case "path":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_path(ctx, field)
-			case "value":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_value(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_op(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_op(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Op, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_op(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_path(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_path(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Path, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_path(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_value(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13124,225 +11819,6 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_applied(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_applied(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Applied, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_applied(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_patches(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_patches(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Patches, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_patches(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "op":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_op(ctx, field)
-			case "path":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_path(ctx, field)
-			case "value":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_value(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_op(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_op(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Op, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_op(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_path(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_path(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Path, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_path(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_value(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -14073,225 +12549,6 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_applied(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_applied(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Applied, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_applied(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_patches(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_patches(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Patches, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_patches(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "op":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_op(ctx, field)
-			case "path":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_path(ctx, field)
-			case "value":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_value(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_op(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_op(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Op, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_op(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_path(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_path(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Path, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_path(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_value(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -15501,225 +13758,6 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_applied(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_applied(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Applied, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_applied(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_patches(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverrides) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_patches(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Patches, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_patches(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "op":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_op(ctx, field)
-			case "path":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_path(ctx, field)
-			case "value":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_value(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_op(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_op(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Op, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_op(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_path(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_path(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Path, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_path(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_value(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_value(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Value, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(interface{})
-	fc.Result = res
-	return ec.marshalOAny2interface(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_value(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -18005,53 +16043,6 @@ func (ec *executionContext) fieldContext_ManagedResource_metadata(ctx context.Co
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedResource_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ManagedResource_overrides(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ManagedResource().Overrides(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ManagedResource_overrides(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ManagedResource",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applied":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_applied(ctx, field)
-			case "patches":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_patches(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ManagedResource_spec(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_spec(ctx, field)
 	if err != nil {
@@ -18355,8 +16346,6 @@ func (ec *executionContext) fieldContext_ManagedResourceEdge_node(ctx context.Co
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedResource_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedResource_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
@@ -18881,53 +16870,6 @@ func (ec *executionContext) fieldContext_ManagedService_metadata(ctx context.Con
 	return fc, nil
 }
 
-func (ec *executionContext) _ManagedService_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_ManagedService_overrides(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.ManagedService().Overrides(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_ManagedService_overrides(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "ManagedService",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applied":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_applied(ctx, field)
-			case "patches":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_patches(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _ManagedService_spec(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_spec(ctx, field)
 	if err != nil {
@@ -19235,8 +17177,6 @@ func (ec *executionContext) fieldContext_ManagedServiceEdge_node(ctx context.Con
 				return ec.fieldContext_ManagedService_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedService_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedService_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedService_spec(ctx, field)
 			case "status":
@@ -20650,10 +18590,6 @@ func (ec *executionContext) fieldContext_Mutation_core_createApp(ctx context.Con
 				return ec.fieldContext_App_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_App_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_App_overrides(ctx, field)
-			case "restart":
-				return ec.fieldContext_App_restart(ctx, field)
 			case "spec":
 				return ec.fieldContext_App_spec(ctx, field)
 			case "status":
@@ -20758,10 +18694,6 @@ func (ec *executionContext) fieldContext_Mutation_core_updateApp(ctx context.Con
 				return ec.fieldContext_App_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_App_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_App_overrides(ctx, field)
-			case "restart":
-				return ec.fieldContext_App_restart(ctx, field)
 			case "spec":
 				return ec.fieldContext_App_spec(ctx, field)
 			case "status":
@@ -20949,8 +18881,6 @@ func (ec *executionContext) fieldContext_Mutation_core_createConfig(ctx context.
 				return ec.fieldContext_Config_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Config_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Config_overrides(ctx, field)
 			case "status":
 				return ec.fieldContext_Config_status(ctx, field)
 			case "syncStatus":
@@ -21055,8 +18985,6 @@ func (ec *executionContext) fieldContext_Mutation_core_updateConfig(ctx context.
 				return ec.fieldContext_Config_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Config_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Config_overrides(ctx, field)
 			case "status":
 				return ec.fieldContext_Config_status(ctx, field)
 			case "syncStatus":
@@ -21242,10 +19170,6 @@ func (ec *executionContext) fieldContext_Mutation_core_createSecret(ctx context.
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Secret_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Secret_overrides(ctx, field)
-			case "projectName":
-				return ec.fieldContext_Secret_projectName(ctx, field)
 			case "status":
 				return ec.fieldContext_Secret_status(ctx, field)
 			case "stringData":
@@ -21354,10 +19278,6 @@ func (ec *executionContext) fieldContext_Mutation_core_updateSecret(ctx context.
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Secret_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Secret_overrides(ctx, field)
-			case "projectName":
-				return ec.fieldContext_Secret_projectName(ctx, field)
 			case "status":
 				return ec.fieldContext_Secret_status(ctx, field)
 			case "stringData":
@@ -21537,14 +19457,14 @@ func (ec *executionContext) fieldContext_Mutation_core_createRouter(ctx context.
 				return ec.fieldContext_Router_clusterName(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
+			case "enabled":
+				return ec.fieldContext_Router_enabled(ctx, field)
 			case "id":
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Router_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Router_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_Router_spec(ctx, field)
 			case "status":
@@ -21641,14 +19561,14 @@ func (ec *executionContext) fieldContext_Mutation_core_updateRouter(ctx context.
 				return ec.fieldContext_Router_clusterName(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
+			case "enabled":
+				return ec.fieldContext_Router_enabled(ctx, field)
 			case "id":
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Router_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Router_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_Router_spec(ctx, field)
 			case "status":
@@ -21834,8 +19754,6 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedService(ctx 
 				return ec.fieldContext_ManagedService_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedService_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedService_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedService_spec(ctx, field)
 			case "status":
@@ -21940,8 +19858,6 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedService(ctx 
 				return ec.fieldContext_ManagedService_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedService_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedService_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedService_spec(ctx, field)
 			case "status":
@@ -22127,8 +20043,6 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedResource(ctx
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedResource_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedResource_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
@@ -22233,8 +20147,6 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedResource(ctx
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedResource_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedResource_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
@@ -24089,10 +22001,6 @@ func (ec *executionContext) fieldContext_Query_core_getApp(ctx context.Context, 
 				return ec.fieldContext_App_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_App_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_App_overrides(ctx, field)
-			case "restart":
-				return ec.fieldContext_App_restart(ctx, field)
 			case "spec":
 				return ec.fieldContext_App_spec(ctx, field)
 			case "status":
@@ -24366,8 +22274,6 @@ func (ec *executionContext) fieldContext_Query_core_getConfig(ctx context.Contex
 				return ec.fieldContext_Config_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Config_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Config_overrides(ctx, field)
 			case "status":
 				return ec.fieldContext_Config_status(ctx, field)
 			case "syncStatus":
@@ -24639,10 +22545,6 @@ func (ec *executionContext) fieldContext_Query_core_getSecret(ctx context.Contex
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Secret_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Secret_overrides(ctx, field)
-			case "projectName":
-				return ec.fieldContext_Secret_projectName(ctx, field)
 			case "status":
 				return ec.fieldContext_Secret_status(ctx, field)
 			case "stringData":
@@ -24908,14 +22810,14 @@ func (ec *executionContext) fieldContext_Query_core_getRouter(ctx context.Contex
 				return ec.fieldContext_Router_clusterName(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
+			case "enabled":
+				return ec.fieldContext_Router_enabled(ctx, field)
 			case "id":
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Router_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Router_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_Router_spec(ctx, field)
 			case "status":
@@ -25306,8 +23208,6 @@ func (ec *executionContext) fieldContext_Query_core_getManagedService(ctx contex
 				return ec.fieldContext_ManagedService_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedService_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedService_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedService_spec(ctx, field)
 			case "status":
@@ -25579,8 +23479,6 @@ func (ec *executionContext) fieldContext_Query_core_getManagedResource(ctx conte
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_ManagedResource_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_ManagedResource_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
@@ -26041,6 +23939,47 @@ func (ec *executionContext) fieldContext_Router_creationTime(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Router_enabled(ctx context.Context, field graphql.CollectedField, obj *entities.Router) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Router_enabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalOBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Router_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Router",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Router_id(ctx context.Context, field graphql.CollectedField, obj *entities.Router) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Router_id(ctx, field)
 	if err != nil {
@@ -26180,53 +24119,6 @@ func (ec *executionContext) fieldContext_Router_metadata(ctx context.Context, fi
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Router_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.Router) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Router_overrides(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Router().Overrides(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1RouterOverrides)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverrides(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Router_overrides(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Router",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applied":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_applied(ctx, field)
-			case "patches":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_patches(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides", field.Name)
 		},
 	}
 	return fc, nil
@@ -26541,14 +24433,14 @@ func (ec *executionContext) fieldContext_RouterEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Router_clusterName(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
+			case "enabled":
+				return ec.fieldContext_Router_enabled(ctx, field)
 			case "id":
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Router_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Router_overrides(ctx, field)
 			case "spec":
 				return ec.fieldContext_Router_spec(ctx, field)
 			case "status":
@@ -27114,94 +25006,6 @@ func (ec *executionContext) fieldContext_Secret_metadata(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Secret_overrides(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Secret_overrides(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Secret().Overrides(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1SecretOverrides)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverrides(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Secret_overrides(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Secret",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "applied":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_applied(ctx, field)
-			case "patches":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_patches(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Secret_projectName(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Secret_projectName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Secret().ProjectName(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Secret_projectName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Secret",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Secret_status(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Secret_status(ctx, field)
 	if err != nil {
@@ -27540,10 +25344,6 @@ func (ec *executionContext) fieldContext_SecretEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Secret_metadata(ctx, field)
-			case "overrides":
-				return ec.fieldContext_Secret_overrides(ctx, field)
-			case "projectName":
-				return ec.fieldContext_Secret_projectName(ctx, field)
 			case "status":
 				return ec.fieldContext_Secret_status(ctx, field)
 			case "stringData":
@@ -30312,7 +28112,7 @@ func (ec *executionContext) unmarshalInputAppIn(ctx context.Context, obj interfa
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "overrides", "restart", "spec"}
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "spec"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30370,28 +28170,6 @@ func (ec *executionContext) unmarshalInputAppIn(ctx context.Context, obj interfa
 			if err = ec.resolvers.AppIn().Metadata(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "overrides":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("overrides"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.AppIn().Overrides(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "restart":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("restart"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.AppIn().Restart(ctx, &it, data); err != nil {
-				return it, err
-			}
 		case "spec":
 			var err error
 
@@ -30416,7 +28194,7 @@ func (ec *executionContext) unmarshalInputConfigIn(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "data", "enabled", "kind", "metadata", "overrides"}
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "data", "enabled", "kind", "metadata"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30483,97 +28261,6 @@ func (ec *executionContext) unmarshalInputConfigIn(ctx context.Context, obj inte
 				return it, err
 			}
 			if err = ec.resolvers.ConfigIn().Metadata(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "overrides":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("overrides"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.ConfigIn().Overrides(ctx, &it, data); err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppOverridesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1AppOverridesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"applied", "patches"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "applied":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applied"))
-			it.Applied, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "patches":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patches"))
-			it.Patches, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"op", "path", "value"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "op":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
-			it.Op, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "path":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("path"))
-			it.Path, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
 				return it, err
 			}
 		}
@@ -31630,86 +29317,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"applied", "patches"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "applied":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applied"))
-			it.Applied, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "patches":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patches"))
-			it.Patches, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"op", "path", "value"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "op":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
-			it.Op, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "path":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("path"))
-			it.Path, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_EnvSpecIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1EnvSpecIn, error) {
 	var it model.GithubComKloudliteOperatorApisCrdsV1EnvSpecIn
 	asMap := map[string]interface{}{}
@@ -31737,86 +29344,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetNamespace"))
 			it.TargetNamespace, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"applied", "patches"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "applied":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applied"))
-			it.Applied, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "patches":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patches"))
-			it.Patches, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"op", "path", "value"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "op":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
-			it.Op, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "path":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("path"))
-			it.Path, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -31933,86 +29460,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"applied", "patches"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "applied":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applied"))
-			it.Applied, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "patches":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patches"))
-			it.Patches, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"op", "path", "value"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "op":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
-			it.Op, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "path":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("path"))
-			it.Path, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32229,86 +29676,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetNamespace"))
 			it.TargetNamespace, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"applied", "patches"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "applied":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applied"))
-			it.Applied, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "patches":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patches"))
-			it.Patches, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"op", "path", "value"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "op":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
-			it.Op, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "path":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("path"))
-			it.Path, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -32662,86 +30029,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"applied", "patches"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "applied":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("applied"))
-			it.Applied, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "patches":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("patches"))
-			it.Patches, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"op", "path", "value"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "op":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("op"))
-			it.Op, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "path":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("path"))
-			it.Path, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "value":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("value"))
-			it.Value, err = ec.unmarshalOAny2interface(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputManagedResourceIn(ctx context.Context, obj interface{}) (entities.ManagedResource, error) {
 	var it entities.ManagedResource
 	asMap := map[string]interface{}{}
@@ -32749,7 +30036,7 @@ func (ec *executionContext) unmarshalInputManagedResourceIn(ctx context.Context,
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "overrides", "spec"}
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "spec"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -32807,17 +30094,6 @@ func (ec *executionContext) unmarshalInputManagedResourceIn(ctx context.Context,
 			if err = ec.resolvers.ManagedResourceIn().Metadata(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "overrides":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("overrides"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.ManagedResourceIn().Overrides(ctx, &it, data); err != nil {
-				return it, err
-			}
 		case "spec":
 			var err error
 
@@ -32842,7 +30118,7 @@ func (ec *executionContext) unmarshalInputManagedServiceIn(ctx context.Context, 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "overrides", "spec"}
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "spec"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -32898,17 +30174,6 @@ func (ec *executionContext) unmarshalInputManagedServiceIn(ctx context.Context, 
 				return it, err
 			}
 			if err = ec.resolvers.ManagedServiceIn().Metadata(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "overrides":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("overrides"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.ManagedServiceIn().Overrides(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "spec":
@@ -33159,7 +30424,7 @@ func (ec *executionContext) unmarshalInputRouterIn(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "kind", "metadata", "overrides", "spec"}
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "enabled", "kind", "metadata", "spec"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -33190,6 +30455,14 @@ func (ec *executionContext) unmarshalInputRouterIn(ctx context.Context, obj inte
 			if err != nil {
 				return it, err
 			}
+		case "enabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			it.Enabled, err = ec.unmarshalOBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "kind":
 			var err error
 
@@ -33207,17 +30480,6 @@ func (ec *executionContext) unmarshalInputRouterIn(ctx context.Context, obj inte
 				return it, err
 			}
 			if err = ec.resolvers.RouterIn().Metadata(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "overrides":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("overrides"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.RouterIn().Overrides(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "spec":
@@ -33244,7 +30506,7 @@ func (ec *executionContext) unmarshalInputSecretIn(ctx context.Context, obj inte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "data", "enabled", "kind", "metadata", "overrides", "projectName", "stringData", "type"}
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "data", "enabled", "kind", "metadata", "stringData", "type"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -33311,28 +30573,6 @@ func (ec *executionContext) unmarshalInputSecretIn(ctx context.Context, obj inte
 				return it, err
 			}
 			if err = ec.resolvers.SecretIn().Metadata(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "overrides":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("overrides"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.SecretIn().Overrides(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "projectName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
-			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.SecretIn().ProjectName(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "stringData":
@@ -33534,40 +30774,6 @@ func (ec *executionContext) _App(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "overrides":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._App_overrides(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
-		case "restart":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._App_restart(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "spec":
 			field := field
 
@@ -33810,23 +31016,6 @@ func (ec *executionContext) _Config(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "overrides":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Config_overrides(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "status":
 
 			out.Values[i] = ec._Config_status(ctx, field, obj)
@@ -33966,74 +31155,6 @@ func (ec *executionContext) _ConsoleCheckNameAvailabilityOutput(ctx context.Cont
 		case "suggestedNames":
 
 			out.Values[i] = ec._ConsoleCheckNameAvailabilityOutput_suggestedNames(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_AppOverridesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_AppOverrides"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverrides(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverrides) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_AppOverridesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_AppOverrides")
-		case "applied":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_applied(ctx, field, obj)
-
-		case "patches":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverrides_patches(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches")
-		case "op":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_op(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "path":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_path(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "value":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches_value(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -34853,74 +31974,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	return out
 }
 
-var github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverrides) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides")
-		case "applied":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_applied(ctx, field, obj)
-
-		case "patches":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides_patches(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches")
-		case "op":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_op(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "path":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_path(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "value":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches_value(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
 var github_com__kloudlite__operator__apis__crds__v1_EnvSpecImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_EnvSpec"}
 
 func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_EnvSpec(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvSpec) graphql.Marshaler {
@@ -34945,74 +31998,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Env
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides")
-		case "applied":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_applied(ctx, field, obj)
-
-		case "patches":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides_patches(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches")
-		case "op":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_op(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "path":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_path(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "value":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches_value(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -35119,74 +32104,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Man
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides")
-		case "applied":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_applied(ctx, field, obj)
-
-		case "patches":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides_patches(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches")
-		case "op":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_op(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "path":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_path(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "value":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches_value(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -35354,74 +32271,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Pro
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_RouterOverridesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverrides) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_RouterOverridesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides")
-		case "applied":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_applied(ctx, field, obj)
-
-		case "patches":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides_patches(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches")
-		case "op":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_op(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "path":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_path(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "value":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches_value(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -35674,74 +32523,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Rou
 		case "rewrite":
 
 			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes_rewrite(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_SecretOverridesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverrides) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_SecretOverridesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides")
-		case "applied":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_applied(ctx, field, obj)
-
-		case "patches":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides_patches(ctx, field, obj)
-
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches")
-		case "op":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_op(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "path":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_path(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "value":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches_value(ctx, field, obj)
 
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
@@ -36425,23 +33206,6 @@ func (ec *executionContext) _ManagedResource(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "overrides":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._ManagedResource_overrides(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "spec":
 			field := field
 
@@ -36667,23 +33431,6 @@ func (ec *executionContext) _ManagedService(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "overrides":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._ManagedService_overrides(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "spec":
 			field := field
 
@@ -38154,6 +34901,10 @@ func (ec *executionContext) _Router(ctx context.Context, sel ast.SelectionSet, o
 				return innerFunc(ctx)
 
 			})
+		case "enabled":
+
+			out.Values[i] = ec._Router_enabled(ctx, field, obj)
+
 		case "id":
 			field := field
 
@@ -38188,23 +34939,6 @@ func (ec *executionContext) _Router(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "overrides":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Router_overrides(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "spec":
 			field := field
 
@@ -38447,40 +35181,6 @@ func (ec *executionContext) _Secret(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
-		case "overrides":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Secret_overrides(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
-		case "projectName":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Secret_projectName(ctx, field, obj)
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "status":
 
 			out.Values[i] = ec._Secret_status(ctx, field, obj)
@@ -40698,97 +37398,6 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverrides(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppOverrides) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverrides(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppOverridesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatches(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatches(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatches(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppOverridesPatches(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppOverridesPatchesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpec2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpec) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -41455,97 +38064,6 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverrides(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverrides) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverrides(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatches(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ConfigOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ConfigOverridesPatchesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_EnvSpec2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1EnvSpec) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -41561,97 +38079,6 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverrides) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverrides(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatches(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceOverridesPatchesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedResourceSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpec) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -41664,97 +38091,6 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverrides) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverrides(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatches(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceOverridesPatchesIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -41861,97 +38197,6 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverrides(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1RouterOverrides) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverrides(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatches(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1RouterOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterOverridesPatchesIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -42103,97 +38348,6 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverrides2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverrides(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1SecretOverrides) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverrides(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatches) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatches(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1SecretOverridesPatchesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_SecretOverridesPatchesIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
