@@ -28,7 +28,7 @@ func (d *domain) CreateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edg
 	return nEdge, err
 }
 
-func (d *domain) ListEdges(ctx InfraContext, clusterName string, providerName *string) ([]*entities.Edge, error) {
+func (d *domain) ListEdges(ctx InfraContext, clusterName string, providerName *string) (*repos.PaginatedRecord[*entities.Edge], error) {
 	f := repos.Filter{"spec.clusterName": clusterName}
 	if providerName != nil {
 		f["spec.providerName"] = providerName

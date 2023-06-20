@@ -65,7 +65,7 @@ func (d *domain) CreateCloudProvider(ctx InfraContext, cloudProvider entities.Cl
 	return cp, nil
 }
 
-func (d *domain) ListCloudProviders(ctx InfraContext) ([]*entities.CloudProvider, error) {
+func (d *domain) ListCloudProviders(ctx InfraContext) (*repos.PaginatedRecord[*entities.CloudProvider], error) {
 	return d.providerRepo.Find(ctx, repos.Query{Filter: repos.Filter{
 		"accountName": ctx.AccountName,
 	}})

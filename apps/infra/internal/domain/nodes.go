@@ -8,11 +8,12 @@ import (
 	"k8s.io/apimachinery/pkg/labels"
 	"kloudlite.io/apps/infra/internal/domain/entities"
 	"kloudlite.io/constants"
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
-func (d *domain) GetNodePools(ctx InfraContext, clusterName string, edgeName string) ([]*entities.NodePool, error) {
+func (d *domain) ListNodePools(ctx InfraContext, clusterName string, edgeName string) (*repos.PaginatedRecord[*entities.NodePool], error) {
 	_, err := d.findCluster(ctx, clusterName)
 	if err != nil {
 		return nil, err
@@ -37,7 +38,23 @@ func (d *domain) GetNodePools(ctx InfraContext, clusterName string, edgeName str
 	return results, nil
 }
 
-func (d *domain) GetMasterNodes(ctx InfraContext, clusterName string) ([]*entities.MasterNode, error) {
+func (d *domain) GetNodePool(ctx InfraContext, clusterName string, edgeName string, poolName string) (*entities.NodePool, error) {
+	_, err := d.findCluster(ctx, clusterName)
+	if err != nil {
+		return nil, err
+	}
+
+	var nodePool infraV1.NodePool
+	if err := d.k8sClient.Get(ctx, fn.NN("", poolName), &nodePool); err != nil {
+		return nil, err
+	}
+
+	return &entities.NodePool{
+		NodePool: nodePool,
+	}, nil
+}
+
+func (d *domain) ListMasterNodes(ctx InfraContext, clusterName string) (*repos.PaginatedRecord[*entities.MasterNode], error) {
 	cluster, err := d.findCluster(ctx, clusterName)
 	if err != nil {
 		return nil, err
@@ -59,7 +76,7 @@ func (d *domain) GetMasterNodes(ctx InfraContext, clusterName string) ([]*entiti
 	return results, nil
 }
 
-func (d *domain) GetWorkerNodes(ctx InfraContext, clusterName string, edgeName string) ([]*entities.WorkerNode, error) {
+func (d *domain) ListWorkerNodes(ctx InfraContext, clusterName string, edgeName string) (*repos.PaginatedRecord[*entities.WorkerNode], error) {
 	cluster, err := d.findCluster(ctx, clusterName)
 	if err != nil {
 		return nil, err

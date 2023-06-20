@@ -34,7 +34,7 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 	return nCluster, nil
 }
 
-func (d *domain) ListClusters(ctx InfraContext) ([]*entities.Cluster, error) {
+func (d *domain) ListClusters(ctx InfraContext) (*repos.PaginatedRecord[*entities.Cluster], error) {
 	return d.clusterRepo.Find(ctx, repos.Query{
 		Filter: repos.Filter{
 			"accountName": ctx.AccountName,
@@ -160,7 +160,7 @@ func (d *domain) CreateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluste
 	return nCluster, nil
 }
 
-func (d *domain) ListBYOCClusters(ctx InfraContext) ([]*entities.BYOCCluster, error) {
+func (d *domain) ListBYOCClusters(ctx InfraContext) (*repos.PaginatedRecord[*entities.BYOCCluster], error) {
 	return d.byocClusterRepo.Find(ctx, repos.Query{
 		Filter: repos.Filter{
 			"spec.accountName": ctx.AccountName,
