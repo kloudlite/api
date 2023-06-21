@@ -724,7 +724,7 @@ type Kloudlite_io__pkg__types_SyncStatusResolver interface {
 	Action(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusAction, error)
 
 	LastSyncedAt(ctx context.Context, obj *types.SyncStatus) (*string, error)
-	State(ctx context.Context, obj *types.SyncStatus) (*model.KloudliteIoPkgTypesSyncStatusState, error)
+	State(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusState, error)
 	SyncScheduledAt(ctx context.Context, obj *types.SyncStatus) (*string, error)
 }
 type ManagedResourceResolver interface {
@@ -861,7 +861,6 @@ type ManagedServiceInResolver interface {
 }
 type MetadataInResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
-
 	Labels(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
 }
 type PaginationQueryArgsResolver interface {
@@ -3986,24 +3985,6 @@ type ConsoleCheckNameAvailabilityOutput @shareable {
   suggestedNames: [String!]
 }
 
-# type PaginatedRecords @shareable {
-#   totalCount: Int!
-#   edges: [Edges!]
-#   pageInfo: PageInfo!
-# }
-#
-# type Edges @shareable {
-#   cursor: String!
-#   node: Any!
-# }
-#
-# type PageInfo @shareable {
-#   hasNextPage: Boolean!
-#   hasPreviousPage: Boolean!
-#   startCursor: String
-#   endCursor: String
-# }
-
 input PaginationQueryArgs {
   first: Int = 10
   after: String
@@ -4094,7 +4075,7 @@ type Mutation {
   core_deleteManagedResource(namespace: String!, name: String!): Boolean! @isLoggedIn @hasAccountAndCluster
 }
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/app.graphqls", Input: `type App {
+	{Name: "../struct-to-graphql/app.graphqls", Input: `type App @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4109,12 +4090,12 @@ type Mutation {
   updateTime: Date!
 }
 
-type AppEdge {
+type AppEdge @shareable {
   cursor: String!
   node: App!
 }
 
-type AppPaginatedRecords {
+type AppPaginatedRecords @shareable {
   edges: [AppEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4131,7 +4112,7 @@ input AppIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__operator__apis__crds__v1_AppSpec {
+	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__operator__apis__crds__v1_AppSpec @shareable {
   containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers]!
   displayName: String
   freeze: Boolean
@@ -4145,7 +4126,7 @@ input AppIn {
   tolerations: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers @shareable {
   args: [String]
   command: [String]
   env: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv]
@@ -4160,7 +4141,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers {
   volumes: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv @shareable {
   key: String!
   optional: Boolean
   refKey: String
@@ -4169,12 +4150,12 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv {
   value: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom @shareable {
   refName: String!
   type: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbe {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbe @shareable {
   failureThreshold: Int
   httpGet: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeHttpGet
   initialDelay: Int
@@ -4184,21 +4165,21 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessPr
   type: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeHttpGet {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeHttpGet @shareable {
   httpHeaders: Map
   path: String!
   port: Int!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeShell {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeShell @shareable {
   command: [String]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeTcp {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeTcp @shareable {
   port: Int!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbe {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbe @shareable {
   failureThreshold: Int
   httpGet: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeHttpGet
   initialDelay: Int
@@ -4208,43 +4189,43 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessP
   type: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeHttpGet {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeHttpGet @shareable {
   httpHeaders: Map
   path: String!
   port: Int!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeShell {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeShell @shareable {
   command: [String]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeTcp {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeTcp @shareable {
   port: Int!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceCpu {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceCpu @shareable {
   max: String
   min: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceMemory {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceMemory @shareable {
   max: String
   min: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes @shareable {
   items: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems]
   mountPath: String!
   refName: String!
   type: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems @shareable {
   fileName: String
   key: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecHpa {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecHpa @shareable {
   enabled: Boolean
   maxReplicas: Int
   minReplicas: Int
@@ -4252,19 +4233,19 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecHpa {
   thresholdMemory: Int
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecIntercept {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecIntercept @shareable {
   enabled: Boolean!
   toDevice: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecServices {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecServices @shareable {
   name: String
   port: Int!
   targetPort: Int
   type: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations {
+type Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations @shareable {
   effect: String
   key: String
   operator: String
@@ -4272,28 +4253,28 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations {
   value: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_EnvSpec {
+type Github_com__kloudlite__operator__apis__crds__v1_EnvSpec @shareable {
   projectName: String!
   targetNamespace: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec {
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec @shareable {
   inputs: Map
   mresKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKind!
   msvcRef: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKind {
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKind @shareable {
   kind: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef {
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMsvcRef @shareable {
   apiVersion: String!
   kind: String
   name: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec {
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec @shareable {
   inputs: Map
   msvcKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKind!
   nodeSelector: Map
@@ -4301,12 +4282,12 @@ type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec {
   tolerations: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKind {
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKind @shareable {
   apiVersion: String!
   kind: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations {
+type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations @shareable {
   effect: String
   key: String
   operator: String
@@ -4314,7 +4295,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecToleratio
   value: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec {
+type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec @shareable {
   accountName: String!
   clusterName: String!
   displayName: String
@@ -4322,7 +4303,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec {
   targetNamespace: String!
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec {
+type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec @shareable {
   backendProtocol: String
   basicAuth: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth
   cors: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors
@@ -4335,32 +4316,32 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec {
   routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth {
+type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth @shareable {
   enabled: Boolean!
   secretName: String
   username: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors {
+type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors @shareable {
   allowCredentials: Boolean
   enabled: Boolean
   origins: [String]
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttps {
+type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttps @shareable {
   clusterIssuer: String
   enabled: Boolean!
   forceRedirect: Boolean
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimit {
+type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimit @shareable {
   connections: Int
   enabled: Boolean
   rpm: Int
   rps: Int
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes {
+type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes @shareable {
   app: String
   lambda: String
   path: String!
@@ -4368,20 +4349,20 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes {
   rewrite: Boolean
 }
 
-type Github_com__kloudlite__operator__pkg__operator_Check {
+type Github_com__kloudlite__operator__pkg__operator_Check @shareable {
   generation: Int
   message: String
   status: Boolean!
 }
 
-type Github_com__kloudlite__operator__pkg__operator_ResourceRef {
+type Github_com__kloudlite__operator__pkg__operator_ResourceRef @shareable {
   apiVersion: String
   kind: String
   name: String!
   namespace: String!
 }
 
-type Github_com__kloudlite__operator__pkg__operator_Status {
+type Github_com__kloudlite__operator__pkg__operator_Status @shareable {
   checks: Map
   isReady: Boolean!
   lastReconcileTime: Date
@@ -4389,11 +4370,11 @@ type Github_com__kloudlite__operator__pkg__operator_Status {
   resources: [Github_com__kloudlite__operator__pkg__operator_ResourceRef!]
 }
 
-type Github_com__kloudlite__operator__pkg__raw___json_RawJson {
+type Github_com__kloudlite__operator__pkg__raw___json_RawJson @shareable {
   RawMessage: Any
 }
 
-type Kloudlite_io__apps__console__internal__domain__entities_InputField {
+type Kloudlite_io__apps__console__internal__domain__entities_InputField @shareable {
   defaultValue: Any!
   inputType: String!
   label: String!
@@ -4404,7 +4385,7 @@ type Kloudlite_io__apps__console__internal__domain__entities_InputField {
   unit: String
 }
 
-type Kloudlite_io__apps__console__internal__domain__entities_MresTemplate {
+type Kloudlite_io__apps__console__internal__domain__entities_MresTemplate @shareable {
   description: String!
   displayName: String!
   fields: [Kloudlite_io__apps__console__internal__domain__entities_InputField!]!
@@ -4412,7 +4393,7 @@ type Kloudlite_io__apps__console__internal__domain__entities_MresTemplate {
   outputs: [Kloudlite_io__apps__console__internal__domain__entities_OutputField!]!
 }
 
-type Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry {
+type Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry @shareable {
   active: Boolean!
   description: String!
   displayName: String!
@@ -4423,30 +4404,30 @@ type Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry {
   resources: [Kloudlite_io__apps__console__internal__domain__entities_MresTemplate!]!
 }
 
-type Kloudlite_io__apps__console__internal__domain__entities_OutputField {
+type Kloudlite_io__apps__console__internal__domain__entities_OutputField @shareable {
   description: String!
   label: String!
   name: String!
 }
 
-type Kloudlite_io__pkg__types_SyncStatus {
+type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
   generation: Int!
   lastSyncedAt: Date
-  state: Kloudlite_io__pkg__types_SyncStatusState
+  state: Kloudlite_io__pkg__types_SyncStatusState!
   syncScheduledAt: Date
 }
 
-type Metadata {
+type Metadata @shareable {
   annotations: Map
-  generation: Int
+  generation: Int!
   labels: Map
   name: String!
   namespace: String
 }
 
-type PageInfo {
+type PageInfo @shareable {
   endCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -4692,7 +4673,6 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
 
 input MetadataIn {
   annotations: Map
-  generation: Int
   labels: Map
   name: String!
   namespace: String
@@ -4711,7 +4691,7 @@ enum Kloudlite_io__pkg__types_SyncStatusState {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/config.graphqls", Input: `type Config {
+	{Name: "../struct-to-graphql/config.graphqls", Input: `type Config @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4726,12 +4706,12 @@ enum Kloudlite_io__pkg__types_SyncStatusState {
   updateTime: Date!
 }
 
-type ConfigEdge {
+type ConfigEdge @shareable {
   cursor: String!
   node: Config!
 }
 
-type ConfigPaginatedRecords {
+type ConfigPaginatedRecords @shareable {
   edges: [ConfigEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4755,7 +4735,7 @@ directive @goField(
 	name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/managedresource.graphqls", Input: `type ManagedResource {
+	{Name: "../struct-to-graphql/managedresource.graphqls", Input: `type ManagedResource @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4770,12 +4750,12 @@ directive @goField(
   updateTime: Date!
 }
 
-type ManagedResourceEdge {
+type ManagedResourceEdge @shareable {
   cursor: String!
   node: ManagedResource!
 }
 
-type ManagedResourcePaginatedRecords {
+type ManagedResourcePaginatedRecords @shareable {
   edges: [ManagedResourceEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4792,7 +4772,7 @@ input ManagedResourceIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/managedservice.graphqls", Input: `type ManagedService {
+	{Name: "../struct-to-graphql/managedservice.graphqls", Input: `type ManagedService @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4807,12 +4787,12 @@ input ManagedResourceIn {
   updateTime: Date!
 }
 
-type ManagedServiceEdge {
+type ManagedServiceEdge @shareable {
   cursor: String!
   node: ManagedService!
 }
 
-type ManagedServicePaginatedRecords {
+type ManagedServicePaginatedRecords @shareable {
   edges: [ManagedServiceEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4829,25 +4809,25 @@ input ManagedServiceIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/msvctemplate.graphqls", Input: `type MsvcTemplate {
+	{Name: "../struct-to-graphql/msvctemplate.graphqls", Input: `type MsvcTemplate @shareable {
   category: String!
   displayName: String!
   items: [Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry!]!
 }
 
-type MsvcTemplateEdge {
+type MsvcTemplateEdge @shareable {
   cursor: String!
   node: MsvcTemplate!
 }
 
-type MsvcTemplatePaginatedRecords {
+type MsvcTemplatePaginatedRecords @shareable {
   edges: [MsvcTemplateEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/project.graphqls", Input: `type Project {
+	{Name: "../struct-to-graphql/project.graphqls", Input: `type Project @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4861,12 +4841,12 @@ type MsvcTemplatePaginatedRecords {
   updateTime: Date!
 }
 
-type ProjectEdge {
+type ProjectEdge @shareable {
   cursor: String!
   node: Project!
 }
 
-type ProjectPaginatedRecords {
+type ProjectPaginatedRecords @shareable {
   edges: [ProjectEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4882,7 +4862,7 @@ input ProjectIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/router.graphqls", Input: `type Router {
+	{Name: "../struct-to-graphql/router.graphqls", Input: `type Router @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4897,12 +4877,12 @@ input ProjectIn {
   updateTime: Date!
 }
 
-type RouterEdge {
+type RouterEdge @shareable {
   cursor: String!
   node: Router!
 }
 
-type RouterPaginatedRecords {
+type RouterPaginatedRecords @shareable {
   edges: [RouterEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4924,7 +4904,7 @@ scalar Json
 scalar Map
 scalar Date
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/secret.graphqls", Input: `type Secret {
+	{Name: "../struct-to-graphql/secret.graphqls", Input: `type Secret @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4941,12 +4921,12 @@ scalar Date
   updateTime: Date!
 }
 
-type SecretEdge {
+type SecretEdge @shareable {
   cursor: String!
   node: Secret!
 }
 
-type SecretPaginatedRecords {
+type SecretPaginatedRecords @shareable {
   edges: [SecretEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -4965,7 +4945,7 @@ input SecretIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/workspace.graphqls", Input: `type Workspace {
+	{Name: "../struct-to-graphql/workspace.graphqls", Input: `type Workspace @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -4979,12 +4959,12 @@ input SecretIn {
   updateTime: Date!
 }
 
-type WorkspaceEdge {
+type WorkspaceEdge @shareable {
   cursor: String!
   node: Workspace!
 }
 
-type WorkspacePaginatedRecords {
+type WorkspacePaginatedRecords @shareable {
   edges: [WorkspaceEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -15621,11 +15601,14 @@ func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus_state(ctx conte
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.KloudliteIoPkgTypesSyncStatusState)
+	res := resTmp.(model.KloudliteIoPkgTypesSyncStatusState)
 	fc.Result = res
-	return ec.marshalOKloudlite_io__pkg__types_SyncStatusState2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx, field.Selections, res)
+	return ec.marshalNKloudlite_io__pkg__types_SyncStatusState2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -17402,11 +17385,14 @@ func (ec *executionContext) _Metadata_generation(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(int64)
 	fc.Result = res
-	return ec.marshalOInt2int64(ctx, field.Selections, res)
+	return ec.marshalNInt2int64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Metadata_generation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -30200,7 +30186,7 @@ func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"annotations", "generation", "labels", "name", "namespace"}
+	fieldsInOrder := [...]string{"annotations", "labels", "name", "namespace"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -30216,14 +30202,6 @@ func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj in
 				return it, err
 			}
 			if err = ec.resolvers.MetadataIn().Annotations(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "generation":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("generation"))
-			it.Generation, err = ec.unmarshalOInt2int64(ctx, v)
-			if err != nil {
 				return it, err
 			}
 		case "labels":
@@ -33082,6 +33060,9 @@ func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus(ctx context.Con
 					}
 				}()
 				res = ec._Kloudlite_io__pkg__types_SyncStatus_state(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -33598,6 +33579,9 @@ func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet,
 
 			out.Values[i] = ec._Metadata_generation(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "labels":
 			field := field
 
@@ -36481,6 +36465,16 @@ func (ec *executionContext) marshalNKloudlite_io__pkg__types_SyncStatusAction2kl
 	return v
 }
 
+func (ec *executionContext) unmarshalNKloudlite_io__pkg__types_SyncStatusState2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, v interface{}) (model.KloudliteIoPkgTypesSyncStatusState, error) {
+	var res model.KloudliteIoPkgTypesSyncStatusState
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNKloudlite_io__pkg__types_SyncStatusState2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, sel ast.SelectionSet, v model.KloudliteIoPkgTypesSyncStatusState) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) marshalNManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐManagedResource(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedResource) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -38409,16 +38403,6 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__pkg__raw___
 	return ec._Github_com__kloudlite__operator__pkg__raw___json_RawJson(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOInt2int64(ctx context.Context, v interface{}) (int64, error) {
-	res, err := graphql.UnmarshalInt64(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
-	res := graphql.MarshalInt64(v)
-	return res
-}
-
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -38456,22 +38440,6 @@ func (ec *executionContext) marshalOKloudlite_io__apps__console__internal__domai
 		return graphql.Null
 	}
 	return ec._Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOKloudlite_io__pkg__types_SyncStatusState2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, v interface{}) (*model.KloudliteIoPkgTypesSyncStatusState, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var res = new(model.KloudliteIoPkgTypesSyncStatusState)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOKloudlite_io__pkg__types_SyncStatusState2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, sel ast.SelectionSet, v *model.KloudliteIoPkgTypesSyncStatusState) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return v
 }
 
 func (ec *executionContext) marshalOManagedResource2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐManagedResource(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedResource) graphql.Marshaler {

@@ -1,4 +1,4 @@
-type ManagedService {
+type ManagedService @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -13,12 +13,12 @@ type ManagedService {
   updateTime: Date!
 }
 
-type ManagedServiceEdge {
+type ManagedServiceEdge @shareable {
   cursor: String!
   node: ManagedService!
 }
 
-type ManagedServicePaginatedRecords {
+type ManagedServicePaginatedRecords @shareable {
   edges: [ManagedServiceEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

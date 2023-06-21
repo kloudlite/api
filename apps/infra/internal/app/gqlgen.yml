@@ -123,5 +123,8 @@ models:
   ResType:
     model: kloudlite.io/apps/infra/internal/domain.ResType
 
+  PaginationQueryArgs:
+    model: kloudlite.io/pkg/types.CursorPagination
+
   CheckNameAvailabilityOutput:
     model: kloudlite.io/apps/infra/internal/domain.CheckNameAvailabilityOutput

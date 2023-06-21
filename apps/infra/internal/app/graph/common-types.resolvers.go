@@ -7,13 +7,13 @@ package graph
 import (
 	"context"
 	"fmt"
-	fn "kloudlite.io/pkg/functions"
 	"time"
 
 	"github.com/kloudlite/operator/pkg/operator"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/infra/internal/app/graph/generated"
 	"kloudlite.io/apps/infra/internal/app/graph/model"
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/types"
 )
 
@@ -79,11 +79,11 @@ func (r *kloudlite_io__pkg__types_SyncStatusResolver) LastSyncedAt(ctx context.C
 }
 
 // State is the resolver for the state field.
-func (r *kloudlite_io__pkg__types_SyncStatusResolver) State(ctx context.Context, obj *types.SyncStatus) (*model.KloudliteIoPkgTypesSyncStatusState, error) {
+func (r *kloudlite_io__pkg__types_SyncStatusResolver) State(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusState, error) {
 	if obj == nil {
-		return nil, fmt.Errorf("syncStatus is nil")
+		return model.KloudliteIoPkgTypesSyncStatusState(obj.State), fmt.Errorf("syncStatus is nil")
 	}
-	return fn.New(model.KloudliteIoPkgTypesSyncStatusState(obj.State)), nil
+	return model.KloudliteIoPkgTypesSyncStatusState(obj.State), nil
 }
 
 // SyncScheduledAt is the resolver for the syncScheduledAt field.

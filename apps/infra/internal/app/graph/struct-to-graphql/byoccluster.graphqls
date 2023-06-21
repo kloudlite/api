@@ -1,4 +1,4 @@
-type BYOCCluster {
+type BYOCCluster @shareable {
   apiVersion: String!
   creationTime: Date!
   helmStatus: Map!
@@ -12,12 +12,12 @@ type BYOCCluster {
   updateTime: Date!
 }
 
-type BYOCClusterEdge {
+type BYOCClusterEdge @shareable {
   cursor: String!
   node: BYOCCluster!
 }
 
-type BYOCClusterPaginatedRecords {
+type BYOCClusterPaginatedRecords @shareable {
   edges: [BYOCClusterEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

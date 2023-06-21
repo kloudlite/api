@@ -1,4 +1,4 @@
-type Config {
+type Config @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -13,12 +13,12 @@ type Config {
   updateTime: Date!
 }
 
-type ConfigEdge {
+type ConfigEdge @shareable {
   cursor: String!
   node: Config!
 }
 
-type ConfigPaginatedRecords {
+type ConfigPaginatedRecords @shareable {
   edges: [ConfigEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

@@ -1,4 +1,4 @@
-type NodePool {
+type NodePool @shareable {
   accoutName: String!
   apiVersion: String!
   clusterName: String!
@@ -12,12 +12,12 @@ type NodePool {
   updateTime: Date!
 }
 
-type NodePoolEdge {
+type NodePoolEdge @shareable {
   cursor: String!
   node: NodePool!
 }
 
-type NodePoolPaginatedRecords {
+type NodePoolPaginatedRecords @shareable {
   edges: [NodePoolEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

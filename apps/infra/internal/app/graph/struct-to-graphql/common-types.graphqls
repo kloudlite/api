@@ -1,4 +1,4 @@
-type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_ClusterSpec {
+type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_ClusterSpec @shareable {
   accountName: String!
   config: String!
   count: Int!
@@ -7,7 +7,7 @@ type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_ClusterSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec {
+type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec @shareable {
   accountName: String!
   clusterName: String!
   config: String!
@@ -16,19 +16,19 @@ type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpec @shareable {
   accountName: String!
   display_name: String!
   provider: String!
   providerSecret: Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecProviderSecret!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecProviderSecret {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecProviderSecret @shareable {
   name: String!
   namespace: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec @shareable {
   accountName: String!
   clusterName: String!
   pools: [Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpecPools]
@@ -37,14 +37,14 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpecPools {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpecPools @shareable {
   config: String!
   max: Int
   min: Int
   name: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec @shareable {
   accountName: String!
   clusterName: String!
   config: String!
@@ -56,7 +56,7 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec @shareable {
   accountName: String!
   clusterName: String!
   config: String!
@@ -69,7 +69,7 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec {
   stateful: Boolean
 }
 
-type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec {
+type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec @shareable {
   accountName: String!
   displayName: String
   incomingKafkaTopic: String!
@@ -80,20 +80,20 @@ type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec {
   storageClasses: [String]
 }
 
-type Github_com__kloudlite__operator__pkg__operator_Check {
+type Github_com__kloudlite__operator__pkg__operator_Check @shareable {
   generation: Int
   message: String
   status: Boolean!
 }
 
-type Github_com__kloudlite__operator__pkg__operator_ResourceRef {
+type Github_com__kloudlite__operator__pkg__operator_ResourceRef @shareable {
   apiVersion: String
   kind: String
   name: String!
   namespace: String!
 }
 
-type Github_com__kloudlite__operator__pkg__operator_Status {
+type Github_com__kloudlite__operator__pkg__operator_Status @shareable {
   checks: Map
   isReady: Boolean!
   lastReconcileTime: Date
@@ -101,33 +101,33 @@ type Github_com__kloudlite__operator__pkg__operator_Status {
   resources: [Github_com__kloudlite__operator__pkg__operator_ResourceRef!]
 }
 
-type Github_com__kloudlite__operator__pkg__raw___json_RawJson {
+type Github_com__kloudlite__operator__pkg__raw___json_RawJson @shareable {
   RawMessage: Any
 }
 
-type Kloudlite_io__apps__infra__internal__domain__entities_HelmStatusVal {
+type Kloudlite_io__apps__infra__internal__domain__entities_HelmStatusVal @shareable {
   isReady: Boolean
   message: String!
 }
 
-type Kloudlite_io__pkg__types_SyncStatus {
+type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
   generation: Int!
   lastSyncedAt: Date
-  state: Kloudlite_io__pkg__types_SyncStatusState
+  state: Kloudlite_io__pkg__types_SyncStatusState!
   syncScheduledAt: Date
 }
 
-type Metadata {
+type Metadata @shareable {
   annotations: Map
-  generation: Int
+  generation: Int!
   labels: Map
   name: String!
   namespace: String
 }
 
-type PageInfo {
+type PageInfo @shareable {
   endCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -218,7 +218,6 @@ input Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn {
 
 input MetadataIn {
   annotations: Map
-  generation: Int
   labels: Map
   name: String!
   namespace: String

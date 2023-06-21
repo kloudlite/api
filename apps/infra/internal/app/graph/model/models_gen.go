@@ -269,15 +269,6 @@ type PageInfo struct {
 	StartCursor     *string `json:"startCursor,omitempty"`
 }
 
-type PaginationQueryArgs struct {
-	First   *int                 `json:"first,omitempty"`
-	After   *string              `json:"after,omitempty"`
-	Last    *int                 `json:"last,omitempty"`
-	Before  *string              `json:"before,omitempty"`
-	OrderBy *string              `json:"orderBy,omitempty"`
-	SortBy  *PaginationSortOrder `json:"sortBy,omitempty"`
-}
-
 type SecretEdge struct {
 	Cursor string           `json:"cursor"`
 	Node   *entities.Secret `json:"node"`

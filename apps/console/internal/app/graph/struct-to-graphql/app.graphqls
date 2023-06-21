@@ -1,4 +1,4 @@
-type App {
+type App @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -13,12 +13,12 @@ type App {
   updateTime: Date!
 }
 
-type AppEdge {
+type AppEdge @shareable {
   cursor: String!
   node: App!
 }
 
-type AppPaginatedRecords {
+type AppPaginatedRecords @shareable {
   edges: [AppEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

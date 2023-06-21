@@ -6,11 +6,13 @@ package graph
 
 import (
 	"context"
+	"fmt"
 
 	"kloudlite.io/apps/infra/internal/app/graph/generated"
 	"kloudlite.io/apps/infra/internal/app/graph/model"
 	"kloudlite.io/apps/infra/internal/domain"
 	"kloudlite.io/apps/infra/internal/domain/entities"
+	"kloudlite.io/pkg/types"
 )
 
 // InfraCreateBYOCCluster is the resolver for the infra_createBYOCCluster field.
@@ -97,8 +99,11 @@ func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType 
 }
 
 // InfraListBYOCClusters is the resolver for the infra_listBYOCClusters field.
-func (r *queryResolver) InfraListBYOCClusters(ctx context.Context) (*model.BYOCClusterPaginatedRecords, error) {
-	pClusters, err := r.Domain.ListBYOCClusters(toInfraContext(ctx))
+func (r *queryResolver) InfraListBYOCClusters(ctx context.Context, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error) {
+	if pagination == nil {
+		pagination = &types.DefaultCursorPagination
+	}
+	pClusters, err := r.Domain.ListBYOCClusters(toInfraContext(ctx), *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -131,8 +136,11 @@ func (r *queryResolver) InfraGetBYOCCluster(ctx context.Context, name string) (*
 }
 
 // InfraListClusters is the resolver for the infra_listClusters field.
-func (r *queryResolver) InfraListClusters(ctx context.Context) (*model.ClusterPaginatedRecords, error) {
-	pClusters, err := r.Domain.ListClusters(toInfraContext(ctx))
+func (r *queryResolver) InfraListClusters(ctx context.Context, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error) {
+	if pagination == nil {
+		pagination = &types.DefaultCursorPagination
+	}
+	pClusters, err := r.Domain.ListClusters(toInfraContext(ctx), *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -165,8 +173,11 @@ func (r *queryResolver) InfraGetCluster(ctx context.Context, name string) (*enti
 }
 
 // InfraListCloudProviders is the resolver for the infra_listCloudProviders field.
-func (r *queryResolver) InfraListCloudProviders(ctx context.Context) (*model.CloudProviderPaginatedRecords, error) {
-	pCloudProviders, err := r.Domain.ListCloudProviders(toInfraContext(ctx))
+func (r *queryResolver) InfraListCloudProviders(ctx context.Context, pagination *types.CursorPagination) (*model.CloudProviderPaginatedRecords, error) {
+	if pagination == nil {
+		pagination = &types.DefaultCursorPagination
+	}
+	pCloudProviders, err := r.Domain.ListCloudProviders(toInfraContext(ctx), *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -199,8 +210,11 @@ func (r *queryResolver) InfraGetCloudProvider(ctx context.Context, name string) 
 }
 
 // InfraListEdges is the resolver for the infra_listEdges field.
-func (r *queryResolver) InfraListEdges(ctx context.Context, clusterName string, providerName *string) (*model.EdgePaginatedRecords, error) {
-	pEdges, err := r.Domain.ListEdges(toInfraContext(ctx), clusterName, providerName)
+func (r *queryResolver) InfraListEdges(ctx context.Context, clusterName string, providerName *string, pagination *types.CursorPagination) (*model.EdgePaginatedRecords, error) {
+	if pagination == nil {
+		pagination = &types.DefaultCursorPagination
+	}
+	pEdges, err := r.Domain.ListEdges(toInfraContext(ctx), clusterName, providerName, *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -225,7 +239,6 @@ func (r *queryResolver) InfraListEdges(ctx context.Context, clusterName string, 
 	}
 
 	return &m, nil
-
 }
 
 // InfraGetEdge is the resolver for the infra_getEdge field.
@@ -234,67 +247,38 @@ func (r *queryResolver) InfraGetEdge(ctx context.Context, clusterName string, na
 }
 
 // InfraListMasterNodes is the resolver for the infra_listMasterNodes field.
-func (r *queryResolver) InfraListMasterNodes(ctx context.Context, clusterName string) (*model.MasterNodePaginatedRecords, error) {
-	pMasterNodes, err := r.Domain.ListMasterNodes(toInfraContext(ctx), clusterName)
+func (r *queryResolver) InfraListMasterNodes(ctx context.Context, clusterName string) ([]*entities.MasterNode, error) {
+	nodes, err := r.Domain.ListMasterNodes(toInfraContext(ctx), clusterName)
 	if err != nil {
 		return nil, err
 	}
-
-	mne := make([]*model.MasterNodeEdge, len(pMasterNodes.Edges))
-	for i := range pMasterNodes.Edges {
-		mne[i] = &model.MasterNodeEdge{
-			Node:   pMasterNodes.Edges[i].Node,
-			Cursor: pMasterNodes.Edges[i].Cursor,
-		}
+	if nodes == nil {
+		return make([]*entities.MasterNode, 0), nil
 	}
 
-	m := model.MasterNodePaginatedRecords{
-		Edges: mne,
-		PageInfo: &model.PageInfo{
-			EndCursor:       &pMasterNodes.PageInfo.EndCursor,
-			HasNextPage:     pMasterNodes.PageInfo.HasNextPage,
-			HasPreviousPage: pMasterNodes.PageInfo.HasPrevPage,
-			StartCursor:     &pMasterNodes.PageInfo.StartCursor,
-		},
-		TotalCount: int(pMasterNodes.TotalCount),
-	}
-
-	return &m, nil
+	return nodes, nil
 }
 
 // InfraListWorkerNodes is the resolver for the infra_listWorkerNodes field.
-func (r *queryResolver) InfraListWorkerNodes(ctx context.Context, clusterName string, edgeName string) (*model.WorkerNodePaginatedRecords, error) {
-	pWorkerNodes, err := r.Domain.ListWorkerNodes(toInfraContext(ctx), clusterName, edgeName)
+func (r *queryResolver) InfraListWorkerNodes(ctx context.Context, clusterName string, edgeName string) ([]*entities.WorkerNode, error) {
+	nodes, err := r.Domain.ListWorkerNodes(toInfraContext(ctx), clusterName, edgeName)
 	if err != nil {
 		return nil, err
 	}
 
-	wne := make([]*model.WorkerNodeEdge, len(pWorkerNodes.Edges))
-	for i := range pWorkerNodes.Edges {
-		wne[i] = &model.WorkerNodeEdge{
-			Node:   pWorkerNodes.Edges[i].Node,
-			Cursor: pWorkerNodes.Edges[i].Cursor,
-		}
+	if nodes == nil {
+		return make([]*entities.WorkerNode, 0), nil
 	}
 
-	m := model.WorkerNodePaginatedRecords{
-		Edges: wne,
-		PageInfo: &model.PageInfo{
-			EndCursor:       &pWorkerNodes.PageInfo.EndCursor,
-			HasNextPage:     pWorkerNodes.PageInfo.HasNextPage,
-			HasPreviousPage: pWorkerNodes.PageInfo.HasPrevPage,
-			StartCursor:     &pWorkerNodes.PageInfo.StartCursor,
-		},
-		TotalCount: int(pWorkerNodes.TotalCount),
-	}
-
-	return &m, nil
-
+	return nodes, nil
 }
 
 // InfraListNodePools is the resolver for the infra_listNodePools field.
-func (r *queryResolver) InfraListNodePools(ctx context.Context, clusterName string, edgeName string) (*model.NodePoolPaginatedRecords, error) {
-	pNodePools, err := r.Domain.ListNodePools(toInfraContext(ctx), clusterName, edgeName)
+func (r *queryResolver) InfraListNodePools(ctx context.Context, clusterName string, edgeName string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error) {
+	if pagination == nil {
+		pagination = &types.DefaultCursorPagination
+	}
+	pNodePools, err := r.Domain.ListNodePools(toInfraContext(ctx), clusterName, edgeName, *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -326,11 +310,22 @@ func (r *queryResolver) InfraGetNodePool(ctx context.Context, clusterName string
 	return r.Domain.GetNodePool(toInfraContext(ctx), clusterName, edgeName, poolName)
 }
 
+// SortBy is the resolver for the sortBy field.
+func (r *paginationQueryArgsResolver) SortBy(ctx context.Context, obj *types.CursorPagination, data *model.PaginationSortOrder) error {
+	panic(fmt.Errorf("not implemented: SortBy - sortBy"))
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
+// PaginationQueryArgs returns generated.PaginationQueryArgsResolver implementation.
+func (r *Resolver) PaginationQueryArgs() generated.PaginationQueryArgsResolver {
+	return &paginationQueryArgsResolver{r}
+}
+
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
+type paginationQueryArgsResolver struct{ *Resolver }

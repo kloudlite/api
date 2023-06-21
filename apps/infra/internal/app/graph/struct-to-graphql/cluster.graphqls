@@ -1,4 +1,4 @@
-type Cluster {
+type Cluster @shareable {
   accountName: String!
   apiVersion: String!
   creationTime: Date!
@@ -11,12 +11,12 @@ type Cluster {
   updateTime: Date!
 }
 
-type ClusterEdge {
+type ClusterEdge @shareable {
   cursor: String!
   node: Cluster!
 }
 
-type ClusterPaginatedRecords {
+type ClusterPaginatedRecords @shareable {
   edges: [ClusterEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

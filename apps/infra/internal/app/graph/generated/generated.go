@@ -62,6 +62,7 @@ type ResolverRoot interface {
 	MasterNodeIn() MasterNodeInResolver
 	MetadataIn() MetadataInResolver
 	NodePoolIn() NodePoolInResolver
+	PaginationQueryArgs() PaginationQueryArgsResolver
 	SecretIn() SecretInResolver
 	WorkerNodeIn() WorkerNodeInResolver
 }
@@ -385,12 +386,12 @@ type ComplexityRoot struct {
 		InfraGetCluster            func(childComplexity int, name string) int
 		InfraGetEdge               func(childComplexity int, clusterName string, name string) int
 		InfraGetNodePool           func(childComplexity int, clusterName string, edgeName string, poolName string) int
-		InfraListBYOCClusters      func(childComplexity int) int
-		InfraListCloudProviders    func(childComplexity int) int
-		InfraListClusters          func(childComplexity int) int
-		InfraListEdges             func(childComplexity int, clusterName string, providerName *string) int
+		InfraListBYOCClusters      func(childComplexity int, pagination *types.CursorPagination) int
+		InfraListCloudProviders    func(childComplexity int, pagination *types.CursorPagination) int
+		InfraListClusters          func(childComplexity int, pagination *types.CursorPagination) int
+		InfraListEdges             func(childComplexity int, clusterName string, providerName *string, pagination *types.CursorPagination) int
 		InfraListMasterNodes       func(childComplexity int, clusterName string) int
-		InfraListNodePools         func(childComplexity int, clusterName string, edgeName string) int
+		InfraListNodePools         func(childComplexity int, clusterName string, edgeName string, pagination *types.CursorPagination) int
 		InfraListWorkerNodes       func(childComplexity int, clusterName string, edgeName string) int
 		__resolve__service         func(childComplexity int) int
 	}
@@ -500,7 +501,7 @@ type Kloudlite_io__pkg__types_SyncStatusResolver interface {
 	Action(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusAction, error)
 
 	LastSyncedAt(ctx context.Context, obj *types.SyncStatus) (*string, error)
-	State(ctx context.Context, obj *types.SyncStatus) (*model.KloudliteIoPkgTypesSyncStatusState, error)
+	State(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusState, error)
 	SyncScheduledAt(ctx context.Context, obj *types.SyncStatus) (*string, error)
 }
 type MasterNodeResolver interface {
@@ -543,17 +544,17 @@ type NodePoolResolver interface {
 }
 type QueryResolver interface {
 	InfraCheckNameAvailability(ctx context.Context, resType domain.ResType, name string) (*domain.CheckNameAvailabilityOutput, error)
-	InfraListBYOCClusters(ctx context.Context) (*model.BYOCClusterPaginatedRecords, error)
+	InfraListBYOCClusters(ctx context.Context, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error)
 	InfraGetBYOCCluster(ctx context.Context, name string) (*entities.BYOCCluster, error)
-	InfraListClusters(ctx context.Context) (*model.ClusterPaginatedRecords, error)
+	InfraListClusters(ctx context.Context, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error)
 	InfraGetCluster(ctx context.Context, name string) (*entities.Cluster, error)
-	InfraListCloudProviders(ctx context.Context) (*model.CloudProviderPaginatedRecords, error)
+	InfraListCloudProviders(ctx context.Context, pagination *types.CursorPagination) (*model.CloudProviderPaginatedRecords, error)
 	InfraGetCloudProvider(ctx context.Context, name string) (*entities.CloudProvider, error)
-	InfraListEdges(ctx context.Context, clusterName string, providerName *string) (*model.EdgePaginatedRecords, error)
+	InfraListEdges(ctx context.Context, clusterName string, providerName *string, pagination *types.CursorPagination) (*model.EdgePaginatedRecords, error)
 	InfraGetEdge(ctx context.Context, clusterName string, name string) (*entities.Edge, error)
-	InfraListMasterNodes(ctx context.Context, clusterName string) (*model.MasterNodePaginatedRecords, error)
-	InfraListWorkerNodes(ctx context.Context, clusterName string, edgeName string) (*model.WorkerNodePaginatedRecords, error)
-	InfraListNodePools(ctx context.Context, clusterName string, edgeName string) (*model.NodePoolPaginatedRecords, error)
+	InfraListMasterNodes(ctx context.Context, clusterName string) ([]*entities.MasterNode, error)
+	InfraListWorkerNodes(ctx context.Context, clusterName string, edgeName string) ([]*entities.WorkerNode, error)
+	InfraListNodePools(ctx context.Context, clusterName string, edgeName string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error)
 	InfraGetNodePool(ctx context.Context, clusterName string, edgeName string, poolName string) (*entities.NodePool, error)
 }
 type SecretResolver interface {
@@ -599,12 +600,14 @@ type MasterNodeInResolver interface {
 }
 type MetadataInResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
-
 	Labels(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
 }
 type NodePoolInResolver interface {
 	Metadata(ctx context.Context, obj *entities.NodePool, data *v1.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.NodePool, data *model.GithubComKloudliteClusterOperatorApisInfraV1NodePoolSpecIn) error
+}
+type PaginationQueryArgsResolver interface {
+	SortBy(ctx context.Context, obj *types.CursorPagination, data *model.PaginationSortOrder) error
 }
 type SecretInResolver interface {
 	Data(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error
@@ -2140,21 +2143,36 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.InfraListBYOCClusters(childComplexity), true
+		args, err := ec.field_Query_infra_listBYOCClusters_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.InfraListBYOCClusters(childComplexity, args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listCloudProviders":
 		if e.complexity.Query.InfraListCloudProviders == nil {
 			break
 		}
 
-		return e.complexity.Query.InfraListCloudProviders(childComplexity), true
+		args, err := ec.field_Query_infra_listCloudProviders_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.InfraListCloudProviders(childComplexity, args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listClusters":
 		if e.complexity.Query.InfraListClusters == nil {
 			break
 		}
 
-		return e.complexity.Query.InfraListClusters(childComplexity), true
+		args, err := ec.field_Query_infra_listClusters_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.InfraListClusters(childComplexity, args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listEdges":
 		if e.complexity.Query.InfraListEdges == nil {
@@ -2166,7 +2184,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListEdges(childComplexity, args["clusterName"].(string), args["providerName"].(*string)), true
+		return e.complexity.Query.InfraListEdges(childComplexity, args["clusterName"].(string), args["providerName"].(*string), args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listMasterNodes":
 		if e.complexity.Query.InfraListMasterNodes == nil {
@@ -2190,7 +2208,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListNodePools(childComplexity, args["clusterName"].(string), args["edgeName"].(string)), true
+		return e.complexity.Query.InfraListNodePools(childComplexity, args["clusterName"].(string), args["edgeName"].(string), args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listWorkerNodes":
 		if e.complexity.Query.InfraListWorkerNodes == nil {
@@ -2588,27 +2606,27 @@ type Query {
   infra_checkNameAvailability(resType: ResType!, name: String!): CheckNameAvailabilityOutput! @isLoggedIn @hasAccount
 
   # BYOC clusters
-  infra_listBYOCClusters: BYOCClusterPaginatedRecords @isLoggedIn @hasAccount
+  infra_listBYOCClusters(pagination: PaginationQueryArgs): BYOCClusterPaginatedRecords @isLoggedIn @hasAccount
   infra_getBYOCCluster(name: String!): BYOCCluster @isLoggedIn @hasAccount
 
   # clusters
-  infra_listClusters: ClusterPaginatedRecords @isLoggedIn @hasAccount
+  infra_listClusters(pagination: PaginationQueryArgs): ClusterPaginatedRecords @isLoggedIn @hasAccount
   infra_getCluster(name: String!): Cluster @isLoggedIn @hasAccount
 
   # cloud providers
-  infra_listCloudProviders: CloudProviderPaginatedRecords @isLoggedIn @hasAccount
+  infra_listCloudProviders(pagination: PaginationQueryArgs): CloudProviderPaginatedRecords @isLoggedIn @hasAccount
   infra_getCloudProvider(name: String!): CloudProvider @isLoggedIn @hasAccount
 
   # list edges
-  infra_listEdges(clusterName: String!, providerName: String): EdgePaginatedRecords @isLoggedIn @hasAccount
+  infra_listEdges(clusterName: String!, providerName: String, pagination: PaginationQueryArgs): EdgePaginatedRecords @isLoggedIn @hasAccount
   infra_getEdge(clusterName: String!, name: String!): Edge @isLoggedIn @hasAccount
 
   # get master nodes
-  infra_listMasterNodes(clusterName: String!): MasterNodePaginatedRecords @isLoggedIn @hasAccount
-  infra_listWorkerNodes(clusterName: String!, edgeName: String!): WorkerNodePaginatedRecords! @isLoggedIn @hasAccount
+  infra_listMasterNodes(clusterName: String!): [MasterNode!] @isLoggedIn @hasAccount
+  infra_listWorkerNodes(clusterName: String!, edgeName: String!): [WorkerNode!] @isLoggedIn @hasAccount
 
   # get node pools
-  infra_listNodePools(clusterName: String!, edgeName: String!): NodePoolPaginatedRecords @isLoggedIn @hasAccount
+  infra_listNodePools(clusterName: String!, edgeName: String!, pagination: PaginationQueryArgs): NodePoolPaginatedRecords @isLoggedIn @hasAccount
   infra_getNodePool(clusterName: String!, edgeName: String!, poolName: String!): NodePool @isLoggedIn @hasAccount
 }
 
@@ -2637,7 +2655,7 @@ type Mutation {
   infra_deleteWorkerNode(clusterName: String!, edgeName: String!, name: String!): Boolean! @isLoggedIn @hasAccount
 }
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/byoccluster.graphqls", Input: `type BYOCCluster {
+	{Name: "../struct-to-graphql/byoccluster.graphqls", Input: `type BYOCCluster @shareable {
   apiVersion: String!
   creationTime: Date!
   helmStatus: Map!
@@ -2651,12 +2669,12 @@ type Mutation {
   updateTime: Date!
 }
 
-type BYOCClusterEdge {
+type BYOCClusterEdge @shareable {
   cursor: String!
   node: BYOCCluster!
 }
 
-type BYOCClusterPaginatedRecords {
+type BYOCClusterPaginatedRecords @shareable {
   edges: [BYOCClusterEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -2670,7 +2688,7 @@ input BYOCClusterIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/cloudprovider.graphqls", Input: `type CloudProvider {
+	{Name: "../struct-to-graphql/cloudprovider.graphqls", Input: `type CloudProvider @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -2684,12 +2702,12 @@ input BYOCClusterIn {
   updateTime: Date!
 }
 
-type CloudProviderEdge {
+type CloudProviderEdge @shareable {
   cursor: String!
   node: CloudProvider!
 }
 
-type CloudProviderPaginatedRecords {
+type CloudProviderPaginatedRecords @shareable {
   edges: [CloudProviderEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -2705,7 +2723,7 @@ input CloudProviderIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/cluster.graphqls", Input: `type Cluster {
+	{Name: "../struct-to-graphql/cluster.graphqls", Input: `type Cluster @shareable {
   accountName: String!
   apiVersion: String!
   creationTime: Date!
@@ -2718,12 +2736,12 @@ input CloudProviderIn {
   updateTime: Date!
 }
 
-type ClusterEdge {
+type ClusterEdge @shareable {
   cursor: String!
   node: Cluster!
 }
 
-type ClusterPaginatedRecords {
+type ClusterPaginatedRecords @shareable {
   edges: [ClusterEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -2738,7 +2756,7 @@ input ClusterIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_ClusterSpec {
+	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_ClusterSpec @shareable {
   accountName: String!
   config: String!
   count: Int!
@@ -2747,7 +2765,7 @@ input ClusterIn {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec {
+type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec @shareable {
   accountName: String!
   clusterName: String!
   config: String!
@@ -2756,19 +2774,19 @@ type Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpec @shareable {
   accountName: String!
   display_name: String!
   provider: String!
   providerSecret: Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecProviderSecret!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecProviderSecret {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecProviderSecret @shareable {
   name: String!
   namespace: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec @shareable {
   accountName: String!
   clusterName: String!
   pools: [Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpecPools]
@@ -2777,14 +2795,14 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpecPools {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpecPools @shareable {
   config: String!
   max: Int
   min: Int
   name: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec @shareable {
   accountName: String!
   clusterName: String!
   config: String!
@@ -2796,7 +2814,7 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec {
   region: String!
 }
 
-type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec {
+type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec @shareable {
   accountName: String!
   clusterName: String!
   config: String!
@@ -2809,7 +2827,7 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec {
   stateful: Boolean
 }
 
-type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec {
+type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec @shareable {
   accountName: String!
   displayName: String
   incomingKafkaTopic: String!
@@ -2820,20 +2838,20 @@ type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec {
   storageClasses: [String]
 }
 
-type Github_com__kloudlite__operator__pkg__operator_Check {
+type Github_com__kloudlite__operator__pkg__operator_Check @shareable {
   generation: Int
   message: String
   status: Boolean!
 }
 
-type Github_com__kloudlite__operator__pkg__operator_ResourceRef {
+type Github_com__kloudlite__operator__pkg__operator_ResourceRef @shareable {
   apiVersion: String
   kind: String
   name: String!
   namespace: String!
 }
 
-type Github_com__kloudlite__operator__pkg__operator_Status {
+type Github_com__kloudlite__operator__pkg__operator_Status @shareable {
   checks: Map
   isReady: Boolean!
   lastReconcileTime: Date
@@ -2841,33 +2859,33 @@ type Github_com__kloudlite__operator__pkg__operator_Status {
   resources: [Github_com__kloudlite__operator__pkg__operator_ResourceRef!]
 }
 
-type Github_com__kloudlite__operator__pkg__raw___json_RawJson {
+type Github_com__kloudlite__operator__pkg__raw___json_RawJson @shareable {
   RawMessage: Any
 }
 
-type Kloudlite_io__apps__infra__internal__domain__entities_HelmStatusVal {
+type Kloudlite_io__apps__infra__internal__domain__entities_HelmStatusVal @shareable {
   isReady: Boolean
   message: String!
 }
 
-type Kloudlite_io__pkg__types_SyncStatus {
+type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
   generation: Int!
   lastSyncedAt: Date
-  state: Kloudlite_io__pkg__types_SyncStatusState
+  state: Kloudlite_io__pkg__types_SyncStatusState!
   syncScheduledAt: Date
 }
 
-type Metadata {
+type Metadata @shareable {
   annotations: Map
-  generation: Int
+  generation: Int!
   labels: Map
   name: String!
   namespace: String
 }
 
-type PageInfo {
+type PageInfo @shareable {
   endCursor: String
   hasNextPage: Boolean!
   hasPreviousPage: Boolean!
@@ -2958,7 +2976,6 @@ input Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn {
 
 input MetadataIn {
   annotations: Map
-  generation: Int
   labels: Map
   name: String!
   namespace: String
@@ -2984,7 +3001,7 @@ directive @goField(
 	name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/edge.graphqls", Input: `type Edge {
+	{Name: "../struct-to-graphql/edge.graphqls", Input: `type Edge @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -2998,12 +3015,12 @@ directive @goField(
   updateTime: Date!
 }
 
-type EdgeEdge {
+type EdgeEdge @shareable {
   cursor: String!
   node: Edge!
 }
 
-type EdgePaginatedRecords {
+type EdgePaginatedRecords @shareable {
   edges: [EdgeEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -3019,7 +3036,7 @@ input EdgeIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/masternode.graphqls", Input: `type MasterNode {
+	{Name: "../struct-to-graphql/masternode.graphqls", Input: `type MasterNode @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -3033,12 +3050,12 @@ input EdgeIn {
   updateTime: Date!
 }
 
-type MasterNodeEdge {
+type MasterNodeEdge @shareable {
   cursor: String!
   node: MasterNode!
 }
 
-type MasterNodePaginatedRecords {
+type MasterNodePaginatedRecords @shareable {
   edges: [MasterNodeEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -3054,7 +3071,7 @@ input MasterNodeIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/nodepool.graphqls", Input: `type NodePool {
+	{Name: "../struct-to-graphql/nodepool.graphqls", Input: `type NodePool @shareable {
   accoutName: String!
   apiVersion: String!
   clusterName: String!
@@ -3068,12 +3085,12 @@ input MasterNodeIn {
   updateTime: Date!
 }
 
-type NodePoolEdge {
+type NodePoolEdge @shareable {
   cursor: String!
   node: NodePool!
 }
 
-type NodePoolPaginatedRecords {
+type NodePoolPaginatedRecords @shareable {
   edges: [NodePoolEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -3094,7 +3111,7 @@ scalar Json
 scalar Map
 scalar Date
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/secret.graphqls", Input: `type Secret {
+	{Name: "../struct-to-graphql/secret.graphqls", Input: `type Secret @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -3111,12 +3128,12 @@ scalar Date
   updateTime: Date!
 }
 
-type SecretEdge {
+type SecretEdge @shareable {
   cursor: String!
   node: Secret!
 }
 
-type SecretPaginatedRecords {
+type SecretPaginatedRecords @shareable {
   edges: [SecretEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -3135,7 +3152,7 @@ input SecretIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/workernode.graphqls", Input: `type WorkerNode {
+	{Name: "../struct-to-graphql/workernode.graphqls", Input: `type WorkerNode @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -3149,12 +3166,12 @@ input SecretIn {
   updateTime: Date!
 }
 
-type WorkerNodeEdge {
+type WorkerNodeEdge @shareable {
   cursor: String!
   node: WorkerNode!
 }
 
-type WorkerNodePaginatedRecords {
+type WorkerNodePaginatedRecords @shareable {
   edges: [WorkerNodeEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
@@ -3582,6 +3599,51 @@ func (ec *executionContext) field_Query_infra_getNodePool_args(ctx context.Conte
 	return args, nil
 }
 
+func (ec *executionContext) field_Query_infra_listBYOCClusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg0, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_infra_listCloudProviders_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg0, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_infra_listClusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg0, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg0
+	return args, nil
+}
+
 func (ec *executionContext) field_Query_infra_listEdges_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3603,6 +3665,15 @@ func (ec *executionContext) field_Query_infra_listEdges_args(ctx context.Context
 		}
 	}
 	args["providerName"] = arg1
+	var arg2 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg2, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg2
 	return args, nil
 }
 
@@ -3642,6 +3713,15 @@ func (ec *executionContext) field_Query_infra_listNodePools_args(ctx context.Con
 		}
 	}
 	args["edgeName"] = arg1
+	var arg2 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg2, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg2
 	return args, nil
 }
 
@@ -10144,11 +10224,14 @@ func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus_state(ctx conte
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.KloudliteIoPkgTypesSyncStatusState)
+	res := resTmp.(model.KloudliteIoPkgTypesSyncStatusState)
 	fc.Result = res
-	return ec.marshalOKloudlite_io__pkg__types_SyncStatusState2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx, field.Selections, res)
+	return ec.marshalNKloudlite_io__pkg__types_SyncStatusState2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11057,11 +11140,14 @@ func (ec *executionContext) _Metadata_generation(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(int64)
 	fc.Result = res
-	return ec.marshalOInt2int64(ctx, field.Selections, res)
+	return ec.marshalNInt2int64(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Metadata_generation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13488,7 +13574,7 @@ func (ec *executionContext) _Query_infra_listBYOCClusters(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListBYOCClusters(rctx)
+			return ec.resolvers.Query().InfraListBYOCClusters(rctx, fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -13544,6 +13630,17 @@ func (ec *executionContext) fieldContext_Query_infra_listBYOCClusters(ctx contex
 			}
 			return nil, fmt.Errorf("no field named %q was found under type BYOCClusterPaginatedRecords", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_infra_listBYOCClusters_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -13665,7 +13762,7 @@ func (ec *executionContext) _Query_infra_listClusters(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListClusters(rctx)
+			return ec.resolvers.Query().InfraListClusters(rctx, fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -13721,6 +13818,17 @@ func (ec *executionContext) fieldContext_Query_infra_listClusters(ctx context.Co
 			}
 			return nil, fmt.Errorf("no field named %q was found under type ClusterPaginatedRecords", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_infra_listClusters_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -13840,7 +13948,7 @@ func (ec *executionContext) _Query_infra_listCloudProviders(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListCloudProviders(rctx)
+			return ec.resolvers.Query().InfraListCloudProviders(rctx, fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -13896,6 +14004,17 @@ func (ec *executionContext) fieldContext_Query_infra_listCloudProviders(ctx cont
 			}
 			return nil, fmt.Errorf("no field named %q was found under type CloudProviderPaginatedRecords", field.Name)
 		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_infra_listCloudProviders_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -14017,7 +14136,7 @@ func (ec *executionContext) _Query_infra_listEdges(ctx context.Context, field gr
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListEdges(rctx, fc.Args["clusterName"].(string), fc.Args["providerName"].(*string))
+			return ec.resolvers.Query().InfraListEdges(rctx, fc.Args["clusterName"].(string), fc.Args["providerName"].(*string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -14227,10 +14346,10 @@ func (ec *executionContext) _Query_infra_listMasterNodes(ctx context.Context, fi
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.MasterNodePaginatedRecords); ok {
+		if data, ok := tmp.([]*entities.MasterNode); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/infra/internal/app/graph/model.MasterNodePaginatedRecords`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/infra/internal/domain/entities.MasterNode`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -14239,9 +14358,9 @@ func (ec *executionContext) _Query_infra_listMasterNodes(ctx context.Context, fi
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.MasterNodePaginatedRecords)
+	res := resTmp.([]*entities.MasterNode)
 	fc.Result = res
-	return ec.marshalOMasterNodePaginatedRecords2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐMasterNodePaginatedRecords(ctx, field.Selections, res)
+	return ec.marshalOMasterNode2ᚕᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐMasterNodeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_infra_listMasterNodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14252,14 +14371,30 @@ func (ec *executionContext) fieldContext_Query_infra_listMasterNodes(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "edges":
-				return ec.fieldContext_MasterNodePaginatedRecords_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_MasterNodePaginatedRecords_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_MasterNodePaginatedRecords_totalCount(ctx, field)
+			case "accountName":
+				return ec.fieldContext_MasterNode_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_MasterNode_apiVersion(ctx, field)
+			case "clusterName":
+				return ec.fieldContext_MasterNode_clusterName(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_MasterNode_creationTime(ctx, field)
+			case "id":
+				return ec.fieldContext_MasterNode_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_MasterNode_kind(ctx, field)
+			case "metadata":
+				return ec.fieldContext_MasterNode_metadata(ctx, field)
+			case "spec":
+				return ec.fieldContext_MasterNode_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_MasterNode_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_MasterNode_syncStatus(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_MasterNode_updateTime(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type MasterNodePaginatedRecords", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type MasterNode", field.Name)
 		},
 	}
 	defer func() {
@@ -14313,24 +14448,21 @@ func (ec *executionContext) _Query_infra_listWorkerNodes(ctx context.Context, fi
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*model.WorkerNodePaginatedRecords); ok {
+		if data, ok := tmp.([]*entities.WorkerNode); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/infra/internal/app/graph/model.WorkerNodePaginatedRecords`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/infra/internal/domain/entities.WorkerNode`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(*model.WorkerNodePaginatedRecords)
+	res := resTmp.([]*entities.WorkerNode)
 	fc.Result = res
-	return ec.marshalNWorkerNodePaginatedRecords2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐWorkerNodePaginatedRecords(ctx, field.Selections, res)
+	return ec.marshalOWorkerNode2ᚕᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐWorkerNodeᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_infra_listWorkerNodes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14341,14 +14473,30 @@ func (ec *executionContext) fieldContext_Query_infra_listWorkerNodes(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
-			case "edges":
-				return ec.fieldContext_WorkerNodePaginatedRecords_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_WorkerNodePaginatedRecords_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_WorkerNodePaginatedRecords_totalCount(ctx, field)
+			case "accountName":
+				return ec.fieldContext_WorkerNode_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_WorkerNode_apiVersion(ctx, field)
+			case "clusterName":
+				return ec.fieldContext_WorkerNode_clusterName(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_WorkerNode_creationTime(ctx, field)
+			case "id":
+				return ec.fieldContext_WorkerNode_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_WorkerNode_kind(ctx, field)
+			case "metadata":
+				return ec.fieldContext_WorkerNode_metadata(ctx, field)
+			case "spec":
+				return ec.fieldContext_WorkerNode_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_WorkerNode_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_WorkerNode_syncStatus(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_WorkerNode_updateTime(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type WorkerNodePaginatedRecords", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type WorkerNode", field.Name)
 		},
 	}
 	defer func() {
@@ -14380,7 +14528,7 @@ func (ec *executionContext) _Query_infra_listNodePools(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListNodePools(rctx, fc.Args["clusterName"].(string), fc.Args["edgeName"].(string))
+			return ec.resolvers.Query().InfraListNodePools(rctx, fc.Args["clusterName"].(string), fc.Args["edgeName"].(string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedIn == nil {
@@ -19220,7 +19368,7 @@ func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj in
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"annotations", "generation", "labels", "name", "namespace"}
+	fieldsInOrder := [...]string{"annotations", "labels", "name", "namespace"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19236,14 +19384,6 @@ func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj in
 				return it, err
 			}
 			if err = ec.resolvers.MetadataIn().Annotations(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "generation":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("generation"))
-			it.Generation, err = ec.unmarshalOInt2int64(ctx, v)
-			if err != nil {
 				return it, err
 			}
 		case "labels":
@@ -19353,8 +19493,8 @@ func (ec *executionContext) unmarshalInputNodePoolIn(ctx context.Context, obj in
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputPaginationQueryArgs(ctx context.Context, obj interface{}) (model.PaginationQueryArgs, error) {
-	var it model.PaginationQueryArgs
+func (ec *executionContext) unmarshalInputPaginationQueryArgs(ctx context.Context, obj interface{}) (types.CursorPagination, error) {
+	var it types.CursorPagination
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -19384,7 +19524,7 @@ func (ec *executionContext) unmarshalInputPaginationQueryArgs(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("first"))
-			it.First, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.First, err = ec.unmarshalOInt2ᚖint64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19400,7 +19540,7 @@ func (ec *executionContext) unmarshalInputPaginationQueryArgs(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("last"))
-			it.Last, err = ec.unmarshalOInt2ᚖint(ctx, v)
+			it.Last, err = ec.unmarshalOInt2ᚖint64(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19416,7 +19556,7 @@ func (ec *executionContext) unmarshalInputPaginationQueryArgs(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("orderBy"))
-			it.OrderBy, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.OrderBy, err = ec.unmarshalOString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19424,8 +19564,11 @@ func (ec *executionContext) unmarshalInputPaginationQueryArgs(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sortBy"))
-			it.SortBy, err = ec.unmarshalOPaginationSortOrder2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐPaginationSortOrder(ctx, v)
+			data, err := ec.unmarshalOPaginationSortOrder2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐPaginationSortOrder(ctx, v)
 			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.PaginationQueryArgs().SortBy(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -21422,6 +21565,9 @@ func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus(ctx context.Con
 					}
 				}()
 				res = ec._Kloudlite_io__pkg__types_SyncStatus_state(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -21722,6 +21868,9 @@ func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet,
 
 			out.Values[i] = ec._Metadata_generation(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "labels":
 			field := field
 
@@ -22393,9 +22542,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_infra_listWorkerNodes(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -23717,6 +23863,16 @@ func (ec *executionContext) marshalNKloudlite_io__pkg__types_SyncStatusAction2kl
 	return v
 }
 
+func (ec *executionContext) unmarshalNKloudlite_io__pkg__types_SyncStatusState2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, v interface{}) (model.KloudliteIoPkgTypesSyncStatusState, error) {
+	var res model.KloudliteIoPkgTypesSyncStatusState
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNKloudlite_io__pkg__types_SyncStatusState2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, sel ast.SelectionSet, v model.KloudliteIoPkgTypesSyncStatusState) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
 	res, err := graphql.UnmarshalMap(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -24084,20 +24240,6 @@ func (ec *executionContext) marshalNWorkerNodeEdge2ᚖkloudliteᚗioᚋappsᚋin
 		return graphql.Null
 	}
 	return ec._WorkerNodeEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNWorkerNodePaginatedRecords2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐWorkerNodePaginatedRecords(ctx context.Context, sel ast.SelectionSet, v model.WorkerNodePaginatedRecords) graphql.Marshaler {
-	return ec._WorkerNodePaginatedRecords(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNWorkerNodePaginatedRecords2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐWorkerNodePaginatedRecords(ctx context.Context, sel ast.SelectionSet, v *model.WorkerNodePaginatedRecords) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._WorkerNodePaginatedRecords(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalN_FieldSet2string(ctx context.Context, v interface{}) (string, error) {
@@ -24732,16 +24874,6 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__pkg__raw___
 	return ec._Github_com__kloudlite__operator__pkg__raw___json_RawJson(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOInt2int64(ctx context.Context, v interface{}) (int64, error) {
-	res, err := graphql.UnmarshalInt64(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOInt2int64(ctx context.Context, sel ast.SelectionSet, v int64) graphql.Marshaler {
-	res := graphql.MarshalInt64(v)
-	return res
-}
-
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {
 	if v == nil {
 		return nil, nil
@@ -24758,20 +24890,20 @@ func (ec *executionContext) marshalOInt2ᚖint(ctx context.Context, sel ast.Sele
 	return res
 }
 
-func (ec *executionContext) unmarshalOKloudlite_io__pkg__types_SyncStatusState2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, v interface{}) (*model.KloudliteIoPkgTypesSyncStatusState, error) {
+func (ec *executionContext) unmarshalOInt2ᚖint64(ctx context.Context, v interface{}) (*int64, error) {
 	if v == nil {
 		return nil, nil
 	}
-	var res = new(model.KloudliteIoPkgTypesSyncStatusState)
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
+	res, err := graphql.UnmarshalInt64(v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOKloudlite_io__pkg__types_SyncStatusState2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐKloudliteIoPkgTypesSyncStatusState(ctx context.Context, sel ast.SelectionSet, v *model.KloudliteIoPkgTypesSyncStatusState) graphql.Marshaler {
+func (ec *executionContext) marshalOInt2ᚖint64(ctx context.Context, sel ast.SelectionSet, v *int64) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return v
+	res := graphql.MarshalInt64(*v)
+	return res
 }
 
 func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
@@ -24790,11 +24922,51 @@ func (ec *executionContext) marshalOMap2map(ctx context.Context, sel ast.Selecti
 	return res
 }
 
-func (ec *executionContext) marshalOMasterNodePaginatedRecords2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐMasterNodePaginatedRecords(ctx context.Context, sel ast.SelectionSet, v *model.MasterNodePaginatedRecords) graphql.Marshaler {
+func (ec *executionContext) marshalOMasterNode2ᚕᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐMasterNodeᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.MasterNode) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._MasterNodePaginatedRecords(ctx, sel, v)
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNMasterNode2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐMasterNode(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalONodePool2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐNodePool(ctx context.Context, sel ast.SelectionSet, v *entities.NodePool) graphql.Marshaler {
@@ -24809,6 +24981,14 @@ func (ec *executionContext) marshalONodePoolPaginatedRecords2ᚖkloudliteᚗio�
 		return graphql.Null
 	}
 	return ec._NodePoolPaginatedRecords(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx context.Context, v interface{}) (*types.CursorPagination, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputPaginationQueryArgs(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOPaginationSortOrder2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐPaginationSortOrder(ctx context.Context, v interface{}) (*model.PaginationSortOrder, error) {
@@ -24929,6 +25109,53 @@ func (ec *executionContext) marshalOString2ᚖstring(ctx context.Context, sel as
 	}
 	res := graphql.MarshalString(*v)
 	return res
+}
+
+func (ec *executionContext) marshalOWorkerNode2ᚕᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐWorkerNodeᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.WorkerNode) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNWorkerNode2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋdomainᚋentitiesᚐWorkerNode(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalO__EnumValue2ᚕgithubᚗcomᚋ99designsᚋgqlgenᚋgraphqlᚋintrospectionᚐEnumValueᚄ(ctx context.Context, sel ast.SelectionSet, v []introspection.EnumValue) graphql.Marshaler {

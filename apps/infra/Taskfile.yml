@@ -100,7 +100,7 @@ tasks:
         nDockerfile=$(cat Dockerfile | tail --lines=+$startLineNo | grep -i --invert-match 'from=base')
         echo "$nDockerfile" | sed "1 i # syntax=docker/dockerfile:1.4" > $tDir/Dockerfile.base
 
-        cat $tDir/Dockerfile.base | sed "4 i COPY --from=local-builder ./{{.APP}} ./{{.APP}}" > $tDir/Dockerfile
+        cat $tDir/Dockerfile.base | sed "6 i COPY --from=local-builder ./{{.APP}} ./{{.APP}}" > $tDir/Dockerfile
         cat $tDir/Dockerfile
         
         echo "building application ..."

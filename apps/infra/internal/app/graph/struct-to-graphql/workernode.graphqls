@@ -1,4 +1,4 @@
-type WorkerNode {
+type WorkerNode @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -12,12 +12,12 @@ type WorkerNode {
   updateTime: Date!
 }
 
-type WorkerNodeEdge {
+type WorkerNodeEdge @shareable {
   cursor: String!
   node: WorkerNode!
 }
 
-type WorkerNodePaginatedRecords {
+type WorkerNodePaginatedRecords @shareable {
   edges: [WorkerNodeEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!

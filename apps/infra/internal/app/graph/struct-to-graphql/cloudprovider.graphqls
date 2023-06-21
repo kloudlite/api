@@ -1,4 +1,4 @@
-type CloudProvider {
+type CloudProvider @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
@@ -12,12 +12,12 @@ type CloudProvider {
   updateTime: Date!
 }
 
-type CloudProviderEdge {
+type CloudProviderEdge @shareable {
   cursor: String!
   node: CloudProvider!
 }
 
-type CloudProviderPaginatedRecords {
+type CloudProviderPaginatedRecords @shareable {
   edges: [CloudProviderEdge!]!
   pageInfo: PageInfo!
   totalCount: Int!
