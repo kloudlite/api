@@ -21,16 +21,6 @@ type AwsProviderConfig struct {
 	AccountName  string `yaml:"accountName"`
 }
 
-// type AWSNode struct {
-// 	NodeId       string `yaml:"nodeId"`
-// 	Region       string `yaml:"region"`
-// 	InstanceType string `yaml:"instanceType"`
-// 	VPC          string `yaml:"vpc"`
-// 	ImageId      string `yaml:"imageId"`
-// 	IsGpu        bool   `yaml:"isGpu"`
-// 	NodeType     string `yaml:"nodeType" json:"nodeType"`
-// }
-
 type AwsClient struct {
 	node        clustersv1.AWSNodeConfig
 	awsS3Client awss3.AwsS3
