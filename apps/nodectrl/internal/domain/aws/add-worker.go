@@ -46,7 +46,7 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		return err
 	}
 
-	if a.node.NodeType == "spot" {
+	if a.node.ProvisionMode == "spot" {
 		if err := a.writeNodeConfig(kc); err != nil {
 			return err
 		}
@@ -64,11 +64,11 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		return err
 	}
 
-	if a.node.NodeType == "spot" {
+	if a.node.ProvisionMode == "spot" {
 		return nil
 	}
 
-	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeId), "node-ip")
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, *a.node.NadeName), "node-ip")
 	if err != nil {
 		return err
 	}
@@ -115,10 +115,10 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		kc.ServerIp,
 		strings.TrimSpace(string(kc.Token)),
 		ip,
-		a.node.NodeId,
+		*a.node.NadeName,
 		strings.Join(labels, " "),
 		func() string {
-			if a.node.IsGpu {
+			if a.node.IsGpu != nil && *a.node.IsGpu {
 				// return "--docker"
 				// return "--docker"
 				return ""
