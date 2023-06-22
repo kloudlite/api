@@ -90,7 +90,7 @@ func (a AwsClient) writeNodeConfig(kc TokenAndKubeconfig) error {
 	nc := NodeConfig{
 		ServerIP: kc.ServerIp,
 		Token:    kc.Token,
-		NodeName: *a.node.NadeName,
+		NodeName: *a.node.NodeName,
 		Taints:   []string{},
 		Labels:   map[string]string{},
 	}
@@ -189,7 +189,7 @@ func (a AwsClient) saveSSH() error {
 
 func (a AwsClient) SaveToDbGuranteed(ctx context.Context) {
 	for {
-		if err := utils.SaveToDb(*a.node.NadeName, a.awsS3Client); err == nil {
+		if err := utils.SaveToDb(*a.node.NodeName, a.awsS3Client); err == nil {
 			break
 		} else {
 			fmt.Println(err)
@@ -218,7 +218,7 @@ func (a AwsClient) NewNode(ctx context.Context) error {
 		return err
 	}
 
-	if err := utils.MakeTfWorkFileReady(*a.node.NadeName, a.getAwsTemplatePath(), a.awsS3Client, true); err != nil {
+	if err := utils.MakeTfWorkFileReady(*a.node.NodeName, a.getAwsTemplatePath(), a.awsS3Client, true); err != nil {
 		return err
 	}
 
@@ -228,11 +228,11 @@ func (a AwsClient) NewNode(ctx context.Context) error {
 
 	// apply the tf file
 	if err := func() error {
-		if err := utils.InitTFdir(path.Join(utils.Workdir, *a.node.NadeName)); err != nil {
+		if err := utils.InitTFdir(path.Join(utils.Workdir, *a.node.NodeName)); err != nil {
 			return err
 		}
 
-		if err := utils.ApplyTF(path.Join(utils.Workdir, *a.node.NadeName), values); err != nil {
+		if err := utils.ApplyTF(path.Join(utils.Workdir, *a.node.NodeName), values); err != nil {
 			return err
 		}
 
@@ -261,13 +261,13 @@ func (a AwsClient) DeleteNode(ctx context.Context) error {
 			- delete final state
 	*/
 
-	if err := utils.MakeTfWorkFileReady(*a.node.NadeName, a.getAwsTemplatePath(), a.awsS3Client, false); err != nil {
+	if err := utils.MakeTfWorkFileReady(*a.node.NodeName, a.getAwsTemplatePath(), a.awsS3Client, false); err != nil {
 		return err
 	}
 
 	// destroy the tf file
 	if err := func() error {
-		if err := utils.DestroyNode(*a.node.NadeName, values); err != nil {
+		if err := utils.DestroyNode(*a.node.NodeName, values); err != nil {
 			return err
 		}
 

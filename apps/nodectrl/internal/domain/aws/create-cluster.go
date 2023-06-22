@@ -37,7 +37,7 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 		return err
 	}
 
-	ip, err := utils.GetOutput(path.Join(utils.Workdir, *a.node.NadeName), "node-ip")
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, *a.node.NodeName), "node-ip")
 	if err != nil {
 		return err
 	}
@@ -70,7 +70,7 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 		string(ip),
 		masterToken.String(),
 		string(ip),
-		*a.node.NadeName,
+		*a.node.NodeName,
 	)
 
 	if err := utils.ExecCmd(cmd, "installing k3s"); err != nil {
@@ -142,10 +142,10 @@ func parseValues(a AwsClient, sshPath string) (map[string]string, error) {
 	}
 	values["region"] = *a.node.Region
 
-	if a.node.NadeName == nil {
+	if a.node.NodeName == nil {
 		return returnError("nodename")
 	}
-	values["node_name"] = *a.node.NadeName
+	values["node_name"] = *a.node.NodeName
 
 	values["keys_path"] = sshPath
 
