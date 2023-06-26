@@ -237,8 +237,17 @@ func (a AwsClient) NewNode(ctx context.Context) error {
 // DeleteNode implements ProviderClient
 func (a AwsClient) DeleteNode(ctx context.Context) error {
 	sshPath := path.Join("/tmp/ssh", a.accountName)
+
+	if err := a.ensurePaths(); err != nil {
+		return err
+	}
+
 	values, err := parseValues(a, sshPath)
 	if err != nil {
+		return err
+	}
+
+	if err := a.SetupSSH(); err != nil {
 		return err
 	}
 

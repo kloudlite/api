@@ -127,12 +127,12 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 	return err
 }
 
-func parseValues(a AwsClient, sshPath string) (map[string]string, error) {
-	returnError := func(errorFor string) (map[string]string, error) {
+func parseValues(a AwsClient, sshPath string) (map[string]any, error) {
+	returnError := func(errorFor string) (map[string]any, error) {
 		return nil, fmt.Errorf("required value %q not provided", errorFor)
 	}
 
-	values := map[string]string{}
+	values := map[string]any{}
 
 	values["access_key"] = a.accessKey
 	values["secret_key"] = a.accessSecret
@@ -142,18 +142,27 @@ func parseValues(a AwsClient, sshPath string) (map[string]string, error) {
 	}
 	values["region"] = *a.node.Region
 
+	values["keys_path"] = sshPath
+
 	if a.node.NodeName == nil {
 		return returnError("nodename")
 	}
 	values["node_name"] = *a.node.NodeName
-
-	values["keys_path"] = sshPath
 
 	if a.node.ProvisionMode != "spot" {
 		if a.node.OnDemandSpecs == nil {
 			return returnError("onDemandSpecs")
 		}
 		values["instance_type"] = a.node.OnDemandSpecs.InstanceType
+
+	}
+
+	if a.node.ProvisionMode == "spot" {
+		values["cpu_min"] = a.node.SpotSpecs.CpuMin
+		values["cpu_max"] = a.node.SpotSpecs.CpuMax
+
+		values["mem_min"] = a.node.SpotSpecs.CpuMin
+		values["mem_max"] = a.node.SpotSpecs.MemMax
 	}
 
 	if a.node.ImageId != nil {

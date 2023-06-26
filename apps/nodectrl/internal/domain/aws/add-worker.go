@@ -18,10 +18,8 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 
 	sshPath := path.Join("/tmp/ssh", a.accountName)
 
-	if _, err := os.Stat(sshPath); err != nil {
-		if e := os.Mkdir(sshPath, os.ModePerm); e != nil {
-			return e
-		}
+	if err := a.ensurePaths(); err != nil {
+		return err
 	}
 
 	tokenFileName := fmt.Sprintf("%s-config.yaml", a.accountName)
