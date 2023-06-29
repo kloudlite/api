@@ -181,6 +181,7 @@ require (
 )
 
 // replace github.com/kloudlite/operator v0.0.0-20230519115853-9aa81fd2e1f7 => /home/vision/kloudlite/a_repos/kloudlite-operator
+replace github.com/kloudlite/operator v0.0.0-20230519115853-9aa81fd2e1f7 => /home/nxtcoder17/workspace/kloudlite/operator
 
 // replace github.com/kloudlite/cluster-operator v0.0.0-20230213105023-96cd6d1e38d3 => /home/vision/kloudlite/cluster-operator
 // replace github.com/kloudlite/cluster-operator v0.0.0-20230213105023-96cd6d1e38d3 => /home/nxtcoder17/workspace/kloudlite/cluster-operator
