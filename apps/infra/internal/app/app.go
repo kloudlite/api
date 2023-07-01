@@ -90,7 +90,8 @@ var Module = fx.Module(
 			env *env.Env,
 		) {
 			config := generated.Config{Resolvers: &graph.Resolver{Domain: d}}
-			config.Directives.IsLoggedIn = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+
+			config.Directives.IsLoggedIn = func(ctx context.Context, _ interface{}, next graphql.Resolver) (res interface{}, err error) {
 				sess := httpServer.GetSession[*common.AuthSession](ctx)
 				if sess == nil {
 					return nil, fiber.ErrUnauthorized
@@ -98,7 +99,23 @@ var Module = fx.Module(
 				return next(ctx)
 			}
 
-			config.Directives.HasAccount = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+			config.Directives.IsLoggedInAndVerified = func(ctx context.Context, _ interface{}, next graphql.Resolver) (res interface{}, err error) {
+				sess := httpServer.GetSession[*common.AuthSession](ctx)
+				if sess == nil {
+					return nil, fiber.ErrUnauthorized
+				}
+
+				if sess.UserVerified {
+					return next(ctx)
+				}
+
+				return nil, &fiber.Error{
+					Code:    fiber.ErrUnauthorized.Code,
+					Message: "user's email is not verified, yet",
+				}
+			}
+
+			config.Directives.HasAccount = func(ctx context.Context, _ interface{}, next graphql.Resolver) (res interface{}, err error) {
 				m := httpServer.GetHttpCookies(ctx)
 				klAccount := m[env.AccountCookieName]
 				if klAccount == "" {

@@ -95,7 +95,7 @@ func (r *mutationResolver) CoreCreateSecret(ctx context.Context, secret entities
 
 // CoreUpdateSecret is the resolver for the core_updateSecret field.
 func (r *mutationResolver) CoreUpdateSecret(ctx context.Context, secret entities.Secret) (*entities.Secret, error) {
-	panic(fmt.Errorf("not implemented: CoreUpdateSecret - core_updateSecret"))
+	return r.Domain.UpdateSecret(toConsoleContext(ctx), secret)
 }
 
 // CoreDeleteSecret is the resolver for the core_deleteSecret field.
@@ -158,6 +158,19 @@ func (r *mutationResolver) CoreDeleteManagedResource(ctx context.Context, namesp
 		return false, err
 	}
 	return true, nil
+}
+
+// CoreCreateImagePullSecret is the resolver for the core_createImagePullSecret field.
+func (r *mutationResolver) CoreCreateImagePullSecret(ctx context.Context, imagePullSecretIn entities.ImagePullSecret) (*entities.ImagePullSecret, error) {
+	return r.Domain.CreateImagePullSecret(toConsoleContext(ctx), imagePullSecretIn)
+}
+
+// CoreDeleteImagePullSecret is the resolver for the core_deleteImagePullSecret field.
+func (r *mutationResolver) CoreDeleteImagePullSecret(ctx context.Context, name string) (*bool, error) {
+	if err := r.Domain.DeleteImagePullSecret(toConsoleContext(ctx), name); err != nil {
+		return nil, err
+	}
+	return fn.New(true), nil
 }
 
 // CoreCheckNameAvailability is the resolver for the core_checkNameAvailability field.
@@ -512,6 +525,16 @@ func (r *queryResolver) CoreResyncManagedResource(ctx context.Context, namespace
 	return true, nil
 }
 
+// CoreListImagePullSecrets is the resolver for the core_listImagePullSecrets field.
+func (r *queryResolver) CoreListImagePullSecrets(ctx context.Context, namespace string) ([]string, error) {
+	panic(fmt.Errorf("not implemented: CoreListImagePullSecrets - core_listImagePullSecrets"))
+}
+
+// CoreGetImagePullSecret is the resolver for the core_getImagePullSecret field.
+func (r *queryResolver) CoreGetImagePullSecret(ctx context.Context, namespace string, name string) (string, error) {
+	panic(fmt.Errorf("not implemented: CoreGetImagePullSecret - core_getImagePullSecret"))
+}
+
 // SortBy is the resolver for the sortBy field.
 func (r *paginationQueryArgsResolver) SortBy(ctx context.Context, obj *types.CursorPagination, data *model.PaginationSortOrder) error {
 	if data == nil {
@@ -522,7 +545,7 @@ func (r *paginationQueryArgsResolver) SortBy(ctx context.Context, obj *types.Cur
 }
 
 // Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }, nil
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }

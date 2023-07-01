@@ -6,7 +6,7 @@ global:
   name: sample
 ---
 
-label: List Projects 2
+label: List Projects
 query: |+
   query Core_listProjects($clusterName: String, $pq: PaginationQueryArgs) {
     core_listProjects(clusterName: $clusterName, pq: $pq) {
@@ -41,35 +41,6 @@ variables:
   #
   #   orderBy: metadata.name
   #   sortBy: ASC
-
----
-
-label: List Projects
-query: |+
-  query Core_listProjects {
-    core_listProjects {
-      metadata {
-        name
-      }
-      spec {
-        accountName
-        clusterName
-        targetNamespace
-      }
-      status {
-        isReady
-        checks
-      }
-      syncStatus{
-        lastSyncedAt
-        action
-        generation
-        state
-        error
-      }
-    }
-  }
-
 ---
 
 label: Get Project
@@ -107,11 +78,11 @@ variables:
     clusterName: "{{.clusterName}}"
     metadata:
       name: "{{.name}}z"
-      generation: 1
     spec:
       clusterName: "{{.clusterName}}"
       accountName: "{{.accountName}}"
       targetNamespace: "{{.targetNamespace}}x"
+
 ---
 
 label: Update Project

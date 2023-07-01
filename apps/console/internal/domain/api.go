@@ -159,4 +159,9 @@ type Domain interface {
 	OnUpdateManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error
 
 	ResyncManagedResource(ctx ConsoleContext, namespace, name string) error
+
+	ListImagePullSecrets(ctx ConsoleContext) (*repos.PaginatedRecord[*entities.ImagePullSecret], error)
+	GetImagePullSecret(ctx ConsoleContext, name string) (*entities.ImagePullSecret, error)
+	CreateImagePullSecret(ctx ConsoleContext, secret entities.ImagePullSecret) (*entities.ImagePullSecret, error)
+	DeleteImagePullSecret(ctx ConsoleContext, name string) error
 }

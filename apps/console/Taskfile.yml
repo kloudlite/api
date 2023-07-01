@@ -11,7 +11,7 @@ tasks:
     dir: ./internal/app
     cmds:
       - go run  -tags dynamic github.com/99designs/gqlgen generate
-      - rm ./graph/scalars.resolvers.go
+      # - rm ./graph/scalars.resolvers.go
 
   build:
     env:
@@ -51,6 +51,7 @@ tasks:
           --struct kloudlite.io/apps/console/internal/domain/entities.ManagedResource
           --struct kloudlite.io/apps/console/internal/domain/entities.ManagedService
           --struct kloudlite.io/apps/console/internal/domain/entities.MsvcTemplate
+          --struct kloudlite.io/apps/console/internal/domain/entities.ImagePullSecret
         > ./internal/app/_struct-to-graphql/main.go
       - |+
         pushd ./internal/app/_struct-to-graphql
@@ -75,8 +76,6 @@ tasks:
 
   local-build:
     preconditions:
-      - sh: '[ -n "{{.EnvName}}" ]'
-        msg: 'var EnvName must have a value'
       - sh: '[ -n "{{.Tag}}" ]'
         msg: 'var Tag must have a value'
     vars:
@@ -92,10 +91,13 @@ tasks:
 
         tDir=$(mktemp -d)
 
-        nDockerfile=$(cat Dockerfile | tail --lines=+$startLineNo | grep -i --invert-match 'from=base')
+        nDockerfile=$(cat Dockerfile | tail --lines=+$startLineNo)
         echo "$nDockerfile" | sed "1 i # syntax=docker/dockerfile:1.4" > $tDir/Dockerfile.base
 
-        cat $tDir/Dockerfile.base | sed "4 i COPY --from=local-builder ./{{.APP}} /{{.APP}}" > $tDir/Dockerfile
+        builderLine=$(cat $tDir/Dockerfile.base | grep -i  -n 'from=base' | awk -F: '{print $1}')
+
+        # cat $tDir/Dockerfile.base | sed "4 i COPY --from=local-builder ./{{.APP}} /{{.APP}}" > $tDir/Dockerfile
+        cat $tDir/Dockerfile.base | sed "${builderLine}s|.*|COPY --from=local-builder ./{{.APP}} ./{{.APP}}|" > $tDir/Dockerfile
         cat $tDir/Dockerfile
 
         echo "building application ..."

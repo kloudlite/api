@@ -68,8 +68,9 @@ type ResolverRoot interface {
 }
 
 type DirectiveRoot struct {
-	HasAccount func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
-	IsLoggedIn func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	HasAccount            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	IsLoggedIn            func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
+	IsLoggedInAndVerified func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error)
 }
 
 type ComplexityRoot struct {
@@ -2569,6 +2570,7 @@ func (ec *executionContext) introspectType(name string) (*introspection.Type, er
 
 var sources = []*ast.Source{
 	{Name: "../schema.graphqls", Input: `directive @isLoggedIn on FIELD_DEFINITION
+directive @isLoggedInAndVerified on FIELD_DEFINITION
 directive @hasAccount on FIELD_DEFINITION
 
 enum ResType {
@@ -2606,53 +2608,53 @@ type Query {
   infra_checkNameAvailability(resType: ResType!, name: String!): CheckNameAvailabilityOutput! @isLoggedIn @hasAccount
 
   # BYOC clusters
-  infra_listBYOCClusters(pagination: PaginationQueryArgs): BYOCClusterPaginatedRecords @isLoggedIn @hasAccount
-  infra_getBYOCCluster(name: String!): BYOCCluster @isLoggedIn @hasAccount
+  infra_listBYOCClusters(pagination: PaginationQueryArgs): BYOCClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_getBYOCCluster(name: String!): BYOCCluster @isLoggedInAndVerified @hasAccount
 
   # clusters
-  infra_listClusters(pagination: PaginationQueryArgs): ClusterPaginatedRecords @isLoggedIn @hasAccount
-  infra_getCluster(name: String!): Cluster @isLoggedIn @hasAccount
+  infra_listClusters(pagination: PaginationQueryArgs): ClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_getCluster(name: String!): Cluster @isLoggedInAndVerified @hasAccount
 
   # cloud providers
-  infra_listCloudProviders(pagination: PaginationQueryArgs): CloudProviderPaginatedRecords @isLoggedIn @hasAccount
-  infra_getCloudProvider(name: String!): CloudProvider @isLoggedIn @hasAccount
+  infra_listCloudProviders(pagination: PaginationQueryArgs): CloudProviderPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_getCloudProvider(name: String!): CloudProvider @isLoggedInAndVerified @hasAccount
 
   # list edges
-  infra_listEdges(clusterName: String!, providerName: String, pagination: PaginationQueryArgs): EdgePaginatedRecords @isLoggedIn @hasAccount
-  infra_getEdge(clusterName: String!, name: String!): Edge @isLoggedIn @hasAccount
+  infra_listEdges(clusterName: String!, providerName: String, pagination: PaginationQueryArgs): EdgePaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_getEdge(clusterName: String!, name: String!): Edge @isLoggedInAndVerified @hasAccount
 
   # get master nodes
-  infra_listMasterNodes(clusterName: String!): [MasterNode!] @isLoggedIn @hasAccount
-  infra_listWorkerNodes(clusterName: String!, edgeName: String!): [WorkerNode!] @isLoggedIn @hasAccount
+  infra_listMasterNodes(clusterName: String!): [MasterNode!] @isLoggedInAndVerified @hasAccount
+  infra_listWorkerNodes(clusterName: String!, edgeName: String!): [WorkerNode!] @isLoggedInAndVerified @hasAccount
 
   # get node pools
-  infra_listNodePools(clusterName: String!, edgeName: String!, pagination: PaginationQueryArgs): NodePoolPaginatedRecords @isLoggedIn @hasAccount
-  infra_getNodePool(clusterName: String!, edgeName: String!, poolName: String!): NodePool @isLoggedIn @hasAccount
+  infra_listNodePools(clusterName: String!, edgeName: String!, pagination: PaginationQueryArgs): NodePoolPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_getNodePool(clusterName: String!, edgeName: String!, poolName: String!): NodePool @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
   # BYOC clusters
-  infra_createBYOCCluster(cluster: BYOCClusterIn!): BYOCCluster @isLoggedIn @hasAccount
-  infra_updateBYOCCluster(cluster: BYOCClusterIn!): BYOCCluster @isLoggedIn @hasAccount
-  infra_deleteBYOCCluster(name: String!): Boolean! @isLoggedIn @hasAccount
+  infra_createBYOCCluster(cluster: BYOCClusterIn!): BYOCCluster @isLoggedInAndVerified @hasAccount
+  infra_updateBYOCCluster(cluster: BYOCClusterIn!): BYOCCluster @isLoggedInAndVerified @hasAccount
+  infra_deleteBYOCCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # clusters
-  infra_createCluster(cluster: ClusterIn!): Cluster @isLoggedIn @hasAccount
-  infra_updateCluster(cluster: ClusterIn!): Cluster @isLoggedIn @hasAccount
-  infra_deleteCluster(name: String!): Boolean! @isLoggedIn @hasAccount
+  infra_createCluster(cluster: ClusterIn!): Cluster @isLoggedInAndVerified @hasAccount
+  infra_updateCluster(cluster: ClusterIn!): Cluster @isLoggedInAndVerified @hasAccount
+  infra_deleteCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # cloud provider
-  infra_createCloudProvider(cloudProvider: CloudProviderIn!, providerSecret: SecretIn!): CloudProvider @isLoggedIn @hasAccount
-  infra_updateCloudProvider(cloudProvider: CloudProviderIn!, providerSecret: SecretIn): CloudProvider @isLoggedIn @hasAccount
-  infra_deleteCloudProvider(name: String!): Boolean!  @isLoggedIn @hasAccount
+  infra_createCloudProvider(cloudProvider: CloudProviderIn!, providerSecret: SecretIn!): CloudProvider @isLoggedInAndVerified @hasAccount
+  infra_updateCloudProvider(cloudProvider: CloudProviderIn!, providerSecret: SecretIn): CloudProvider @isLoggedInAndVerified @hasAccount
+  infra_deleteCloudProvider(name: String!): Boolean!  @isLoggedInAndVerified @hasAccount
 
   # Edge Regions
-  infra_createEdge(edge: EdgeIn!): Edge @isLoggedIn @hasAccount
-  infra_updateEdge(edge: EdgeIn!): Edge @isLoggedIn @hasAccount
-  infra_deleteEdge(clusterName: String!, name: String!): Boolean! @isLoggedIn @hasAccount
+  infra_createEdge(edge: EdgeIn!): Edge @isLoggedInAndVerified @hasAccount
+  infra_updateEdge(edge: EdgeIn!): Edge @isLoggedInAndVerified @hasAccount
+  infra_deleteEdge(clusterName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # Nodes
-  infra_deleteWorkerNode(clusterName: String!, edgeName: String!, name: String!): Boolean! @isLoggedIn @hasAccount
+  infra_deleteWorkerNode(clusterName: String!, edgeName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 }
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/byoccluster.graphqls", Input: `type BYOCCluster @shareable {
@@ -2663,7 +2665,7 @@ type Mutation {
   isConnected: Boolean!
   kind: String!
   metadata: Metadata! @goField(name: "objectMeta")
-  spec: Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec
+  spec: Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec!
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
   updateTime: Date!
@@ -2684,7 +2686,7 @@ input BYOCClusterIn {
   apiVersion: String!
   kind: String!
   metadata: MetadataIn!
-  spec: Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn
+  spec: Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn!
 }
 
 `, BuiltIn: false},
@@ -4128,11 +4130,14 @@ func (ec *executionContext) _BYOCCluster_spec(ctx context.Context, field graphql
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.GithubComKloudliteOperatorApisClustersV1BYOCSpec)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpec2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpec(ctx, field.Selections, res)
+	return ec.marshalNGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpec2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpec(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_BYOCCluster_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11307,10 +11312,10 @@ func (ec *executionContext) _Mutation_infra_createBYOCCluster(ctx context.Contex
 			return ec.resolvers.Mutation().InfraCreateBYOCCluster(rctx, fc.Args["cluster"].(entities.BYOCCluster))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11409,10 +11414,10 @@ func (ec *executionContext) _Mutation_infra_updateBYOCCluster(ctx context.Contex
 			return ec.resolvers.Mutation().InfraUpdateBYOCCluster(rctx, fc.Args["cluster"].(entities.BYOCCluster))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11511,10 +11516,10 @@ func (ec *executionContext) _Mutation_infra_deleteBYOCCluster(ctx context.Contex
 			return ec.resolvers.Mutation().InfraDeleteBYOCCluster(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11592,10 +11597,10 @@ func (ec *executionContext) _Mutation_infra_createCluster(ctx context.Context, f
 			return ec.resolvers.Mutation().InfraCreateCluster(rctx, fc.Args["cluster"].(entities.Cluster))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11692,10 +11697,10 @@ func (ec *executionContext) _Mutation_infra_updateCluster(ctx context.Context, f
 			return ec.resolvers.Mutation().InfraUpdateCluster(rctx, fc.Args["cluster"].(entities.Cluster))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11792,10 +11797,10 @@ func (ec *executionContext) _Mutation_infra_deleteCluster(ctx context.Context, f
 			return ec.resolvers.Mutation().InfraDeleteCluster(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11873,10 +11878,10 @@ func (ec *executionContext) _Mutation_infra_createCloudProvider(ctx context.Cont
 			return ec.resolvers.Mutation().InfraCreateCloudProvider(rctx, fc.Args["cloudProvider"].(entities.CloudProvider), fc.Args["providerSecret"].(entities.Secret))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -11975,10 +11980,10 @@ func (ec *executionContext) _Mutation_infra_updateCloudProvider(ctx context.Cont
 			return ec.resolvers.Mutation().InfraUpdateCloudProvider(rctx, fc.Args["cloudProvider"].(entities.CloudProvider), fc.Args["providerSecret"].(*entities.Secret))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -12077,10 +12082,10 @@ func (ec *executionContext) _Mutation_infra_deleteCloudProvider(ctx context.Cont
 			return ec.resolvers.Mutation().InfraDeleteCloudProvider(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -12158,10 +12163,10 @@ func (ec *executionContext) _Mutation_infra_createEdge(ctx context.Context, fiel
 			return ec.resolvers.Mutation().InfraCreateEdge(rctx, fc.Args["edge"].(entities.Edge))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -12260,10 +12265,10 @@ func (ec *executionContext) _Mutation_infra_updateEdge(ctx context.Context, fiel
 			return ec.resolvers.Mutation().InfraUpdateEdge(rctx, fc.Args["edge"].(entities.Edge))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -12362,10 +12367,10 @@ func (ec *executionContext) _Mutation_infra_deleteEdge(ctx context.Context, fiel
 			return ec.resolvers.Mutation().InfraDeleteEdge(rctx, fc.Args["clusterName"].(string), fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -12443,10 +12448,10 @@ func (ec *executionContext) _Mutation_infra_deleteWorkerNode(ctx context.Context
 			return ec.resolvers.Mutation().InfraDeleteWorkerNode(rctx, fc.Args["clusterName"].(string), fc.Args["edgeName"].(string), fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -13577,10 +13582,10 @@ func (ec *executionContext) _Query_infra_listBYOCClusters(ctx context.Context, f
 			return ec.resolvers.Query().InfraListBYOCClusters(rctx, fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -13663,10 +13668,10 @@ func (ec *executionContext) _Query_infra_getBYOCCluster(ctx context.Context, fie
 			return ec.resolvers.Query().InfraGetBYOCCluster(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -13765,10 +13770,10 @@ func (ec *executionContext) _Query_infra_listClusters(ctx context.Context, field
 			return ec.resolvers.Query().InfraListClusters(rctx, fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -13851,10 +13856,10 @@ func (ec *executionContext) _Query_infra_getCluster(ctx context.Context, field g
 			return ec.resolvers.Query().InfraGetCluster(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -13951,10 +13956,10 @@ func (ec *executionContext) _Query_infra_listCloudProviders(ctx context.Context,
 			return ec.resolvers.Query().InfraListCloudProviders(rctx, fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14037,10 +14042,10 @@ func (ec *executionContext) _Query_infra_getCloudProvider(ctx context.Context, f
 			return ec.resolvers.Query().InfraGetCloudProvider(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14139,10 +14144,10 @@ func (ec *executionContext) _Query_infra_listEdges(ctx context.Context, field gr
 			return ec.resolvers.Query().InfraListEdges(rctx, fc.Args["clusterName"].(string), fc.Args["providerName"].(*string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14225,10 +14230,10 @@ func (ec *executionContext) _Query_infra_getEdge(ctx context.Context, field grap
 			return ec.resolvers.Query().InfraGetEdge(rctx, fc.Args["clusterName"].(string), fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14327,10 +14332,10 @@ func (ec *executionContext) _Query_infra_listMasterNodes(ctx context.Context, fi
 			return ec.resolvers.Query().InfraListMasterNodes(rctx, fc.Args["clusterName"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14429,10 +14434,10 @@ func (ec *executionContext) _Query_infra_listWorkerNodes(ctx context.Context, fi
 			return ec.resolvers.Query().InfraListWorkerNodes(rctx, fc.Args["clusterName"].(string), fc.Args["edgeName"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14531,10 +14536,10 @@ func (ec *executionContext) _Query_infra_listNodePools(ctx context.Context, fiel
 			return ec.resolvers.Query().InfraListNodePools(rctx, fc.Args["clusterName"].(string), fc.Args["edgeName"].(string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -14617,10 +14622,10 @@ func (ec *executionContext) _Query_infra_getNodePool(ctx context.Context, field 
 			return ec.resolvers.Query().InfraGetNodePool(rctx, fc.Args["clusterName"].(string), fc.Args["edgeName"].(string), fc.Args["poolName"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedIn == nil {
-				return nil, errors.New("directive isLoggedIn is not implemented")
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
 			}
-			return ec.directives.IsLoggedIn(ctx, nil, directive0)
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.HasAccount == nil {
@@ -18440,7 +18445,7 @@ func (ec *executionContext) unmarshalInputBYOCClusterIn(ctx context.Context, obj
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spec"))
-			data, err := ec.unmarshalOGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpecIn(ctx, v)
+			data, err := ec.unmarshalNGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpecIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19871,6 +19876,9 @@ func (ec *executionContext) _BYOCCluster(ctx context.Context, sel ast.SelectionS
 					}
 				}()
 				res = ec._BYOCCluster_spec(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
 				return res
 			}
 
@@ -23809,6 +23817,30 @@ func (ec *executionContext) unmarshalNGithub_com__kloudlite__cluster___operator_
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpec2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpec(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteOperatorApisClustersV1BYOCSpec) graphql.Marshaler {
+	return ec._Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpec2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisClustersV1BYOCSpec) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpecIn(ctx context.Context, v interface{}) (model.GithubComKloudliteOperatorApisClustersV1BYOCSpecIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn(ctx, v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisClustersV1BYOCSpecIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNGithub_com__kloudlite__operator__pkg__operator_ResourceRef2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorResourceRef(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorPkgOperatorResourceRef) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -24791,21 +24823,6 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__cluster___operator_
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGithub_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpecIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpec2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisClustersV1BYOCSpec) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn2ᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisClustersV1BYOCSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisClustersV1BYOCSpecIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

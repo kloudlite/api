@@ -523,6 +523,17 @@ type GithubComKloudliteOperatorPkgRawJSONRawJSON struct {
 	RawMessage interface{} `json:"RawMessage,omitempty"`
 }
 
+type ImagePullSecretEdge struct {
+	Cursor string                    `json:"cursor"`
+	Node   *entities.ImagePullSecret `json:"node"`
+}
+
+type ImagePullSecretPaginatedRecords struct {
+	Edges      []*ImagePullSecretEdge `json:"edges"`
+	PageInfo   *PageInfo              `json:"pageInfo"`
+	TotalCount int                    `json:"totalCount"`
+}
+
 type KloudliteIoAppsConsoleInternalDomainEntitiesInputField struct {
 	DefaultValue interface{} `json:"defaultValue"`
 	InputType    string      `json:"inputType"`

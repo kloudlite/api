@@ -55,6 +55,22 @@ var Module = fx.Module("app",
 				return next(ctx)
 			}
 
+			gqlConfig.Directives.IsLoggedInAndVerified = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+				sess := httpServer.GetSession[*common.AuthSession](ctx)
+				if sess == nil {
+					return nil, fiber.ErrUnauthorized
+				}
+
+				if sess.UserVerified {
+					return next(ctx)
+				}
+
+				return nil, &fiber.Error{
+					Code:    fiber.StatusForbidden,
+					Message: "user's email is not verified",
+				}
+			}
+
 			gqlConfig.Directives.HasAccountAndCluster = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
 				sess := httpServer.GetSession[*common.AuthSession](ctx)
 				if sess == nil {
