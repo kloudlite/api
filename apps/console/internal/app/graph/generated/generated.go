@@ -606,7 +606,7 @@ type ComplexityRoot struct {
 		CoreCheckNameAvailability       func(childComplexity int, resType domain.ResType, name string) int
 		CoreGetApp                      func(childComplexity int, namespace string, name string) int
 		CoreGetConfig                   func(childComplexity int, namespace string, name string) int
-		CoreGetImagePullSecret          func(childComplexity int, namespace string, name string) int
+		CoreGetImagePullSecret          func(childComplexity int, name string) int
 		CoreGetManagedResource          func(childComplexity int, namespace string, name string) int
 		CoreGetManagedService           func(childComplexity int, namespace string, name string) int
 		CoreGetManagedServiceTemplate   func(childComplexity int, category string, name string) int
@@ -616,7 +616,7 @@ type ComplexityRoot struct {
 		CoreGetWorkspace                func(childComplexity int, namespace string, name string) int
 		CoreListApps                    func(childComplexity int, namespace string, pq *types.CursorPagination) int
 		CoreListConfigs                 func(childComplexity int, namespace string, pq *types.CursorPagination) int
-		CoreListImagePullSecrets        func(childComplexity int, namespace string) int
+		CoreListImagePullSecrets        func(childComplexity int) int
 		CoreListManagedResources        func(childComplexity int, namespace string, pq *types.CursorPagination) int
 		CoreListManagedServiceTemplates func(childComplexity int) int
 		CoreListManagedServices         func(childComplexity int, namespace string, pq *types.CursorPagination) int
@@ -812,7 +812,7 @@ type MutationResolver interface {
 	CoreUpdateManagedResource(ctx context.Context, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	CoreDeleteManagedResource(ctx context.Context, namespace string, name string) (bool, error)
 	CoreCreateImagePullSecret(ctx context.Context, imagePullSecretIn entities.ImagePullSecret) (*entities.ImagePullSecret, error)
-	CoreDeleteImagePullSecret(ctx context.Context, name string) (*entities.ImagePullSecret, error)
+	CoreDeleteImagePullSecret(ctx context.Context, name string) (*bool, error)
 }
 type ProjectResolver interface {
 	CreationTime(ctx context.Context, obj *entities.Project) (string, error)
@@ -850,8 +850,8 @@ type QueryResolver interface {
 	CoreListManagedResources(ctx context.Context, namespace string, pq *types.CursorPagination) (*model.ManagedResourcePaginatedRecords, error)
 	CoreGetManagedResource(ctx context.Context, namespace string, name string) (*entities.ManagedResource, error)
 	CoreResyncManagedResource(ctx context.Context, namespace string, name string) (bool, error)
-	CoreListImagePullSecrets(ctx context.Context, namespace string) ([]string, error)
-	CoreGetImagePullSecret(ctx context.Context, namespace string, name string) (string, error)
+	CoreListImagePullSecrets(ctx context.Context) (*model.ImagePullSecretPaginatedRecords, error)
+	CoreGetImagePullSecret(ctx context.Context, name string) (*entities.ImagePullSecret, error)
 }
 type RouterResolver interface {
 	CreationTime(ctx context.Context, obj *entities.Router) (string, error)
@@ -3364,7 +3364,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.CoreGetImagePullSecret(childComplexity, args["namespace"].(string), args["name"].(string)), true
+		return e.complexity.Query.CoreGetImagePullSecret(childComplexity, args["name"].(string)), true
 
 	case "Query.core_getManagedResource":
 		if e.complexity.Query.CoreGetManagedResource == nil {
@@ -3479,12 +3479,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_core_listImagePullSecrets_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.CoreListImagePullSecrets(childComplexity, args["namespace"].(string)), true
+		return e.complexity.Query.CoreListImagePullSecrets(childComplexity), true
 
 	case "Query.core_listManagedResources":
 		if e.complexity.Query.CoreListManagedResources == nil {
@@ -4227,8 +4222,8 @@ type Query {
   core_getManagedResource(namespace: String!, name: String!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_resyncManagedResource(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
 
-  core_listImagePullSecrets(namespace: String!): [String!]! @isLoggedInAndVerified @hasAccountAndCluster
-  core_getImagePullSecret(namespace: String!, name: String!): String! @isLoggedInAndVerified @hasAccountAndCluster
+  core_listImagePullSecrets: ImagePullSecretPaginatedRecords @isLoggedInAndVerified @hasAccount
+  core_getImagePullSecret(name: String!): ImagePullSecret @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -4264,8 +4259,8 @@ type Mutation {
   core_updateManagedResource(mres: ManagedResourceIn!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_deleteManagedResource(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
 
-  core_createImagePullSecret(imagePullSecretIn: ImagePullSecretIn!): ImagePullSecret @isLoggedInAndVerified @hasAccountAndCluster
-  core_deleteImagePullSecret(name: String!): ImagePullSecret @isLoggedInAndVerified @hasAccountAndCluster
+  core_createImagePullSecret(imagePullSecretIn: ImagePullSecretIn!): ImagePullSecret @isLoggedInAndVerified @hasAccount
+  core_deleteImagePullSecret(name: String!): Boolean @isLoggedInAndVerified @hasAccount
 }
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/app.graphqls", Input: `type App @shareable {
@@ -5781,23 +5776,14 @@ func (ec *executionContext) field_Query_core_getImagePullSecret_args(ctx context
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
-	if tmp, ok := rawArgs["namespace"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
 		arg0, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["namespace"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg1
+	args["name"] = arg0
 	return args, nil
 }
 
@@ -6005,21 +5991,6 @@ func (ec *executionContext) field_Query_core_listConfigs_args(ctx context.Contex
 		}
 	}
 	args["pq"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_core_listImagePullSecrets_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["namespace"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["namespace"] = arg0
 	return args, nil
 }
 
@@ -21208,10 +21179,10 @@ func (ec *executionContext) _Mutation_core_createImagePullSecret(ctx context.Con
 			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccountAndCluster == nil {
-				return nil, errors.New("directive hasAccountAndCluster is not implemented")
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
 			}
-			return ec.directives.HasAccountAndCluster(ctx, nil, directive1)
+			return ec.directives.HasAccount(ctx, nil, directive1)
 		}
 
 		tmp, err := directive2(rctx)
@@ -21306,10 +21277,10 @@ func (ec *executionContext) _Mutation_core_deleteImagePullSecret(ctx context.Con
 			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccountAndCluster == nil {
-				return nil, errors.New("directive hasAccountAndCluster is not implemented")
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
 			}
-			return ec.directives.HasAccountAndCluster(ctx, nil, directive1)
+			return ec.directives.HasAccount(ctx, nil, directive1)
 		}
 
 		tmp, err := directive2(rctx)
@@ -21319,10 +21290,10 @@ func (ec *executionContext) _Mutation_core_deleteImagePullSecret(ctx context.Con
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.ImagePullSecret); ok {
+		if data, ok := tmp.(*bool); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ImagePullSecret`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -21331,9 +21302,9 @@ func (ec *executionContext) _Mutation_core_deleteImagePullSecret(ctx context.Con
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*entities.ImagePullSecret)
+	res := resTmp.(*bool)
 	fc.Result = res
-	return ec.marshalOImagePullSecret2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐImagePullSecret(ctx, field.Selections, res)
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_core_deleteImagePullSecret(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -21343,27 +21314,7 @@ func (ec *executionContext) fieldContext_Mutation_core_deleteImagePullSecret(ctx
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_ImagePullSecret_accountName(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_ImagePullSecret_creationTime(ctx, field)
-			case "dockerConfigJson":
-				return ec.fieldContext_ImagePullSecret_dockerConfigJson(ctx, field)
-			case "dockerPassword":
-				return ec.fieldContext_ImagePullSecret_dockerPassword(ctx, field)
-			case "dockerRegistryEndpoint":
-				return ec.fieldContext_ImagePullSecret_dockerRegistryEndpoint(ctx, field)
-			case "dockerUsername":
-				return ec.fieldContext_ImagePullSecret_dockerUsername(ctx, field)
-			case "id":
-				return ec.fieldContext_ImagePullSecret_id(ctx, field)
-			case "name":
-				return ec.fieldContext_ImagePullSecret_name(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_ImagePullSecret_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type ImagePullSecret", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {
@@ -24730,7 +24681,7 @@ func (ec *executionContext) _Query_core_listImagePullSecrets(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().CoreListImagePullSecrets(rctx, fc.Args["namespace"].(string))
+			return ec.resolvers.Query().CoreListImagePullSecrets(rctx)
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -24739,10 +24690,10 @@ func (ec *executionContext) _Query_core_listImagePullSecrets(ctx context.Context
 			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccountAndCluster == nil {
-				return nil, errors.New("directive hasAccountAndCluster is not implemented")
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
 			}
-			return ec.directives.HasAccountAndCluster(ctx, nil, directive1)
+			return ec.directives.HasAccount(ctx, nil, directive1)
 		}
 
 		tmp, err := directive2(rctx)
@@ -24752,24 +24703,21 @@ func (ec *executionContext) _Query_core_listImagePullSecrets(ctx context.Context
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.([]string); ok {
+		if data, ok := tmp.(*model.ImagePullSecretPaginatedRecords); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []string`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/app/graph/model.ImagePullSecretPaginatedRecords`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.([]string)
+	res := resTmp.(*model.ImagePullSecretPaginatedRecords)
 	fc.Result = res
-	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+	return ec.marshalOImagePullSecretPaginatedRecords2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐImagePullSecretPaginatedRecords(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_core_listImagePullSecrets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -24779,19 +24727,16 @@ func (ec *executionContext) fieldContext_Query_core_listImagePullSecrets(ctx con
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ImagePullSecretPaginatedRecords_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ImagePullSecretPaginatedRecords_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ImagePullSecretPaginatedRecords_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ImagePullSecretPaginatedRecords", field.Name)
 		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_core_listImagePullSecrets_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
 	}
 	return fc, nil
 }
@@ -24811,7 +24756,7 @@ func (ec *executionContext) _Query_core_getImagePullSecret(ctx context.Context, 
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().CoreGetImagePullSecret(rctx, fc.Args["namespace"].(string), fc.Args["name"].(string))
+			return ec.resolvers.Query().CoreGetImagePullSecret(rctx, fc.Args["name"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -24820,10 +24765,10 @@ func (ec *executionContext) _Query_core_getImagePullSecret(ctx context.Context, 
 			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccountAndCluster == nil {
-				return nil, errors.New("directive hasAccountAndCluster is not implemented")
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
 			}
-			return ec.directives.HasAccountAndCluster(ctx, nil, directive1)
+			return ec.directives.HasAccount(ctx, nil, directive1)
 		}
 
 		tmp, err := directive2(rctx)
@@ -24833,24 +24778,21 @@ func (ec *executionContext) _Query_core_getImagePullSecret(ctx context.Context, 
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(string); ok {
+		if data, ok := tmp.(*entities.ImagePullSecret); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be string`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *kloudlite.io/apps/console/internal/domain/entities.ImagePullSecret`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*entities.ImagePullSecret)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOImagePullSecret2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋdomainᚋentitiesᚐImagePullSecret(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Query_core_getImagePullSecret(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -24860,7 +24802,27 @@ func (ec *executionContext) fieldContext_Query_core_getImagePullSecret(ctx conte
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_ImagePullSecret_accountName(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_ImagePullSecret_creationTime(ctx, field)
+			case "dockerConfigJson":
+				return ec.fieldContext_ImagePullSecret_dockerConfigJson(ctx, field)
+			case "dockerPassword":
+				return ec.fieldContext_ImagePullSecret_dockerPassword(ctx, field)
+			case "dockerRegistryEndpoint":
+				return ec.fieldContext_ImagePullSecret_dockerRegistryEndpoint(ctx, field)
+			case "dockerUsername":
+				return ec.fieldContext_ImagePullSecret_dockerUsername(ctx, field)
+			case "id":
+				return ec.fieldContext_ImagePullSecret_id(ctx, field)
+			case "name":
+				return ec.fieldContext_ImagePullSecret_name(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_ImagePullSecret_updateTime(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ImagePullSecret", field.Name)
 		},
 	}
 	defer func() {
@@ -36389,9 +36351,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_core_listImagePullSecrets(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -36412,9 +36371,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_core_getImagePullSecret(ctx, field)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
 				return res
 			}
 
@@ -38779,38 +38735,6 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
-	}
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
 func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
 	var vSlice []interface{}
 	if v != nil {
@@ -40206,6 +40130,13 @@ func (ec *executionContext) marshalOImagePullSecret2ᚖkloudliteᚗioᚋappsᚋc
 		return graphql.Null
 	}
 	return ec._ImagePullSecret(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOImagePullSecretPaginatedRecords2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐImagePullSecretPaginatedRecords(ctx context.Context, sel ast.SelectionSet, v *model.ImagePullSecretPaginatedRecords) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ImagePullSecretPaginatedRecords(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOInt2ᚖint(ctx context.Context, v interface{}) (*int, error) {

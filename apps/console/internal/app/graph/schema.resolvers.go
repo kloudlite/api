@@ -526,13 +526,37 @@ func (r *queryResolver) CoreResyncManagedResource(ctx context.Context, namespace
 }
 
 // CoreListImagePullSecrets is the resolver for the core_listImagePullSecrets field.
-func (r *queryResolver) CoreListImagePullSecrets(ctx context.Context, namespace string) ([]string, error) {
-	panic(fmt.Errorf("not implemented: CoreListImagePullSecrets - core_listImagePullSecrets"))
+func (r *queryResolver) CoreListImagePullSecrets(ctx context.Context) (*model.ImagePullSecretPaginatedRecords, error) {
+	pr, err := r.Domain.ListImagePullSecrets(toConsoleContext(ctx))
+	if err != nil {
+		return nil, err
+	}
+
+	ipsEdges := make([]*model.ImagePullSecretEdge, len(pr.Edges))
+	for i := range pr.Edges {
+		ipsEdges[i] = &model.ImagePullSecretEdge{
+			Node:   pr.Edges[i].Node,
+			Cursor: pr.Edges[i].Cursor,
+		}
+	}
+
+	m := model.ImagePullSecretPaginatedRecords{
+		Edges: ipsEdges,
+		PageInfo: &model.PageInfo{
+			EndCursor:       &pr.PageInfo.EndCursor,
+			HasNextPage:     pr.PageInfo.HasNextPage,
+			HasPreviousPage: pr.PageInfo.HasPrevPage,
+			StartCursor:     &pr.PageInfo.StartCursor,
+		},
+		TotalCount: int(pr.TotalCount),
+	}
+
+	return &m, nil
 }
 
 // CoreGetImagePullSecret is the resolver for the core_getImagePullSecret field.
-func (r *queryResolver) CoreGetImagePullSecret(ctx context.Context, namespace string, name string) (string, error) {
-	panic(fmt.Errorf("not implemented: CoreGetImagePullSecret - core_getImagePullSecret"))
+func (r *queryResolver) CoreGetImagePullSecret(ctx context.Context, name string) (*entities.ImagePullSecret, error) {
+	return r.Domain.GetImagePullSecret(toConsoleContext(ctx), name)
 }
 
 // SortBy is the resolver for the sortBy field.
@@ -545,7 +569,7 @@ func (r *paginationQueryArgsResolver) SortBy(ctx context.Context, obj *types.Cur
 }
 
 // Mutation returns generated.MutationResolver implementation.
-func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }, nil
+func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
