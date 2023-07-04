@@ -16,6 +16,7 @@ import (
 	"kloudlite.io/common"
 	"kloudlite.io/constants"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/finance"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/cache"
 	httpServer "kloudlite.io/pkg/http-server"
 	"kloudlite.io/pkg/logging"
@@ -27,6 +28,8 @@ import (
 
 type AuthCacheClient cache.Client
 type FinanceClientConnection *grpc.ClientConn
+
+type IAMGrpcClient *grpc.ClientConn
 
 var Module = fx.Module(
 	"app",
@@ -116,6 +119,11 @@ var Module = fx.Module(
 			}
 
 			config.Directives.HasAccount = func(ctx context.Context, _ interface{}, next graphql.Resolver) (res interface{}, err error) {
+				sess := httpServer.GetSession[*common.AuthSession](ctx)
+				if sess == nil {
+					return nil, fiber.ErrUnauthorized
+				}
+
 				m := httpServer.GetHttpCookies(ctx)
 				klAccount := m[env.AccountCookieName]
 				if klAccount == "" {
@@ -124,6 +132,7 @@ var Module = fx.Module(
 				cc := domain.InfraContext{
 					Context:     ctx,
 					AccountName: klAccount,
+					UserId:      sess.UserId,
 				}
 				return next(context.WithValue(ctx, "infra-ctx", cc))
 			}
@@ -139,6 +148,12 @@ var Module = fx.Module(
 					constants.CacheSessionPrefix,
 				),
 			)
+		},
+	),
+
+	fx.Provide(
+		func(clientConn IAMGrpcClient) iam.IAMClient {
+			return iam.NewIAMClient((*grpc.ClientConn)(clientConn))
 		},
 	),
 )

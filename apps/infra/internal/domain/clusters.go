@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"time"
 
+	redpandaMsvcv1 "github.com/kloudlite/operator/apis/redpanda.msvc/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/infra/internal/domain/entities"
 	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
@@ -134,7 +136,7 @@ func (d *domain) findBYOCCluster(ctx InfraContext, clusterName string) (*entitie
 
 func (d *domain) CreateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluster) (*entities.BYOCCluster, error) {
 	cluster.EnsureGVK()
-	cluster.Spec.IncomingKafkaTopic = common.GetKafkaTopicName(ctx.AccountName, cluster.Name)
+	cluster.IncomingKafkaTopicName = common.GetKafkaTopicName(ctx.AccountName, cluster.Name)
 
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &cluster.BYOC); err != nil {
 		return nil, err
@@ -152,6 +154,17 @@ func (d *domain) CreateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluste
 	}
 
 	if err := d.applyK8sResource(ctx, &nCluster.BYOC); err != nil {
+		return nil, err
+	}
+
+	redpandaTopic := redpandaMsvcv1.Topic{
+		TypeMeta:   metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{Name: cluster.IncomingKafkaTopicName, Namespace: d.env.ProviderSecretNamespace},
+	}
+
+	redpandaTopic.EnsureGVK()
+
+	if err := d.applyK8sResource(ctx, &redpandaTopic); err != nil {
 		return nil, err
 	}
 
@@ -204,6 +217,29 @@ func (d *domain) DeleteBYOCCluster(ctx InfraContext, name string) error {
 		return err
 	}
 	return d.deleteK8sResource(ctx, &upC.BYOC)
+}
+
+func (d *domain) ResyncBYOCCluster(ctx InfraContext, name string) error {
+	clus, err := d.findBYOCCluster(ctx, name)
+	if err != nil {
+		return err
+	}
+
+	if err := d.applyK8sResource(ctx, &clus.BYOC); err != nil {
+		return err
+	}
+
+	redpandaTopic := redpandaMsvcv1.Topic{
+		TypeMeta: metav1.TypeMeta{},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      clus.IncomingKafkaTopicName,
+			Namespace: d.env.ProviderSecretNamespace,
+		},
+	}
+
+	redpandaTopic.EnsureGVK()
+
+	return d.applyK8sResource(ctx, &redpandaTopic)
 }
 
 func (d *domain) OnDeleteBYOCClusterMessage(ctx InfraContext, cluster entities.BYOCCluster) error {

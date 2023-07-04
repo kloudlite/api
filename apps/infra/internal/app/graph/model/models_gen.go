@@ -197,25 +197,23 @@ type GithubComKloudliteClusterOperatorApisInfraV1WorkerNodeSpecIn struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1BYOCSpec struct {
-	AccountName        string    `json:"accountName"`
-	DisplayName        *string   `json:"displayName,omitempty"`
-	IncomingKafkaTopic string    `json:"incomingKafkaTopic"`
-	IngressClasses     []*string `json:"ingressClasses,omitempty"`
-	Provider           string    `json:"provider"`
-	PublicIps          []*string `json:"publicIps,omitempty"`
-	Region             string    `json:"region"`
-	StorageClasses     []*string `json:"storageClasses,omitempty"`
+	AccountName    string    `json:"accountName"`
+	DisplayName    *string   `json:"displayName,omitempty"`
+	IngressClasses []*string `json:"ingressClasses,omitempty"`
+	Provider       string    `json:"provider"`
+	PublicIps      []*string `json:"publicIps,omitempty"`
+	Region         string    `json:"region"`
+	StorageClasses []*string `json:"storageClasses,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1BYOCSpecIn struct {
-	AccountName        string    `json:"accountName"`
-	DisplayName        *string   `json:"displayName,omitempty"`
-	IncomingKafkaTopic string    `json:"incomingKafkaTopic"`
-	IngressClasses     []*string `json:"ingressClasses,omitempty"`
-	Provider           string    `json:"provider"`
-	PublicIps          []*string `json:"publicIps,omitempty"`
-	Region             string    `json:"region"`
-	StorageClasses     []*string `json:"storageClasses,omitempty"`
+	AccountName    string    `json:"accountName"`
+	DisplayName    *string   `json:"displayName,omitempty"`
+	IngressClasses []*string `json:"ingressClasses,omitempty"`
+	Provider       string    `json:"provider"`
+	PublicIps      []*string `json:"publicIps,omitempty"`
+	Region         string    `json:"region"`
+	StorageClasses []*string `json:"storageClasses,omitempty"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheck struct {

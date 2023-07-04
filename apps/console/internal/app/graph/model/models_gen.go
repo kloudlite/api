@@ -314,16 +314,6 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn struct {
 	Value             *string `json:"value,omitempty"`
 }
 
-type GithubComKloudliteOperatorApisCrdsV1EnvSpec struct {
-	ProjectName     string `json:"projectName"`
-	TargetNamespace string `json:"targetNamespace"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1EnvSpecIn struct {
-	ProjectName     string `json:"projectName"`
-	TargetNamespace string `json:"targetNamespace"`
-}
-
 type GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpec struct {
 	Inputs   map[string]interface{}                                           `json:"inputs,omitempty"`
 	MresKind *GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpecMresKind `json:"mresKind"`
@@ -399,19 +389,31 @@ type GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn struct 
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ProjectSpec struct {
-	AccountName     string  `json:"accountName"`
-	ClusterName     string  `json:"clusterName"`
-	DisplayName     *string `json:"displayName,omitempty"`
-	Logo            *string `json:"logo,omitempty"`
-	TargetNamespace string  `json:"targetNamespace"`
+	AccountName      string                                                             `json:"accountName"`
+	ClusterName      string                                                             `json:"clusterName"`
+	DisplayName      *string                                                            `json:"displayName,omitempty"`
+	ImagePullSecrets []*GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets `json:"imagePullSecrets,omitempty"`
+	Logo             *string                                                            `json:"logo,omitempty"`
+	TargetNamespace  string                                                             `json:"targetNamespace"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn struct {
-	AccountName     string  `json:"accountName"`
-	ClusterName     string  `json:"clusterName"`
-	DisplayName     *string `json:"displayName,omitempty"`
-	Logo            *string `json:"logo,omitempty"`
-	TargetNamespace string  `json:"targetNamespace"`
+	AccountName      string                                                               `json:"accountName"`
+	ClusterName      string                                                               `json:"clusterName"`
+	DisplayName      *string                                                              `json:"displayName,omitempty"`
+	ImagePullSecrets []*GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn `json:"imagePullSecrets,omitempty"`
+	Logo             *string                                                              `json:"logo,omitempty"`
+	TargetNamespace  string                                                               `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1RouterSpec struct {
@@ -504,6 +506,16 @@ type GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn struct {
 	Path    string  `json:"path"`
 	Port    int     `json:"port"`
 	Rewrite *bool   `json:"rewrite,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec struct {
+	ProjectName     string `json:"projectName"`
+	TargetNamespace string `json:"targetNamespace"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
+	ProjectName     string `json:"projectName"`
+	TargetNamespace string `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheck struct {

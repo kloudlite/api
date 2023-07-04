@@ -139,11 +139,6 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations @shareab
   value: String
 }
 
-type Github_com__kloudlite__operator__apis__crds__v1_EnvSpec @shareable {
-  projectName: String!
-  targetNamespace: String!
-}
-
 type Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpec @shareable {
   inputs: Map
   mresKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKind!
@@ -185,8 +180,14 @@ type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec @shareable {
   accountName: String!
   clusterName: String!
   displayName: String
+  imagePullSecrets: [Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets]
   logo: String
   targetNamespace: String!
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets @shareable {
+  name: String!
+  namespace: String
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec @shareable {
@@ -233,6 +234,11 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes @shareable
   path: String!
   port: Int!
   rewrite: Boolean
+}
+
+type Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec @shareable {
+  projectName: String!
+  targetNamespace: String!
 }
 
 type Github_com__kloudlite__operator__pkg__operator_Check @shareable {
@@ -461,11 +467,6 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn {
   value: String
 }
 
-input Github_com__kloudlite__operator__apis__crds__v1_EnvSpecIn {
-  projectName: String!
-  targetNamespace: String!
-}
-
 input Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecIn {
   inputs: Map
   mresKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedResourceSpecMresKindIn!
@@ -503,10 +504,16 @@ input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerati
   value: String
 }
 
+input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn {
+  name: String!
+  namespace: String
+}
+
 input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn {
   accountName: String!
   clusterName: String!
   displayName: String
+  imagePullSecrets: [Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn]
   logo: String
   targetNamespace: String!
 }
@@ -555,6 +562,11 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
   path: String!
   port: Int!
   rewrite: Boolean
+}
+
+input Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpecIn {
+  projectName: String!
+  targetNamespace: String!
 }
 
 input MetadataIn {

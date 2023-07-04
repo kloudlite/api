@@ -1,10 +1,10 @@
 type NodePool @shareable {
-  accoutName: String!
-  apiVersion: String!
+  accountName: String!
+  apiVersion: String
   clusterName: String!
   creationTime: Date!
   id: String!
-  kind: String!
+  kind: String
   metadata: Metadata! @goField(name: "objectMeta")
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
@@ -24,10 +24,8 @@ type NodePoolPaginatedRecords @shareable {
 }
 
 input NodePoolIn {
-  accoutName: String!
-  apiVersion: String!
-  clusterName: String!
-  kind: String!
+  apiVersion: String
+  kind: String
   metadata: MetadataIn!
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpecIn
 }

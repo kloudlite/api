@@ -21,6 +21,26 @@ func (r *imagePullSecretResolver) CreationTime(ctx context.Context, obj *entitie
 	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
+// DockerConfigJSON is the resolver for the dockerConfigJson field.
+func (r *imagePullSecretResolver) DockerConfigJSON(ctx context.Context, obj *entities.ImagePullSecret) (*string, error) {
+	panic(fmt.Errorf("not implemented: DockerConfigJSON - dockerConfigJson"))
+}
+
+// DockerPassword is the resolver for the dockerPassword field.
+func (r *imagePullSecretResolver) DockerPassword(ctx context.Context, obj *entities.ImagePullSecret) (*string, error) {
+	panic(fmt.Errorf("not implemented: DockerPassword - dockerPassword"))
+}
+
+// DockerRegistryEndpoint is the resolver for the dockerRegistryEndpoint field.
+func (r *imagePullSecretResolver) DockerRegistryEndpoint(ctx context.Context, obj *entities.ImagePullSecret) (*string, error) {
+	panic(fmt.Errorf("not implemented: DockerRegistryEndpoint - dockerRegistryEndpoint"))
+}
+
+// DockerUsername is the resolver for the dockerUsername field.
+func (r *imagePullSecretResolver) DockerUsername(ctx context.Context, obj *entities.ImagePullSecret) (*string, error) {
+	panic(fmt.Errorf("not implemented: DockerUsername - dockerUsername"))
+}
+
 // ID is the resolver for the id field.
 func (r *imagePullSecretResolver) ID(ctx context.Context, obj *entities.ImagePullSecret) (string, error) {
 	if obj == nil {
@@ -37,9 +57,35 @@ func (r *imagePullSecretResolver) UpdateTime(ctx context.Context, obj *entities.
 	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
+// DockerConfigJSON is the resolver for the dockerConfigJson field.
+func (r *imagePullSecretInResolver) DockerConfigJSON(ctx context.Context, obj *entities.ImagePullSecret, data *string) error {
+	panic(fmt.Errorf("not implemented: DockerConfigJSON - dockerConfigJson"))
+}
+
+// DockerPassword is the resolver for the dockerPassword field.
+func (r *imagePullSecretInResolver) DockerPassword(ctx context.Context, obj *entities.ImagePullSecret, data *string) error {
+	panic(fmt.Errorf("not implemented: DockerPassword - dockerPassword"))
+}
+
+// DockerRegistryEndpoint is the resolver for the dockerRegistryEndpoint field.
+func (r *imagePullSecretInResolver) DockerRegistryEndpoint(ctx context.Context, obj *entities.ImagePullSecret, data *string) error {
+	panic(fmt.Errorf("not implemented: DockerRegistryEndpoint - dockerRegistryEndpoint"))
+}
+
+// DockerUsername is the resolver for the dockerUsername field.
+func (r *imagePullSecretInResolver) DockerUsername(ctx context.Context, obj *entities.ImagePullSecret, data *string) error {
+	panic(fmt.Errorf("not implemented: DockerUsername - dockerUsername"))
+}
+
 // ImagePullSecret returns generated.ImagePullSecretResolver implementation.
 func (r *Resolver) ImagePullSecret() generated.ImagePullSecretResolver {
 	return &imagePullSecretResolver{r}
 }
 
+// ImagePullSecretIn returns generated.ImagePullSecretInResolver implementation.
+func (r *Resolver) ImagePullSecretIn() generated.ImagePullSecretInResolver {
+	return &imagePullSecretInResolver{r}
+}
+
 type imagePullSecretResolver struct{ *Resolver }
+type imagePullSecretInResolver struct{ *Resolver }

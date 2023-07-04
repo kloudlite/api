@@ -130,28 +130,6 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 		return nil, err
 	}
 
-	defaultWs := entities.Workspace{
-		Env: crdsv1.Env{
-			ObjectMeta: metav1.ObjectMeta{
-				Name:       d.envVars.DefaultProjectWorkspaceName,
-				Namespace:  project.Spec.TargetNamespace,
-				Generation: 1,
-			},
-			Spec: crdsv1.EnvSpec{
-				ProjectName:     project.Name,
-				TargetNamespace: fmt.Sprintf("%s-%s", project.Name, d.envVars.DefaultProjectWorkspaceName),
-			},
-		},
-		AccountName: ctx.AccountName,
-		ClusterName: ctx.ClusterName,
-	}
-
-	if _, err = d.findWorkspace(ctx, defaultWs.Namespace, defaultWs.Name); err != nil {
-		if _, err := d.CreateWorkspace(ctx, defaultWs); err != nil {
-			return nil, err
-		}
-	}
-
 	if err := d.applyK8sResource(ctx, &corev1.Namespace{
 		TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Namespace"},
 		ObjectMeta: metav1.ObjectMeta{
@@ -166,6 +144,28 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 
 	if err := d.applyK8sResource(ctx, &prj.Project); err != nil {
 		return nil, err
+	}
+
+	defaultWs := entities.Workspace{
+		Workspace: crdsv1.Workspace{
+			ObjectMeta: metav1.ObjectMeta{
+				Name:       d.envVars.DefaultProjectWorkspaceName,
+				Namespace:  project.Spec.TargetNamespace,
+				Generation: 1,
+			},
+			Spec: crdsv1.WorkspaceSpec{
+				ProjectName:     project.Name,
+				TargetNamespace: fmt.Sprintf("%s-%s", project.Name, d.envVars.DefaultProjectWorkspaceName),
+			},
+		},
+		AccountName: ctx.AccountName,
+		ClusterName: ctx.ClusterName,
+	}
+
+	if _, err = d.findWorkspace(ctx, defaultWs.Namespace, defaultWs.Name); err != nil {
+		if _, err := d.CreateWorkspace(ctx, defaultWs); err != nil {
+			return nil, err
+		}
 	}
 
 	return prj, nil

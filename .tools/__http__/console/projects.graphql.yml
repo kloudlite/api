@@ -1,7 +1,7 @@
 ---
 global:
   accountName: kloudlite-dev
-  clusterName: sample2
+  clusterName: sample
   targetNamespace: sample
   name: sample
 ---
@@ -13,13 +13,21 @@ query: |+
       edges {
         cursor
         node {
+          # createdAt
+          updateTime
           creationTime
           accountName
           apiVersion
           kind
           metadata {
             name
-            namespace
+            generation
+          }
+          syncStatus {
+            state
+            action
+            error
+            generation
           }
         }
       }
@@ -72,16 +80,12 @@ query: |+
   }
 variables:
   project:
-    apiVersion: core.kloudlite.io/v1alpha1
-    kind: Project
-    accountName: "{{.accountName}}"
-    clusterName: "{{.clusterName}}"
     metadata:
-      name: "{{.name}}z"
+      name: "{{.name}}"
     spec:
       clusterName: "{{.clusterName}}"
       accountName: "{{.accountName}}"
-      targetNamespace: "{{.targetNamespace}}x"
+      targetNamespace: "{{.targetNamespace}}"
 
 ---
 

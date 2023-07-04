@@ -37,6 +37,7 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.ManagedResource]("managed_resources", "mres", entities.MresIndexes),
 	repos.NewFxMongoRepo[*entities.ManagedService]("managed_services", "msvc", entities.MsvcIndexes),
 	repos.NewFxMongoRepo[*entities.Router]("routers", "rt", entities.RouterIndexes),
+	repos.NewFxMongoRepo[*entities.ImagePullSecret]("image_pull_secrets", "ips", entities.ImagePullSecretIndexes),
 
 	fx.Invoke(
 		func(

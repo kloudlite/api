@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -9,7 +10,6 @@ import (
 	t "github.com/kloudlite/operator/agent/types"
 	"github.com/kloudlite/operator/pkg/kubectl"
 	"go.uber.org/fx"
-	"golang.org/x/net/context"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 	"sigs.k8s.io/yaml"
 
@@ -173,40 +173,6 @@ func (d *domain) canMutateResourcesInWorkspace(ctx ConsoleContext, targetNamespa
 	return nil
 }
 
-func (d *domain) canMutateSecretsInAccount(ctx context.Context, userId string, accountName string) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
-		UserId: userId,
-		ResourceRefs: []string{
-			iamT.NewResourceRef(accountName, iamT.ResourceAccount, accountName),
-		},
-		Action: string(iamT.CreateSecretsInAccount),
-	})
-	if err != nil {
-		return err
-	}
-	if !co.Status {
-		return fmt.Errorf("unauthorized to mutate secrets in account %q", accountName)
-	}
-	return nil
-}
-
-func (d *domain) canReadSecretsFromAccount(ctx context.Context, userId string, accountName string) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
-		UserId: userId,
-		ResourceRefs: []string{
-			iamT.NewResourceRef(accountName, iamT.ResourceAccount, accountName),
-		},
-		Action: string(iamT.ReadSecretsFromAccount),
-	})
-	if err != nil {
-		return err
-	}
-	if !co.Status {
-		return fmt.Errorf("unauthorized to read secrets from account  %q", accountName)
-	}
-	return nil
-}
-
 func (d *domain) canReadResourcesInWorkspace(ctx ConsoleContext, targetNamespace string) error {
 	ws, err := d.findWorkspaceByTargetNs(ctx, targetNamespace)
 	if err != nil {
@@ -249,6 +215,40 @@ func (d *domain) canReadResourcesInProject(ctx ConsoleContext, targetNamespace s
 	}
 	if !co.Status {
 		return fmt.Errorf("unauthorized to read resources in project %q", prj.Name)
+	}
+	return nil
+}
+
+func (d *domain) canMutateSecretsInAccount(ctx context.Context, userId string, accountName string) error {
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: userId,
+		ResourceRefs: []string{
+			iamT.NewResourceRef(accountName, iamT.ResourceAccount, accountName),
+		},
+		Action: string(iamT.CreateSecretsInAccount),
+	})
+	if err != nil {
+		return err
+	}
+	if !co.Status {
+		return fmt.Errorf("unauthorized to mutate secrets in account %q", accountName)
+	}
+	return nil
+}
+
+func (d *domain) canReadSecretsFromAccount(ctx context.Context, userId string, accountName string) error {
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: userId,
+		ResourceRefs: []string{
+			iamT.NewResourceRef(accountName, iamT.ResourceAccount, accountName),
+		},
+		Action: string(iamT.ReadSecretsFromAccount),
+	})
+	if err != nil {
+		return err
+	}
+	if !co.Status {
+		return fmt.Errorf("unauthorized to read secrets from account  %q", accountName)
 	}
 	return nil
 }

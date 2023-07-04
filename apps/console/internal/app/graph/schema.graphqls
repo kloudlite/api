@@ -42,6 +42,11 @@ type Query {
   core_getProject(name: String!): Project @isLoggedInAndVerified @hasAccountAndCluster
   core_resyncProject(name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
 
+  # get image pull secrets
+  core_listImagePullSecrets(namespace: String!, pq: PaginationQueryArgs): ImagePullSecretPaginatedRecords @isLoggedInAndVerified @hasAccountAndCluster
+  core_getImagePullSecret(namespace: String!, name: String!): ImagePullSecret @isLoggedInAndVerified @hasAccountAndCluster
+  core_resyncImagePullSecret(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
+
   core_listWorkspaces(namespace: String!, pq: PaginationQueryArgs): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccountAndCluster
   core_getWorkspace(namespace: String!, name: String!): Workspace @isLoggedInAndVerified @hasAccountAndCluster
   core_resyncWorkspace(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
@@ -72,15 +77,16 @@ type Query {
   core_listManagedResources(namespace: String!, pq: PaginationQueryArgs): ManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccountAndCluster
   core_getManagedResource(namespace: String!, name: String!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_resyncManagedResource(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
-
-  core_listImagePullSecrets: ImagePullSecretPaginatedRecords @isLoggedInAndVerified @hasAccount
-  core_getImagePullSecret(name: String!): ImagePullSecret @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
   core_createProject(project: ProjectIn!): Project @isLoggedInAndVerified @hasAccountAndCluster
   core_updateProject(project: ProjectIn!): Project @isLoggedInAndVerified @hasAccountAndCluster
   core_deleteProject(name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
+
+  # image pull secrets
+  core_createImagePullSecret(imagePullSecretIn: ImagePullSecretIn!): ImagePullSecret @isLoggedInAndVerified @hasAccountAndCluster
+  core_deleteImagePullSecret(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
 
   core_createWorkspace(env: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccountAndCluster
   core_updateWorkspace(env: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccountAndCluster
@@ -109,7 +115,4 @@ type Mutation {
   core_createManagedResource(mres: ManagedResourceIn!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_updateManagedResource(mres: ManagedResourceIn!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_deleteManagedResource(namespace: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
-
-  core_createImagePullSecret(imagePullSecretIn: ImagePullSecretIn!): ImagePullSecret @isLoggedInAndVerified @hasAccount
-  core_deleteImagePullSecret(name: String!): Boolean @isLoggedInAndVerified @hasAccount
 }

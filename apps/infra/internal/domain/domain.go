@@ -1,7 +1,9 @@
 package domain
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 
 	"github.com/kloudlite/operator/agent/types"
 	"github.com/kloudlite/operator/pkg/kubectl"
@@ -9,12 +11,15 @@ import (
 	"kloudlite.io/apps/infra/internal/domain/entities"
 	"kloudlite.io/apps/infra/internal/env"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/finance"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/agent"
 	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"
 	"kloudlite.io/pkg/redpanda"
 	"kloudlite.io/pkg/repos"
 	"sigs.k8s.io/controller-runtime/pkg/client"
+
+	iamT "kloudlite.io/apps/iam/types"
 )
 
 type domain struct {
@@ -34,6 +39,7 @@ type domain struct {
 	producer          redpanda.Producer
 	k8sYamlClient     *kubectl.YAMLClient
 	k8sExtendedClient k8s.ExtendedK8sClient
+	iamClient         iam.IAMClient
 }
 
 func (d *domain) dispatchToTargetAgent(ctx InfraContext, action agent.Action, clusterName string, obj client.Object) error {
@@ -105,6 +111,7 @@ var Module = fx.Module("domain",
 			k8sClient client.Client,
 			k8sYamlClient *kubectl.YAMLClient,
 			k8sExtendedClient k8s.ExtendedK8sClient,
+			iamClient iam.IAMClient,
 		) Domain {
 			return &domain{
 				env: env,
@@ -123,6 +130,7 @@ var Module = fx.Module("domain",
 				k8sClient:         k8sClient,
 				k8sYamlClient:     k8sYamlClient,
 				k8sExtendedClient: k8sExtendedClient,
+				iamClient:         iamClient,
 			}
 		}),
 )

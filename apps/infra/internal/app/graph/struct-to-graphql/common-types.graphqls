@@ -72,7 +72,6 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec @
 type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec @shareable {
   accountName: String!
   displayName: String
-  incomingKafkaTopic: String!
   ingressClasses: [String]
   provider: String!
   publicIps: [String]
@@ -208,7 +207,6 @@ input Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpecI
 input Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn {
   accountName: String!
   displayName: String
-  incomingKafkaTopic: String!
   ingressClasses: [String]
   provider: String!
   publicIps: [String]

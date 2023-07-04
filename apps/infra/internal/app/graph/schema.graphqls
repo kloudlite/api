@@ -31,7 +31,6 @@ enum PaginationSortOrder {
   DESC
 }
 
-
 type Query {
   # unique name suggestions
   infra_checkNameAvailability(resType: ResType!, name: String!): CheckNameAvailabilityOutput! @isLoggedIn @hasAccount
@@ -66,21 +65,25 @@ type Mutation {
   infra_createBYOCCluster(cluster: BYOCClusterIn!): BYOCCluster @isLoggedInAndVerified @hasAccount
   infra_updateBYOCCluster(cluster: BYOCClusterIn!): BYOCCluster @isLoggedInAndVerified @hasAccount
   infra_deleteBYOCCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+  infra_resyncBYOCCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # clusters
   infra_createCluster(cluster: ClusterIn!): Cluster @isLoggedInAndVerified @hasAccount
   infra_updateCluster(cluster: ClusterIn!): Cluster @isLoggedInAndVerified @hasAccount
   infra_deleteCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+  infra_resyncCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # cloud provider
   infra_createCloudProvider(cloudProvider: CloudProviderIn!, providerSecret: SecretIn!): CloudProvider @isLoggedInAndVerified @hasAccount
   infra_updateCloudProvider(cloudProvider: CloudProviderIn!, providerSecret: SecretIn): CloudProvider @isLoggedInAndVerified @hasAccount
   infra_deleteCloudProvider(name: String!): Boolean!  @isLoggedInAndVerified @hasAccount
+  infra_resyncCloudProvider(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # Edge Regions
   infra_createEdge(edge: EdgeIn!): Edge @isLoggedInAndVerified @hasAccount
   infra_updateEdge(edge: EdgeIn!): Edge @isLoggedInAndVerified @hasAccount
   infra_deleteEdge(clusterName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+  infra_resyncEdge(clusterName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   # Nodes
   infra_deleteWorkerNode(clusterName: String!, edgeName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount

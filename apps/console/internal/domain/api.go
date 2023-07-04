@@ -72,8 +72,8 @@ type Domain interface {
 	DeleteWorkspace(ctx ConsoleContext, namespace, name string) error
 
 	OnApplyWorkspaceError(ctx ConsoleContext, errMsg, namespace, name string) error
-	OnDeleteEnvironmentMessage(ctx ConsoleContext, cluster entities.Workspace) error
-	OnUpdateEnvironmentMessage(ctx ConsoleContext, cluster entities.Workspace) error
+	OnDeleteWorkspaceMessage(ctx ConsoleContext, cluster entities.Workspace) error
+	OnUpdateWorkspaceMessage(ctx ConsoleContext, cluster entities.Workspace) error
 
 	ResyncWorkspace(ctx ConsoleContext, namespace, name string) error
 
@@ -160,8 +160,16 @@ type Domain interface {
 
 	ResyncManagedResource(ctx ConsoleContext, namespace, name string) error
 
-	ListImagePullSecrets(ctx ConsoleContext) (*repos.PaginatedRecord[*entities.ImagePullSecret], error)
-	GetImagePullSecret(ctx ConsoleContext, name string) (*entities.ImagePullSecret, error)
+	// image pull secrets
+
+	ListImagePullSecrets(ctx ConsoleContext, namespace string, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.ImagePullSecret], error)
+	GetImagePullSecret(ctx ConsoleContext, namespace string, name string) (*entities.ImagePullSecret, error)
 	CreateImagePullSecret(ctx ConsoleContext, secret entities.ImagePullSecret) (*entities.ImagePullSecret, error)
-	DeleteImagePullSecret(ctx ConsoleContext, name string) error
+	DeleteImagePullSecret(ctx ConsoleContext, namespace string, name string) error
+
+	OnApplyImagePullSecretError(ctx ConsoleContext, errMsg string, namespace string, name string) error
+	OnDeleteImagePullSecretMessage(ctx ConsoleContext, mres entities.ImagePullSecret) error
+	OnUpdateImagePullSecretMessage(ctx ConsoleContext, mres entities.ImagePullSecret) error
+
+	ResyncImagePullSecret(ctx ConsoleContext, namespace, name string) error
 }

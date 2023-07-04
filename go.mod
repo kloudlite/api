@@ -37,7 +37,6 @@ require (
 	go.mongodb.org/mongo-driver v1.9.1
 	go.uber.org/fx v1.17.1
 	go.uber.org/zap v1.24.0
-	golang.org/x/net v0.8.0
 	golang.org/x/oauth2 v0.3.0
 	golang.org/x/sync v0.1.0
 	golang.zx2c4.com/wireguard/wgctrl v0.0.0-20221104135756-97bc4ad4a1cb
@@ -59,6 +58,7 @@ require (
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/munnerz/goautoneg v0.0.0-20191010083416-a7dc8b61c822 // indirect
 	github.com/sergi/go-diff v1.3.1 // indirect
+	golang.org/x/net v0.8.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
 

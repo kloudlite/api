@@ -292,8 +292,7 @@ func (repo *dbRepo[T]) Create(ctx context.Context, data T) (T, error) {
 		return x, err
 	}
 
-
-  // These fields will be set by mongodb and should not be set by the user
+	// These fields will be set by mongodb and should not be set by the user
 	delete(m, "_id")
 	delete(m, "creationTime")
 	delete(m, "updateTime")
@@ -386,6 +385,8 @@ func (repo *dbRepo[T]) UpdateById(ctx context.Context, id ID, updatedData T, opt
 	if err != nil {
 		return result, err
 	}
+
+	delete(m, "_id")
 
 	r := repo.db.Collection(repo.collectionName).FindOneAndUpdate(
 		ctx,
