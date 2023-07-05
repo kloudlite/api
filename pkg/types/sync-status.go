@@ -24,10 +24,13 @@ const (
 )
 
 const (
-	SyncStateIdle       SyncState = "IDLE"
-	SyncStateInProgress SyncState = "IN_PROGRESS"
-	SyncStateReady      SyncState = "READY"
-	SyncStateNotReady   SyncState = "NOT_READY"
+	SyncStateIdle                    SyncState = "IDLE"
+	SyncStateInQueue                 SyncState = "IN_QUEUE"
+	SyncStateAppliedAtAgent          SyncState = "APPLIED_AT_AGENT"
+	SyncStateErroredAtAgent          SyncState = "ERRORED_AT_AGENT"
+	SyncStateReceivedUpdateFromAgent SyncState = "RECEIVED_UPDATE_FROM_AGENT"
+	// SyncStateReady          SyncState = "READY"
+	// SyncStateNotReady       SyncState = "NOT_READY"
 )
 
 func GenSyncStatus(action SyncAction, generation int64) SyncStatus {
@@ -44,7 +47,7 @@ func GetSyncStatusForCreation() SyncStatus {
 		SyncScheduledAt: time.Now(),
 		Action:          SyncActionApply,
 		Generation:      1,
-		State:           SyncStateIdle,
+		State:           SyncStateInQueue,
 	}
 }
 
@@ -53,7 +56,7 @@ func GetSyncStatusForUpdation(generation int64) SyncStatus {
 		SyncScheduledAt: time.Now(),
 		Action:          SyncActionApply,
 		Generation:      generation,
-		State:           SyncStateIdle,
+		State:           SyncStateInQueue,
 	}
 }
 
@@ -62,13 +65,6 @@ func GetSyncStatusForDeletion(generation int64) SyncStatus {
 		SyncScheduledAt: time.Now(),
 		Action:          SyncActionDelete,
 		Generation:      generation,
-		State:           SyncStateIdle,
+		State:           SyncStateInQueue,
 	}
-}
-
-func ParseSyncState(isReady bool) SyncState {
-	if isReady {
-		return SyncStateReady
-	}
-	return SyncStateNotReady
 }

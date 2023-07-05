@@ -314,17 +314,11 @@ type ComplexityRoot struct {
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec struct {
-		AccountName      func(childComplexity int) int
-		ClusterName      func(childComplexity int) int
-		DisplayName      func(childComplexity int) int
-		ImagePullSecrets func(childComplexity int) int
-		Logo             func(childComplexity int) int
-		TargetNamespace  func(childComplexity int) int
-	}
-
-	Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets struct {
-		Name      func(childComplexity int) int
-		Namespace func(childComplexity int) int
+		AccountName     func(childComplexity int) int
+		ClusterName     func(childComplexity int) int
+		DisplayName     func(childComplexity int) int
+		Logo            func(childComplexity int) int
+		TargetNamespace func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_RouterSpec struct {
@@ -524,11 +518,13 @@ type ComplexityRoot struct {
 	}
 
 	Metadata struct {
-		Annotations func(childComplexity int) int
-		Generation  func(childComplexity int) int
-		Labels      func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Namespace   func(childComplexity int) int
+		Annotations       func(childComplexity int) int
+		CreationTimestamp func(childComplexity int) int
+		DeletionTimestamp func(childComplexity int) int
+		Generation        func(childComplexity int) int
+		Labels            func(childComplexity int) int
+		Name              func(childComplexity int) int
+		Namespace         func(childComplexity int) int
 	}
 
 	MsvcTemplate struct {
@@ -794,6 +790,8 @@ type ManagedServiceResolver interface {
 }
 type MetadataResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
+	CreationTimestamp(ctx context.Context, obj *v1.ObjectMeta) (string, error)
+	DeletionTimestamp(ctx context.Context, obj *v1.ObjectMeta) (*string, error)
 
 	Labels(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
 }
@@ -1932,13 +1930,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.DisplayName(childComplexity), true
 
-	case "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.imagePullSecrets":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.ImagePullSecrets == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.ImagePullSecrets(childComplexity), true
-
 	case "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.logo":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.Logo == nil {
 			break
@@ -1952,20 +1943,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec.TargetNamespace(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets.name":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets.Name == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets.Name(childComplexity), true
-
-	case "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets.namespace":
-		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets.Namespace == nil {
-			break
-		}
-
-		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets.Namespace(childComplexity), true
 
 	case "Github_com__kloudlite__operator__apis__crds__v1_RouterSpec.backendProtocol":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterSpec.BackendProtocol == nil {
@@ -2820,6 +2797,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Metadata.Annotations(childComplexity), true
+
+	case "Metadata.creationTimestamp":
+		if e.complexity.Metadata.CreationTimestamp == nil {
+			break
+		}
+
+		return e.complexity.Metadata.CreationTimestamp(childComplexity), true
+
+	case "Metadata.deletionTimestamp":
+		if e.complexity.Metadata.DeletionTimestamp == nil {
+			break
+		}
+
+		return e.complexity.Metadata.DeletionTimestamp(childComplexity), true
 
 	case "Metadata.generation":
 		if e.complexity.Metadata.Generation == nil {
@@ -4126,7 +4117,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKindIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn,
-		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn,
 		ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecCorsIn,
@@ -4540,14 +4530,8 @@ type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec @shareable {
   accountName: String!
   clusterName: String!
   displayName: String
-  imagePullSecrets: [Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets]
   logo: String
   targetNamespace: String!
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets @shareable {
-  name: String!
-  namespace: String
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec @shareable {
@@ -4673,6 +4657,8 @@ type Kloudlite_io__pkg__types_SyncStatus @shareable {
 
 type Metadata @shareable {
   annotations: Map
+  creationTimestamp: Date!
+  deletionTimestamp: Date
   generation: Int!
   labels: Map
   name: String!
@@ -4864,16 +4850,10 @@ input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerati
   value: String
 }
 
-input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn {
-  name: String!
-  namespace: String
-}
-
 input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn {
   accountName: String!
   clusterName: String!
   displayName: String
-  imagePullSecrets: [Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn]
   logo: String
   targetNamespace: String!
 }
@@ -6821,6 +6801,10 @@ func (ec *executionContext) fieldContext_App_metadata(ctx context.Context, field
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -7699,6 +7683,10 @@ func (ec *executionContext) fieldContext_Config_metadata(ctx context.Context, fi
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -12737,53 +12725,6 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 	return fc, nil
 }
 
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_imagePullSecrets(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpec) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_imagePullSecrets(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ImagePullSecrets, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets)
-	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_imagePullSecrets(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "name":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_name(ctx, field)
-			case "namespace":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_namespace(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_logo(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpec) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_logo(ctx, field)
 	if err != nil {
@@ -12859,91 +12800,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Pro
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_targetNamespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_name(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_namespace(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_namespace(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Namespace, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_namespace(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -17153,6 +17009,10 @@ func (ec *executionContext) fieldContext_ManagedResource_metadata(ctx context.Co
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -17974,6 +17834,10 @@ func (ec *executionContext) fieldContext_ManagedService_metadata(ctx context.Con
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -18495,6 +18359,91 @@ func (ec *executionContext) fieldContext_Metadata_annotations(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Metadata().CreationTimestamp(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Metadata",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Metadata().DeletionTimestamp(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalODate2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Metadata",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
 		},
 	}
 	return fc, nil
@@ -22024,6 +21973,10 @@ func (ec *executionContext) fieldContext_Project_metadata(ctx context.Context, f
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -22081,8 +22034,6 @@ func (ec *executionContext) fieldContext_Project_spec(ctx context.Context, field
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_clusterName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_displayName(ctx, field)
-			case "imagePullSecrets":
-				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_imagePullSecrets(ctx, field)
 			case "logo":
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_logo(ctx, field)
 			case "targetNamespace":
@@ -25665,6 +25616,10 @@ func (ec *executionContext) fieldContext_Router_metadata(ctx context.Context, fi
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -26541,6 +26496,10 @@ func (ec *executionContext) fieldContext_Secret_metadata(ctx context.Context, fi
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -27358,6 +27317,10 @@ func (ec *executionContext) fieldContext_Workspace_metadata(ctx context.Context,
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -31101,42 +31064,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn, error) {
-	var it model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"name", "namespace"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			it.Name, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "namespace":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
-			it.Namespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn, error) {
 	var it model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn
 	asMap := map[string]interface{}{}
@@ -31144,7 +31071,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "clusterName", "displayName", "imagePullSecrets", "logo", "targetNamespace"}
+	fieldsInOrder := [...]string{"accountName", "clusterName", "displayName", "logo", "targetNamespace"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -31172,14 +31099,6 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
 			it.DisplayName, err = ec.unmarshalOString2ᚖstring(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "imagePullSecrets":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imagePullSecrets"))
-			it.ImagePullSecrets, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -33745,10 +33664,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Pro
 
 			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_displayName(ctx, field, obj)
 
-		case "imagePullSecrets":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_imagePullSecrets(ctx, field, obj)
-
 		case "logo":
 
 			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec_logo(ctx, field, obj)
@@ -33760,38 +33675,6 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Pro
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch()
-	if invalids > 0 {
-		return graphql.Null
-	}
-	return out
-}
-
-var github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsImplementors = []string{"Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets"}
-
-func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsImplementors)
-	out := graphql.NewFieldSet(fields)
-	var invalids uint32
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets")
-		case "name":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_name(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "namespace":
-
-			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets_namespace(ctx, field, obj)
-
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -35374,6 +35257,43 @@ func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet,
 					}
 				}()
 				res = ec._Metadata_annotations(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "creationTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Metadata_creationTimestamp(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "deletionTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Metadata_deletionTimestamp(ctx, field, obj)
 				return res
 			}
 
@@ -40098,82 +40018,6 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 		return graphql.Null
 	}
 	return ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	return ret
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn, error) {

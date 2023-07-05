@@ -147,7 +147,7 @@ func (d *domain) OnUpdateSecretMessage(ctx ConsoleContext, secret entities.Secre
 	s.SyncStatus.Error = nil
 	s.SyncStatus.LastSyncedAt = time.Now()
 	s.SyncStatus.Generation = secret.Generation
-	s.SyncStatus.State = t.ParseSyncState(secret.Status.IsReady)
+	s.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.secretRepo.UpdateById(ctx, s.Id, s)
 	return err

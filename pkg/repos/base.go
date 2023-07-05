@@ -3,8 +3,8 @@ package repos
 import "time"
 
 type BaseEntity struct {
-	PrimitiveId  ID        `json:"_id" bson:"_id" graphql:"ignore"`
-	Id           ID        `json:"id" bson:"id"`
+	PrimitiveId  ID        `json:"_id,omitempty" graphql:"ignore"`
+	Id           ID        `json:"id"`
 	CreationTime time.Time `json:"creationTime"`
 	UpdateTime   time.Time `json:"updateTime"`
 }

@@ -131,6 +131,7 @@ func (d *domain) OnApplyConfigError(ctx ConsoleContext, errMsg, namespace, name 
 		return err2
 	}
 
+	c.SyncStatus.State = t.SyncStateErroredAtAgent
 	c.SyncStatus.Error = &errMsg
 	_, err := d.configRepo.UpdateById(ctx, c.Id, c)
 	return err
@@ -155,7 +156,7 @@ func (d *domain) OnUpdateConfigMessage(ctx ConsoleContext, config entities.Confi
 	c.SyncStatus.Error = nil
 	c.SyncStatus.LastSyncedAt = time.Now()
 	c.SyncStatus.Generation = config.Generation
-	c.SyncStatus.State = t.ParseSyncState(config.Status.IsReady)
+	c.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.configRepo.UpdateById(ctx, c.Id, c)
 	return err

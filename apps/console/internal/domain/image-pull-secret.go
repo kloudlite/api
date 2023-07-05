@@ -126,7 +126,7 @@ func (d *domain) OnUpdateImagePullSecretMessage(ctx ConsoleContext, ips entities
 	a.SyncStatus.Error = nil
 	a.SyncStatus.LastSyncedAt = time.Now()
 	a.SyncStatus.Generation = ips.Generation
-	a.SyncStatus.State = t.ParseSyncState(ips.Status.IsReady)
+	a.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.ipsRepo.UpdateById(ctx, a.Id, a)
 	return err
@@ -147,6 +147,8 @@ func (d *domain) OnApplyImagePullSecretError(ctx ConsoleContext, errMsg string, 
 		return err2
 	}
 
+	a.SyncStatus.State = t.SyncStateErroredAtAgent
+	a.SyncStatus.LastSyncedAt = time.Now()
 	a.SyncStatus.Error = &errMsg
 	_, err := d.ipsRepo.UpdateById(ctx, a.Id, a)
 	return err

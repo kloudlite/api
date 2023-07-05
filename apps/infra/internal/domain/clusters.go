@@ -100,7 +100,7 @@ func (d *domain) OnUpdateClusterMessage(ctx InfraContext, cluster entities.Clust
 
 	c.Cluster = cluster.Cluster
 	c.SyncStatus.LastSyncedAt = time.Now()
-	c.SyncStatus.State = t.ParseSyncState(c.Status.IsReady)
+	c.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.clusterRepo.UpdateById(ctx, c.Id, c)
 	return err
@@ -254,6 +254,8 @@ func (d *domain) OnBYOCClusterHelmUpdates(ctx InfraContext, cluster entities.BYO
 	if err != nil {
 		return err
 	}
+
+	c.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.byocClusterRepo.UpdateById(ctx, c.Id, &cluster)
 	if err != nil {

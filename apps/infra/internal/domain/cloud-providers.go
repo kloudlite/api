@@ -167,7 +167,8 @@ func (d *domain) OnUpdateCloudProviderMessage(ctx InfraContext, cloudProvider en
 
 	cp.CloudProvider = cloudProvider.CloudProvider
 	cp.SyncStatus.LastSyncedAt = time.Now()
-	cp.SyncStatus.State = t.ParseSyncState(cloudProvider.Status.IsReady)
+	cp.SyncStatus.Generation = cloudProvider.Generation
+	cp.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 	_, err = d.providerRepo.UpdateById(ctx, cp.Id, cp)
 	return err
 }

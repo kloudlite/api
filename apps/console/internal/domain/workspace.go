@@ -196,7 +196,7 @@ func (d *domain) OnUpdateWorkspaceMessage(ctx ConsoleContext, ws entities.Worksp
 	exWs.SyncStatus.Error = nil
 	exWs.SyncStatus.LastSyncedAt = time.Now()
 	exWs.SyncStatus.Generation = ws.Generation
-	exWs.SyncStatus.State = t.ParseSyncState(ws.Status.IsReady)
+	exWs.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.workspaceRepo.UpdateById(ctx, exWs.Id, exWs)
 	return err

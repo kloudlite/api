@@ -143,7 +143,7 @@ func (d *domain) OnUpdateAppMessage(ctx ConsoleContext, app entities.App) error 
 	a.SyncStatus.Error = nil
 	a.SyncStatus.LastSyncedAt = time.Now()
 	a.SyncStatus.Generation = app.Generation
-	a.SyncStatus.State = t.ParseSyncState(app.Status.IsReady)
+	a.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.appRepo.UpdateById(ctx, a.Id, a)
 	return err
@@ -164,6 +164,7 @@ func (d *domain) OnApplyAppError(ctx ConsoleContext, errMsg string, namespace st
 		return err2
 	}
 
+	a.SyncStatus.State = t.SyncStateErroredAtAgent
 	a.SyncStatus.Error = &errMsg
 	_, err := d.appRepo.UpdateById(ctx, a.Id, a)
 	return err

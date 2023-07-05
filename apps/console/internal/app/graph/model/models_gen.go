@@ -389,31 +389,19 @@ type GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn struct 
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ProjectSpec struct {
-	AccountName      string                                                             `json:"accountName"`
-	ClusterName      string                                                             `json:"clusterName"`
-	DisplayName      *string                                                            `json:"displayName,omitempty"`
-	ImagePullSecrets []*GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets `json:"imagePullSecrets,omitempty"`
-	Logo             *string                                                            `json:"logo,omitempty"`
-	TargetNamespace  string                                                             `json:"targetNamespace"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecrets struct {
-	Name      string  `json:"name"`
-	Namespace *string `json:"namespace,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn struct {
-	Name      string  `json:"name"`
-	Namespace *string `json:"namespace,omitempty"`
+	AccountName     string  `json:"accountName"`
+	ClusterName     string  `json:"clusterName"`
+	DisplayName     *string `json:"displayName,omitempty"`
+	Logo            *string `json:"logo,omitempty"`
+	TargetNamespace string  `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn struct {
-	AccountName      string                                                               `json:"accountName"`
-	ClusterName      string                                                               `json:"clusterName"`
-	DisplayName      *string                                                              `json:"displayName,omitempty"`
-	ImagePullSecrets []*GithubComKloudliteOperatorApisCrdsV1ProjectSpecImagePullSecretsIn `json:"imagePullSecrets,omitempty"`
-	Logo             *string                                                              `json:"logo,omitempty"`
-	TargetNamespace  string                                                               `json:"targetNamespace"`
+	AccountName     string  `json:"accountName"`
+	ClusterName     string  `json:"clusterName"`
+	DisplayName     *string `json:"displayName,omitempty"`
+	Logo            *string `json:"logo,omitempty"`
+	TargetNamespace string  `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1RouterSpec struct {

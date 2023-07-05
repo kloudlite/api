@@ -97,7 +97,7 @@ func (d *domain) OnUpdateEdgeMessage(ctx InfraContext, edge entities.Edge) error
 
 	e.Edge = edge.Edge
 	e.SyncStatus.LastSyncedAt = time.Now()
-	e.SyncStatus.State = t.ParseSyncState(edge.Status.IsReady)
+	e.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 	_, err = d.edgeRepo.UpdateById(ctx, e.Id, e)
 	return err
 }

@@ -143,7 +143,7 @@ func (d *domain) OnUpdateManagedServiceMessage(ctx ConsoleContext, msvc entities
 	m.SyncStatus.Error = nil
 	m.SyncStatus.LastSyncedAt = time.Now()
 	m.SyncStatus.Generation = msvc.Generation
-	m.SyncStatus.State = t.ParseSyncState(msvc.Status.IsReady)
+	m.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.msvcRepo.UpdateById(ctx, m.Id, m)
 	return err
@@ -155,6 +155,7 @@ func (d *domain) OnApplyManagedServiceError(ctx ConsoleContext, errMsg string, n
 		return err2
 	}
 
+  m.SyncStatus.State = t.SyncStateErroredAtAgent
 	m.SyncStatus.Error = &errMsg
 	_, err := d.msvcRepo.UpdateById(ctx, m.Id, m)
 	return err

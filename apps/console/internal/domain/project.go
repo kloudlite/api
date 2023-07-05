@@ -265,7 +265,7 @@ func (d *domain) OnUpdateProjectMessage(ctx ConsoleContext, project entities.Pro
 	p.SyncStatus.Error = nil
 	p.SyncStatus.LastSyncedAt = time.Now()
 	p.SyncStatus.Generation = project.Generation
-	p.SyncStatus.State = t.ParseSyncState(project.Status.IsReady)
+	p.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.projectRepo.UpdateById(ctx, p.Id, p)
 	return err
@@ -277,6 +277,7 @@ func (d *domain) OnApplyProjectError(ctx ConsoleContext, errMsg string, name str
 		return err2
 	}
 
+	p.SyncStatus.State = t.SyncStateErroredAtAgent
 	p.SyncStatus.Error = &errMsg
 	_, err := d.projectRepo.UpdateById(ctx, p.Id, p)
 	return err

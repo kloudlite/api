@@ -180,14 +180,8 @@ type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec @shareable {
   accountName: String!
   clusterName: String!
   displayName: String
-  imagePullSecrets: [Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets]
   logo: String
   targetNamespace: String!
-}
-
-type Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecrets @shareable {
-  name: String!
-  namespace: String
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec @shareable {
@@ -313,6 +307,8 @@ type Kloudlite_io__pkg__types_SyncStatus @shareable {
 
 type Metadata @shareable {
   annotations: Map
+  creationTimestamp: Date!
+  deletionTimestamp: Date
   generation: Int!
   labels: Map
   name: String!
@@ -504,16 +500,10 @@ input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerati
   value: String
 }
 
-input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn {
-  name: String!
-  namespace: String
-}
-
 input Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn {
   accountName: String!
   clusterName: String!
   displayName: String
-  imagePullSecrets: [Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecImagePullSecretsIn]
   logo: String
   targetNamespace: String!
 }
