@@ -94,6 +94,12 @@ func (d *domain) UpdateSecret(ctx ConsoleContext, secret entities.Secret) (*enti
 		return nil, err
 	}
 
+	if s.Type != secret.Type {
+		return nil, fmt.Errorf("updating secret.type is forbidden")
+	}
+
+	s.ObjectMeta.Labels = secret.ObjectMeta.Labels
+	s.ObjectMeta.Annotations = secret.ObjectMeta.Annotations
 	s.Data = secret.Data
 	s.StringData = secret.StringData
 	s.Generation += 1
@@ -159,6 +165,8 @@ func (d *domain) OnApplySecretError(ctx ConsoleContext, errMsg, namespace, name 
 		return err2
 	}
 
+	s.SyncStatus.State = t.SyncStateErroredAtAgent
+	s.SyncStatus.LastSyncedAt = time.Now()
 	s.SyncStatus.Error = &errMsg
 	_, err := d.secretRepo.UpdateById(ctx, s.Id, s)
 	return err

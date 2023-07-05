@@ -74,16 +74,21 @@ func (d *domain) UpdateImagePullSecret(ctx ConsoleContext, ips entities.ImagePul
 	}
 
 	ips.EnsureGVK()
+	if err := d.k8sExtendedClient.ValidateStruct(ctx, &ips.ImagePullSecret); err != nil {
+		return nil, err
+	}
 
 	exIps, err := d.findImagePullSecret(ctx, ips.Namespace, ips.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	exIps.Spec.DockerConfigJson = ips.Spec.DockerConfigJson
-	exIps.Spec.DockerUsername = ips.Spec.DockerUsername
-	exIps.Spec.DockerPassword = ips.Spec.DockerPassword
-	exIps.Spec.DockerUsername = ips.Spec.DockerUsername
+	exIps.Annotations = ips.Annotations
+	exIps.Labels = ips.Labels
+
+	exIps.Spec = ips.Spec
+	exIps.Generation += 1
+	exIps.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exIps.Generation)
 
 	upIps, err := d.ipsRepo.UpdateById(ctx, exIps.Id, exIps)
 	if err != nil {
@@ -117,18 +122,19 @@ func (d *domain) DeleteImagePullSecret(ctx ConsoleContext, namespace, name strin
 }
 
 func (d *domain) OnUpdateImagePullSecretMessage(ctx ConsoleContext, ips entities.ImagePullSecret) error {
-	a, err := d.findImagePullSecret(ctx, ips.Namespace, ips.Name)
+	exIps, err := d.findImagePullSecret(ctx, ips.Namespace, ips.Name)
 	if err != nil {
 		return err
 	}
 
-	a.Status = ips.Status
-	a.SyncStatus.Error = nil
-	a.SyncStatus.LastSyncedAt = time.Now()
-	a.SyncStatus.Generation = ips.Generation
-	a.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+	exIps.CreationTimestamp = ips.CreationTimestamp
+	exIps.Status = ips.Status
+	exIps.SyncStatus.Error = nil
+	exIps.SyncStatus.LastSyncedAt = time.Now()
+	exIps.SyncStatus.Generation = ips.Generation
+	exIps.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
-	_, err = d.ipsRepo.UpdateById(ctx, a.Id, a)
+	_, err = d.ipsRepo.UpdateById(ctx, exIps.Id, exIps)
 	return err
 }
 

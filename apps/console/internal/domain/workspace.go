@@ -132,6 +132,8 @@ func (d *domain) UpdateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 		return nil, errAlreadyMarkedForDeletion("environment", "", ws.Name)
 	}
 
+	exWs.Labels = ws.Labels
+	exWs.Annotations = ws.Annotations
 	exWs.Spec = ws.Spec
 	exWs.Generation += 1
 	exWs.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exWs.Generation)
@@ -172,6 +174,8 @@ func (d *domain) OnApplyWorkspaceError(ctx ConsoleContext, errMsg, namespace, na
 		return err2
 	}
 
+	ws.SyncStatus.State = t.SyncStateErroredAtAgent
+	ws.SyncStatus.LastSyncedAt = time.Now()
 	ws.SyncStatus.Error = &errMsg
 	_, err := d.workspaceRepo.UpdateById(ctx, ws.Id, ws)
 	return err
@@ -192,6 +196,7 @@ func (d *domain) OnUpdateWorkspaceMessage(ctx ConsoleContext, ws entities.Worksp
 		return err
 	}
 
+	exWs.CreationTimestamp = ws.CreationTimestamp
 	exWs.Status = ws.Status
 	exWs.SyncStatus.Error = nil
 	exWs.SyncStatus.LastSyncedAt = time.Now()

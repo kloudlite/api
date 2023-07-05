@@ -57,8 +57,8 @@ func (d *domain) CreateConfig(ctx ConsoleContext, config entities.Config) (*enti
 
 	config.AccountName = ctx.AccountName
 	config.ClusterName = ctx.ClusterName
-	config.SetGeneration(1)
-	config.SyncStatus = t.GetSyncStatusForCreation()
+	config.Generation = 1
+	config.SyncStatus = t.GenSyncStatus(t.SyncActionApply, config.Generation)
 
 	c, err := d.configRepo.Create(ctx, &config)
 	if err != nil {
@@ -91,9 +91,11 @@ func (d *domain) UpdateConfig(ctx ConsoleContext, config entities.Config) (*enti
 		return nil, err
 	}
 
-	c.Config = config.Config
+	c.ObjectMeta.Labels = config.ObjectMeta.Labels
+	c.ObjectMeta.Annotations = config.ObjectMeta.Annotations
+	c.Data = config.Data
 	c.Generation += 1
-	c.SyncStatus = t.GetSyncStatusForUpdation(c.Generation)
+	c.SyncStatus = t.GenSyncStatus(t.SyncActionApply, c.Generation)
 
 	upConfig, err := d.configRepo.UpdateById(ctx, c.Id, c)
 	if err != nil {
@@ -132,6 +134,7 @@ func (d *domain) OnApplyConfigError(ctx ConsoleContext, errMsg, namespace, name 
 	}
 
 	c.SyncStatus.State = t.SyncStateErroredAtAgent
+	c.SyncStatus.LastSyncedAt = time.Now()
 	c.SyncStatus.Error = &errMsg
 	_, err := d.configRepo.UpdateById(ctx, c.Id, c)
 	return err
@@ -152,6 +155,7 @@ func (d *domain) OnUpdateConfigMessage(ctx ConsoleContext, config entities.Confi
 		return err
 	}
 
+	c.CreationTimestamp = config.CreationTimestamp
 	c.Status = config.Status
 	c.SyncStatus.Error = nil
 	c.SyncStatus.LastSyncedAt = time.Now()

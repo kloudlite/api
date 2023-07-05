@@ -314,21 +314,6 @@ func (repo *dbRepo[T]) withUpdateTime(data T) {
 }
 
 func (repo *dbRepo[T]) Create(ctx context.Context, data T) (T, error) {
-	// b, err := json.Marshal(data)
-	// if err != nil {
-	// 	var x T
-	// 	return x, err
-	// }
-	// var m map[string]any
-	// if err := json.Unmarshal(b, &m); err != nil {
-	// 	var x T
-	// 	return x, err
-	// }
-	//
-	// // These fields will be set by mongodb and should not be set by the user
-	// delete(m, "_id")
-	// delete(m, "creationTime")
-	// delete(m, "updateTime")
 	repo.withId(data)
 	data.SetCreationTime(time.Now())
 	data.SetUpdateTime(time.Now())
@@ -340,7 +325,6 @@ func (repo *dbRepo[T]) Create(ctx context.Context, data T) (T, error) {
 		return emptyResult, err
 	}
 
-	//
 	// buff := new(bytes.Buffer)
 	// vw, err := bsonrw.NewBSONValueWriter(buff)
 	// if err != nil {

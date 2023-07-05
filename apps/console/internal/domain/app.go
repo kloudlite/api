@@ -139,6 +139,7 @@ func (d *domain) OnUpdateAppMessage(ctx ConsoleContext, app entities.App) error 
 		return err
 	}
 
+	a.CreationTimestamp = app.CreationTimestamp
 	a.Status = app.Status
 	a.SyncStatus.Error = nil
 	a.SyncStatus.LastSyncedAt = time.Now()
@@ -165,6 +166,7 @@ func (d *domain) OnApplyAppError(ctx ConsoleContext, errMsg string, namespace st
 	}
 
 	a.SyncStatus.State = t.SyncStateErroredAtAgent
+	a.SyncStatus.LastSyncedAt = time.Now()
 	a.SyncStatus.Error = &errMsg
 	_, err := d.appRepo.UpdateById(ctx, a.Id, a)
 	return err

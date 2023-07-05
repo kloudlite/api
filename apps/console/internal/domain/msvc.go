@@ -91,6 +91,9 @@ func (d *domain) UpdateManagedService(ctx ConsoleContext, msvc entities.ManagedS
 		return nil, err
 	}
 
+	m.Annotations = msvc.Annotations
+	m.Labels = msvc.Labels
+
 	m.Spec = msvc.Spec
 	m.Generation += 1
 	m.SyncStatus = t.GenSyncStatus(t.SyncActionApply, m.Generation)
@@ -139,6 +142,7 @@ func (d *domain) OnUpdateManagedServiceMessage(ctx ConsoleContext, msvc entities
 		return err
 	}
 
+	m.CreationTimestamp = msvc.CreationTimestamp
 	m.Status = msvc.Status
 	m.SyncStatus.Error = nil
 	m.SyncStatus.LastSyncedAt = time.Now()
@@ -155,7 +159,8 @@ func (d *domain) OnApplyManagedServiceError(ctx ConsoleContext, errMsg string, n
 		return err2
 	}
 
-  m.SyncStatus.State = t.SyncStateErroredAtAgent
+	m.SyncStatus.State = t.SyncStateErroredAtAgent
+	m.SyncStatus.LastSyncedAt = time.Now()
 	m.SyncStatus.Error = &errMsg
 	_, err := d.msvcRepo.UpdateById(ctx, m.Id, m)
 	return err

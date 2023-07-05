@@ -98,6 +98,9 @@ func (d *domain) UpdateManagedResource(ctx ConsoleContext, mres entities.Managed
 		return nil, err
 	}
 
+	m.Labels = mres.Labels
+	m.Annotations = mres.Annotations
+
 	m.Spec = mres.Spec
 	m.Generation += 1
 	m.SyncStatus = t.GenSyncStatus(t.SyncActionApply, m.Generation)
@@ -147,6 +150,7 @@ func (d *domain) OnUpdateManagedResourceMessage(ctx ConsoleContext, mres entitie
 		return err
 	}
 
+	m.CreationTimestamp = mres.CreationTimestamp
 	m.Status = mres.Status
 	m.SyncStatus.Error = nil
 	m.SyncStatus.LastSyncedAt = time.Now()
@@ -164,6 +168,7 @@ func (d *domain) OnApplyManagedResourceError(ctx ConsoleContext, errMsg string, 
 	}
 
 	m.SyncStatus.State = t.SyncStateErroredAtAgent
+	m.SyncStatus.LastSyncedAt = time.Now()
 	m.SyncStatus.Error = &errMsg
 	_, err := d.mresRepo.UpdateById(ctx, m.Id, m)
 	return err

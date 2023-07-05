@@ -88,16 +88,19 @@ func (d *domain) UpdateRouter(ctx ConsoleContext, router entities.Router) (*enti
 		return nil, err
 	}
 
-	r, err := d.findRouter(ctx, router.Namespace, router.Name)
+	exRouter, err := d.findRouter(ctx, router.Namespace, router.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	r.Spec = router.Spec
-	r.Generation += 1
-	r.SyncStatus = t.GenSyncStatus(t.SyncActionApply, r.Generation)
+	exRouter.Annotations = router.Annotations
+	exRouter.Labels = router.Labels
 
-	upRouter, err := d.routerRepo.UpdateById(ctx, r.Id, r)
+	exRouter.Spec = router.Spec
+	exRouter.Generation += 1
+	exRouter.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exRouter.Generation)
+
+	upRouter, err := d.routerRepo.UpdateById(ctx, exRouter.Id, exRouter)
 	if err != nil {
 		return nil, err
 	}
@@ -142,6 +145,7 @@ func (d *domain) OnUpdateRouterMessage(ctx ConsoleContext, router entities.Route
 		return err
 	}
 
+	r.CreationTimestamp = router.CreationTimestamp
 	r.Status = router.Status
 	r.SyncStatus.Error = nil
 	r.SyncStatus.LastSyncedAt = time.Now()
@@ -159,6 +163,7 @@ func (d *domain) OnApplyRouterError(ctx ConsoleContext, errMsg string, namespace
 	}
 
 	m.SyncStatus.State = t.SyncStateErroredAtAgent
+	m.SyncStatus.LastSyncedAt = time.Now()
 	m.SyncStatus.Error = &errMsg
 	_, err := d.routerRepo.UpdateById(ctx, m.Id, m)
 	return err

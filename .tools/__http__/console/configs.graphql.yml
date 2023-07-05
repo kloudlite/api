@@ -19,9 +19,11 @@ query: |+
           metadata {
             name
             namespace
+            generation
           }
           status {
             isReady
+            checks
             lastReconcileTime
           }
           syncStatus {
@@ -53,6 +55,14 @@ query: |+
         name
         namespace
       }
+      status {
+        checks
+        lastReconcileTime
+      }
+      syncStatus {
+        state
+        action
+      }
       data
     }
   }
@@ -81,7 +91,7 @@ query: |+
         checks
         lastReconcileTime
       }
-      syncStatus{
+      syncStatus {
         state
         action
         generation
@@ -136,7 +146,7 @@ query: |+
   }
 variables:
   namespace: '{{.namespace}}'
-  name: "{{.name}}y"
+  name: "{{.name}}"
 ---
 
 label: Resync Config
