@@ -409,13 +409,14 @@ func (repo *dbRepo[T]) UpdateOne(ctx context.Context, filter Filter, updatedData
 		updateOpts.Upsert = &opt.Upsert
 	}
 
+	updatedData.SetUpdateTime(time.Now())
+
 	m, err := toMap(updatedData)
 	if err != nil {
 		var x T
 		return x, err
 	}
 
-	repo.withUpdateTime(updatedData)
 	r := repo.db.Collection(repo.collectionName).FindOneAndUpdate(
 		ctx,
 		filter,
@@ -434,7 +435,8 @@ func (repo *dbRepo[T]) UpdateById(ctx context.Context, id ID, updatedData T, opt
 	if opt := fn.ParseOnlyOption[UpdateOpts](opts); opt != nil {
 		updateOpts.Upsert = &opt.Upsert
 	}
-	repo.withUpdateTime(updatedData)
+
+	updatedData.SetUpdateTime(time.Now())
 
 	m, err := toMap(updatedData)
 	if err != nil {

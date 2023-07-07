@@ -118,8 +118,7 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 
 	project.AccountName = ctx.AccountName
 	project.ClusterName = ctx.ClusterName
-	project.Generation = 1
-	project.SyncStatus = t.GenSyncStatus(t.SyncActionApply, project.Generation)
+	project.SyncStatus = t.GenSyncStatus(t.SyncActionApply, project.RecordVersion+1)
 
 	prj, err := d.projectRepo.Create(ctx, &project)
 	if err != nil {
@@ -138,11 +137,11 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 				constants.ProjectNameKey: prj.Name,
 			},
 		},
-	}); err != nil {
+	}, 0); err != nil {
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &prj.Project); err != nil {
+	if err := d.applyK8sResource(ctx, &prj.Project, prj.RecordVersion); err != nil {
 		return nil, err
 	}
 
@@ -192,7 +191,7 @@ func (d *domain) DeleteProject(ctx ConsoleContext, name string) error {
 		return err
 	}
 
-	prj.SyncStatus = t.GetSyncStatusForDeletion(prj.Generation)
+	prj.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, prj.RecordVersion+1)
 	if _, err := d.projectRepo.UpdateById(ctx, prj.Id, prj); err != nil {
 		return err
 	}
@@ -232,14 +231,14 @@ func (d *domain) UpdateProject(ctx ConsoleContext, project entities.Project) (*e
 	}
 
 	exProject.Spec = project.Spec
-	exProject.SyncStatus = t.GetSyncStatusForUpdation(exProject.Generation + 1)
+	exProject.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exProject.RecordVersion+1)
 
 	upProject, err := d.projectRepo.UpdateById(ctx, exProject.Id, exProject)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &upProject.Project); err != nil {
+	if err := d.applyK8sResource(ctx, &upProject.Project, upProject.RecordVersion); err != nil {
 		return nil, err
 	}
 
@@ -252,6 +251,10 @@ func (d *domain) OnDeleteProjectMessage(ctx ConsoleContext, project entities.Pro
 		return err
 	}
 
+	if err := d.MatchRecordVersion(&project.Project, p.RecordVersion); err != nil {
+		return d.resyncK8sResource(ctx, p.SyncStatus.Action, &p.Project)
+	}
+
 	return d.projectRepo.DeleteById(ctx, p.Id)
 }
 
@@ -261,11 +264,19 @@ func (d *domain) OnUpdateProjectMessage(ctx ConsoleContext, project entities.Pro
 		return err
 	}
 
+	if err := d.MatchRecordVersion(&project, p.RecordVersion); err != nil {
+		return d.resyncK8sResource(ctx, p.SyncStatus.Action, &p.Project)
+	}
+
+	p.Project.CreationTimestamp = project.CreationTimestamp
+	p.Project.Labels = project.Labels
+	p.Project.Annotations = project.Annotations
+
 	p.Status = project.Status
+
+	p.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 	p.SyncStatus.Error = nil
 	p.SyncStatus.LastSyncedAt = time.Now()
-	p.SyncStatus.Generation = project.Generation
-	p.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.projectRepo.UpdateById(ctx, p.Id, p)
 	return err
@@ -278,6 +289,7 @@ func (d *domain) OnApplyProjectError(ctx ConsoleContext, errMsg string, name str
 	}
 
 	p.SyncStatus.State = t.SyncStateErroredAtAgent
+	p.SyncStatus.LastSyncedAt = time.Now()
 	p.SyncStatus.Error = &errMsg
 	_, err := d.projectRepo.UpdateById(ctx, p.Id, p)
 	return err
