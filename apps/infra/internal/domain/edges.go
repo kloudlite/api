@@ -15,6 +15,7 @@ func (d *domain) CreateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edg
 		return nil, err
 	}
 
+	edge.IncrementRecordVersion()
 	edge.AccountName = ctx.AccountName
 	edge.SyncStatus = t.GetSyncStatusForCreation()
 	nEdge, err := d.edgeRepo.Create(ctx, &edge)
@@ -22,7 +23,7 @@ func (d *domain) CreateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edg
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &nEdge.Edge); err != nil {
+	if err := d.applyK8sResource(ctx, &nEdge.Edge, nEdge.RecordVersion); err != nil {
 		return nil, err
 	}
 	return nEdge, err
@@ -42,7 +43,6 @@ func (d *domain) GetEdge(ctx InfraContext, clusterName string, name string) (*en
 
 func (d *domain) UpdateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edge, error) {
 	edge.EnsureGVK()
-
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &edge.Edge); err != nil {
 		return nil, err
 	}
@@ -57,6 +57,7 @@ func (d *domain) UpdateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edg
 		return nil, err
 	}
 
+	e.IncrementRecordVersion()
 	e.Spec = edge.Spec
 	e.SyncStatus = t.GenSyncStatus(t.SyncActionApply, e.RecordVersion)
 
@@ -65,7 +66,7 @@ func (d *domain) UpdateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edg
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &uEdge.Edge); err != nil {
+	if err := d.applyK8sResource(ctx, &uEdge.Edge, uEdge.RecordVersion); err != nil {
 		return nil, err
 	}
 	return uEdge, nil
