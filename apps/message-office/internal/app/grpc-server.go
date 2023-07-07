@@ -8,10 +8,7 @@ import (
 	"github.com/kloudlite/operator/grpc-interfaces/grpc/messages"
 	"github.com/kloudlite/operator/pkg/kubectl"
 	"github.com/pkg/errors"
-	corev1 "k8s.io/api/core/v1"
-	"sigs.k8s.io/controller-runtime/pkg/client"
 
-	apiLabels "k8s.io/apimachinery/pkg/labels"
 	"kloudlite.io/apps/message-office/internal/domain"
 	"kloudlite.io/apps/message-office/internal/env"
 	"kloudlite.io/common"
@@ -39,44 +36,44 @@ type grpcServer struct {
 	byocClientUpdatesCounter int64
 }
 
-func (g *grpcServer) GetDockerCredentials(ctx context.Context, in *messages.GetDockerCredentialsIn) (out *messages.GetDockerCredentialsOut, err error) {
-	logger := g.logger.WithKV("accountName", in.AccountName, "clusterName", in.ClusterName)
-	logger.Infof("request received for docker credentials")
-	defer func() {
-		if err != nil {
-			logger.Errorf(err, "error occurred while processing for docker credentials")
-			return
-		}
-		g.logger.Infof("request processed for docker credentials")
-	}()
-
-	if err := g.domain.ValidateAccessToken(ctx, in.AccessToken, in.AccountName, in.ClusterName); err != nil {
-		return nil, err
-	}
-
-	ns, err := common.FindNamespaceForAccount(ctx, g.k8sControllerCli, in.AccountName)
-	if err != nil {
-		return nil, err
-	}
-
-	var secretsList corev1.SecretList
-	if err := g.k8sControllerCli.List(ctx, &secretsList, &client.ListOptions{
-		LabelSelector: apiLabels.SelectorFromValidatedSet(map[string]string{
-			"kloudlite.io/secret.type": string(corev1.SecretTypeDockerConfigJson),
-		}),
-		Namespace: ns.Name,
-		Limit:     0,
-	}); err != nil {
-		return nil, err
-	}
-
-	secrets := make(map[string]string, len(secretsList.Items))
-	for i := range secretsList.Items {
-		secrets[secretsList.Items[i].Name] = string(secretsList.Items[i].Data[".dockerconfigjson"])
-	}
-
-	return &messages.GetDockerCredentialsOut{DockerConfigJsonSecrets: secrets}, nil
-}
+// func (g *grpcServer) GetDockerCredentials(ctx context.Context, in *messages.GetDockerCredentialsIn) (out *messages.GetDockerCredentialsOut, err error) {
+// 	logger := g.logger.WithKV("accountName", in.AccountName, "clusterName", in.ClusterName)
+// 	logger.Infof("request received for docker credentials")
+// 	defer func() {
+// 		if err != nil {
+// 			logger.Errorf(err, "error occurred while processing for docker credentials")
+// 			return
+// 		}
+// 		g.logger.Infof("request processed for docker credentials")
+// 	}()
+//
+// 	if err := g.domain.ValidateAccessToken(ctx, in.AccessToken, in.AccountName, in.ClusterName); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	ns, err := common.FindNamespaceForAccount(ctx, g.k8sControllerCli, in.AccountName)
+// 	if err != nil {
+// 		return nil, err
+// 	}
+//
+// 	var secretsList corev1.SecretList
+// 	if err := g.k8sControllerCli.List(ctx, &secretsList, &client.ListOptions{
+// 		LabelSelector: apiLabels.SelectorFromValidatedSet(map[string]string{
+// 			"kloudlite.io/secret.type": string(corev1.SecretTypeDockerConfigJson),
+// 		}),
+// 		Namespace: ns.Name,
+// 		Limit:     0,
+// 	}); err != nil {
+// 		return nil, err
+// 	}
+//
+// 	secrets := make(map[string]string, len(secretsList.Items))
+// 	for i := range secretsList.Items {
+// 		secrets[secretsList.Items[i].Name] = string(secretsList.Items[i].Data[".dockerconfigjson"])
+// 	}
+//
+// 	return &messages.GetDockerCredentialsOut{DockerConfigJsonSecrets: secrets}, nil
+// }
 
 func (g *grpcServer) parseError(ctx context.Context, errMsg *messages.ErrorData) (err error) {
 	g.errorMessagesCounter++
