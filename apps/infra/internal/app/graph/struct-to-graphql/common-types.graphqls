@@ -72,6 +72,7 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec @
 type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec @shareable {
   accountName: String!
   displayName: String
+  incomingKafkaTopic: String!
   ingressClasses: [String]
   provider: String!
   publicIps: [String]
@@ -112,14 +113,16 @@ type Kloudlite_io__apps__infra__internal__domain__entities_HelmStatusVal @sharea
 type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
-  generation: Int!
   lastSyncedAt: Date
+  recordVersion: Int!
   state: Kloudlite_io__pkg__types_SyncStatusState!
   syncScheduledAt: Date
 }
 
 type Metadata @shareable {
   annotations: Map
+  creationTimestamp: Date!
+  deletionTimestamp: Date
   generation: Int!
   labels: Map
   name: String!
@@ -207,6 +210,7 @@ input Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpecI
 input Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn {
   accountName: String!
   displayName: String
+  incomingKafkaTopic: String!
   ingressClasses: [String]
   provider: String!
   publicIps: [String]
@@ -227,9 +231,10 @@ enum Kloudlite_io__pkg__types_SyncStatusAction {
 }
 
 enum Kloudlite_io__pkg__types_SyncStatusState {
+  APPLIED_AT_AGENT
+  ERRORED_AT_AGENT
   IDLE
-  IN_PROGRESS
-  NOT_READY
-  READY
+  IN_QUEUE
+  RECEIVED_UPDATE_FROM_AGENT
 }
 

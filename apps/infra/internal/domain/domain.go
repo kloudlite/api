@@ -1,9 +1,7 @@
 package domain
 
 import (
-	"context"
 	"encoding/json"
-	"fmt"
 
 	"github.com/kloudlite/operator/agent/types"
 	"github.com/kloudlite/operator/pkg/kubectl"
@@ -18,8 +16,6 @@ import (
 	"kloudlite.io/pkg/redpanda"
 	"kloudlite.io/pkg/repos"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-
-	iamT "kloudlite.io/apps/iam/types"
 )
 
 type domain struct {

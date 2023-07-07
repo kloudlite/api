@@ -83,6 +83,7 @@ type ComplexityRoot struct {
 		IsConnected            func(childComplexity int) int
 		Kind                   func(childComplexity int) int
 		ObjectMeta             func(childComplexity int) int
+		RecordVersion          func(childComplexity int) int
 		Spec                   func(childComplexity int) int
 		Status                 func(childComplexity int) int
 		SyncStatus             func(childComplexity int) int
@@ -106,17 +107,18 @@ type ComplexityRoot struct {
 	}
 
 	CloudProvider struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Spec         func(childComplexity int) int
-		Status       func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		ClusterName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Spec          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	CloudProviderEdge struct {
@@ -131,16 +133,17 @@ type ComplexityRoot struct {
 	}
 
 	Cluster struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Spec         func(childComplexity int) int
-		Status       func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Spec          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	ClusterEdge struct {
@@ -155,17 +158,18 @@ type ComplexityRoot struct {
 	}
 
 	Edge struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Spec         func(childComplexity int) int
-		Status       func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		ClusterName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Spec          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	EdgeEdge struct {
@@ -251,13 +255,14 @@ type ComplexityRoot struct {
 	}
 
 	Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec struct {
-		AccountName    func(childComplexity int) int
-		DisplayName    func(childComplexity int) int
-		IngressClasses func(childComplexity int) int
-		Provider       func(childComplexity int) int
-		PublicIps      func(childComplexity int) int
-		Region         func(childComplexity int) int
-		StorageClasses func(childComplexity int) int
+		AccountName        func(childComplexity int) int
+		DisplayName        func(childComplexity int) int
+		IncomingKafkaTopic func(childComplexity int) int
+		IngressClasses     func(childComplexity int) int
+		Provider           func(childComplexity int) int
+		PublicIps          func(childComplexity int) int
+		Region             func(childComplexity int) int
+		StorageClasses     func(childComplexity int) int
 	}
 
 	Github_com__kloudlite__operator__pkg__operator_Check struct {
@@ -293,24 +298,25 @@ type ComplexityRoot struct {
 	Kloudlite_io__pkg__types_SyncStatus struct {
 		Action          func(childComplexity int) int
 		Error           func(childComplexity int) int
-		Generation      func(childComplexity int) int
 		LastSyncedAt    func(childComplexity int) int
+		RecordVersion   func(childComplexity int) int
 		State           func(childComplexity int) int
 		SyncScheduledAt func(childComplexity int) int
 	}
 
 	MasterNode struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Spec         func(childComplexity int) int
-		Status       func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		ClusterName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Spec          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	MasterNodeEdge struct {
@@ -325,11 +331,13 @@ type ComplexityRoot struct {
 	}
 
 	Metadata struct {
-		Annotations func(childComplexity int) int
-		Generation  func(childComplexity int) int
-		Labels      func(childComplexity int) int
-		Name        func(childComplexity int) int
-		Namespace   func(childComplexity int) int
+		Annotations       func(childComplexity int) int
+		CreationTimestamp func(childComplexity int) int
+		DeletionTimestamp func(childComplexity int) int
+		Generation        func(childComplexity int) int
+		Labels            func(childComplexity int) int
+		Name              func(childComplexity int) int
+		Namespace         func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -353,17 +361,18 @@ type ComplexityRoot struct {
 	}
 
 	NodePool struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Spec         func(childComplexity int) int
-		Status       func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		ClusterName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Spec          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	NodePoolEdge struct {
@@ -402,20 +411,21 @@ type ComplexityRoot struct {
 	}
 
 	Secret struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		Data         func(childComplexity int) int
-		Enabled      func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Status       func(childComplexity int) int
-		StringData   func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		Type         func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		ClusterName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		Data          func(childComplexity int) int
+		Enabled       func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Status        func(childComplexity int) int
+		StringData    func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		Type          func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	SecretEdge struct {
@@ -430,17 +440,18 @@ type ComplexityRoot struct {
 	}
 
 	WorkerNode struct {
-		APIVersion   func(childComplexity int) int
-		AccountName  func(childComplexity int) int
-		ClusterName  func(childComplexity int) int
-		CreationTime func(childComplexity int) int
-		ID           func(childComplexity int) int
-		Kind         func(childComplexity int) int
-		ObjectMeta   func(childComplexity int) int
-		Spec         func(childComplexity int) int
-		Status       func(childComplexity int) int
-		SyncStatus   func(childComplexity int) int
-		UpdateTime   func(childComplexity int) int
+		APIVersion    func(childComplexity int) int
+		AccountName   func(childComplexity int) int
+		ClusterName   func(childComplexity int) int
+		CreationTime  func(childComplexity int) int
+		ID            func(childComplexity int) int
+		Kind          func(childComplexity int) int
+		ObjectMeta    func(childComplexity int) int
+		RecordVersion func(childComplexity int) int
+		Spec          func(childComplexity int) int
+		Status        func(childComplexity int) int
+		SyncStatus    func(childComplexity int) int
+		UpdateTime    func(childComplexity int) int
 	}
 
 	WorkerNodeEdge struct {
@@ -506,6 +517,7 @@ type Kloudlite_io__pkg__types_SyncStatusResolver interface {
 	Action(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusAction, error)
 
 	LastSyncedAt(ctx context.Context, obj *types.SyncStatus) (*string, error)
+
 	State(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusState, error)
 	SyncScheduledAt(ctx context.Context, obj *types.SyncStatus) (*string, error)
 }
@@ -520,6 +532,8 @@ type MasterNodeResolver interface {
 }
 type MetadataResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
+	CreationTimestamp(ctx context.Context, obj *v1.ObjectMeta) (string, error)
+	DeletionTimestamp(ctx context.Context, obj *v1.ObjectMeta) (*string, error)
 
 	Labels(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
 }
@@ -701,6 +715,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.BYOCCluster.ObjectMeta(childComplexity), true
 
+	case "BYOCCluster.recordVersion":
+		if e.complexity.BYOCCluster.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.BYOCCluster.RecordVersion(childComplexity), true
+
 	case "BYOCCluster.spec":
 		if e.complexity.BYOCCluster.Spec == nil {
 			break
@@ -827,6 +848,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CloudProvider.ObjectMeta(childComplexity), true
 
+	case "CloudProvider.recordVersion":
+		if e.complexity.CloudProvider.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.CloudProvider.RecordVersion(childComplexity), true
+
 	case "CloudProvider.spec":
 		if e.complexity.CloudProvider.Spec == nil {
 			break
@@ -931,6 +959,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Cluster.ObjectMeta(childComplexity), true
+
+	case "Cluster.recordVersion":
+		if e.complexity.Cluster.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.Cluster.RecordVersion(childComplexity), true
 
 	case "Cluster.spec":
 		if e.complexity.Cluster.Spec == nil {
@@ -1043,6 +1078,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Edge.ObjectMeta(childComplexity), true
+
+	case "Edge.recordVersion":
+		if e.complexity.Edge.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.Edge.RecordVersion(childComplexity), true
 
 	case "Edge.spec":
 		if e.complexity.Edge.Spec == nil {
@@ -1450,6 +1492,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec.DisplayName(childComplexity), true
 
+	case "Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec.incomingKafkaTopic":
+		if e.complexity.Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec.IncomingKafkaTopic == nil {
+			break
+		}
+
+		return e.complexity.Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec.IncomingKafkaTopic(childComplexity), true
+
 	case "Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec.ingressClasses":
 		if e.complexity.Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec.IngressClasses == nil {
 			break
@@ -1604,19 +1653,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Kloudlite_io__pkg__types_SyncStatus.Error(childComplexity), true
 
-	case "Kloudlite_io__pkg__types_SyncStatus.generation":
-		if e.complexity.Kloudlite_io__pkg__types_SyncStatus.Generation == nil {
-			break
-		}
-
-		return e.complexity.Kloudlite_io__pkg__types_SyncStatus.Generation(childComplexity), true
-
 	case "Kloudlite_io__pkg__types_SyncStatus.lastSyncedAt":
 		if e.complexity.Kloudlite_io__pkg__types_SyncStatus.LastSyncedAt == nil {
 			break
 		}
 
 		return e.complexity.Kloudlite_io__pkg__types_SyncStatus.LastSyncedAt(childComplexity), true
+
+	case "Kloudlite_io__pkg__types_SyncStatus.recordVersion":
+		if e.complexity.Kloudlite_io__pkg__types_SyncStatus.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__pkg__types_SyncStatus.RecordVersion(childComplexity), true
 
 	case "Kloudlite_io__pkg__types_SyncStatus.state":
 		if e.complexity.Kloudlite_io__pkg__types_SyncStatus.State == nil {
@@ -1680,6 +1729,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MasterNode.ObjectMeta(childComplexity), true
+
+	case "MasterNode.recordVersion":
+		if e.complexity.MasterNode.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.MasterNode.RecordVersion(childComplexity), true
 
 	case "MasterNode.spec":
 		if e.complexity.MasterNode.Spec == nil {
@@ -1750,6 +1806,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Metadata.Annotations(childComplexity), true
+
+	case "Metadata.creationTimestamp":
+		if e.complexity.Metadata.CreationTimestamp == nil {
+			break
+		}
+
+		return e.complexity.Metadata.CreationTimestamp(childComplexity), true
+
+	case "Metadata.deletionTimestamp":
+		if e.complexity.Metadata.DeletionTimestamp == nil {
+			break
+		}
+
+		return e.complexity.Metadata.DeletionTimestamp(childComplexity), true
 
 	case "Metadata.generation":
 		if e.complexity.Metadata.Generation == nil {
@@ -2031,6 +2101,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NodePool.ObjectMeta(childComplexity), true
+
+	case "NodePool.recordVersion":
+		if e.complexity.NodePool.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.NodePool.RecordVersion(childComplexity), true
 
 	case "NodePool.spec":
 		if e.complexity.NodePool.Spec == nil {
@@ -2349,6 +2426,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Secret.ObjectMeta(childComplexity), true
 
+	case "Secret.recordVersion":
+		if e.complexity.Secret.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.Secret.RecordVersion(childComplexity), true
+
 	case "Secret.status":
 		if e.complexity.Secret.Status == nil {
 			break
@@ -2467,6 +2551,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.WorkerNode.ObjectMeta(childComplexity), true
+
+	case "WorkerNode.recordVersion":
+		if e.complexity.WorkerNode.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.WorkerNode.RecordVersion(childComplexity), true
 
 	case "WorkerNode.spec":
 		if e.complexity.WorkerNode.Spec == nil {
@@ -2725,6 +2816,7 @@ type Mutation {
   isConnected: Boolean!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -2758,6 +2850,7 @@ input BYOCClusterIn {
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -2776,9 +2869,7 @@ type CloudProviderPaginatedRecords @shareable {
 }
 
 input CloudProviderIn {
-  accountName: String!
   apiVersion: String
-  clusterName: String!
   kind: String
   metadata: MetadataIn!
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_CloudProviderSpecIn
@@ -2792,6 +2883,7 @@ input CloudProviderIn {
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__cluster___operator__apis__cmgr__v1_ClusterSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -2891,6 +2983,7 @@ type Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec @
 type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec @shareable {
   accountName: String!
   displayName: String
+  incomingKafkaTopic: String!
   ingressClasses: [String]
   provider: String!
   publicIps: [String]
@@ -2931,14 +3024,16 @@ type Kloudlite_io__apps__infra__internal__domain__entities_HelmStatusVal @sharea
 type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
-  generation: Int!
   lastSyncedAt: Date
+  recordVersion: Int!
   state: Kloudlite_io__pkg__types_SyncStatusState!
   syncScheduledAt: Date
 }
 
 type Metadata @shareable {
   annotations: Map
+  creationTimestamp: Date!
+  deletionTimestamp: Date
   generation: Int!
   labels: Map
   name: String!
@@ -3026,6 +3121,7 @@ input Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpecI
 input Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn {
   accountName: String!
   displayName: String
+  incomingKafkaTopic: String!
   ingressClasses: [String]
   provider: String!
   publicIps: [String]
@@ -3046,10 +3142,11 @@ enum Kloudlite_io__pkg__types_SyncStatusAction {
 }
 
 enum Kloudlite_io__pkg__types_SyncStatusState {
+  APPLIED_AT_AGENT
+  ERRORED_AT_AGENT
   IDLE
-  IN_PROGRESS
-  NOT_READY
-  READY
+  IN_QUEUE
+  RECEIVED_UPDATE_FROM_AGENT
 }
 
 `, BuiltIn: false},
@@ -3068,6 +3165,7 @@ directive @goField(
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_EdgeSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -3101,6 +3199,7 @@ input EdgeIn {
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__cluster___operator__apis__cmgr__v1_MasterNodeSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -3134,6 +3233,7 @@ input MasterNodeIn {
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_NodePoolSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -3174,6 +3274,7 @@ scalar Date
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   status: Github_com__kloudlite__operator__pkg__operator_Status
   stringData: Map
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -3211,6 +3312,7 @@ input SecretIn {
   id: String!
   kind: String
   metadata: Metadata! @goField(name: "objectMeta")
+  recordVersion: Int!
   spec: Github_com__kloudlite__cluster___operator__apis__infra__v1_WorkerNodeSpec
   status: Github_com__kloudlite__operator__pkg__operator_Status
   syncStatus: Kloudlite_io__pkg__types_SyncStatus!
@@ -4248,6 +4350,10 @@ func (ec *executionContext) fieldContext_BYOCCluster_metadata(ctx context.Contex
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -4258,6 +4364,50 @@ func (ec *executionContext) fieldContext_BYOCCluster_metadata(ctx context.Contex
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _BYOCCluster_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.BYOCCluster) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_BYOCCluster_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_BYOCCluster_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "BYOCCluster",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -4303,6 +4453,8 @@ func (ec *executionContext) fieldContext_BYOCCluster_spec(ctx context.Context, f
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_accountName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_displayName(ctx, field)
+			case "incomingKafkaTopic":
+				return ec.fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_incomingKafkaTopic(ctx, field)
 			case "ingressClasses":
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_ingressClasses(ctx, field)
 			case "provider":
@@ -4416,10 +4568,10 @@ func (ec *executionContext) fieldContext_BYOCCluster_syncStatus(ctx context.Cont
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -4574,6 +4726,8 @@ func (ec *executionContext) fieldContext_BYOCClusterEdge_node(ctx context.Contex
 				return ec.fieldContext_BYOCCluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOCCluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_BYOCCluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_BYOCCluster_spec(ctx, field)
 			case "status":
@@ -5124,6 +5278,10 @@ func (ec *executionContext) fieldContext_CloudProvider_metadata(ctx context.Cont
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -5134,6 +5292,50 @@ func (ec *executionContext) fieldContext_CloudProvider_metadata(ctx context.Cont
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _CloudProvider_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.CloudProvider) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_CloudProvider_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_CloudProvider_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "CloudProvider",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5286,10 +5488,10 @@ func (ec *executionContext) fieldContext_CloudProvider_syncStatus(ctx context.Co
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -5442,6 +5644,8 @@ func (ec *executionContext) fieldContext_CloudProviderEdge_node(ctx context.Cont
 				return ec.fieldContext_CloudProvider_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_CloudProvider_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_CloudProvider_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_CloudProvider_spec(ctx, field)
 			case "status":
@@ -5860,6 +6064,10 @@ func (ec *executionContext) fieldContext_Cluster_metadata(ctx context.Context, f
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -5870,6 +6078,50 @@ func (ec *executionContext) fieldContext_Cluster_metadata(ctx context.Context, f
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Cluster_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.Cluster) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Cluster_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Cluster_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Cluster",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6026,10 +6278,10 @@ func (ec *executionContext) fieldContext_Cluster_syncStatus(ctx context.Context,
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -6180,6 +6432,8 @@ func (ec *executionContext) fieldContext_ClusterEdge_node(ctx context.Context, f
 				return ec.fieldContext_Cluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Cluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Cluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Cluster_spec(ctx, field)
 			case "status":
@@ -6642,6 +6896,10 @@ func (ec *executionContext) fieldContext_Edge_metadata(ctx context.Context, fiel
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -6652,6 +6910,50 @@ func (ec *executionContext) fieldContext_Edge_metadata(ctx context.Context, fiel
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Edge_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.Edge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Edge_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Edge_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Edge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -6808,10 +7110,10 @@ func (ec *executionContext) fieldContext_Edge_syncStatus(ctx context.Context, fi
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -6964,6 +7266,8 @@ func (ec *executionContext) fieldContext_EdgeEdge_node(ctx context.Context, fiel
 				return ec.fieldContext_Edge_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Edge_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Edge_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Edge_spec(ctx, field)
 			case "status":
@@ -9272,6 +9576,50 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 	return fc, nil
 }
 
+func (ec *executionContext) _Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_incomingKafkaTopic(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisClustersV1BYOCSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_incomingKafkaTopic(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IncomingKafkaTopic, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_incomingKafkaTopic(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_ingressClasses(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisClustersV1BYOCSpec) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_ingressClasses(ctx, field)
 	if err != nil {
@@ -10212,50 +10560,6 @@ func (ec *executionContext) fieldContext_Kloudlite_io__pkg__types_SyncStatus_err
 	return fc, nil
 }
 
-func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus_generation(ctx context.Context, field graphql.CollectedField, obj *types.SyncStatus) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Generation, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int64)
-	fc.Result = res
-	return ec.marshalNInt2int64(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Kloudlite_io__pkg__types_SyncStatus",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *types.SyncStatus) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
 	if err != nil {
@@ -10292,6 +10596,50 @@ func (ec *executionContext) fieldContext_Kloudlite_io__pkg__types_SyncStatus_las
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx context.Context, field graphql.CollectedField, obj *types.SyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__pkg__types_SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -10681,6 +11029,10 @@ func (ec *executionContext) fieldContext_MasterNode_metadata(ctx context.Context
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -10691,6 +11043,50 @@ func (ec *executionContext) fieldContext_MasterNode_metadata(ctx context.Context
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MasterNode_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.MasterNode) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MasterNode_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MasterNode_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MasterNode",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -10847,10 +11243,10 @@ func (ec *executionContext) fieldContext_MasterNode_syncStatus(ctx context.Conte
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -11003,6 +11399,8 @@ func (ec *executionContext) fieldContext_MasterNodeEdge_node(ctx context.Context
 				return ec.fieldContext_MasterNode_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_MasterNode_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_MasterNode_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_MasterNode_spec(ctx, field)
 			case "status":
@@ -11202,6 +11600,91 @@ func (ec *executionContext) fieldContext_Metadata_annotations(ctx context.Contex
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Metadata().CreationTimestamp(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Metadata",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Metadata().DeletionTimestamp(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalODate2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Metadata",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
 		},
 	}
 	return fc, nil
@@ -11455,6 +11938,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_createBYOCCluster(ctx co
 				return ec.fieldContext_BYOCCluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOCCluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_BYOCCluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_BYOCCluster_spec(ctx, field)
 			case "status":
@@ -11559,6 +12044,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_updateBYOCCluster(ctx co
 				return ec.fieldContext_BYOCCluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOCCluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_BYOCCluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_BYOCCluster_spec(ctx, field)
 			case "status":
@@ -11821,6 +12308,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_createCluster(ctx contex
 				return ec.fieldContext_Cluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Cluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Cluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Cluster_spec(ctx, field)
 			case "status":
@@ -11921,6 +12410,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_updateCluster(ctx contex
 				return ec.fieldContext_Cluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Cluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Cluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Cluster_spec(ctx, field)
 			case "status":
@@ -12185,6 +12676,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_createCloudProvider(ctx 
 				return ec.fieldContext_CloudProvider_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_CloudProvider_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_CloudProvider_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_CloudProvider_spec(ctx, field)
 			case "status":
@@ -12287,6 +12780,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_updateCloudProvider(ctx 
 				return ec.fieldContext_CloudProvider_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_CloudProvider_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_CloudProvider_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_CloudProvider_spec(ctx, field)
 			case "status":
@@ -12551,6 +13046,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_createEdge(ctx context.C
 				return ec.fieldContext_Edge_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Edge_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Edge_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Edge_spec(ctx, field)
 			case "status":
@@ -12653,6 +13150,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_updateEdge(ctx context.C
 				return ec.fieldContext_Edge_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Edge_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Edge_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Edge_spec(ctx, field)
 			case "status":
@@ -13221,6 +13720,10 @@ func (ec *executionContext) fieldContext_NodePool_metadata(ctx context.Context, 
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -13231,6 +13734,50 @@ func (ec *executionContext) fieldContext_NodePool_metadata(ctx context.Context, 
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NodePool_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.NodePool) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NodePool_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NodePool_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NodePool",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -13393,10 +13940,10 @@ func (ec *executionContext) fieldContext_NodePool_syncStatus(ctx context.Context
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -13549,6 +14096,8 @@ func (ec *executionContext) fieldContext_NodePoolEdge_node(ctx context.Context, 
 				return ec.fieldContext_NodePool_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_NodePool_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_NodePool_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_NodePool_spec(ctx, field)
 			case "status":
@@ -14133,6 +14682,8 @@ func (ec *executionContext) fieldContext_Query_infra_getBYOCCluster(ctx context.
 				return ec.fieldContext_BYOCCluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOCCluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_BYOCCluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_BYOCCluster_spec(ctx, field)
 			case "status":
@@ -14319,6 +14870,8 @@ func (ec *executionContext) fieldContext_Query_infra_getCluster(ctx context.Cont
 				return ec.fieldContext_Cluster_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Cluster_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Cluster_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Cluster_spec(ctx, field)
 			case "status":
@@ -14507,6 +15060,8 @@ func (ec *executionContext) fieldContext_Query_infra_getCloudProvider(ctx contex
 				return ec.fieldContext_CloudProvider_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_CloudProvider_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_CloudProvider_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_CloudProvider_spec(ctx, field)
 			case "status":
@@ -14695,6 +15250,8 @@ func (ec *executionContext) fieldContext_Query_infra_getEdge(ctx context.Context
 				return ec.fieldContext_Edge_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Edge_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Edge_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_Edge_spec(ctx, field)
 			case "status":
@@ -14797,6 +15354,8 @@ func (ec *executionContext) fieldContext_Query_infra_listMasterNodes(ctx context
 				return ec.fieldContext_MasterNode_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_MasterNode_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_MasterNode_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_MasterNode_spec(ctx, field)
 			case "status":
@@ -14899,6 +15458,8 @@ func (ec *executionContext) fieldContext_Query_infra_listWorkerNodes(ctx context
 				return ec.fieldContext_WorkerNode_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_WorkerNode_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_WorkerNode_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_WorkerNode_spec(ctx, field)
 			case "status":
@@ -15087,6 +15648,8 @@ func (ec *executionContext) fieldContext_Query_infra_getNodePool(ctx context.Con
 				return ec.fieldContext_NodePool_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_NodePool_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_NodePool_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_NodePool_spec(ctx, field)
 			case "status":
@@ -15671,6 +16234,10 @@ func (ec *executionContext) fieldContext_Secret_metadata(ctx context.Context, fi
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -15681,6 +16248,50 @@ func (ec *executionContext) fieldContext_Secret_metadata(ctx context.Context, fi
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Secret_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Secret_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Secret_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -15823,10 +16434,10 @@ func (ec *executionContext) fieldContext_Secret_syncStatus(ctx context.Context, 
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -16024,6 +16635,8 @@ func (ec *executionContext) fieldContext_SecretEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Secret_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Secret_recordVersion(ctx, field)
 			case "status":
 				return ec.fieldContext_Secret_status(ctx, field)
 			case "stringData":
@@ -16488,6 +17101,10 @@ func (ec *executionContext) fieldContext_WorkerNode_metadata(ctx context.Context
 			switch field.Name {
 			case "annotations":
 				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 			case "generation":
 				return ec.fieldContext_Metadata_generation(ctx, field)
 			case "labels":
@@ -16498,6 +17115,50 @@ func (ec *executionContext) fieldContext_WorkerNode_metadata(ctx context.Context
 				return ec.fieldContext_Metadata_namespace(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _WorkerNode_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.WorkerNode) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_WorkerNode_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_WorkerNode_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "WorkerNode",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16662,10 +17323,10 @@ func (ec *executionContext) fieldContext_WorkerNode_syncStatus(ctx context.Conte
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 			case "error":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_error(ctx, field)
-			case "generation":
-				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field)
 			case "lastSyncedAt":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field)
 			case "state":
 				return ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_state(ctx, field)
 			case "syncScheduledAt":
@@ -16818,6 +17479,8 @@ func (ec *executionContext) fieldContext_WorkerNodeEdge_node(ctx context.Context
 				return ec.fieldContext_WorkerNode_kind(ctx, field)
 			case "metadata":
 				return ec.fieldContext_WorkerNode_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_WorkerNode_recordVersion(ctx, field)
 			case "spec":
 				return ec.fieldContext_WorkerNode_spec(ctx, field)
 			case "status":
@@ -18860,34 +19523,18 @@ func (ec *executionContext) unmarshalInputCloudProviderIn(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "kind", "metadata", "spec"}
+	fieldsInOrder := [...]string{"apiVersion", "kind", "metadata", "spec"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "accountName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
-			it.AccountName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "apiVersion":
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiVersion"))
 			it.APIVersion, err = ec.unmarshalOString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "clusterName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-			it.ClusterName, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -19586,7 +20233,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "displayName", "ingressClasses", "provider", "publicIps", "region", "storageClasses"}
+	fieldsInOrder := [...]string{"accountName", "displayName", "incomingKafkaTopic", "ingressClasses", "provider", "publicIps", "region", "storageClasses"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -19606,6 +20253,14 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
 			it.DisplayName, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "incomingKafkaTopic":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("incomingKafkaTopic"))
+			it.IncomingKafkaTopic, err = ec.unmarshalNString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -20166,6 +20821,13 @@ func (ec *executionContext) _BYOCCluster(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "recordVersion":
+
+			out.Values[i] = ec._BYOCCluster_recordVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "spec":
 			field := field
 
@@ -20416,6 +21078,13 @@ func (ec *executionContext) _CloudProvider(ctx context.Context, sel ast.Selectio
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "recordVersion":
+
+			out.Values[i] = ec._CloudProvider_recordVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "spec":
 			field := field
 
@@ -20633,6 +21302,13 @@ func (ec *executionContext) _Cluster(ctx context.Context, sel ast.SelectionSet, 
 		case "metadata":
 
 			out.Values[i] = ec._Cluster_metadata(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recordVersion":
+
+			out.Values[i] = ec._Cluster_recordVersion(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -20861,6 +21537,13 @@ func (ec *executionContext) _Edge(ctx context.Context, sel ast.SelectionSet, obj
 		case "metadata":
 
 			out.Values[i] = ec._Edge_metadata(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recordVersion":
+
+			out.Values[i] = ec._Edge_recordVersion(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -21508,6 +22191,13 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__clusters__v1
 
 			out.Values[i] = ec._Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_displayName(ctx, field, obj)
 
+		case "incomingKafkaTopic":
+
+			out.Values[i] = ec._Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_incomingKafkaTopic(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "ingressClasses":
 
 			out.Values[i] = ec._Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec_ingressClasses(ctx, field, obj)
@@ -21811,13 +22501,6 @@ func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus(ctx context.Con
 
 			out.Values[i] = ec._Kloudlite_io__pkg__types_SyncStatus_error(ctx, field, obj)
 
-		case "generation":
-
-			out.Values[i] = ec._Kloudlite_io__pkg__types_SyncStatus_generation(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "lastSyncedAt":
 			field := field
 
@@ -21835,6 +22518,13 @@ func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus(ctx context.Con
 				return innerFunc(ctx)
 
 			})
+		case "recordVersion":
+
+			out.Values[i] = ec._Kloudlite_io__pkg__types_SyncStatus_recordVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "state":
 			field := field
 
@@ -21958,6 +22648,13 @@ func (ec *executionContext) _MasterNode(ctx context.Context, sel ast.SelectionSe
 		case "metadata":
 
 			out.Values[i] = ec._MasterNode_metadata(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recordVersion":
+
+			out.Values[i] = ec._MasterNode_recordVersion(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -22131,6 +22828,43 @@ func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet,
 					}
 				}()
 				res = ec._Metadata_annotations(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "creationTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Metadata_creationTimestamp(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "deletionTimestamp":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Metadata_deletionTimestamp(ctx, field, obj)
 				return res
 			}
 
@@ -22418,6 +23152,13 @@ func (ec *executionContext) _NodePool(ctx context.Context, sel ast.SelectionSet,
 		case "metadata":
 
 			out.Values[i] = ec._NodePool_metadata(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recordVersion":
+
+			out.Values[i] = ec._NodePool_recordVersion(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -23042,6 +23783,13 @@ func (ec *executionContext) _Secret(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "recordVersion":
+
+			out.Values[i] = ec._Secret_recordVersion(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "status":
 
 			out.Values[i] = ec._Secret_status(ctx, field, obj)
@@ -23270,6 +24018,13 @@ func (ec *executionContext) _WorkerNode(ctx context.Context, sel ast.SelectionSe
 		case "metadata":
 
 			out.Values[i] = ec._WorkerNode_metadata(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "recordVersion":
+
+			out.Values[i] = ec._WorkerNode_recordVersion(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)

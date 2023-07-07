@@ -30,9 +30,10 @@ query: |+
           syncStatus {
             state
             error
-            generation
+            recordVersion
             action
           }
+          recordVersion
         }
       }
       pageInfo {
@@ -83,7 +84,7 @@ query: |+
       syncStatus {
         state
         lastSyncedAt
-        generation
+        recordVersion
         action
         syncScheduledAt
       }
@@ -154,6 +155,6 @@ query: |+
 variables:
   namespace: '{{.projectTargetNamespace}}'
   # name: "{{.name}}"
-  name: "sample-5828"
+  name: "sample"
 
 ---

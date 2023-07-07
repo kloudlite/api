@@ -12,7 +12,7 @@ query: |+
       edges {
         cursor
         node {
-          # creationTime
+          creationTime
           accountName
           apiVersion
           kind
@@ -29,9 +29,10 @@ query: |+
           syncStatus {
             state
             error
-            generation
+            recordVersion
             action
           }
+          recordVersion
         }
       }
       pageInfo {
@@ -62,7 +63,9 @@ query: |+
       syncStatus {
         state
         action
+        recordVersion
       }
+      recordVersion
       data
     }
   }

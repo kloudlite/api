@@ -13,7 +13,6 @@ query: |+
       edges {
         cursor
         node {
-          # createdAt
           updateTime
           creationTime
           accountName
@@ -22,13 +21,18 @@ query: |+
           metadata {
             name
             generation
+            creationTimestamp
+          }
+          spec {
+            targetNamespace
           }
           syncStatus {
             state
             action
             error
-            generation
+            recordVersion
           }
+          recordVersion
         }
       }
       pageInfo {
@@ -107,7 +111,8 @@ variables:
       name: "{{.name}}"
     spec:
       displayName: "Example Project"
-      accountName: kloudlite-dev
+      clusterName: "{{.clusterName}}"
+      accountName: "{{.accountName}}"
       targetNamespace: "{{.namespace}}"
 ---
 

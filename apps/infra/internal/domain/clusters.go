@@ -57,7 +57,7 @@ func (d *domain) UpdateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 	}
 
 	clus.Cluster = cluster.Cluster
-	clus.SyncStatus = t.GetSyncStatusForUpdation(clus.Generation + 1)
+	clus.SyncStatus = t.GenSyncStatus(t.SyncActionApply, clus.RecordVersion)
 
 	uCluster, err := d.clusterRepo.UpdateById(ctx, clus.Id, clus)
 	if err != nil {
@@ -188,7 +188,7 @@ func (d *domain) UpdateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluste
 		return nil, err
 	}
 	c.BYOC = cluster.BYOC
-	c.SyncStatus = t.GetSyncStatusForUpdation(c.Generation + 1)
+	c.SyncStatus = t.GenSyncStatus(t.SyncActionApply, c.RecordVersion)
 
 	// c.Spec.AccountName = ctx.AccountName
 	// c.Spec.Region = cluster.Spec.Region

@@ -58,7 +58,7 @@ func (d *domain) UpdateEdge(ctx InfraContext, edge entities.Edge) (*entities.Edg
 	}
 
 	e.Spec = edge.Spec
-	e.SyncStatus = t.GetSyncStatusForUpdation(e.Generation + 1)
+	e.SyncStatus = t.GenSyncStatus(t.SyncActionApply, e.RecordVersion)
 
 	uEdge, err := d.edgeRepo.UpdateById(ctx, e.Id, e)
 	if err != nil {

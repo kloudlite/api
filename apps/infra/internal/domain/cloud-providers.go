@@ -114,7 +114,7 @@ func (d *domain) UpdateCloudProvider(ctx InfraContext, cloudProvider entities.Cl
 		}
 	}
 
-	cloudProvider.SyncStatus = t.GetSyncStatusForUpdation(cp.Generation + 1)
+	cloudProvider.SyncStatus = t.GenSyncStatus(t.SyncActionApply, cp.RecordVersion)
 
 	uProvider, err := d.providerRepo.UpdateById(ctx, cp.Id, &cloudProvider)
 	if err != nil {
@@ -167,7 +167,7 @@ func (d *domain) OnUpdateCloudProviderMessage(ctx InfraContext, cloudProvider en
 
 	cp.CloudProvider = cloudProvider.CloudProvider
 	cp.SyncStatus.LastSyncedAt = time.Now()
-	cp.SyncStatus.Generation = cloudProvider.Generation
+	cp.SyncStatus.RecordVersion = 1
 	cp.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 	_, err = d.providerRepo.UpdateById(ctx, cp.Id, cp)
 	return err

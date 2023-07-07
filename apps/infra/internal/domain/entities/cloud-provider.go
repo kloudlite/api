@@ -49,8 +49,8 @@ var SecretIndices = []repos.IndexField{
 type CloudProvider struct {
 	repos.BaseEntity      `json:",inline" graphql:"noinput"`
 	infraV1.CloudProvider `json:",inline" graphql:"uri=k8s://cloudproviders.infra.kloudlite.io"`
-	AccountName           string       `json:"accountName"`
-	ClusterName           string       `json:"clusterName"`
+	AccountName           string       `json:"accountName" graphql:"noinput" `
+	ClusterName           string       `json:"clusterName" graphql:"noinput"`
 	SyncStatus            t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
