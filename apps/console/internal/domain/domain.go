@@ -4,8 +4,10 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"github.com/kloudlite/operator/pkg/constants"
 	"io"
 	"os"
+	"strconv"
 
 	t "github.com/kloudlite/operator/agent/types"
 	"github.com/kloudlite/operator/pkg/kubectl"
@@ -58,7 +60,14 @@ func errAlreadyMarkedForDeletion(label, namespace, name string) error {
 	)
 }
 
-func (d *domain) applyK8sResource(ctx ConsoleContext, obj client.Object) error {
+func (d *domain) applyK8sResource(ctx ConsoleContext, obj client.Object, recordVersion int) error {
+	ann := obj.GetAnnotations()
+	if ann == nil {
+		ann = make(map[string]string, 1)
+	}
+	ann[constants.RecordVersionKey] = fmt.Sprintf("%d", recordVersion)
+	obj.SetAnnotations(ann)
+
 	m, err := fn.K8sObjToMap(obj)
 	if err != nil {
 		return err
@@ -105,11 +114,11 @@ func (d *domain) deleteK8sResource(ctx ConsoleContext, obj client.Object) error 
 	return err
 }
 
-func (d *domain) resyncK8sResource(ctx ConsoleContext, action types.SyncAction, obj client.Object) error {
+func (d *domain) resyncK8sResource(ctx ConsoleContext, action types.SyncAction, obj client.Object, rv int) error {
 	switch action {
 	case types.SyncActionApply:
 		{
-			return d.applyK8sResource(ctx, obj)
+			return d.applyK8sResource(ctx, obj, rv)
 		}
 	case types.SyncActionDelete:
 		{
@@ -120,6 +129,33 @@ func (d *domain) resyncK8sResource(ctx ConsoleContext, action types.SyncAction, 
 			return fmt.Errorf("unknown sync action %q", action)
 		}
 	}
+}
+
+func (d *domain) parseRecordVersionFromAnnotations(annotations map[string]string) (int, error) {
+	annotatedVersion, ok := annotations[constants.RecordVersionKey]
+	if !ok {
+		return 0, fmt.Errorf("no annotation with record version key (%s), found on the resource", constants.RecordVersionKey)
+	}
+
+	annVersion, err := strconv.ParseInt(annotatedVersion, 10, 32)
+	if err != nil {
+		return 0, err
+	}
+
+	return int(annVersion), nil
+}
+
+func (d *domain) MatchRecordVersion(annotations map[string]string, rv int) error {
+	annVersion, err := d.parseRecordVersionFromAnnotations(annotations)
+	if err != nil {
+		return err
+	}
+
+	if annVersion != rv {
+		return fmt.Errorf("record version mismatch, expected %d, got %d", rv, annVersion)
+	}
+
+	return nil
 }
 
 func (d *domain) canMutateResourcesInProject(ctx ConsoleContext, targetNamespace string) error {

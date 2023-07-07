@@ -142,12 +142,23 @@ func (r *metadataResolver) Annotations(ctx context.Context, obj *v1.ObjectMeta) 
 
 // CreationTimestamp is the resolver for the creationTimestamp field.
 func (r *metadataResolver) CreationTimestamp(ctx context.Context, obj *v1.ObjectMeta) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTimestamp - creationTimestamp"))
+	if obj == nil {
+		return "", fmt.Errorf("metadata is nil")
+	}
+	return obj.CreationTimestamp.Format(time.RFC3339), nil
 }
 
 // DeletionTimestamp is the resolver for the deletionTimestamp field.
 func (r *metadataResolver) DeletionTimestamp(ctx context.Context, obj *v1.ObjectMeta) (*string, error) {
-	panic(fmt.Errorf("not implemented: DeletionTimestamp - deletionTimestamp"))
+	if obj == nil {
+		return nil, fmt.Errorf("metadata is nil")
+	}
+
+	if obj.DeletionTimestamp == nil {
+		return nil, nil
+	}
+
+	return fn.New(obj.DeletionTimestamp.Format(time.RFC3339)), nil
 }
 
 // Labels is the resolver for the labels field.

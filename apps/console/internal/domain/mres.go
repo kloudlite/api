@@ -62,10 +62,10 @@ func (d *domain) CreateManagedResource(ctx ConsoleContext, mres entities.Managed
 		return nil, err
 	}
 
+  mres.IncrementRecordVersion()
 	mres.AccountName = ctx.AccountName
 	mres.ClusterName = ctx.ClusterName
-	mres.Generation = 1
-	mres.SyncStatus = t.GenSyncStatus(t.SyncActionApply, mres.Generation)
+	mres.SyncStatus = t.GenSyncStatus(t.SyncActionApply, mres.RecordVersion)
 
 	m, err := d.mresRepo.Create(ctx, &mres)
 	if err != nil {
@@ -76,7 +76,7 @@ func (d *domain) CreateManagedResource(ctx ConsoleContext, mres entities.Managed
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &m.ManagedResource); err != nil {
+	if err := d.applyK8sResource(ctx, &m.ManagedResource, 0); err != nil {
 		return m, err
 	}
 
@@ -98,23 +98,23 @@ func (d *domain) UpdateManagedResource(ctx ConsoleContext, mres entities.Managed
 		return nil, err
 	}
 
+  m.IncrementRecordVersion()
 	m.Labels = mres.Labels
 	m.Annotations = mres.Annotations
 
 	m.Spec = mres.Spec
-	m.Generation += 1
-	m.SyncStatus = t.GenSyncStatus(t.SyncActionApply, m.Generation)
+	m.SyncStatus = t.GenSyncStatus(t.SyncActionApply, m.RecordVersion)
 
-	upMRes, err := d.mresRepo.UpdateById(ctx, m.Id, m)
+	upMres, err := d.mresRepo.UpdateById(ctx, m.Id, m)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &upMRes.ManagedResource); err != nil {
-		return upMRes, err
+	if err := d.applyK8sResource(ctx, &upMres.ManagedResource, upMres.RecordVersion); err != nil {
+		return upMres, err
 	}
 
-	return upMRes, nil
+	return upMres, nil
 }
 
 func (d *domain) DeleteManagedResource(ctx ConsoleContext, namespace string, name string) error {
@@ -127,7 +127,7 @@ func (d *domain) DeleteManagedResource(ctx ConsoleContext, namespace string, nam
 		return err
 	}
 
-	m.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, m.Generation)
+	m.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, m.RecordVersion)
 	if _, err := d.mresRepo.UpdateById(ctx, m.Id, m); err != nil {
 		return err
 	}
@@ -136,28 +136,46 @@ func (d *domain) DeleteManagedResource(ctx ConsoleContext, namespace string, nam
 }
 
 func (d *domain) OnDeleteManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error {
-	a, err := d.findMRes(ctx, mres.Namespace, mres.Name)
+	exMres, err := d.findMRes(ctx, mres.Namespace, mres.Name)
 	if err != nil {
 		return err
 	}
 
-	return d.mresRepo.DeleteById(ctx, a.Id)
+	if err := d.MatchRecordVersion(mres.Annotations, exMres.RecordVersion); err != nil {
+		return d.resyncK8sResource(ctx, mres.SyncStatus.Action, &mres.ManagedResource, mres.RecordVersion)
+	}
+
+	return d.mresRepo.DeleteById(ctx, exMres.Id)
 }
 
 func (d *domain) OnUpdateManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error {
-	m, err := d.findMRes(ctx, mres.Namespace, mres.Name)
+	exMres, err := d.findMRes(ctx, mres.Namespace, mres.Name)
 	if err != nil {
 		return err
 	}
 
-	m.CreationTimestamp = mres.CreationTimestamp
-	m.Status = mres.Status
-	m.SyncStatus.Error = nil
-	m.SyncStatus.LastSyncedAt = time.Now()
-	m.SyncStatus.Generation = mres.Generation
-	m.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+	annotatedVersion, err := d.parseRecordVersionFromAnnotations(mres.Annotations)
+	if err != nil {
+		return d.resyncK8sResource(ctx, mres.SyncStatus.Action, &mres.ManagedResource, mres.RecordVersion)
+	}
 
-	_, err = d.mresRepo.UpdateById(ctx, m.Id, m)
+	if annotatedVersion != exMres.RecordVersion {
+		return d.resyncK8sResource(ctx, mres.SyncStatus.Action, &mres.ManagedResource, mres.RecordVersion)
+	}
+
+	exMres.CreationTimestamp = mres.CreationTimestamp
+	exMres.Labels = mres.Labels
+	exMres.Annotations = mres.Annotations
+	exMres.Generation = mres.Generation
+
+	exMres.Status = mres.Status
+
+	exMres.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+	exMres.SyncStatus.RecordVersion = annotatedVersion
+	exMres.SyncStatus.Error = nil
+	exMres.SyncStatus.LastSyncedAt = time.Now()
+
+	_, err = d.mresRepo.UpdateById(ctx, exMres.Id, exMres)
 	return err
 }
 
@@ -183,5 +201,5 @@ func (d *domain) ResyncManagedResource(ctx ConsoleContext, namespace, name strin
 	if err != nil {
 		return err
 	}
-	return d.resyncK8sResource(ctx, m.SyncStatus.Action, &m.ManagedResource)
+	return d.resyncK8sResource(ctx, m.SyncStatus.Action, &m.ManagedResource, m.RecordVersion)
 }

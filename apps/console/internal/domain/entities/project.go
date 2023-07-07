@@ -9,9 +9,10 @@ import (
 type Project struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 	crdsv1.Project   `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
-	AccountName      string       `json:"accountName" graphql:"noinput"`
-	ClusterName      string       `json:"clusterName" graphql:"noinput"`
-	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"noinput"`
+	AccountName string `json:"accountName" graphql:"noinput"`
+	ClusterName string `json:"clusterName" graphql:"noinput"`
+
+	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
 var ProjectIndexes = []repos.IndexField{

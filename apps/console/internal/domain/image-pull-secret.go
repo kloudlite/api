@@ -51,10 +51,10 @@ func (d *domain) CreateImagePullSecret(ctx ConsoleContext, ips entities.ImagePul
 		return nil, err
 	}
 
+  ips.IncrementRecordVersion()
 	ips.AccountName = ctx.AccountName
 	ips.ClusterName = ctx.ClusterName
-	ips.Generation = 1
-	ips.SyncStatus = t.GenSyncStatus(t.SyncActionApply, ips.Generation)
+	ips.SyncStatus = t.GenSyncStatus(t.SyncActionApply, ips.RecordVersion)
 
 	nIps, err := d.ipsRepo.Create(ctx, &ips)
 	if err != nil {
@@ -83,19 +83,19 @@ func (d *domain) UpdateImagePullSecret(ctx ConsoleContext, ips entities.ImagePul
 		return nil, err
 	}
 
+  exIps.IncrementRecordVersion()
 	exIps.Annotations = ips.Annotations
 	exIps.Labels = ips.Labels
 
 	exIps.Spec = ips.Spec
-	exIps.Generation += 1
-	exIps.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exIps.Generation)
+	exIps.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exIps.RecordVersion)
 
 	upIps, err := d.ipsRepo.UpdateById(ctx, exIps.Id, exIps)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &upIps.ImagePullSecret); err != nil {
+	if err := d.applyK8sResource(ctx, &upIps.ImagePullSecret, 0); err != nil {
 		return nil, err
 	}
 
@@ -112,7 +112,7 @@ func (d *domain) DeleteImagePullSecret(ctx ConsoleContext, namespace, name strin
 		return err
 	}
 
-	ips.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, ips.Generation)
+	ips.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, ips.RecordVersion)
 
 	if _, err := d.ipsRepo.UpdateById(ctx, ips.Id, ips); err != nil {
 		return err
@@ -127,12 +127,26 @@ func (d *domain) OnUpdateImagePullSecretMessage(ctx ConsoleContext, ips entities
 		return err
 	}
 
+	annotatedVersion, err := d.parseRecordVersionFromAnnotations(ips.Annotations)
+	if err != nil {
+		return d.resyncK8sResource(ctx, exIps.SyncStatus.Action, &exIps.ImagePullSecret, exIps.RecordVersion)
+	}
+
+	if annotatedVersion != exIps.RecordVersion {
+		return d.resyncK8sResource(ctx, exIps.SyncStatus.Action, &exIps.ImagePullSecret, exIps.RecordVersion)
+	}
+
 	exIps.CreationTimestamp = ips.CreationTimestamp
+	exIps.Labels = ips.Labels
+	exIps.Annotations = ips.Annotations
+	exIps.Generation = ips.Generation
+
 	exIps.Status = ips.Status
+
+	exIps.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+	exIps.SyncStatus.RecordVersion = annotatedVersion
 	exIps.SyncStatus.Error = nil
 	exIps.SyncStatus.LastSyncedAt = time.Now()
-	exIps.SyncStatus.Generation = ips.Generation
-	exIps.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.ipsRepo.UpdateById(ctx, exIps.Id, exIps)
 	return err
@@ -165,9 +179,9 @@ func (d *domain) ResyncImagePullSecret(ctx ConsoleContext, namespace, name strin
 		return err
 	}
 
-	a, err := d.findImagePullSecret(ctx, namespace, name)
+	exIps, err := d.findImagePullSecret(ctx, namespace, name)
 	if err != nil {
 		return err
 	}
-	return d.resyncK8sResource(ctx, a.SyncStatus.Action, &a.ImagePullSecret)
+	return d.resyncK8sResource(ctx, exIps.SyncStatus.Action, &exIps.ImagePullSecret, exIps.RecordVersion)
 }

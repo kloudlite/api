@@ -80,10 +80,10 @@ func (d *domain) CreateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 		return nil, err
 	}
 
+	ws.IncrementRecordVersion()
 	ws.AccountName = ctx.AccountName
 	ws.ClusterName = ctx.ClusterName
-	ws.Generation = 1
-	ws.SyncStatus = t.GenSyncStatus(t.SyncActionApply, ws.Generation)
+	ws.SyncStatus = t.GenSyncStatus(t.SyncActionApply, ws.RecordVersion)
 
 	nWs, err := d.workspaceRepo.Create(ctx, &ws)
 	if err != nil {
@@ -94,19 +94,19 @@ func (d *domain) CreateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &corev1.Namespace{
-		TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Namespace"},
-		ObjectMeta: metav1.ObjectMeta{
-			Name: ws.Spec.TargetNamespace,
-			Labels: map[string]string{
-				constants.EnvNameKey: ws.Name,
-			},
-		},
-	}); err != nil {
-		return nil, err
-	}
+	// if err := d.applyK8sResource(ctx, &corev1.Namespace{
+	// 	TypeMeta: metav1.TypeMeta{APIVersion: "v1", Kind: "Namespace"},
+	// 	ObjectMeta: metav1.ObjectMeta{
+	// 		Name: ws.Spec.TargetNamespace,
+	// 		Labels: map[string]string{
+	// 			constants.EnvNameKey: ws.Name,
+	// 		},
+	// 	},
+	// }, 0); err != nil {
+	// 	return nil, err
+	// }
 
-	if err := d.applyK8sResource(ctx, &ws.Workspace); err != nil {
+	if err := d.applyK8sResource(ctx, &nWs.Workspace, nWs.RecordVersion); err != nil {
 		return nil, err
 	}
 
@@ -129,21 +129,20 @@ func (d *domain) UpdateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 	}
 
 	if exWs.GetDeletionTimestamp() != nil {
-		return nil, errAlreadyMarkedForDeletion("environment", "", ws.Name)
+		return nil, errAlreadyMarkedForDeletion("workspace", "", ws.Name)
 	}
 
 	exWs.Labels = ws.Labels
 	exWs.Annotations = ws.Annotations
 	exWs.Spec = ws.Spec
-	exWs.Generation += 1
-	exWs.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exWs.Generation)
+	exWs.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exWs.RecordVersion)
 
 	upWs, err := d.workspaceRepo.UpdateById(ctx, exWs.Id, exWs)
 	if err != nil {
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &upWs.Workspace); err != nil {
+	if err := d.applyK8sResource(ctx, &upWs.Workspace, upWs.RecordVersion); err != nil {
 		return nil, err
 	}
 
@@ -160,7 +159,7 @@ func (d *domain) DeleteWorkspace(ctx ConsoleContext, namespace, name string) err
 		return err
 	}
 
-	ws.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, ws.Generation)
+	ws.SyncStatus = t.GenSyncStatus(t.SyncActionDelete, ws.RecordVersion)
 	if _, err := d.workspaceRepo.UpdateById(ctx, ws.Id, ws); err != nil {
 		return err
 	}
@@ -182,12 +181,16 @@ func (d *domain) OnApplyWorkspaceError(ctx ConsoleContext, errMsg, namespace, na
 }
 
 func (d *domain) OnDeleteWorkspaceMessage(ctx ConsoleContext, ws entities.Workspace) error {
-	p, err := d.findWorkspace(ctx, ws.Namespace, ws.Name)
+	exWs, err := d.findWorkspace(ctx, ws.Namespace, ws.Name)
 	if err != nil {
 		return err
 	}
 
-	return d.workspaceRepo.DeleteById(ctx, p.Id)
+	if err := d.MatchRecordVersion(ws.Annotations, exWs.RecordVersion); err != nil {
+		return err
+	}
+
+	return d.workspaceRepo.DeleteById(ctx, exWs.Id)
 }
 
 func (d *domain) OnUpdateWorkspaceMessage(ctx ConsoleContext, ws entities.Workspace) error {
@@ -196,12 +199,29 @@ func (d *domain) OnUpdateWorkspaceMessage(ctx ConsoleContext, ws entities.Worksp
 		return err
 	}
 
+	annotatedVersion, err := d.parseRecordVersionFromAnnotations(ws.Annotations)
+	if err != nil {
+		return d.resyncK8sResource(ctx, exWs.SyncStatus.Action, &exWs.Workspace, exWs.RecordVersion)
+	}
+
+	if annotatedVersion != exWs.RecordVersion {
+		if err := d.resyncK8sResource(ctx, exWs.SyncStatus.Action, &exWs.Workspace, exWs.RecordVersion); err != nil {
+			return err
+		}
+		return nil
+	}
+
 	exWs.CreationTimestamp = ws.CreationTimestamp
+	exWs.Labels = ws.Labels
+	exWs.Annotations = ws.Annotations
+	exWs.Generation = ws.Generation
+
 	exWs.Status = ws.Status
+
+	exWs.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+	exWs.SyncStatus.RecordVersion = annotatedVersion
 	exWs.SyncStatus.Error = nil
 	exWs.SyncStatus.LastSyncedAt = time.Now()
-	exWs.SyncStatus.Generation = ws.Generation
-	exWs.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
 
 	_, err = d.workspaceRepo.UpdateById(ctx, exWs.Id, exWs)
 	return err
@@ -225,9 +245,9 @@ func (d *domain) ResyncWorkspace(ctx ConsoleContext, namespace, name string) err
 				constants.EnvNameKey: e.Name,
 			},
 		},
-	}); err != nil {
+	}, 0); err != nil {
 		return err
 	}
 
-	return d.resyncK8sResource(ctx, e.SyncStatus.Action, &e.Workspace)
+	return d.resyncK8sResource(ctx, e.SyncStatus.Action, &e.Workspace, e.RecordVersion)
 }
