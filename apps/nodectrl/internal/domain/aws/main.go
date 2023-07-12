@@ -80,7 +80,7 @@ func (a AwsClient) writeNodeConfig(kc TokenAndKubeconfig) error {
 	nc := NodeConfig{
 		ServerIP: kc.ServerIp,
 		Token:    kc.Token,
-		NodeName: *a.node.NodeName,
+		NodeName: a.node.NodeName,
 		Taints:   []string{},
 		Labels:   map[string]string{},
 	}
@@ -179,7 +179,7 @@ func (a AwsClient) saveSSH() error {
 
 func (a AwsClient) SaveToDbGuranteed(ctx context.Context) {
 	for {
-		if err := utils.SaveToDb(*a.node.NodeName, a.awsS3Client); err == nil {
+		if err := utils.SaveToDb(a.node.NodeName, a.awsS3Client); err == nil {
 			break
 		} else {
 			fmt.Println(err)
@@ -208,7 +208,7 @@ func (a AwsClient) NewNode(ctx context.Context) error {
 		return err
 	}
 
-	if err := utils.MakeTfWorkFileReady(*a.node.NodeName, a.getAwsTemplatePath(), a.awsS3Client, true); err != nil {
+	if err := utils.MakeTfWorkFileReady(a.node.NodeName, a.getAwsTemplatePath(), a.awsS3Client, true); err != nil {
 		return err
 	}
 
@@ -218,11 +218,11 @@ func (a AwsClient) NewNode(ctx context.Context) error {
 
 	// apply the tf file
 	if err := func() error {
-		if err := utils.InitTFdir(path.Join(utils.Workdir, *a.node.NodeName)); err != nil {
+		if err := utils.InitTFdir(path.Join(utils.Workdir, a.node.NodeName)); err != nil {
 			return err
 		}
 
-		if err := utils.ApplyTF(path.Join(utils.Workdir, *a.node.NodeName), values); err != nil {
+		if err := utils.ApplyTF(path.Join(utils.Workdir, a.node.NodeName), values); err != nil {
 			return err
 		}
 
@@ -235,43 +235,93 @@ func (a AwsClient) NewNode(ctx context.Context) error {
 }
 
 // DeleteNode implements ProviderClient
-func (a AwsClient) DeleteNode(ctx context.Context) error {
+func (a AwsClient) DeleteNode(ctx context.Context, force bool) error {
 	sshPath := path.Join("/tmp/ssh", a.accountName)
 
+	// ensure all required paths created if not exists
 	if err := a.ensurePaths(); err != nil {
 		return err
 	}
 
+	// parse all values from the awsclient to pass as tf variables
 	values, err := parseValues(a, sshPath)
 	if err != nil {
 		return err
 	}
 
+	// fetch kubeconfig
+	kc, err := func() ([]byte, error) {
+		sshPath := path.Join("/tmp/ssh", a.accountName)
+
+		configFileName := fmt.Sprintf("%s-config.yaml", a.accountName)
+
+		if err := a.awsS3Client.IsFileExists(configFileName); err != nil {
+			return nil, err
+		}
+
+		configPath := path.Join(sshPath, "config.yaml")
+		if err := a.awsS3Client.DownloadFile(configPath, configFileName); err != nil {
+			return nil, err
+		}
+
+		b, err := os.ReadFile(configPath)
+		if err != nil {
+			return nil, err
+		}
+
+		kc := TokenAndKubeconfig{}
+
+		if err := yaml.Unmarshal(b, &kc); err != nil {
+			return nil, err
+		}
+
+		out, err := yaml.Marshal(kc.Kubeconfig)
+		return out, err
+
+	}()
+
+	if err != nil {
+		return err
+	}
+
+	// drain and delete node befor destroying
+
+	// drain
+	if err := utils.Drain(kc, a.node.NodeName); err != nil {
+		if !force {
+			fmt.Println(err.Error())
+			fmt.Println(utils.ColorText("ignoring error because of force delete", 2))
+
+			return nil
+		}
+		return err
+	}
+
+	time.Sleep(time.Second * 15)
+
+	// delete from cluster
+	if err := utils.DeleteNode(kc, a.node.NodeName); err != nil {
+		if !force {
+			fmt.Println(err.Error())
+			fmt.Println(utils.ColorText("ignoring error because of force delete", 2))
+			return nil
+
+		}
+		return err
+	}
+
+	// setup ssh so nodes can be accesed [generate rsa for first time]
 	if err := a.SetupSSH(); err != nil {
 		return err
 	}
 
-	/*
-		steps:
-			- check if state present in db
-			- if present load that to working dir
-			- else initialize new tf dir
-			- destroy node with terraform
-			- delete final state
-	*/
-
-	if err := utils.MakeTfWorkFileReady(*a.node.NodeName, a.getAwsTemplatePath(), a.awsS3Client, false); err != nil {
+	// initiate the tf_template and init the tf_directory to sync the tf_plugin
+	if err := utils.MakeTfWorkFileReady(a.node.NodeName, a.getAwsTemplatePath(), a.awsS3Client, false); err != nil {
 		return err
 	}
 
-	// destroy the tf file
-	if err := func() error {
-		if err := utils.DestroyNode(*a.node.NodeName, values); err != nil {
-			return err
-		}
-
-		return nil
-	}(); err != nil {
+	// destroy node [using terraform]
+	if err := utils.DestroyNode(a.node.NodeName, values); err != nil {
 		return err
 	}
 
@@ -281,6 +331,7 @@ func (a AwsClient) DeleteNode(ctx context.Context) error {
 func NewAwsProviderClient(node clustersv1.AWSNodeConfig, cpd common.CommonProviderData, apc AwsProviderConfig) (common.ProviderClient, error) {
 	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, apc.AccountName)
 	if err != nil {
+		fmt.Println(utils.ColorText(err.Error(), 1))
 		return nil, err
 	}
 

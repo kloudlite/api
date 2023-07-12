@@ -66,7 +66,7 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		return nil
 	}
 
-	ip, err := utils.GetOutput(path.Join(utils.Workdir, *a.node.NodeName), "node-ip")
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeName), "node-ip")
 	if err != nil {
 		return err
 	}
@@ -113,10 +113,10 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		kc.ServerIp,
 		strings.TrimSpace(string(kc.Token)),
 		ip,
-		*a.node.NodeName,
+		a.node.NodeName,
 		strings.Join(labels, " "),
 		func() string {
-			if a.node.IsGpu != nil && *a.node.IsGpu {
+			if a.node.IsGpu {
 				// return "--docker"
 				// return "--docker"
 				return ""

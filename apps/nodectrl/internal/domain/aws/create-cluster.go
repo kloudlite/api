@@ -37,7 +37,7 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 		return err
 	}
 
-	ip, err := utils.GetOutput(path.Join(utils.Workdir, *a.node.NodeName), "node-ip")
+	ip, err := utils.GetOutput(path.Join(utils.Workdir, a.node.NodeName), "node-ip")
 	if err != nil {
 		return err
 	}
@@ -63,19 +63,38 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 
 	masterToken := guuid.New()
 
-	// install k3s
-	cmd := fmt.Sprintf(
-		"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh server --token=%s --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%s --cluster-init",
-		sshPath,
-		string(ip),
-		masterToken.String(),
-		string(ip),
-		*a.node.NodeName,
-	)
+	_, err = utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /etc/rancher/k3s/k3s.yaml", sshPath, string(ip)), "checking if k3s already installed.")
+	if err != nil {
 
-	if err := utils.ExecCmd(cmd, "installing k3s"); err != nil {
-		return err
+		// install k3s
+		cmd := fmt.Sprintf(
+			"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s sudo sh /tmp/k3s-install.sh server --token=%s --node-external-ip %s --flannel-backend wireguard-native --flannel-external-ip --disable traefik --node-name=%s --cluster-init",
+			sshPath,
+			string(ip),
+			masterToken.String(),
+			string(ip),
+			a.node.NodeName,
+		)
+
+		if err := utils.ExecCmd(cmd, "installing k3s"); err != nil {
+			return err
+		}
+
+	} else {
+
+		// install k3s
+		cmd := fmt.Sprintf(
+			"ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s systemctl restart k3s.service",
+			sshPath,
+			string(ip),
+		)
+
+		if err := utils.ExecCmd(cmd, "restarting k3s"); err != nil {
+			return err
+		}
+
 	}
+
 	// needed to fetch kubeconfig
 
 	configOut, err := utils.ExecCmdWithOutput(fmt.Sprintf("ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -i %s/access root@%s cat /etc/rancher/k3s/k3s.yaml", sshPath, string(ip)), "fetching kubeconfig from the cluster")
@@ -144,10 +163,10 @@ func parseValues(a AwsClient, sshPath string) (map[string]any, error) {
 
 	values["keys_path"] = sshPath
 
-	if a.node.NodeName == nil {
+	if a.node.NodeName == "" {
 		return returnError("nodename")
 	}
-	values["node_name"] = *a.node.NodeName
+	values["node_name"] = a.node.NodeName
 
 	if a.node.ProvisionMode != "spot" {
 		if a.node.OnDemandSpecs == nil {
@@ -165,8 +184,8 @@ func parseValues(a AwsClient, sshPath string) (map[string]any, error) {
 		values["mem_max"] = a.node.SpotSpecs.MemMax
 	}
 
-	if a.node.ImageId != nil {
-		values["ami"] = *a.node.ImageId
+	if a.node.ImageId != "" {
+		values["ami"] = a.node.ImageId
 	}
 
 	return values, nil
