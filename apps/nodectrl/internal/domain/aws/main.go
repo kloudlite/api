@@ -286,28 +286,32 @@ func (a AwsClient) DeleteNode(ctx context.Context, force bool) error {
 
 	// drain and delete node befor destroying
 
-	// drain
-	if err := utils.Drain(kc, a.node.NodeName); err != nil {
-		if !force {
-			fmt.Println(err.Error())
-			fmt.Println(utils.ColorText("ignoring error because of force delete", 2))
+	if a.node.ProvisionMode != "spot" {
 
-			return nil
+		// drain
+		if err := utils.Drain(kc, a.node.NodeName); err != nil {
+			if !force {
+				fmt.Println(err.Error())
+				fmt.Println(utils.ColorText("ignoring error because of force delete", 2))
+
+				return nil
+			}
+			return err
 		}
-		return err
-	}
 
-	time.Sleep(time.Second * 15)
+		time.Sleep(time.Second * 15)
 
-	// delete from cluster
-	if err := utils.DeleteNode(kc, a.node.NodeName); err != nil {
-		if !force {
-			fmt.Println(err.Error())
-			fmt.Println(utils.ColorText("ignoring error because of force delete", 2))
-			return nil
+		// delete from cluster
+		if err := utils.DeleteNode(kc, a.node.NodeName); err != nil {
+			if !force {
+				fmt.Println(err.Error())
+				fmt.Println(utils.ColorText("ignoring error because of force delete", 2))
+				return nil
 
+			}
+			return err
 		}
-		return err
+
 	}
 
 	// setup ssh so nodes can be accesed [generate rsa for first time]
