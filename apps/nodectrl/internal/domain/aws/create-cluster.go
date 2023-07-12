@@ -143,6 +143,8 @@ func (a AwsClient) CreateCluster(ctx context.Context) error {
 		return err
 	}
 
+	// TODO: have to install agent and the operator as target cluster
+
 	return err
 }
 
