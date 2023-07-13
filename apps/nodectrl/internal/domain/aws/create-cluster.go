@@ -179,15 +179,15 @@ func parseValues(a AwsClient, sshPath string) (map[string]any, error) {
 	}
 
 	if a.node.ProvisionMode == "spot" {
-		values["cpu_min"] = a.node.SpotSpecs.CpuMin
-		values["cpu_max"] = a.node.SpotSpecs.CpuMax
+		values["cpu_min"] = fmt.Sprintf("%d", a.node.SpotSpecs.CpuMin)
+		values["cpu_max"] = fmt.Sprintf("%d", a.node.SpotSpecs.CpuMax)
 
-		values["mem_min"] = a.node.SpotSpecs.CpuMin
-		values["mem_max"] = a.node.SpotSpecs.MemMax
+		values["mem_min"] = fmt.Sprintf("%d", a.node.SpotSpecs.MemMin)
+		values["mem_max"] = fmt.Sprintf("%d", a.node.SpotSpecs.MemMax)
 	}
 
-	if a.node.ImageId != "" {
-		values["ami"] = a.node.ImageId
+	if a.node.ImageId != nil {
+		values["ami"] = *a.node.ImageId
 	}
 
 	return values, nil

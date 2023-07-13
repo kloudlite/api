@@ -44,18 +44,18 @@ func (a AwsClient) AddWorker(ctx context.Context) error {
 		return err
 	}
 
-	if a.node.ProvisionMode == "spot" {
-		if err := a.writeNodeConfig(kc); err != nil {
-			return err
-		}
-	}
-
 	// setup ssh
 
 	if err := a.SetupSSH(); err != nil {
 		return err
 	}
 	defer a.saveForSure()
+
+	if a.node.ProvisionMode == "spot" {
+		if err := a.writeNodeConfig(kc); err != nil {
+			return err
+		}
+	}
 
 	// create node and wait for ready
 	if err := a.NewNode(ctx); err != nil {

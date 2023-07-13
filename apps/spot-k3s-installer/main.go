@@ -85,14 +85,14 @@ func ExecCmdWithOutput(cmdString string, logStr string) ([]byte, error) {
 }
 
 func Run() error {
-	b, err := os.ReadFile("/tmp/ssh/data.yaml")
+	b, err := os.ReadFile("/k3s/data.yaml")
 	if err != nil {
 		return err
 	}
 
 	var nc NodeConfig
 
-	if err := yaml.Unmarshal(b, nc); err != nil {
+	if err := yaml.Unmarshal(b, &nc); err != nil {
 		return err
 	}
 
@@ -122,7 +122,7 @@ func Run() error {
 	}()
 
 	cmd := fmt.Sprintf(
-		"sh /tmp/k3s-install.sh agent --server https://%s:6443 --token=%s --node-external-ip %s --node-name %s %s",
+		"k3s agent --server https://%s:6443 --token=%s --node-external-ip %s --node-name %s %s",
 		nc.ServerIP,
 		strings.TrimSpace(string(nc.Token)),
 		ip,

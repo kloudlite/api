@@ -20,9 +20,13 @@ type AwsProviderConfig struct {
 	AccessSecret string `yaml:"accessSecret"`
 	AccountName  string `yaml:"accountName"`
 }
+type AWSNodeConfig struct {
+	clustersv1.AWSNodeConfig `json:",inline"`
+	NodeName                 string `json:"nodeName"`
+}
 
 type AwsClient struct {
-	node        clustersv1.AWSNodeConfig
+	node        AWSNodeConfig
 	awsS3Client awss3.AwsS3
 
 	accessKey    string
@@ -51,6 +55,15 @@ type NodeConfig struct {
 }
 
 func (a AwsClient) ensurePaths() error {
+
+	workDir := path.Join("/tmp", a.node.NodeName)
+
+	if _, err := os.Stat(workDir); err != nil {
+		if err := os.Mkdir(workDir, os.ModePerm); err != nil {
+			return err
+		}
+	}
+
 	const sshDir = "/tmp/ssh"
 	sshPath := path.Join(sshDir, a.accountName)
 	if _, err := os.Stat(sshDir); err != nil {
@@ -332,7 +345,7 @@ func (a AwsClient) DeleteNode(ctx context.Context, force bool) error {
 	return nil
 }
 
-func NewAwsProviderClient(node clustersv1.AWSNodeConfig, cpd common.CommonProviderData, apc AwsProviderConfig) (common.ProviderClient, error) {
+func NewAwsProviderClient(node AWSNodeConfig, cpd common.CommonProviderData, apc AwsProviderConfig) (common.ProviderClient, error) {
 	awsS3Client, err := awss3.NewAwsS3Client(apc.AccessKey, apc.AccessSecret, apc.AccountName)
 	if err != nil {
 		fmt.Println(utils.ColorText(err.Error(), 1))

@@ -180,7 +180,8 @@ require (
 	sigs.k8s.io/structured-merge-diff/v4 v4.2.3 // indirect
 )
 
-// replace github.com/kloudlite/operator v0.0.0-20230519115853-9aa81fd2e1f7 => /home/vision/kloudlite/a_repos/kloudlite-operator
+replace github.com/kloudlite/operator v0.0.0-20230708142000-0caa559e1c9b => /home/vision/kloudlite/a_repos/kloudlite-operator
+
 // replace github.com/kloudlite/operator v0.0.0-20230519115853-9aa81fd2e1f7 => /home/nxtcoder17/workspace/kloudlite/operator
 
 // replace github.com/kloudlite/cluster-operator v0.0.0-20230213105023-96cd6d1e38d3 => /home/vision/kloudlite/cluster-operator
