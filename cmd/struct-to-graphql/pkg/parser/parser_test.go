@@ -587,6 +587,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"AccountName: String!",
 							"apiVersion: String!",
 							"kind: String!",
+							// "metadata: Metadata!",
 							"metadata: Metadata! @goField(name: \"objectMeta\")",
 							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec!",
 							"status: Github_com__kloudlite__operator__pkg__operator_Status",
@@ -743,7 +744,6 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						"Kloudlite_io__pkg__types_SyncStatus": {
 							"action: Kloudlite_io__pkg__types_SyncStatusAction!",
 							"error: String",
-							// "generation: Int!",
 							"recordVersion: Int!",
 							"lastSyncedAt: Date",
 							"state: Kloudlite_io__pkg__types_SyncStatusState!",
