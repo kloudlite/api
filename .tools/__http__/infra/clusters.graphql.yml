@@ -17,7 +17,6 @@ query: |+
       }
       spec {
         accountName
-        providerName
       }
     }
   }
@@ -29,29 +28,44 @@ variables:
       name: "{{.clusterName}}"
     spec:
       accountName: "{{.accountName}}"
-      providerName: "{{.providerName}}"
-      provider: aws
-      count: 1
+      cloudProvider: 'aws'
+      availabilityMode: ''
       region: ap-south-1
-      config: '{"instanceType":"c6a.large","vpc":""}'
+      agentHelmValuesRef: |+
+        {}
 ---
 
 label: List Clusters
 query: |+
-  query Query {
-    infra_listClusters {
-      # syncStatus {
-      #   status
-      # }
-      clusterToken
-      metadata {
-        name
-      }
-      spec {
-        accountName
+  query Infra_listClusters($pagination: PaginationQueryArgs) {
+    infra_listClusters(pagination: $pagination) {
+      edges {
+        cursor
+        node {
+          id
+          kind
+          metadata {
+            name
+            namespace
+          }
+          status {
+            checks
+          }
+          syncStatus {
+            action
+            error
+            lastSyncedAt
+            state
+            syncScheduledAt
+            recordVersion
+          }
+        }
       }
     }
   }
+variables:
+  pagination:
+    first: 10
 
 ---
 
