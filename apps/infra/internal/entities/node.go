@@ -1,20 +1,20 @@
 package entities
 
 import (
-	infraV1 "github.com/kloudlite/cluster-operator/apis/infra/v1"
+	clustersv1 "github.com/kloudlite/operator/apis/clusters/v1"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
 
-type Edge struct {
+type Node struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
-	infraV1.Edge     `json:",inline" graphql:"uri=k8s://edges.infra.kloudlite.io"`
+	clustersv1.Node  `json:",inline" graphql:"uri=k8s://nodes.clusters.kloudlite.io"`
 	AccountName      string       `json:"accountName" graphql:"noinput"`
 	ClusterName      string       `json:"clusterName" graphql:"noinput"`
 	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
-var EdgeIndices = []repos.IndexField{
+var NodeIndices = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
 			{Key: "id", Value: repos.IndexAsc},
@@ -24,18 +24,9 @@ var EdgeIndices = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
 			{Key: "metadata.name", Value: repos.IndexAsc},
-		},
-		Unique: true,
-	},
-
-	{
-		Field: []repos.IndexKey{
 			{Key: "accountName", Value: repos.IndexAsc},
-		},
-	},
-	{
-		Field: []repos.IndexKey{
 			{Key: "clusterName", Value: repos.IndexAsc},
 		},
+		Unique: true,
 	},
 }

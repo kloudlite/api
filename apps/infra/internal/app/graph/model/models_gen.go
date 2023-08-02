@@ -7,29 +7,19 @@ import (
 	"io"
 	"strconv"
 
-	"kloudlite.io/apps/infra/internal/domain/entities"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	"kloudlite.io/apps/infra/internal/entities"
 )
 
-type BYOCClusterEdge struct {
-	Cursor string                `json:"cursor"`
-	Node   *entities.BYOCCluster `json:"node"`
+type CloudProviderSecretEdge struct {
+	Cursor string                        `json:"cursor"`
+	Node   *entities.CloudProviderSecret `json:"node"`
 }
 
-type BYOCClusterPaginatedRecords struct {
-	Edges      []*BYOCClusterEdge `json:"edges"`
-	PageInfo   *PageInfo          `json:"pageInfo"`
-	TotalCount int                `json:"totalCount"`
-}
-
-type CloudProviderEdge struct {
-	Cursor string                  `json:"cursor"`
-	Node   *entities.CloudProvider `json:"node"`
-}
-
-type CloudProviderPaginatedRecords struct {
-	Edges      []*CloudProviderEdge `json:"edges"`
-	PageInfo   *PageInfo            `json:"pageInfo"`
-	TotalCount int                  `json:"totalCount"`
+type CloudProviderSecretPaginatedRecords struct {
+	Edges      []*CloudProviderSecretEdge `json:"edges"`
+	PageInfo   *PageInfo                  `json:"pageInfo"`
+	TotalCount int                        `json:"totalCount"`
 }
 
 type ClusterEdge struct {
@@ -43,212 +33,150 @@ type ClusterPaginatedRecords struct {
 	TotalCount int            `json:"totalCount"`
 }
 
-type EdgeEdge struct {
-	Cursor string         `json:"cursor"`
-	Node   *entities.Edge `json:"node"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpec struct {
+	AccountName            string                                                                     `json:"accountName"`
+	AgentHelmValuesRef     *GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRef     `json:"agentHelmValuesRef"`
+	AvailabilityMode       string                                                                     `json:"availabilityMode"`
+	CloudProvider          string                                                                     `json:"cloudProvider"`
+	CredentialsRef         *GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRef         `json:"credentialsRef"`
+	NodeIps                []*string                                                                  `json:"nodeIps,omitempty"`
+	OperatorsHelmValuesRef *GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRef `json:"operatorsHelmValuesRef"`
+	Region                 string                                                                     `json:"region"`
+	Vpc                    *string                                                                    `json:"vpc,omitempty"`
 }
 
-type EdgePaginatedRecords struct {
-	Edges      []*EdgeEdge `json:"edges"`
-	PageInfo   *PageInfo   `json:"pageInfo"`
-	TotalCount int         `json:"totalCount"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRef struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisCmgrV1ClusterSpec struct {
-	AccountName  string `json:"accountName"`
-	Config       string `json:"config"`
-	Count        int    `json:"count"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRefIn struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisCmgrV1ClusterSpecIn struct {
-	AccountName  string `json:"accountName"`
-	Config       string `json:"config"`
-	Count        int    `json:"count"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRef struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisCmgrV1MasterNodeSpec struct {
-	AccountName  string `json:"accountName"`
-	ClusterName  string `json:"clusterName"`
-	Config       string `json:"config"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRefIn struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisCmgrV1MasterNodeSpecIn struct {
-	AccountName  string `json:"accountName"`
-	ClusterName  string `json:"clusterName"`
-	Config       string `json:"config"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecIn struct {
+	AccountName            string                                                                       `json:"accountName"`
+	AgentHelmValuesRef     *GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRefIn     `json:"agentHelmValuesRef"`
+	AvailabilityMode       string                                                                       `json:"availabilityMode"`
+	CloudProvider          string                                                                       `json:"cloudProvider"`
+	CredentialsRef         *GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRefIn         `json:"credentialsRef"`
+	NodeIps                []*string                                                                    `json:"nodeIps,omitempty"`
+	OperatorsHelmValuesRef *GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRefIn `json:"operatorsHelmValuesRef"`
+	Region                 string                                                                       `json:"region"`
+	Vpc                    *string                                                                      `json:"vpc,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1CloudProviderSpec struct {
-	AccountName    string                                                                       `json:"accountName"`
-	DisplayName    string                                                                       `json:"display_name"`
-	Provider       string                                                                       `json:"provider"`
-	ProviderSecret *GithubComKloudliteClusterOperatorApisInfraV1CloudProviderSpecProviderSecret `json:"providerSecret"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRef struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1CloudProviderSpecIn struct {
-	AccountName    string                                                                         `json:"accountName"`
-	DisplayName    string                                                                         `json:"display_name"`
-	Provider       string                                                                         `json:"provider"`
-	ProviderSecret *GithubComKloudliteClusterOperatorApisInfraV1CloudProviderSpecProviderSecretIn `json:"providerSecret"`
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRefIn struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1CloudProviderSpecProviderSecret struct {
-	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpec struct {
+	AwsNodeConfig *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfig `json:"awsNodeConfig,omitempty"`
+	MaxCount      int                                                                `json:"maxCount"`
+	MinCount      int                                                                `json:"minCount"`
+	TargetCount   int                                                                `json:"targetCount"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1CloudProviderSpecProviderSecretIn struct {
-	Name      string `json:"name"`
-	Namespace string `json:"namespace"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfig struct {
+	ImageID       *string                                                                         `json:"imageId,omitempty"`
+	IsGpu         *bool                                                                           `json:"isGpu,omitempty"`
+	OnDemandSpecs *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigOnDemandSpecs `json:"onDemandSpecs,omitempty"`
+	ProvisionMode string                                                                          `json:"provisionMode"`
+	Region        *string                                                                         `json:"region,omitempty"`
+	SpotSpecs     *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigSpotSpecs     `json:"spotSpecs,omitempty"`
+	Vpc           *string                                                                         `json:"vpc,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1EdgeSpec struct {
-	AccountName  string                                                       `json:"accountName"`
-	ClusterName  string                                                       `json:"clusterName"`
-	Pools        []*GithubComKloudliteClusterOperatorApisInfraV1EdgeSpecPools `json:"pools,omitempty"`
-	Provider     *string                                                      `json:"provider,omitempty"`
-	ProviderName string                                                       `json:"providerName"`
-	Region       string                                                       `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigIn struct {
+	ImageID       *string                                                                           `json:"imageId,omitempty"`
+	IsGpu         *bool                                                                             `json:"isGpu,omitempty"`
+	OnDemandSpecs *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigOnDemandSpecsIn `json:"onDemandSpecs,omitempty"`
+	ProvisionMode string                                                                            `json:"provisionMode"`
+	Region        *string                                                                           `json:"region,omitempty"`
+	SpotSpecs     *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigSpotSpecsIn     `json:"spotSpecs,omitempty"`
+	Vpc           *string                                                                           `json:"vpc,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1EdgeSpecIn struct {
-	AccountName  string                                                         `json:"accountName"`
-	ClusterName  string                                                         `json:"clusterName"`
-	Pools        []*GithubComKloudliteClusterOperatorApisInfraV1EdgeSpecPoolsIn `json:"pools,omitempty"`
-	Provider     *string                                                        `json:"provider,omitempty"`
-	ProviderName string                                                         `json:"providerName"`
-	Region       string                                                         `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigOnDemandSpecs struct {
+	InstanceType string `json:"instanceType"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1EdgeSpecPools struct {
-	Config string `json:"config"`
-	Max    *int   `json:"max,omitempty"`
-	Min    *int   `json:"min,omitempty"`
-	Name   string `json:"name"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigOnDemandSpecsIn struct {
+	InstanceType string `json:"instanceType"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1EdgeSpecPoolsIn struct {
-	Config string `json:"config"`
-	Max    *int   `json:"max,omitempty"`
-	Min    *int   `json:"min,omitempty"`
-	Name   string `json:"name"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigSpotSpecs struct {
+	CPUMax int `json:"cpuMax"`
+	CPUMin int `json:"cpuMin"`
+	MemMax int `json:"memMax"`
+	MemMin int `json:"memMin"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1NodePoolSpec struct {
-	AccountName  string `json:"accountName"`
-	ClusterName  string `json:"clusterName"`
-	Config       string `json:"config"`
-	EdgeName     string `json:"edgeName"`
-	Max          *int   `json:"max,omitempty"`
-	Min          *int   `json:"min,omitempty"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigSpotSpecsIn struct {
+	CPUMax int `json:"cpuMax"`
+	CPUMin int `json:"cpuMin"`
+	MemMax int `json:"memMax"`
+	MemMin int `json:"memMin"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1NodePoolSpecIn struct {
-	AccountName  string `json:"accountName"`
-	ClusterName  string `json:"clusterName"`
-	Config       string `json:"config"`
-	EdgeName     string `json:"edgeName"`
-	Max          *int   `json:"max,omitempty"`
-	Min          *int   `json:"min,omitempty"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecIn struct {
+	AwsNodeConfig *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigIn `json:"awsNodeConfig,omitempty"`
+	MaxCount      int                                                                  `json:"maxCount"`
+	MinCount      int                                                                  `json:"minCount"`
+	TargetCount   int                                                                  `json:"targetCount"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1WorkerNodeSpec struct {
-	AccountName  string `json:"accountName"`
-	ClusterName  string `json:"clusterName"`
-	Config       string `json:"config"`
-	EdgeName     string `json:"edgeName"`
-	NodeIndex    *int   `json:"nodeIndex,omitempty"`
-	Pool         string `json:"pool"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
-	Stateful     *bool  `json:"stateful,omitempty"`
+type GithubComKloudliteOperatorApisClustersV1NodeSpec struct {
+	ClusterName  *string   `json:"clusterName,omitempty"`
+	NodePoolName *string   `json:"nodePoolName,omitempty"`
+	NodeType     string    `json:"nodeType"`
+	Taints       []*string `json:"taints,omitempty"`
 }
 
-type GithubComKloudliteClusterOperatorApisInfraV1WorkerNodeSpecIn struct {
-	AccountName  string `json:"accountName"`
-	ClusterName  string `json:"clusterName"`
-	Config       string `json:"config"`
-	EdgeName     string `json:"edgeName"`
-	NodeIndex    *int   `json:"nodeIndex,omitempty"`
-	Pool         string `json:"pool"`
-	Provider     string `json:"provider"`
-	ProviderName string `json:"providerName"`
-	Region       string `json:"region"`
-	Stateful     *bool  `json:"stateful,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisClustersV1BYOCSpec struct {
-	AccountName        string    `json:"accountName"`
-	DisplayName        *string   `json:"displayName,omitempty"`
-	IncomingKafkaTopic string    `json:"incomingKafkaTopic"`
-	IngressClasses     []*string `json:"ingressClasses,omitempty"`
-	Provider           string    `json:"provider"`
-	PublicIps          []*string `json:"publicIps,omitempty"`
-	Region             string    `json:"region"`
-	StorageClasses     []*string `json:"storageClasses,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisClustersV1BYOCSpecIn struct {
-	AccountName        string    `json:"accountName"`
-	DisplayName        *string   `json:"displayName,omitempty"`
-	IncomingKafkaTopic string    `json:"incomingKafkaTopic"`
-	IngressClasses     []*string `json:"ingressClasses,omitempty"`
-	Provider           string    `json:"provider"`
-	PublicIps          []*string `json:"publicIps,omitempty"`
-	Region             string    `json:"region"`
-	StorageClasses     []*string `json:"storageClasses,omitempty"`
-}
-
-type GithubComKloudliteOperatorPkgOperatorCheck struct {
-	Generation *int    `json:"generation,omitempty"`
-	Message    *string `json:"message,omitempty"`
-	Status     bool    `json:"status"`
-}
-
-type GithubComKloudliteOperatorPkgOperatorResourceRef struct {
-	APIVersion *string `json:"apiVersion,omitempty"`
-	Kind       *string `json:"kind,omitempty"`
-	Name       string  `json:"name"`
-	Namespace  string  `json:"namespace"`
+type GithubComKloudliteOperatorApisClustersV1NodeSpecIn struct {
+	ClusterName  *string   `json:"clusterName,omitempty"`
+	NodePoolName *string   `json:"nodePoolName,omitempty"`
+	NodeType     string    `json:"nodeType"`
+	Taints       []*string `json:"taints,omitempty"`
 }
 
 type GithubComKloudliteOperatorPkgRawJSONRawJSON struct {
 	RawMessage interface{} `json:"RawMessage,omitempty"`
 }
 
-type KloudliteIoAppsInfraInternalDomainEntitiesHelmStatusVal struct {
-	IsReady *bool  `json:"isReady,omitempty"`
-	Message string `json:"message"`
+type NodeEdge struct {
+	Cursor string         `json:"cursor"`
+	Node   *entities.Node `json:"node"`
 }
 
-type MasterNodeEdge struct {
-	Cursor string               `json:"cursor"`
-	Node   *entities.MasterNode `json:"node"`
+type NodeIn struct {
+	APIVersion *string                                             `json:"apiVersion,omitempty"`
+	Kind       *string                                             `json:"kind,omitempty"`
+	Metadata   *v1.ObjectMeta                                      `json:"metadata"`
+	Spec       *GithubComKloudliteOperatorApisClustersV1NodeSpecIn `json:"spec"`
 }
 
-type MasterNodePaginatedRecords struct {
-	Edges      []*MasterNodeEdge `json:"edges"`
-	PageInfo   *PageInfo         `json:"pageInfo"`
-	TotalCount int               `json:"totalCount"`
+type NodePaginatedRecords struct {
+	Edges      []*NodeEdge `json:"edges"`
+	PageInfo   *PageInfo   `json:"pageInfo"`
+	TotalCount int         `json:"totalCount"`
 }
 
 type NodePoolEdge struct {
@@ -267,116 +195,6 @@ type PageInfo struct {
 	HasNextPage     bool    `json:"hasNextPage"`
 	HasPreviousPage bool    `json:"hasPreviousPage"`
 	StartCursor     *string `json:"startCursor,omitempty"`
-}
-
-type SecretEdge struct {
-	Cursor string           `json:"cursor"`
-	Node   *entities.Secret `json:"node"`
-}
-
-type SecretPaginatedRecords struct {
-	Edges      []*SecretEdge `json:"edges"`
-	PageInfo   *PageInfo     `json:"pageInfo"`
-	TotalCount int           `json:"totalCount"`
-}
-
-type WorkerNodeEdge struct {
-	Cursor string               `json:"cursor"`
-	Node   *entities.WorkerNode `json:"node"`
-}
-
-type WorkerNodePaginatedRecords struct {
-	Edges      []*WorkerNodeEdge `json:"edges"`
-	PageInfo   *PageInfo         `json:"pageInfo"`
-	TotalCount int               `json:"totalCount"`
-}
-
-type KloudliteIoPkgTypesSyncStatusAction string
-
-const (
-	KloudliteIoPkgTypesSyncStatusActionApply  KloudliteIoPkgTypesSyncStatusAction = "APPLY"
-	KloudliteIoPkgTypesSyncStatusActionDelete KloudliteIoPkgTypesSyncStatusAction = "DELETE"
-)
-
-var AllKloudliteIoPkgTypesSyncStatusAction = []KloudliteIoPkgTypesSyncStatusAction{
-	KloudliteIoPkgTypesSyncStatusActionApply,
-	KloudliteIoPkgTypesSyncStatusActionDelete,
-}
-
-func (e KloudliteIoPkgTypesSyncStatusAction) IsValid() bool {
-	switch e {
-	case KloudliteIoPkgTypesSyncStatusActionApply, KloudliteIoPkgTypesSyncStatusActionDelete:
-		return true
-	}
-	return false
-}
-
-func (e KloudliteIoPkgTypesSyncStatusAction) String() string {
-	return string(e)
-}
-
-func (e *KloudliteIoPkgTypesSyncStatusAction) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = KloudliteIoPkgTypesSyncStatusAction(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Kloudlite_io__pkg__types_SyncStatusAction", str)
-	}
-	return nil
-}
-
-func (e KloudliteIoPkgTypesSyncStatusAction) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type KloudliteIoPkgTypesSyncStatusState string
-
-const (
-	KloudliteIoPkgTypesSyncStatusStateAppliedAtAgent          KloudliteIoPkgTypesSyncStatusState = "APPLIED_AT_AGENT"
-	KloudliteIoPkgTypesSyncStatusStateErroredAtAgent          KloudliteIoPkgTypesSyncStatusState = "ERRORED_AT_AGENT"
-	KloudliteIoPkgTypesSyncStatusStateIDLe                    KloudliteIoPkgTypesSyncStatusState = "IDLE"
-	KloudliteIoPkgTypesSyncStatusStateInQueue                 KloudliteIoPkgTypesSyncStatusState = "IN_QUEUE"
-	KloudliteIoPkgTypesSyncStatusStateReceivedUpdateFromAgent KloudliteIoPkgTypesSyncStatusState = "RECEIVED_UPDATE_FROM_AGENT"
-)
-
-var AllKloudliteIoPkgTypesSyncStatusState = []KloudliteIoPkgTypesSyncStatusState{
-	KloudliteIoPkgTypesSyncStatusStateAppliedAtAgent,
-	KloudliteIoPkgTypesSyncStatusStateErroredAtAgent,
-	KloudliteIoPkgTypesSyncStatusStateIDLe,
-	KloudliteIoPkgTypesSyncStatusStateInQueue,
-	KloudliteIoPkgTypesSyncStatusStateReceivedUpdateFromAgent,
-}
-
-func (e KloudliteIoPkgTypesSyncStatusState) IsValid() bool {
-	switch e {
-	case KloudliteIoPkgTypesSyncStatusStateAppliedAtAgent, KloudliteIoPkgTypesSyncStatusStateErroredAtAgent, KloudliteIoPkgTypesSyncStatusStateIDLe, KloudliteIoPkgTypesSyncStatusStateInQueue, KloudliteIoPkgTypesSyncStatusStateReceivedUpdateFromAgent:
-		return true
-	}
-	return false
-}
-
-func (e KloudliteIoPkgTypesSyncStatusState) String() string {
-	return string(e)
-}
-
-func (e *KloudliteIoPkgTypesSyncStatusState) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = KloudliteIoPkgTypesSyncStatusState(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Kloudlite_io__pkg__types_SyncStatusState", str)
-	}
-	return nil
-}
-
-func (e KloudliteIoPkgTypesSyncStatusState) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type PaginationSortOrder string

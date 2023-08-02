@@ -2,15 +2,17 @@ package domain
 
 import (
 	"fmt"
+	"kloudlite.io/apps/infra/internal/entities"
 	"time"
 
-	"kloudlite.io/apps/infra/internal/domain/entities"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
 
 func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*entities.Cluster, error) {
 	cluster.EnsureGVK()
+	cluster.Namespace = d.getAccountNamespace(ctx.AccountName)
+
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &cluster.Cluster); err != nil {
 		return nil, err
 	}
@@ -22,8 +24,12 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 	nCluster, err := d.clusterRepo.Create(ctx, &cluster)
 	if err != nil {
 		if d.clusterRepo.ErrAlreadyExists(err) {
-			return nil, fmt.Errorf("cluster with name %q already exists", cluster.Name)
+			return nil, fmt.Errorf("cluster with name %q already exists in namespace %q", cluster.Name, cluster.Namespace)
 		}
+		return nil, err
+	}
+
+	if err := d.ensureNamespaceForAccount(ctx, ctx.AccountName); err != nil {
 		return nil, err
 	}
 
@@ -36,14 +42,16 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 
 func (d *domain) ListClusters(ctx InfraContext, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.Cluster], error) {
 	return d.clusterRepo.FindPaginated(ctx, repos.Filter{
-		"accountName": ctx.AccountName,
+		"accountName":        ctx.AccountName,
+		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
 	}, pagination)
 }
 
 func (d *domain) GetCluster(ctx InfraContext, name string) (*entities.Cluster, error) {
 	return d.clusterRepo.FindOne(ctx, repos.Filter{
-		"accountName":   ctx.AccountName,
-		"metadata.name": name,
+		"accountName":        ctx.AccountName,
+		"metadata.name":      name,
+		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
 	})
 }
 
@@ -54,7 +62,9 @@ func (d *domain) UpdateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 		return nil, err
 	}
 
-	clus.Cluster = cluster.Cluster
+	clus.Spec = cluster.Cluster.Spec
+	clus.Labels = cluster.Labels
+	clus.Annotations = cluster.Annotations
 	clus.SyncStatus = t.GenSyncStatus(t.SyncActionApply, clus.RecordVersion)
 
 	uCluster, err := d.clusterRepo.UpdateById(ctx, clus.Id, clus)
@@ -80,13 +90,15 @@ func (d *domain) DeleteCluster(ctx InfraContext, name string) error {
 	if err != nil {
 		return err
 	}
+
 	return d.deleteK8sResource(ctx, &upC.Cluster)
 }
 
 func (d *domain) OnDeleteClusterMessage(ctx InfraContext, cluster entities.Cluster) error {
 	return d.clusterRepo.DeleteOne(ctx, repos.Filter{
-		"accountName":   ctx.AccountName,
-		"metadata.name": cluster.Name,
+		"accountName":        ctx.AccountName,
+		"metadata.name":      cluster.Name,
+		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
 	})
 }
 
@@ -96,9 +108,20 @@ func (d *domain) OnUpdateClusterMessage(ctx InfraContext, cluster entities.Clust
 		return err
 	}
 
-	c.Cluster = cluster.Cluster
+	if err := d.matchRecordVersion(cluster.Annotations, c.RecordVersion); err != nil {
+		return nil
+	}
+
+	c.Cluster.Labels = cluster.Labels
+	c.Cluster.Annotations = cluster.Annotations
+	c.Cluster.Spec = cluster.Spec
+
 	c.SyncStatus.LastSyncedAt = time.Now()
+	c.SyncStatus.Error = nil
+	c.SyncStatus.RecordVersion = c.RecordVersion
 	c.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+
+	c.Status = cluster.Status
 
 	_, err = d.clusterRepo.UpdateById(ctx, c.Id, c)
 	return err
@@ -106,8 +129,9 @@ func (d *domain) OnUpdateClusterMessage(ctx InfraContext, cluster entities.Clust
 
 func (d *domain) findCluster(ctx InfraContext, clusterName string) (*entities.Cluster, error) {
 	cluster, err := d.clusterRepo.FindOne(ctx, repos.Filter{
-		"accountName":   ctx.AccountName,
-		"metadata.name": clusterName,
+		"accountName":        ctx.AccountName,
+		"metadata.name":      clusterName,
+		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
 	})
 	if err != nil {
 		return nil, err
@@ -117,7 +141,3 @@ func (d *domain) findCluster(ctx InfraContext, clusterName string) (*entities.Cl
 	}
 	return cluster, nil
 }
-
-// func (d *domain) OnUpdateBYOCClusterMessage(ctx InfraContext, cluster entities.BYOCCluster) error {
-// 	d.findBYOCCluster(ctx, cluster.Name)
-// }
