@@ -2,9 +2,11 @@ package domain
 
 import (
 	"fmt"
-	"kloudlite.io/apps/infra/internal/entities"
 	"time"
 
+	"kloudlite.io/apps/infra/internal/entities"
+
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -16,6 +18,17 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &cluster.Cluster); err != nil {
 		return nil, err
 	}
+
+	cps, err := d.findProviderSecret(ctx, cluster.Spec.CredentialsRef.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	if cps.IsMarkedForDeletion() {
+		return nil, fmt.Errorf("cloud provider secret %q is marked for deletion, aborting cluster creation ...", cps.Name)
+	}
+
+	cluster.Spec.CredentialsRef.Namespace = cps.Namespace
 
 	cluster.IncrementRecordVersion()
 	cluster.AccountName = ctx.AccountName
@@ -62,6 +75,23 @@ func (d *domain) UpdateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 		return nil, err
 	}
 
+	if clus.IsMarkedForDeletion() {
+		return nil, fmt.Errorf("cluster %q in namespace %q is marked for deletion, could not perform any update operation", clus.Name, clus.Namespace)
+	}
+
+	cps, err := d.findProviderSecret(ctx, cluster.Spec.CredentialsRef.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	if cps.IsMarkedForDeletion() {
+		return nil, fmt.Errorf("cloud provider secret %q is marked for deletion, aborting cluster update ...", cps.Name)
+	}
+
+	cluster.Spec.CredentialsRef.Namespace = cps.Namespace
+
+	clus.IncrementRecordVersion()
+
 	clus.Spec = cluster.Cluster.Spec
 	clus.Labels = cluster.Labels
 	clus.Annotations = cluster.Annotations
@@ -85,6 +115,7 @@ func (d *domain) DeleteCluster(ctx InfraContext, name string) error {
 		return err
 	}
 
+	c.MarkedForDeletion = fn.New(true)
 	c.SyncStatus = t.GetSyncStatusForDeletion(c.Generation)
 	upC, err := d.clusterRepo.UpdateById(ctx, c.Id, c)
 	if err != nil {

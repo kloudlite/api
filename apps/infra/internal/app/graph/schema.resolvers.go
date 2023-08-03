@@ -70,8 +70,8 @@ func (r *mutationResolver) InfraDeleteNodePool(ctx context.Context, clusterName 
 }
 
 // InfraCheckNameAvailability is the resolver for the infra_checkNameAvailability field.
-func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType domain.ResType, name string) (*domain.CheckNameAvailabilityOutput, error) {
-	return r.Domain.CheckNameAvailability(toInfraContext(ctx), resType, name)
+func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType domain.ResType, clusterName *string, name string) (*domain.CheckNameAvailabilityOutput, error) {
+	return r.Domain.CheckNameAvailability(toInfraContext(ctx), resType, clusterName, name)
 }
 
 // InfraListClusters is the resolver for the infra_listClusters field.

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"kloudlite.io/apps/infra/internal/entities"
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -46,7 +47,13 @@ func (d *domain) UpdateNodePool(ctx InfraContext, clusterName string, nodePool e
 		return nil, err
 	}
 
-	np.NodePool = nodePool.NodePool
+	if np.IsMarkedForDeletion() {
+		return nil, fmt.Errorf("nodepool %q (clusterName=%q) is marked for deletion, aborting update ...", nodePool.Name, clusterName)
+	}
+
+	np.Labels = nodePool.Labels
+	np.Annotations = nodePool.Annotations
+	np.Spec = nodePool.Spec
 
 	np.IncrementRecordVersion()
 	np.SyncStatus = t.GenSyncStatus(t.SyncActionApply, np.RecordVersion)
@@ -69,6 +76,11 @@ func (d *domain) DeleteNodePool(ctx InfraContext, clusterName string, poolName s
 		return err
 	}
 
+	if np.IsMarkedForDeletion() {
+		return fmt.Errorf("nodepool %q (clusterName=%q) is already marked for deletion", poolName, clusterName)
+	}
+
+	np.MarkedForDeletion = fn.New(true)
 	np.SyncStatus = t.GetSyncStatusForDeletion(np.Generation)
 	upC, err := d.nodePoolRepo.UpdateById(ctx, np.Id, np)
 	if err != nil {

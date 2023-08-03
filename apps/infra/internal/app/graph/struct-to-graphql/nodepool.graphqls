@@ -5,6 +5,7 @@ type NodePool @shareable {
   creationTime: Date!
   id: String!
   kind: String!
+  markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
   spec: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpec!

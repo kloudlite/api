@@ -6,6 +6,7 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/infra/internal/entities"
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 	"kloudlite.io/pkg/types"
 )
@@ -91,7 +92,20 @@ func (d *domain) UpdateProviderSecret(ctx InfraContext, secret entities.CloudPro
 }
 
 func (d *domain) DeleteProviderSecret(ctx InfraContext, secretName string) error {
-	return fmt.Errorf("yet to be implemented")
+	cps, err := d.findProviderSecret(ctx, secretName)
+	if err != nil {
+		return err
+	}
+
+	if cps.IsMarkedForDeletion() {
+		return fmt.Errorf("cloud provider secret %q is already marked for deletion", secretName)
+	}
+
+	cps.MarkedForDeletion = fn.New(true)
+	if _, err := d.secretRepo.UpdateById(ctx, cps.Id, cps); err != nil {
+		return err
+	}
+	return nil
 }
 
 func (d *domain) ListProviderSecrets(ctx InfraContext, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.CloudProviderSecret], error) {

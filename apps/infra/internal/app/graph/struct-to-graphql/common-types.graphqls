@@ -1,16 +1,17 @@
 type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpec @shareable {
   accountName: String!
-  agentHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRef!
-  availabilityMode: String!
-  cloudProvider: String!
+  agentHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRef
+  availabilityMode: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAvailabilityMode!
+  cloudProvider: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCloudProvider!
   credentialsRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCredentialsRef!
   nodeIps: [String]
-  operatorsHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRef!
+  operatorsHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRef
   region: String!
   vpc: String
 }
 
 type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRef @shareable {
+  key: String!
   name: String!
   namespace: String
 }
@@ -21,6 +22,7 @@ type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCredentialsR
 }
 
 type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRef @shareable {
+  key: String!
   name: String!
   namespace: String
 }
@@ -36,7 +38,7 @@ type Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConf
   imageId: String
   isGpu: Boolean
   onDemandSpecs: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigOnDemandSpecs
-  provisionMode: String!
+  provisionMode: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigProvisionMode!
   region: String
   spotSpecs: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigSpotSpecs
   vpc: String
@@ -56,7 +58,7 @@ type Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConf
 type Github_com__kloudlite__operator__apis__clusters__v1_NodeSpec @shareable {
   clusterName: String
   nodePoolName: String
-  nodeType: String!
+  nodeType: Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecNodeType!
   taints: [String]
 }
 
@@ -112,6 +114,7 @@ type PageInfo @shareable {
 }
 
 input Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRefIn {
+  key: String!
   name: String!
   namespace: String
 }
@@ -123,17 +126,18 @@ input Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCredentials
 
 input Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecIn {
   accountName: String!
-  agentHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRefIn!
-  availabilityMode: String!
-  cloudProvider: String!
+  agentHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRefIn
+  availabilityMode: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAvailabilityMode!
+  cloudProvider: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCloudProvider!
   credentialsRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCredentialsRefIn!
   nodeIps: [String]
-  operatorsHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRefIn!
+  operatorsHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRefIn
   region: String!
   vpc: String
 }
 
 input Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRefIn {
+  key: String!
   name: String!
   namespace: String
 }
@@ -142,7 +146,7 @@ input Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeCon
   imageId: String
   isGpu: Boolean
   onDemandSpecs: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigOnDemandSpecsIn
-  provisionMode: String!
+  provisionMode: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigProvisionMode!
   region: String
   spotSpecs: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigSpotSpecsIn
   vpc: String
@@ -169,7 +173,7 @@ input Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecIn {
 input Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecIn {
   clusterName: String
   nodePoolName: String
-  nodeType: String!
+  nodeType: Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecNodeType!
   taints: [String]
 }
 
@@ -178,6 +182,30 @@ input MetadataIn {
   labels: Map
   name: String!
   namespace: String
+}
+
+enum Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAvailabilityMode {
+  dev
+  HA
+}
+
+enum Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCloudProvider {
+  aws
+  azure
+  do
+  gcp
+}
+
+enum Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigProvisionMode {
+  on_demand
+  reserved
+  spot
+}
+
+enum Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecNodeType {
+  cluster
+  master
+  worker
 }
 
 enum Kloudlite_io__pkg__types_SyncStatusAction {

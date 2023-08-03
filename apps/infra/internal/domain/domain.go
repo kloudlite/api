@@ -34,12 +34,7 @@ type domain struct {
 
 	clusterRepo repos.DbRepo[*entities.Cluster]
 	nodeRepo    repos.DbRepo[*entities.Node]
-	// byocClusterRepo repos.DbRepo[*entities.BYOCCluster]
-	//edgeRepo        repos.DbRepo[*entities.Edge]
-	//providerRepo    repos.DbRepo[*entities.CloudProvider]
 	k8sClient client.Client
-	//masterNodeRepo  repos.DbRepo[*entities.MasterNode]
-	//workerNodeRepo  repos.DbRepo[*entities.WorkerNode]
 	nodePoolRepo repos.DbRepo[*entities.NodePool]
 
 	secretRepo repos.DbRepo[*entities.CloudProviderSecret]
@@ -165,6 +160,7 @@ func (d *domain) matchRecordVersion(annotations map[string]string, rv int) error
 }
 
 func (d *domain) getAccountNamespace(accountName string) string {
+  // TODO(nxtcoder17): need to fix this to use accounts-api GRPC, once accounts api is up and running
 	return fmt.Sprintf("kl-account-%s", accountName)
 }
 
@@ -191,7 +187,6 @@ func (d *domain) ensureNamespaceForAccount(ctx context.Context, accountName stri
 	}
 
 	return nil
-
 }
 
 var Module = fx.Module("domain",
@@ -199,18 +194,12 @@ var Module = fx.Module("domain",
 		func(
 			env *env.Env,
 			clusterRepo repos.DbRepo[*entities.Cluster],
-			// byocClusterRepo repos.DbRepo[*entities.BYOCCluster],
-			//providerRepo repos.DbRepo[*entities.CloudProvider],
-			//edgeRepo repos.DbRepo[*entities.Edge],
-			//masterNodeRepo repos.DbRepo[*entities.MasterNode],
-			//workerNodeRepo repos.DbRepo[*entities.WorkerNode],
 			nodeRepo repos.DbRepo[*entities.Node],
 			nodePoolRepo repos.DbRepo[*entities.NodePool],
 			secretRepo repos.DbRepo[*entities.CloudProviderSecret],
 
 			financeClient finance.FinanceClient,
 
-			// agentMessenger agent.Sender,
 			producer redpanda.Producer,
 
 			k8sClient client.Client,
@@ -223,11 +212,6 @@ var Module = fx.Module("domain",
 
 				clusterRepo: clusterRepo,
 				nodeRepo:    nodeRepo,
-				// byocClusterRepo: byocClusterRepo,
-				//providerRepo:    providerRepo,
-				//edgeRepo:        edgeRepo,
-				//masterNodeRepo:  masterNodeRepo,
-				//workerNodeRepo:  workerNodeRepo,
 				nodePoolRepo: nodePoolRepo,
 				secretRepo:   secretRepo,
 

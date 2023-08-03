@@ -35,22 +35,24 @@ type ClusterPaginatedRecords struct {
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpec struct {
 	AccountName            string                                                                     `json:"accountName"`
-	AgentHelmValuesRef     *GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRef     `json:"agentHelmValuesRef"`
-	AvailabilityMode       string                                                                     `json:"availabilityMode"`
-	CloudProvider          string                                                                     `json:"cloudProvider"`
+	AgentHelmValuesRef     *GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRef     `json:"agentHelmValuesRef,omitempty"`
+	AvailabilityMode       GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode        `json:"availabilityMode"`
+	CloudProvider          GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider           `json:"cloudProvider"`
 	CredentialsRef         *GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRef         `json:"credentialsRef"`
 	NodeIps                []*string                                                                  `json:"nodeIps,omitempty"`
-	OperatorsHelmValuesRef *GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRef `json:"operatorsHelmValuesRef"`
+	OperatorsHelmValuesRef *GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRef `json:"operatorsHelmValuesRef,omitempty"`
 	Region                 string                                                                     `json:"region"`
 	Vpc                    *string                                                                    `json:"vpc,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRef struct {
+	Key       string  `json:"key"`
 	Name      string  `json:"name"`
 	Namespace *string `json:"namespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRefIn struct {
+	Key       string  `json:"key"`
 	Name      string  `json:"name"`
 	Namespace *string `json:"namespace,omitempty"`
 }
@@ -67,22 +69,24 @@ type GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRefIn struct 
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpecIn struct {
 	AccountName            string                                                                       `json:"accountName"`
-	AgentHelmValuesRef     *GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRefIn     `json:"agentHelmValuesRef"`
-	AvailabilityMode       string                                                                       `json:"availabilityMode"`
-	CloudProvider          string                                                                       `json:"cloudProvider"`
+	AgentHelmValuesRef     *GithubComKloudliteOperatorApisClustersV1ClusterSpecAgentHelmValuesRefIn     `json:"agentHelmValuesRef,omitempty"`
+	AvailabilityMode       GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode          `json:"availabilityMode"`
+	CloudProvider          GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider             `json:"cloudProvider"`
 	CredentialsRef         *GithubComKloudliteOperatorApisClustersV1ClusterSpecCredentialsRefIn         `json:"credentialsRef"`
 	NodeIps                []*string                                                                    `json:"nodeIps,omitempty"`
-	OperatorsHelmValuesRef *GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRefIn `json:"operatorsHelmValuesRef"`
+	OperatorsHelmValuesRef *GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRefIn `json:"operatorsHelmValuesRef,omitempty"`
 	Region                 string                                                                       `json:"region"`
 	Vpc                    *string                                                                      `json:"vpc,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRef struct {
+	Key       string  `json:"key"`
 	Name      string  `json:"name"`
 	Namespace *string `json:"namespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpecOperatorsHelmValuesRefIn struct {
+	Key       string  `json:"key"`
 	Name      string  `json:"name"`
 	Namespace *string `json:"namespace,omitempty"`
 }
@@ -98,7 +102,7 @@ type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfig struct {
 	ImageID       *string                                                                         `json:"imageId,omitempty"`
 	IsGpu         *bool                                                                           `json:"isGpu,omitempty"`
 	OnDemandSpecs *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigOnDemandSpecs `json:"onDemandSpecs,omitempty"`
-	ProvisionMode string                                                                          `json:"provisionMode"`
+	ProvisionMode GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode  `json:"provisionMode"`
 	Region        *string                                                                         `json:"region,omitempty"`
 	SpotSpecs     *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigSpotSpecs     `json:"spotSpecs,omitempty"`
 	Vpc           *string                                                                         `json:"vpc,omitempty"`
@@ -108,7 +112,7 @@ type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigIn struct 
 	ImageID       *string                                                                           `json:"imageId,omitempty"`
 	IsGpu         *bool                                                                             `json:"isGpu,omitempty"`
 	OnDemandSpecs *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigOnDemandSpecsIn `json:"onDemandSpecs,omitempty"`
-	ProvisionMode string                                                                            `json:"provisionMode"`
+	ProvisionMode GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode    `json:"provisionMode"`
 	Region        *string                                                                           `json:"region,omitempty"`
 	SpotSpecs     *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigSpotSpecsIn     `json:"spotSpecs,omitempty"`
 	Vpc           *string                                                                           `json:"vpc,omitempty"`
@@ -144,17 +148,17 @@ type GithubComKloudliteOperatorApisClustersV1NodePoolSpecIn struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1NodeSpec struct {
-	ClusterName  *string   `json:"clusterName,omitempty"`
-	NodePoolName *string   `json:"nodePoolName,omitempty"`
-	NodeType     string    `json:"nodeType"`
-	Taints       []*string `json:"taints,omitempty"`
+	ClusterName  *string                                                  `json:"clusterName,omitempty"`
+	NodePoolName *string                                                  `json:"nodePoolName,omitempty"`
+	NodeType     GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType `json:"nodeType"`
+	Taints       []*string                                                `json:"taints,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1NodeSpecIn struct {
-	ClusterName  *string   `json:"clusterName,omitempty"`
-	NodePoolName *string   `json:"nodePoolName,omitempty"`
-	NodeType     string    `json:"nodeType"`
-	Taints       []*string `json:"taints,omitempty"`
+	ClusterName  *string                                                  `json:"clusterName,omitempty"`
+	NodePoolName *string                                                  `json:"nodePoolName,omitempty"`
+	NodeType     GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType `json:"nodeType"`
+	Taints       []*string                                                `json:"taints,omitempty"`
 }
 
 type GithubComKloudliteOperatorPkgRawJSONRawJSON struct {
@@ -195,6 +199,178 @@ type PageInfo struct {
 	HasNextPage     bool    `json:"hasNextPage"`
 	HasPreviousPage bool    `json:"hasPreviousPage"`
 	StartCursor     *string `json:"startCursor,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode string
+
+const (
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityModeDev GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode = "dev"
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityModeHa  GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode = "HA"
+)
+
+var AllGithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode = []GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode{
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityModeDev,
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityModeHa,
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityModeDev, GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityModeHa:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAvailabilityMode", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider string
+
+const (
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderAws   GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider = "aws"
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderAzure GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider = "azure"
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderDo    GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider = "do"
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderGcp   GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider = "gcp"
+)
+
+var AllGithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider = []GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider{
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderAws,
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderAzure,
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderDo,
+	GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderGcp,
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderAws, GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderAzure, GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderDo, GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProviderGcp:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCloudProvider", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecCloudProvider) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode string
+
+const (
+	GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeOnDemand GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode = "on_demand"
+	GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeReserved GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode = "reserved"
+	GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeSpot     GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode = "spot"
+)
+
+var AllGithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode = []GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode{
+	GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeOnDemand,
+	GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeReserved,
+	GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeSpot,
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeOnDemand, GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeReserved, GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionModeSpot:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigProvisionMode", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1NodePoolSpecAwsNodeConfigProvisionMode) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType string
+
+const (
+	GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeCluster GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType = "cluster"
+	GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeMaster  GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType = "master"
+	GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeWorker  GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType = "worker"
+)
+
+var AllGithubComKloudliteOperatorApisClustersV1NodeSpecNodeType = []GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType{
+	GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeCluster,
+	GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeMaster,
+	GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeWorker,
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeCluster, GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeMaster, GithubComKloudliteOperatorApisClustersV1NodeSpecNodeTypeWorker:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecNodeType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisClustersV1NodeSpecNodeType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type PaginationSortOrder string
