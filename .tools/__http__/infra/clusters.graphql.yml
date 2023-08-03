@@ -29,10 +29,18 @@ variables:
     spec:
       accountName: "{{.accountName}}"
       cloudProvider: 'aws'
-      availabilityMode: ''
+      availabilityMode: 'dev'
       region: ap-south-1
-      agentHelmValuesRef: |+
-        {}
+      credentialsRef:
+        name: provider-sample
+      # agentHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
+      #   key: "asdfasf"
+      # operatorsHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
+      #   key: "asdfasf"
 ---
 
 label: List Clusters
@@ -51,6 +59,7 @@ query: |+
           status {
             checks
           }
+          markedForDeletion
           syncStatus {
             action
             error
@@ -77,8 +86,14 @@ query: |+
       metadata {
         name
       }
+      recordVersion
+      markedForDeletion
       spec {
-        provider
+        cloudProvider
+        credentialsRef {
+          name
+          namespace
+        }
       }
     }
   }
@@ -88,8 +103,15 @@ variables:
 ---
 label: Update Cluster
 query: |+
-  mutation Infra_updateCluster($cluster: Cluster!) {
-    infra_updateCluster(cluster: $cluster)
+  mutation Infra_updateCluster($cluster: ClusterIn!) {
+    infra_updateCluster(cluster: $cluster) {
+      metadata {
+        name
+      }
+      spec {
+        accountName
+      }
+    }
   }
 variables:
   cluster:
@@ -97,13 +119,21 @@ variables:
       name: "{{.clusterName}}"
     spec:
       accountName: "{{.accountName}}"
-      providerName: "{{.providerName}}"
-      provider: aws
-      count: 2
+      cloudProvider: 'aws'
+      availabilityMode: 'dev'
       region: ap-south-1
-      config: '{"instanceType":"c6a.large","vpc":""}'
+      credentialsRef:
+        name: sdfaf2
+        namespace: asdfasdf
+      # agentHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
+      # operatorsHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
 
 ---
+
 label: Delete Cluster
 query: |+
   mutation Infra_deleteCluster($name: String!) {
@@ -111,6 +141,7 @@ query: |+
   }
 variables:
   name: "{{.clusterName}}"
+
 ---
 
 
