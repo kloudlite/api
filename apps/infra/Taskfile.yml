@@ -51,6 +51,7 @@ tasks:
       #   > ./internal/app/_struct-to-graphql/main.go
       - go run ../../cmd/struct-to-graphql
           --struct kloudlite.io/apps/infra/internal/entities.Cluster
+          --struct kloudlite.io/apps/infra/internal/entities.BYOCCluster
           --struct kloudlite.io/apps/infra/internal/entities.Node
           --struct kloudlite.io/apps/infra/internal/entities.NodePool
           --struct kloudlite.io/apps/infra/internal/entities.CloudProviderSecret

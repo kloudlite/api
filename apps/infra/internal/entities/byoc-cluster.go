@@ -18,6 +18,7 @@ type BYOCCluster struct {
 	IsConnected            bool                     `json:"isConnected" graphql:"noinput"`
 	SyncStatus             t.SyncStatus             `json:"syncStatus" graphql:"noinput"`
 	HelmStatus             map[string]HelmStatusVal `json:"helmStatus" graphql:"noinput"`
+	AccountName            string                   `json:"accountName"`
 }
 
 var BYOCClusterIndices = []repos.IndexField{
@@ -30,7 +31,7 @@ var BYOCClusterIndices = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
 			{Key: "metadata.name", Value: repos.IndexAsc},
-			{Key: "spec.accountName", Value: repos.IndexAsc},
+			{Key: "accountName", Value: repos.IndexAsc},
 			{Key: "spec.region", Value: repos.IndexAsc},
 			{Key: "spec.provider", Value: repos.IndexAsc},
 		},

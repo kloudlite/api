@@ -33,6 +33,24 @@ func (r *mutationResolver) InfraDeleteCluster(ctx context.Context, name string) 
 	return true, nil
 }
 
+// InfraCreateBYOCCluster is the resolver for the infra_createBYOCCluster field.
+func (r *mutationResolver) InfraCreateBYOCCluster(ctx context.Context, byocCluster entities.BYOCCluster) (*entities.BYOCCluster, error) {
+	return r.Domain.CreateBYOCCluster(toInfraContext(ctx), byocCluster)
+}
+
+// InfraUpdateBYOCCluster is the resolver for the infra_updateBYOCCluster field.
+func (r *mutationResolver) InfraUpdateBYOCCluster(ctx context.Context, byocCluster entities.BYOCCluster) (*entities.BYOCCluster, error) {
+	return r.Domain.UpdateBYOCCluster(toInfraContext(ctx), byocCluster)
+}
+
+// InfraDeleteBYOCCluster is the resolver for the infra_deleteBYOCCluster field.
+func (r *mutationResolver) InfraDeleteBYOCCluster(ctx context.Context, name string) (bool, error) {
+	if err := r.Domain.DeleteBYOCCluster(toInfraContext(ctx), name); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
 // InfraCreateProviderSecret is the resolver for the infra_createProviderSecret field.
 func (r *mutationResolver) InfraCreateProviderSecret(ctx context.Context, secret entities.CloudProviderSecret) (*entities.CloudProviderSecret, error) {
 	return r.Domain.CreateProviderSecret(toInfraContext(ctx), secret)
@@ -109,6 +127,43 @@ func (r *queryResolver) InfraListClusters(ctx context.Context, pagination *types
 // InfraGetCluster is the resolver for the infra_getCluster field.
 func (r *queryResolver) InfraGetCluster(ctx context.Context, name string) (*entities.Cluster, error) {
 	return r.Domain.GetCluster(toInfraContext(ctx), name)
+}
+
+// InfraListBYOCClusters is the resolver for the infra_listBYOCClusters field.
+func (r *queryResolver) InfraListBYOCClusters(ctx context.Context, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error) {
+	if pagination == nil {
+		pagination = &types.DefaultCursorPagination
+	}
+	pClusters, err := r.Domain.ListBYOCClusters(toInfraContext(ctx), *pagination)
+	if err != nil {
+		return nil, err
+	}
+
+	bce := make([]*model.BYOCClusterEdge, len(pClusters.Edges))
+	for i := range pClusters.Edges {
+		bce[i] = &model.BYOCClusterEdge{
+			Node:   pClusters.Edges[i].Node,
+			Cursor: pClusters.Edges[i].Cursor,
+		}
+	}
+
+	m := model.BYOCClusterPaginatedRecords{
+		Edges: bce,
+		PageInfo: &model.PageInfo{
+			EndCursor:       &pClusters.PageInfo.EndCursor,
+			HasNextPage:     pClusters.PageInfo.HasNextPage,
+			HasPreviousPage: pClusters.PageInfo.HasPrevPage,
+			StartCursor:     &pClusters.PageInfo.StartCursor,
+		},
+		TotalCount: int(pClusters.TotalCount),
+	}
+
+	return &m, nil
+}
+
+// InfraGetBYOCCluster is the resolver for the infra_getBYOCCluster field.
+func (r *queryResolver) InfraGetBYOCCluster(ctx context.Context, name string) (*entities.BYOCCluster, error) {
+	return r.Domain.GetBYOCCluster(toInfraContext(ctx), name)
 }
 
 // InfraListNodePools is the resolver for the infra_listNodePools field.
@@ -208,13 +263,3 @@ func (r *Resolver) PaginationQueryArgs() generated.PaginationQueryArgsResolver {
 type mutationResolver struct{ *Resolver }
 type queryResolver struct{ *Resolver }
 type paginationQueryArgsResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *mutationResolver) InfraResyncCluster(ctx context.Context, name string) (bool, error) {
-	panic(fmt.Errorf("not implemented: InfraResyncCluster - infra_resyncCluster"))
-}

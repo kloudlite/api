@@ -32,10 +32,11 @@ import (
 type domain struct {
 	env *env.Env
 
-	clusterRepo repos.DbRepo[*entities.Cluster]
-	nodeRepo    repos.DbRepo[*entities.Node]
-	k8sClient client.Client
-	nodePoolRepo repos.DbRepo[*entities.NodePool]
+	byocClusterRepo repos.DbRepo[*entities.BYOCCluster]
+	clusterRepo     repos.DbRepo[*entities.Cluster]
+	nodeRepo        repos.DbRepo[*entities.Node]
+	k8sClient       client.Client
+	nodePoolRepo    repos.DbRepo[*entities.NodePool]
 
 	secretRepo repos.DbRepo[*entities.CloudProviderSecret]
 
@@ -160,7 +161,7 @@ func (d *domain) matchRecordVersion(annotations map[string]string, rv int) error
 }
 
 func (d *domain) getAccountNamespace(accountName string) string {
-  // TODO(nxtcoder17): need to fix this to use accounts-api GRPC, once accounts api is up and running
+	// TODO(nxtcoder17): need to fix this to use accounts-api GRPC, once accounts api is up and running
 	return fmt.Sprintf("kl-account-%s", accountName)
 }
 
@@ -193,6 +194,7 @@ var Module = fx.Module("domain",
 	fx.Provide(
 		func(
 			env *env.Env,
+			byocClusterRepo repos.DbRepo[*entities.BYOCCluster],
 			clusterRepo repos.DbRepo[*entities.Cluster],
 			nodeRepo repos.DbRepo[*entities.Node],
 			nodePoolRepo repos.DbRepo[*entities.NodePool],
@@ -210,10 +212,11 @@ var Module = fx.Module("domain",
 			return &domain{
 				env: env,
 
-				clusterRepo: clusterRepo,
-				nodeRepo:    nodeRepo,
-				nodePoolRepo: nodePoolRepo,
-				secretRepo:   secretRepo,
+				clusterRepo:     clusterRepo,
+				byocClusterRepo: byocClusterRepo,
+				nodeRepo:        nodeRepo,
+				nodePoolRepo:    nodePoolRepo,
+				secretRepo:      secretRepo,
 
 				producer: producer,
 

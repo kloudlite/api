@@ -11,6 +11,17 @@ import (
 	"kloudlite.io/apps/infra/internal/entities"
 )
 
+type BYOCClusterEdge struct {
+	Cursor string                `json:"cursor"`
+	Node   *entities.BYOCCluster `json:"node"`
+}
+
+type BYOCClusterPaginatedRecords struct {
+	Edges      []*BYOCClusterEdge `json:"edges"`
+	PageInfo   *PageInfo          `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
 type CloudProviderSecretEdge struct {
 	Cursor string                        `json:"cursor"`
 	Node   *entities.CloudProviderSecret `json:"node"`
@@ -31,6 +42,28 @@ type ClusterPaginatedRecords struct {
 	Edges      []*ClusterEdge `json:"edges"`
 	PageInfo   *PageInfo      `json:"pageInfo"`
 	TotalCount int            `json:"totalCount"`
+}
+
+type GithubComKloudliteOperatorApisClustersV1BYOCSpec struct {
+	AccountName        string    `json:"accountName"`
+	DisplayName        *string   `json:"displayName,omitempty"`
+	IncomingKafkaTopic string    `json:"incomingKafkaTopic"`
+	IngressClasses     []*string `json:"ingressClasses,omitempty"`
+	Provider           string    `json:"provider"`
+	PublicIps          []*string `json:"publicIps,omitempty"`
+	Region             string    `json:"region"`
+	StorageClasses     []*string `json:"storageClasses,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisClustersV1BYOCSpecIn struct {
+	AccountName        string    `json:"accountName"`
+	DisplayName        *string   `json:"displayName,omitempty"`
+	IncomingKafkaTopic string    `json:"incomingKafkaTopic"`
+	IngressClasses     []*string `json:"ingressClasses,omitempty"`
+	Provider           string    `json:"provider"`
+	PublicIps          []*string `json:"publicIps,omitempty"`
+	Region             string    `json:"region"`
+	StorageClasses     []*string `json:"storageClasses,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1ClusterSpec struct {
@@ -163,6 +196,11 @@ type GithubComKloudliteOperatorApisClustersV1NodeSpecIn struct {
 
 type GithubComKloudliteOperatorPkgRawJSONRawJSON struct {
 	RawMessage interface{} `json:"RawMessage,omitempty"`
+}
+
+type KloudliteIoAppsInfraInternalEntitiesHelmStatusVal struct {
+	IsReady *bool  `json:"isReady,omitempty"`
+	Message string `json:"message"`
 }
 
 type NodeEdge struct {

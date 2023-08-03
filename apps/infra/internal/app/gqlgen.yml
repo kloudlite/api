@@ -84,6 +84,10 @@ models:
     model: kloudlite.io/apps/infra/internal/entities.Cluster
   ClusterIn: *cluster-model
 
+  BYOCCluster: &byoc-cluster-model
+    model: kloudlite.io/apps/infra/internal/entities.BYOCCluster
+  BYOCClusterIn: *byoc-cluster-model
+
   # Edge: &edge-model
   #   model: kloudlite.io/apps/infra/internal/domain/entities.Edge
   # EdgeIn: *edge-model

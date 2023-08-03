@@ -40,6 +40,9 @@ type Query {
   infra_listClusters(pagination: PaginationQueryArgs): ClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
   infra_getCluster(name: String!): Cluster @isLoggedInAndVerified @hasAccount
 
+  infra_listBYOCClusters(pagination: PaginationQueryArgs): BYOCClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_getBYOCCluster(name: String!): BYOCCluster @isLoggedInAndVerified @hasAccount
+
   # get node pools
   infra_listNodePools(clusterName: String!, pagination: PaginationQueryArgs): NodePoolPaginatedRecords @isLoggedInAndVerified @hasAccount
   infra_getNodePool(clusterName: String!, poolName: String!): NodePool @isLoggedInAndVerified @hasAccount
@@ -56,6 +59,11 @@ type Mutation {
   infra_updateCluster(cluster: ClusterIn!): Cluster @isLoggedInAndVerified @hasAccount
   infra_deleteCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
   # infra_resyncCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+
+  # BYOC cluster
+  infra_createBYOCCluster(byocCluster: BYOCClusterIn!): BYOCCluster @isLoggedInAndVerified @hasAccount
+  infra_updateBYOCCluster(byocCluster: BYOCClusterIn!): BYOCCluster @isLoggedInAndVerified @hasAccount
+  infra_deleteBYOCCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
   infra_createProviderSecret(secret: CloudProviderSecretIn!): CloudProviderSecret @isLoggedInAndVerified @hasAccount
   infra_updateProviderSecret(secret: CloudProviderSecretIn!): CloudProviderSecret @isLoggedInAndVerified @hasAccount
