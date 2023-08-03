@@ -11,6 +11,7 @@ import (
 )
 
 type Server interface {
+	grpc.ServiceRegistrar
 	Listen(addr string) error
 	Stop()
 }
@@ -58,3 +59,6 @@ func NewGrpcServer(opts ServerOpts) (Server, error) {
 
 	return &grpcServer{Server: server, logger: opts.Logger}, nil
 }
+
+// Type guard to ensure grpcServer implements Server interface, at compile time
+var _ Server = &grpcServer{}
