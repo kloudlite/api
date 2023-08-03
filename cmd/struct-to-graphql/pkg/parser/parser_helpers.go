@@ -30,11 +30,18 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 		childType = genTypeName(pkgPath + "_" + f.Type.Name())
 	}
 
+	structName := func() string {
+		if pkgPath == "" {
+			return f.StructName
+		}
+		return commonLabel
+	}()
+
 	if f.Uri != nil {
 		jsonSchema, err := func() (*apiExtensionsV1.JSONSchemaProps, error) {
-			if strings.HasPrefix(*f.Uri, "https://") {
+			if strings.HasPrefix(*f.Uri, "http://") || strings.HasPrefix(*f.Uri, "https://") {
 				// WIP: https uri support, not completed, and nor tested
-				req, err := http.NewRequest(http.MethodGet, "https://raw.githubusercontent.com/instrumenta/kubernetes-json-schema/master/v1.18.1/secret.json", nil)
+				req, err := http.NewRequest(http.MethodGet, *f.Uri, nil)
 				if err != nil {
 					return nil, err
 				}
@@ -69,21 +76,14 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 			panic(err)
 		}
 
-		structName := func() string {
-			if pkgPath == "" {
-				return f.StructName
-			}
-			return commonLabel
-		}()
+		if f.Parser.structs[structName] == nil {
+			f.Parser.structs[structName] = newStruct()
+		}
 
 		if f.Inline {
 			p2 := newParser(f.Parser.kCli)
 			p2.structs[structName] = newStruct()
 			p2.GenerateFromJsonSchema(p2.structs[structName], childType, jsonSchema)
-
-			if f.Parser.structs[structName] == nil {
-				f.Parser.structs[structName] = newStruct()
-			}
 
 			fields2, inputFields2 := f.Parser.structs[structName].mergeParser(p2.structs[structName], childType)
 
@@ -102,13 +102,6 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string) {
 	}
 
 	p2 := newParser(f.Parser.kCli)
-
-	structName := func() string {
-		if pkgPath == "" {
-			return f.StructName
-		}
-		return commonLabel
-	}()
 
 	p2.structs[structName] = newStruct()
 	p2.GenerateGraphQLSchema(structName, childType, f.Type)

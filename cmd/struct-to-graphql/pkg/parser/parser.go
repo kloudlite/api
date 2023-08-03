@@ -438,14 +438,20 @@ func (p *parser) NavigateTree(s *Struct, name string, tree *v1.JSONSchemaProps, 
 
 		if v.Type == "string" {
 			if len(v.Enum) > 0 {
-				fields = append(fields, genFieldEntry(k, genTypeName(v.Type), m[k]))
-				inputFields = append(inputFields, genFieldEntry(k, genTypeName(v.Type), m[k]))
+				fqtn := typeName + genTypeName(k)
+				fields = append(fields, genFieldEntry(k, fqtn, m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, fqtn, m[k]))
 
-				m := make([]string, len(v.Enum))
+				enums := make([]string, len(v.Enum))
 				for i := range v.Enum {
-					m[i] = v.Enum[i].String()
+					vjson, _ := v.Enum[i].MarshalJSON()
+					var v string
+					if err := json.Unmarshal(vjson, &v); err != nil {
+						return
+					}
+					enums[i] = v
 				}
-				s.Enums[genTypeName(v.Type)] = m
+				s.Enums[fqtn] = enums
 				continue
 			}
 		}
