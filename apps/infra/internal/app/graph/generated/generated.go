@@ -360,10 +360,10 @@ type ComplexityRoot struct {
 		InfraGetCluster            func(childComplexity int, name string) int
 		InfraGetNodePool           func(childComplexity int, clusterName string, poolName string) int
 		InfraGetProviderSecret     func(childComplexity int, name string) int
-		InfraListBYOCClusters      func(childComplexity int, pagination *types.CursorPagination) int
-		InfraListClusters          func(childComplexity int, pagination *types.CursorPagination) int
-		InfraListNodePools         func(childComplexity int, clusterName string, pagination *types.CursorPagination) int
-		InfraListProviderSecrets   func(childComplexity int, pagination *types.CursorPagination) int
+		InfraListBYOCClusters      func(childComplexity int, search *string, pagination *types.CursorPagination) int
+		InfraListClusters          func(childComplexity int, search *string, pagination *types.CursorPagination) int
+		InfraListNodePools         func(childComplexity int, clusterName string, search *string, pagination *types.CursorPagination) int
+		InfraListProviderSecrets   func(childComplexity int, search *string, pagination *types.CursorPagination) int
 		__resolve__service         func(childComplexity int) int
 	}
 
@@ -449,13 +449,13 @@ type NodePoolResolver interface {
 }
 type QueryResolver interface {
 	InfraCheckNameAvailability(ctx context.Context, resType domain.ResType, clusterName *string, name string) (*domain.CheckNameAvailabilityOutput, error)
-	InfraListClusters(ctx context.Context, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error)
+	InfraListClusters(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error)
 	InfraGetCluster(ctx context.Context, name string) (*entities.Cluster, error)
-	InfraListBYOCClusters(ctx context.Context, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error)
+	InfraListBYOCClusters(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error)
 	InfraGetBYOCCluster(ctx context.Context, name string) (*entities.BYOCCluster, error)
-	InfraListNodePools(ctx context.Context, clusterName string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error)
+	InfraListNodePools(ctx context.Context, clusterName string, search *string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error)
 	InfraGetNodePool(ctx context.Context, clusterName string, poolName string) (*entities.NodePool, error)
-	InfraListProviderSecrets(ctx context.Context, pagination *types.CursorPagination) (*model.CloudProviderSecretPaginatedRecords, error)
+	InfraListProviderSecrets(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.CloudProviderSecretPaginatedRecords, error)
 	InfraGetProviderSecret(ctx context.Context, name string) (*entities.CloudProviderSecret, error)
 }
 
@@ -1905,7 +1905,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListBYOCClusters(childComplexity, args["pagination"].(*types.CursorPagination)), true
+		return e.complexity.Query.InfraListBYOCClusters(childComplexity, args["search"].(*string), args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listClusters":
 		if e.complexity.Query.InfraListClusters == nil {
@@ -1917,7 +1917,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListClusters(childComplexity, args["pagination"].(*types.CursorPagination)), true
+		return e.complexity.Query.InfraListClusters(childComplexity, args["search"].(*string), args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listNodePools":
 		if e.complexity.Query.InfraListNodePools == nil {
@@ -1929,7 +1929,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListNodePools(childComplexity, args["clusterName"].(string), args["pagination"].(*types.CursorPagination)), true
+		return e.complexity.Query.InfraListNodePools(childComplexity, args["clusterName"].(string), args["search"].(*string), args["pagination"].(*types.CursorPagination)), true
 
 	case "Query.infra_listProviderSecrets":
 		if e.complexity.Query.InfraListProviderSecrets == nil {
@@ -1941,7 +1941,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListProviderSecrets(childComplexity, args["pagination"].(*types.CursorPagination)), true
+		return e.complexity.Query.InfraListProviderSecrets(childComplexity, args["search"].(*string), args["pagination"].(*types.CursorPagination)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -2081,17 +2081,18 @@ type Query {
   infra_checkNameAvailability(resType: ResType!, clusterName: String, name: String!): CheckNameAvailabilityOutput! @isLoggedIn @hasAccount
 
   # clusters
-  infra_listClusters(pagination: PaginationQueryArgs): ClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
+  # TODO(nxtcoder17): add filtering with keywords
+  infra_listClusters(search: String, pagination: PaginationQueryArgs): ClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
   infra_getCluster(name: String!): Cluster @isLoggedInAndVerified @hasAccount
 
-  infra_listBYOCClusters(pagination: PaginationQueryArgs): BYOCClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_listBYOCClusters(search: String, pagination: PaginationQueryArgs): BYOCClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
   infra_getBYOCCluster(name: String!): BYOCCluster @isLoggedInAndVerified @hasAccount
 
   # get node pools
-  infra_listNodePools(clusterName: String!, pagination: PaginationQueryArgs): NodePoolPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_listNodePools(clusterName: String!, search: String, pagination: PaginationQueryArgs): NodePoolPaginatedRecords @isLoggedInAndVerified @hasAccount
   infra_getNodePool(clusterName: String!, poolName: String!): NodePool @isLoggedInAndVerified @hasAccount
   
-  infra_listProviderSecrets(pagination: PaginationQueryArgs): CloudProviderSecretPaginatedRecords @isLoggedInAndVerified @hasAccount
+  infra_listProviderSecrets(search: String, pagination: PaginationQueryArgs): CloudProviderSecretPaginatedRecords @isLoggedInAndVerified @hasAccount
   infra_getProviderSecret(name: String!): CloudProviderSecret @isLoggedInAndVerified @hasAccount
 
   # TODO: get node, delete node
@@ -2918,30 +2919,48 @@ func (ec *executionContext) field_Query_infra_getProviderSecret_args(ctx context
 func (ec *executionContext) field_Query_infra_listBYOCClusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *types.CursorPagination
-	if tmp, ok := rawArgs["pagination"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
-		arg0, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+	var arg0 *string
+	if tmp, ok := rawArgs["search"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["pagination"] = arg0
+	args["search"] = arg0
+	var arg1 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg1, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg1
 	return args, nil
 }
 
 func (ec *executionContext) field_Query_infra_listClusters_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *types.CursorPagination
-	if tmp, ok := rawArgs["pagination"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
-		arg0, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+	var arg0 *string
+	if tmp, ok := rawArgs["search"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["pagination"] = arg0
+	args["search"] = arg0
+	var arg1 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg1, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg1
 	return args, nil
 }
 
@@ -2957,6 +2976,39 @@ func (ec *executionContext) field_Query_infra_listNodePools_args(ctx context.Con
 		}
 	}
 	args["clusterName"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["search"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg1
+	var arg2 *types.CursorPagination
+	if tmp, ok := rawArgs["pagination"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+		arg2, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["pagination"] = arg2
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_infra_listProviderSecrets_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 *string
+	if tmp, ok := rawArgs["search"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["search"] = arg0
 	var arg1 *types.CursorPagination
 	if tmp, ok := rawArgs["pagination"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
@@ -2966,21 +3018,6 @@ func (ec *executionContext) field_Query_infra_listNodePools_args(ctx context.Con
 		}
 	}
 	args["pagination"] = arg1
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_infra_listProviderSecrets_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 *types.CursorPagination
-	if tmp, ok := rawArgs["pagination"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
-		arg0, err = ec.unmarshalOPaginationQueryArgs2ᚖkloudliteᚗioᚋpkgᚋtypesᚐCursorPagination(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["pagination"] = arg0
 	return args, nil
 }
 
@@ -12157,7 +12194,7 @@ func (ec *executionContext) _Query_infra_listClusters(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListClusters(rctx, fc.Args["pagination"].(*types.CursorPagination))
+			return ec.resolvers.Query().InfraListClusters(rctx, fc.Args["search"].(*string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -12347,7 +12384,7 @@ func (ec *executionContext) _Query_infra_listBYOCClusters(ctx context.Context, f
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListBYOCClusters(rctx, fc.Args["pagination"].(*types.CursorPagination))
+			return ec.resolvers.Query().InfraListBYOCClusters(rctx, fc.Args["search"].(*string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -12541,7 +12578,7 @@ func (ec *executionContext) _Query_infra_listNodePools(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListNodePools(rctx, fc.Args["clusterName"].(string), fc.Args["pagination"].(*types.CursorPagination))
+			return ec.resolvers.Query().InfraListNodePools(rctx, fc.Args["clusterName"].(string), fc.Args["search"].(*string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -12733,7 +12770,7 @@ func (ec *executionContext) _Query_infra_listProviderSecrets(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListProviderSecrets(rctx, fc.Args["pagination"].(*types.CursorPagination))
+			return ec.resolvers.Query().InfraListProviderSecrets(rctx, fc.Args["search"].(*string), fc.Args["pagination"].(*types.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {

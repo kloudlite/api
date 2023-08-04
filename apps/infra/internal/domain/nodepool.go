@@ -48,7 +48,7 @@ func (d *domain) UpdateNodePool(ctx InfraContext, clusterName string, nodePool e
 	}
 
 	if np.IsMarkedForDeletion() {
-		return nil, fmt.Errorf("nodepool %q (clusterName=%q) is marked for deletion, aborting update ...", nodePool.Name, clusterName)
+		return nil, fmt.Errorf("nodepool %q (clusterName=%q) is marked for deletion, aborting update", nodePool.Name, clusterName)
 	}
 
 	np.Labels = nodePool.Labels
@@ -97,11 +97,16 @@ func (d *domain) GetNodePool(ctx InfraContext, clusterName string, poolName stri
 	return np, nil
 }
 
-func (d *domain) ListNodePools(ctx InfraContext, clusterName string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.NodePool], error) {
-	return d.nodePoolRepo.FindPaginated(ctx, repos.Filter{
+func (d *domain) ListNodePools(ctx InfraContext, clusterName string, search *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.NodePool], error) {
+	filter := repos.Filter{
 		"accountName": ctx.AccountName,
 		"clusterName": clusterName,
-	}, pagination)
+	}
+	if search != nil {
+		filter["metadata.name"] = map[string]any{"$regex": fmt.Sprintf("/.*%s.*/i", *search)}
+	}
+
+	return d.nodePoolRepo.FindPaginated(ctx, filter, pagination)
 }
 
 func (d *domain) findNodePool(ctx InfraContext, clusterName string, poolName string) (*entities.NodePool, error) {

@@ -93,11 +93,11 @@ func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType 
 }
 
 // InfraListClusters is the resolver for the infra_listClusters field.
-func (r *queryResolver) InfraListClusters(ctx context.Context, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error) {
+func (r *queryResolver) InfraListClusters(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
-	pClusters, err := r.Domain.ListClusters(toInfraContext(ctx), *pagination)
+	pClusters, err := r.Domain.ListClusters(toInfraContext(ctx), search, *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -130,11 +130,11 @@ func (r *queryResolver) InfraGetCluster(ctx context.Context, name string) (*enti
 }
 
 // InfraListBYOCClusters is the resolver for the infra_listBYOCClusters field.
-func (r *queryResolver) InfraListBYOCClusters(ctx context.Context, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error) {
+func (r *queryResolver) InfraListBYOCClusters(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
-	pClusters, err := r.Domain.ListBYOCClusters(toInfraContext(ctx), *pagination)
+	pClusters, err := r.Domain.ListBYOCClusters(toInfraContext(ctx), search, *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -167,11 +167,11 @@ func (r *queryResolver) InfraGetBYOCCluster(ctx context.Context, name string) (*
 }
 
 // InfraListNodePools is the resolver for the infra_listNodePools field.
-func (r *queryResolver) InfraListNodePools(ctx context.Context, clusterName string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error) {
+func (r *queryResolver) InfraListNodePools(ctx context.Context, clusterName string, search *string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
-	pNodePools, err := r.Domain.ListNodePools(toInfraContext(ctx), clusterName, *pagination)
+	pNodePools, err := r.Domain.ListNodePools(toInfraContext(ctx), clusterName, search, *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -204,11 +204,11 @@ func (r *queryResolver) InfraGetNodePool(ctx context.Context, clusterName string
 }
 
 // InfraListProviderSecrets is the resolver for the infra_listProviderSecrets field.
-func (r *queryResolver) InfraListProviderSecrets(ctx context.Context, pagination *types.CursorPagination) (*model.CloudProviderSecretPaginatedRecords, error) {
+func (r *queryResolver) InfraListProviderSecrets(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.CloudProviderSecretPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
-	pSecrets, err := r.Domain.ListProviderSecrets(toInfraContext(ctx), *pagination)
+	pSecrets, err := r.Domain.ListProviderSecrets(toInfraContext(ctx), search, *pagination)
 	if err != nil {
 		return nil, err
 	}
@@ -241,7 +241,7 @@ func (r *queryResolver) InfraGetProviderSecret(ctx context.Context, name string)
 }
 
 // SortBy is the resolver for the sortBy field.
-func (r *paginationQueryArgsResolver) SortBy(ctx context.Context, obj *types.CursorPagination, data *model.PaginationSortOrder) error {
+func (r *paginationQueryArgsResolver) SortBy(_ context.Context, obj *types.CursorPagination, data *model.PaginationSortOrder) error {
 	if data == nil {
 		return fmt.Errorf("pagination-sort-order is nil")
 	}

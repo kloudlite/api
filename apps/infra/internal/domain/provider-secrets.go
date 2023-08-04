@@ -108,11 +108,16 @@ func (d *domain) DeleteProviderSecret(ctx InfraContext, secretName string) error
 	return nil
 }
 
-func (d *domain) ListProviderSecrets(ctx InfraContext, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.CloudProviderSecret], error) {
-	return d.secretRepo.FindPaginated(ctx, repos.Filter{
+func (d *domain) ListProviderSecrets(ctx InfraContext, search *string, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.CloudProviderSecret], error) {
+	filters := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
-	}, pagination)
+	}
+
+	if search != nil {
+		filters["metadata.name"] = map[string]any{"$regex": fmt.Sprintf("/.*%s.*/i", *search)}
+	}
+	return d.secretRepo.FindPaginated(ctx, filters, pagination)
 }
 
 func (d *domain) GetProviderSecret(ctx InfraContext, name string) (*entities.CloudProviderSecret, error) {

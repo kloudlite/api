@@ -53,11 +53,16 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 	return nCluster, nil
 }
 
-func (d *domain) ListClusters(ctx InfraContext, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.Cluster], error) {
-	return d.clusterRepo.FindPaginated(ctx, repos.Filter{
+func (d *domain) ListClusters(ctx InfraContext, search *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.Cluster], error) {
+	filters := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
-	}, pagination)
+	}
+	if search != nil {
+		filters["metadata.name"] = map[string]any{"$regex": fmt.Sprintf(".*%s.*", *search)}
+	}
+
+	return d.clusterRepo.FindPaginated(ctx, filters, pagination)
 }
 
 func (d *domain) GetCluster(ctx InfraContext, name string) (*entities.Cluster, error) {
