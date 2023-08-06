@@ -97,16 +97,12 @@ func (d *domain) GetNodePool(ctx InfraContext, clusterName string, poolName stri
 	return np, nil
 }
 
-func (d *domain) ListNodePools(ctx InfraContext, clusterName string, search *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.NodePool], error) {
+func (d *domain) ListNodePools(ctx InfraContext, clusterName string, search *repos.SearchFilter, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.NodePool], error) {
 	filter := repos.Filter{
 		"accountName": ctx.AccountName,
 		"clusterName": clusterName,
 	}
-	if search != nil {
-		filter["metadata.name"] = map[string]any{"$regex": fmt.Sprintf("/.*%s.*/i", *search)}
-	}
-
-	return d.nodePoolRepo.FindPaginated(ctx, filter, pagination)
+	return d.nodePoolRepo.FindPaginated(ctx, d.nodePoolRepo.MergeSearchFilter(filter, search), pagination)
 }
 
 func (d *domain) findNodePool(ctx InfraContext, clusterName string, poolName string) (*entities.NodePool, error) {

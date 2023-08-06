@@ -22,30 +22,31 @@ func (d *domain) CreateProviderSecret(ctx InfraContext, secret entities.CloudPro
 	}
 
 	secret.IncrementRecordVersion()
-
-	nSecret, err := d.secretRepo.Create(ctx, &secret)
-	if err != nil {
-		return nil, err
-	}
-
 	cSecret := corev1.Secret{
 		TypeMeta: metav1.TypeMeta{
 			APIVersion: "v1",
 			Kind:       "Secret",
 		},
-		ObjectMeta: nSecret.ObjectMeta,
-		Data:       nSecret.Data,
-		StringData: nSecret.StringData,
-		Type:       nSecret.Type,
+		ObjectMeta: secret.ObjectMeta,
+		Data:       secret.Data,
+		StringData: secret.StringData,
+		Type:       secret.Type,
 	}
 
 	if err := d.ensureNamespaceForAccount(ctx, ctx.AccountName); err != nil {
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &cSecret, nSecret.RecordVersion); err != nil {
+	if err := d.applyK8sResource(ctx, &cSecret, secret.RecordVersion); err != nil {
 		return nil, err
 	}
+
+	secret.Status.IsReady = true
+	nSecret, err := d.secretRepo.Create(ctx, &secret)
+	if err != nil {
+		return nil, err
+	}
+
 	return nSecret, nil
 }
 
@@ -108,16 +109,12 @@ func (d *domain) DeleteProviderSecret(ctx InfraContext, secretName string) error
 	return nil
 }
 
-func (d *domain) ListProviderSecrets(ctx InfraContext, search *string, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.CloudProviderSecret], error) {
-	filters := repos.Filter{
+func (d *domain) ListProviderSecrets(ctx InfraContext, search *repos.SearchFilter, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.CloudProviderSecret], error) {
+	filter := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
 	}
-
-	if search != nil {
-		filters["metadata.name"] = map[string]any{"$regex": fmt.Sprintf("/.*%s.*/i", *search)}
-	}
-	return d.secretRepo.FindPaginated(ctx, filters, pagination)
+	return d.secretRepo.FindPaginated(ctx, d.secretRepo.MergeSearchFilter(filter, search), pagination)
 }
 
 func (d *domain) GetProviderSecret(ctx InfraContext, name string) (*entities.CloudProviderSecret, error) {

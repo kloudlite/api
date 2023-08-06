@@ -69,11 +69,12 @@ func (d *domain) CreateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluste
 	return nCluster, nil
 }
 
-func (d *domain) ListBYOCClusters(ctx InfraContext, search *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.BYOCCluster], error) {
-	return d.byocClusterRepo.FindPaginated(ctx, repos.Filter{
+func (d *domain) ListBYOCClusters(ctx InfraContext, search *repos.SearchFilter, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.BYOCCluster], error) {
+	filter := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
-	}, pagination)
+	}
+	return d.byocClusterRepo.FindPaginated(ctx, d.byocClusterRepo.MergeSearchFilter(filter, search), pagination)
 }
 
 func (d *domain) GetBYOCCluster(ctx InfraContext, name string) (*entities.BYOCCluster, error) {
