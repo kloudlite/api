@@ -17,6 +17,8 @@ func (d *domain) ListNodes(ctx InfraContext, clusterName string, search *repos.S
 	return d.nodeRepo.FindPaginated(ctx, d.nodeRepo.MergeSearchFilter(filter, search), pagination)
 }
 
+//TODO (nxtcoder17): Deleting node should also be available
+
 func (d *domain) GetNode(ctx InfraContext, clusterName string, nodeName string) (*entities.Node, error) {
 	return d.findNode(ctx, clusterName, nodeName)
 }

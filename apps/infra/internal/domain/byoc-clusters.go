@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/apps/infra/internal/entities"
 	fn "kloudlite.io/pkg/functions"
 
@@ -28,6 +29,10 @@ func (d *domain) findBYOCCluster(ctx InfraContext, clusterName string) (*entitie
 }
 
 func (d *domain) CreateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluster) (*entities.BYOCCluster, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.CreateCluster); err != nil {
+		return nil, err
+	}
+
 	cluster.EnsureGVK()
 	cluster.IncomingKafkaTopicName = common.GetKafkaTopicName(ctx.AccountName, cluster.Name)
 
@@ -70,6 +75,9 @@ func (d *domain) CreateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluste
 }
 
 func (d *domain) ListBYOCClusters(ctx InfraContext, search *repos.SearchFilter, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.BYOCCluster], error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.ListClusters); err != nil {
+		return nil, err
+	}
 	filter := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
@@ -78,10 +86,17 @@ func (d *domain) ListBYOCClusters(ctx InfraContext, search *repos.SearchFilter, 
 }
 
 func (d *domain) GetBYOCCluster(ctx InfraContext, name string) (*entities.BYOCCluster, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.GetCluster); err != nil {
+		return nil, err
+	}
 	return d.findBYOCCluster(ctx, name)
 }
 
 func (d *domain) UpdateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluster) (*entities.BYOCCluster, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.UpdateCluster); err != nil {
+		return nil, err
+	}
+
 	cluster.EnsureGVK()
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &cluster.BYOC); err != nil {
 		return nil, err
@@ -109,6 +124,10 @@ func (d *domain) UpdateBYOCCluster(ctx InfraContext, cluster entities.BYOCCluste
 }
 
 func (d *domain) DeleteBYOCCluster(ctx InfraContext, name string) error {
+	if err := d.canPerformActionInAccount(ctx, iamT.DeleteCluster); err != nil {
+		return err
+	}
+
 	clus, err := d.findBYOCCluster(ctx, name)
 	if err != nil {
 		return err

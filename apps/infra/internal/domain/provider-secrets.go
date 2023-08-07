@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	iamT "kloudlite.io/apps/iam/types"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -12,6 +13,9 @@ import (
 )
 
 func (d *domain) CreateProviderSecret(ctx InfraContext, secret entities.CloudProviderSecret) (*entities.CloudProviderSecret, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.CreateCloudProviderSecret); err != nil {
+		return nil, err
+	}
 	secret.EnsureGVK()
 
 	secret.AccountName = ctx.AccountName
@@ -51,6 +55,9 @@ func (d *domain) CreateProviderSecret(ctx InfraContext, secret entities.CloudPro
 }
 
 func (d *domain) UpdateProviderSecret(ctx InfraContext, secret entities.CloudProviderSecret) (*entities.CloudProviderSecret, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.UpdateCloudProviderSecret); err != nil {
+		return nil, err
+	}
 	secret.EnsureGVK()
 	secret.Namespace = d.env.ProviderSecretNamespace
 
@@ -93,6 +100,9 @@ func (d *domain) UpdateProviderSecret(ctx InfraContext, secret entities.CloudPro
 }
 
 func (d *domain) DeleteProviderSecret(ctx InfraContext, secretName string) error {
+	if err := d.canPerformActionInAccount(ctx, iamT.DeleteCloudProviderSecret); err != nil {
+		return err
+	}
 	cps, err := d.findProviderSecret(ctx, secretName)
 	if err != nil {
 		return err
@@ -110,6 +120,9 @@ func (d *domain) DeleteProviderSecret(ctx InfraContext, secretName string) error
 }
 
 func (d *domain) ListProviderSecrets(ctx InfraContext, search *repos.SearchFilter, pagination types.CursorPagination) (*repos.PaginatedRecord[*entities.CloudProviderSecret], error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.ListCloudProviderSecrets); err != nil {
+		return nil, err
+	}
 	filter := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
@@ -118,6 +131,9 @@ func (d *domain) ListProviderSecrets(ctx InfraContext, search *repos.SearchFilte
 }
 
 func (d *domain) GetProviderSecret(ctx InfraContext, name string) (*entities.CloudProviderSecret, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.GetCloudProviderSecret); err != nil {
+		return nil, err
+	}
 	return d.findProviderSecret(ctx, name)
 }
 
