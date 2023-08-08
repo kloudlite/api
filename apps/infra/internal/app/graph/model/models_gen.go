@@ -239,57 +239,6 @@ type PageInfo struct {
 	StartCursor     *string `json:"startCursor,omitempty"`
 }
 
-type CloudProviderSecretCloudProviderName string
-
-const (
-	CloudProviderSecretCloudProviderNameAws       CloudProviderSecretCloudProviderName = "aws"
-	CloudProviderSecretCloudProviderNameAzure     CloudProviderSecretCloudProviderName = "azure"
-	CloudProviderSecretCloudProviderNameDo        CloudProviderSecretCloudProviderName = "do"
-	CloudProviderSecretCloudProviderNameGcp       CloudProviderSecretCloudProviderName = "gcp"
-	CloudProviderSecretCloudProviderNameOci       CloudProviderSecretCloudProviderName = "oci"
-	CloudProviderSecretCloudProviderNameOpenstack CloudProviderSecretCloudProviderName = "openstack"
-	CloudProviderSecretCloudProviderNameVmware    CloudProviderSecretCloudProviderName = "vmware"
-)
-
-var AllCloudProviderSecretCloudProviderName = []CloudProviderSecretCloudProviderName{
-	CloudProviderSecretCloudProviderNameAws,
-	CloudProviderSecretCloudProviderNameAzure,
-	CloudProviderSecretCloudProviderNameDo,
-	CloudProviderSecretCloudProviderNameGcp,
-	CloudProviderSecretCloudProviderNameOci,
-	CloudProviderSecretCloudProviderNameOpenstack,
-	CloudProviderSecretCloudProviderNameVmware,
-}
-
-func (e CloudProviderSecretCloudProviderName) IsValid() bool {
-	switch e {
-	case CloudProviderSecretCloudProviderNameAws, CloudProviderSecretCloudProviderNameAzure, CloudProviderSecretCloudProviderNameDo, CloudProviderSecretCloudProviderNameGcp, CloudProviderSecretCloudProviderNameOci, CloudProviderSecretCloudProviderNameOpenstack, CloudProviderSecretCloudProviderNameVmware:
-		return true
-	}
-	return false
-}
-
-func (e CloudProviderSecretCloudProviderName) String() string {
-	return string(e)
-}
-
-func (e *CloudProviderSecretCloudProviderName) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = CloudProviderSecretCloudProviderName(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid CloudProviderSecretCloudProviderName", str)
-	}
-	return nil
-}
-
-func (e CloudProviderSecretCloudProviderName) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
 type GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode string
 
 const (

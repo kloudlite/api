@@ -76,6 +76,10 @@ models:
     model: kloudlite.io/apps/infra/internal/entities.CloudProviderSecret
   CloudProviderSecretIn: *provider-secret-model
 
+  CloudProviderSecretCloudProviderName: &cloud-provider-name
+    model: kloudlite.io/apps/infra/internal/entities.CloudProviderName
+  CloudProviderSecretCloudProviderNameIn: *cloud-provider-name
+
   NodePool: &nodepool-model
     model: kloudlite.io/apps/infra/internal/entities.NodePool
   NodePoolIn: *nodepool-model

@@ -12,15 +12,9 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/infra/internal/app/graph/generated"
-	"kloudlite.io/apps/infra/internal/app/graph/model"
 	"kloudlite.io/apps/infra/internal/entities"
 	fn "kloudlite.io/pkg/functions"
 )
-
-// CloudProviderName is the resolver for the cloudProviderName field.
-func (r *cloudProviderSecretResolver) CloudProviderName(ctx context.Context, obj *entities.CloudProviderSecret) (model.CloudProviderSecretCloudProviderName, error) {
-	panic(fmt.Errorf("not implemented: CloudProviderName - cloudProviderName"))
-}
 
 // CreationTime is the resolver for the creationTime field.
 func (r *cloudProviderSecretResolver) CreationTime(ctx context.Context, obj *entities.CloudProviderSecret) (string, error) {
@@ -54,6 +48,7 @@ func (r *cloudProviderSecretResolver) ID(ctx context.Context, obj *entities.Clou
 // StringData is the resolver for the stringData field.
 func (r *cloudProviderSecretResolver) StringData(ctx context.Context, obj *entities.CloudProviderSecret) (map[string]interface{}, error) {
 	if obj == nil {
+
 		return nil, fmt.Errorf("CloudProviderSecret object is nil")
 	}
 
@@ -80,11 +75,6 @@ func (r *cloudProviderSecretResolver) UpdateTime(ctx context.Context, obj *entit
 	}
 
 	return obj.UpdateTime.Format(time.RFC3339), nil
-}
-
-// CloudProviderName is the resolver for the cloudProviderName field.
-func (r *cloudProviderSecretInResolver) CloudProviderName(ctx context.Context, obj *entities.CloudProviderSecret, data model.CloudProviderSecretCloudProviderName) error {
-	panic(fmt.Errorf("not implemented: CloudProviderName - cloudProviderName"))
 }
 
 // Data is the resolver for the data field.

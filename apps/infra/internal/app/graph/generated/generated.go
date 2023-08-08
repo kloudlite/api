@@ -385,7 +385,6 @@ type BYOCClusterResolver interface {
 	UpdateTime(ctx context.Context, obj *entities.BYOCCluster) (string, error)
 }
 type CloudProviderSecretResolver interface {
-	CloudProviderName(ctx context.Context, obj *entities.CloudProviderSecret) (model.CloudProviderSecretCloudProviderName, error)
 	CreationTime(ctx context.Context, obj *entities.CloudProviderSecret) (string, error)
 	Data(ctx context.Context, obj *entities.CloudProviderSecret) (map[string]interface{}, error)
 
@@ -468,7 +467,6 @@ type BYOCClusterInResolver interface {
 	Spec(ctx context.Context, obj *entities.BYOCCluster, data *model.GithubComKloudliteOperatorApisClustersV1BYOCSpecIn) error
 }
 type CloudProviderSecretInResolver interface {
-	CloudProviderName(ctx context.Context, obj *entities.CloudProviderSecret, data model.CloudProviderSecretCloudProviderName) error
 	Data(ctx context.Context, obj *entities.CloudProviderSecret, data map[string]interface{}) error
 
 	Metadata(ctx context.Context, obj *entities.CloudProviderSecret, data *v1.ObjectMeta) error
@@ -4269,7 +4267,7 @@ func (ec *executionContext) _CloudProviderSecret_cloudProviderName(ctx context.C
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.CloudProviderSecret().CloudProviderName(rctx, obj)
+		return obj.CloudProviderName, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -4281,17 +4279,17 @@ func (ec *executionContext) _CloudProviderSecret_cloudProviderName(ctx context.C
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.CloudProviderSecretCloudProviderName)
+	res := resTmp.(entities.CloudProviderName)
 	fc.Result = res
-	return ec.marshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐCloudProviderSecretCloudProviderName(ctx, field.Selections, res)
+	return ec.marshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋentitiesᚐCloudProviderName(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_CloudProviderSecret_cloudProviderName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "CloudProviderSecret",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type CloudProviderSecretCloudProviderName does not have child fields")
 		},
@@ -15174,11 +15172,8 @@ func (ec *executionContext) unmarshalInputCloudProviderSecretIn(ctx context.Cont
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("cloudProviderName"))
-			data, err := ec.unmarshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐCloudProviderSecretCloudProviderName(ctx, v)
+			it.CloudProviderName, err = ec.unmarshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋentitiesᚐCloudProviderName(ctx, v)
 			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.CloudProviderSecretIn().CloudProviderName(ctx, &it, data); err != nil {
 				return it, err
 			}
 		case "data":
@@ -16483,25 +16478,12 @@ func (ec *executionContext) _CloudProviderSecret(ctx context.Context, sel ast.Se
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "cloudProviderName":
-			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._CloudProviderSecret_cloudProviderName(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._CloudProviderSecret_cloudProviderName(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "creationTime":
 			field := field
 
@@ -19156,14 +19138,20 @@ func (ec *executionContext) marshalNCloudProviderSecret2ᚖkloudliteᚗioᚋapps
 	return ec._CloudProviderSecret(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐCloudProviderSecretCloudProviderName(ctx context.Context, v interface{}) (model.CloudProviderSecretCloudProviderName, error) {
-	var res model.CloudProviderSecretCloudProviderName
-	err := res.UnmarshalGQL(v)
+func (ec *executionContext) unmarshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋentitiesᚐCloudProviderName(ctx context.Context, v interface{}) (entities.CloudProviderName, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := entities.CloudProviderName(tmp)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐCloudProviderSecretCloudProviderName(ctx context.Context, sel ast.SelectionSet, v model.CloudProviderSecretCloudProviderName) graphql.Marshaler {
-	return v
+func (ec *executionContext) marshalNCloudProviderSecretCloudProviderName2kloudliteᚗioᚋappsᚋinfraᚋinternalᚋentitiesᚐCloudProviderName(ctx context.Context, sel ast.SelectionSet, v entities.CloudProviderName) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
 }
 
 func (ec *executionContext) marshalNCloudProviderSecretEdge2ᚕᚖkloudliteᚗioᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐCloudProviderSecretEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.CloudProviderSecretEdge) graphql.Marshaler {
