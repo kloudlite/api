@@ -12,6 +12,7 @@ import (
 	"kloudlite.io/apps/infra/internal/app/graph/model"
 	"kloudlite.io/apps/infra/internal/domain"
 	"kloudlite.io/apps/infra/internal/entities"
+	"kloudlite.io/pkg/repos"
 	"kloudlite.io/pkg/types"
 )
 
@@ -93,7 +94,7 @@ func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType 
 }
 
 // InfraListClusters is the resolver for the infra_listClusters field.
-func (r *queryResolver) InfraListClusters(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error) {
+func (r *queryResolver) InfraListClusters(ctx context.Context, search *repos.SearchFilter, pagination *types.CursorPagination) (*model.ClusterPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
@@ -130,7 +131,7 @@ func (r *queryResolver) InfraGetCluster(ctx context.Context, name string) (*enti
 }
 
 // InfraListBYOCClusters is the resolver for the infra_listBYOCClusters field.
-func (r *queryResolver) InfraListBYOCClusters(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error) {
+func (r *queryResolver) InfraListBYOCClusters(ctx context.Context, search *repos.SearchFilter, pagination *types.CursorPagination) (*model.BYOCClusterPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
@@ -167,7 +168,7 @@ func (r *queryResolver) InfraGetBYOCCluster(ctx context.Context, name string) (*
 }
 
 // InfraListNodePools is the resolver for the infra_listNodePools field.
-func (r *queryResolver) InfraListNodePools(ctx context.Context, clusterName string, search *string, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error) {
+func (r *queryResolver) InfraListNodePools(ctx context.Context, clusterName string, search *repos.SearchFilter, pagination *types.CursorPagination) (*model.NodePoolPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}
@@ -204,7 +205,7 @@ func (r *queryResolver) InfraGetNodePool(ctx context.Context, clusterName string
 }
 
 // InfraListProviderSecrets is the resolver for the infra_listProviderSecrets field.
-func (r *queryResolver) InfraListProviderSecrets(ctx context.Context, search *string, pagination *types.CursorPagination) (*model.CloudProviderSecretPaginatedRecords, error) {
+func (r *queryResolver) InfraListProviderSecrets(ctx context.Context, search *repos.SearchFilter, pagination *types.CursorPagination) (*model.CloudProviderSecretPaginatedRecords, error) {
 	if pagination == nil {
 		pagination = &types.DefaultCursorPagination
 	}

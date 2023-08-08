@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	iamT "kloudlite.io/apps/iam/types"
 	"time"
 
 	"kloudlite.io/apps/infra/internal/entities"
@@ -11,6 +12,9 @@ import (
 )
 
 func (d *domain) CreateNodePool(ctx InfraContext, clusterName string, nodePool entities.NodePool) (*entities.NodePool, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.CreateNodepool); err != nil {
+		return nil, err
+	}
 	nodePool.EnsureGVK()
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &nodePool.NodePool); err != nil {
 		return nil, err
@@ -37,6 +41,9 @@ func (d *domain) CreateNodePool(ctx InfraContext, clusterName string, nodePool e
 }
 
 func (d *domain) UpdateNodePool(ctx InfraContext, clusterName string, nodePool entities.NodePool) (*entities.NodePool, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.UpdateNodepool); err != nil {
+		return nil, err
+	}
 	nodePool.EnsureGVK()
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &nodePool.NodePool); err != nil {
 		return nil, err
@@ -71,6 +78,9 @@ func (d *domain) UpdateNodePool(ctx InfraContext, clusterName string, nodePool e
 }
 
 func (d *domain) DeleteNodePool(ctx InfraContext, clusterName string, poolName string) error {
+	if err := d.canPerformActionInAccount(ctx, iamT.DeleteNodepool); err != nil {
+		return err
+	}
 	np, err := d.findNodePool(ctx, clusterName, poolName)
 	if err != nil {
 		return err
@@ -90,6 +100,9 @@ func (d *domain) DeleteNodePool(ctx InfraContext, clusterName string, poolName s
 }
 
 func (d *domain) GetNodePool(ctx InfraContext, clusterName string, poolName string) (*entities.NodePool, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.GetNodepool); err != nil {
+		return nil, err
+	}
 	np, err := d.findNodePool(ctx, clusterName, poolName)
 	if err != nil {
 		return nil, err
@@ -97,16 +110,15 @@ func (d *domain) GetNodePool(ctx InfraContext, clusterName string, poolName stri
 	return np, nil
 }
 
-func (d *domain) ListNodePools(ctx InfraContext, clusterName string, search *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.NodePool], error) {
+func (d *domain) ListNodePools(ctx InfraContext, clusterName string, search *repos.SearchFilter, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.NodePool], error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.ListNodepools); err != nil {
+		return nil, err
+	}
 	filter := repos.Filter{
 		"accountName": ctx.AccountName,
 		"clusterName": clusterName,
 	}
-	if search != nil {
-		filter["metadata.name"] = map[string]any{"$regex": fmt.Sprintf("/.*%s.*/i", *search)}
-	}
-
-	return d.nodePoolRepo.FindPaginated(ctx, filter, pagination)
+	return d.nodePoolRepo.FindPaginated(ctx, d.nodePoolRepo.MergeSearchFilter(filter, search), pagination)
 }
 
 func (d *domain) findNodePool(ctx InfraContext, clusterName string, poolName string) (*entities.NodePool, error) {
@@ -125,6 +137,12 @@ func (d *domain) findNodePool(ctx InfraContext, clusterName string, poolName str
 }
 
 func (d *domain) ResyncNodePool(ctx InfraContext, clusterName string, poolName string) error {
+	err := func() error {
+		if err := d.canPerformActionInAccount(ctx, iamT.UpdateNodepool); err != nil {
+			return d.canPerformActionInAccount(ctx, iamT.DeleteNodepool)
+		}
+		return nil
+	}()
 	np, err := d.findNodePool(ctx, clusterName, poolName)
 	if err != nil {
 		return err

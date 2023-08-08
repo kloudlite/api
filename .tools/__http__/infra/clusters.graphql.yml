@@ -45,7 +45,7 @@ variables:
 
 label: List Clusters
 query: |+
-  query Infra_listClusters($search: String, $pagination: PaginationQueryArgs) {
+  query Infra_listClusters($search: SearchFilter, $pagination: PaginationQueryArgs) {
     infra_listClusters(search: $search, pagination: $pagination) {
       edges {
         cursor
@@ -73,7 +73,10 @@ query: |+
     }
   }
 variables:
-  search: "ple"
+  search: 
+    keyword: "ple"
+    fields:
+      - metadata.name
   pagination:
     first: 10
 

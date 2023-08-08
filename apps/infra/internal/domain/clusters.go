@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	iamT "kloudlite.io/apps/iam/types"
 	"time"
 
 	"kloudlite.io/apps/infra/internal/entities"
@@ -12,6 +13,10 @@ import (
 )
 
 func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*entities.Cluster, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.CreateCluster); err != nil {
+		return nil, err
+	}
+
 	cluster.EnsureGVK()
 	cluster.Namespace = d.getAccountNamespace(ctx.AccountName)
 
@@ -53,19 +58,21 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 	return nCluster, nil
 }
 
-func (d *domain) ListClusters(ctx InfraContext, search *string, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.Cluster], error) {
+func (d *domain) ListClusters(ctx InfraContext, search *repos.SearchFilter, pagination t.CursorPagination) (*repos.PaginatedRecord[*entities.Cluster], error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.ListClusters); err != nil {
+		return nil, err
+	}
 	filters := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.namespace": d.getAccountNamespace(ctx.AccountName),
 	}
-	if search != nil {
-		filters["metadata.name"] = map[string]any{"$regex": fmt.Sprintf(".*%s.*", *search)}
-	}
-
-	return d.clusterRepo.FindPaginated(ctx, filters, pagination)
+	return d.clusterRepo.FindPaginated(ctx, d.secretRepo.MergeSearchFilter(filters, search), pagination)
 }
 
 func (d *domain) GetCluster(ctx InfraContext, name string) (*entities.Cluster, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.GetCluster); err != nil {
+		return nil, err
+	}
 	return d.clusterRepo.FindOne(ctx, repos.Filter{
 		"accountName":        ctx.AccountName,
 		"metadata.name":      name,
@@ -74,6 +81,9 @@ func (d *domain) GetCluster(ctx InfraContext, name string) (*entities.Cluster, e
 }
 
 func (d *domain) UpdateCluster(ctx InfraContext, cluster entities.Cluster) (*entities.Cluster, error) {
+	if err := d.canPerformActionInAccount(ctx, iamT.UpdateCluster); err != nil {
+		return nil, err
+	}
 	cluster.EnsureGVK()
 	clus, err := d.findCluster(ctx, cluster.Name)
 	if err != nil {
@@ -115,6 +125,9 @@ func (d *domain) UpdateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 }
 
 func (d *domain) DeleteCluster(ctx InfraContext, name string) error {
+	if err := d.canPerformActionInAccount(ctx, iamT.DeleteCluster); err != nil {
+		return err
+	}
 	c, err := d.findCluster(ctx, name)
 	if err != nil {
 		return err
