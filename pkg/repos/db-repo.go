@@ -28,9 +28,19 @@ type Query struct {
 	Sort   map[string]interface{}
 }
 
-type SearchFilter struct {
-	Keyword string
-	Fields  []string
+type MatchType string
+
+const (
+	MatchTypeExact = "exact"
+	MatchTypeArray = "array"
+	MatchTypeRegex = "regex"
+)
+
+type MatchFilter struct {
+	MatchType MatchType `json:"matchType" graphql:"enum=exact;array;regex;"`
+	Exact     any       `json:"exact,omitempty"`
+	Array     []any     `json:"array,omitempty"`
+	Regex     *string   `json:"regex,omitempty"`
 }
 
 type ID string
@@ -38,8 +48,8 @@ type ID string
 type PageInfo struct {
 	StartCursor string
 	EndCursor   string
-	HasNextPage bool
-	HasPrevPage bool
+	HasNextPage *bool
+	HasPrevPage *bool
 }
 
 type RecordEdge[T Entity] struct {
@@ -81,7 +91,7 @@ type DbRepo[T Entity] interface {
 	DeleteOne(ctx context.Context, filter Filter) error
 
 	ErrAlreadyExists(err error) bool
-	MergeSearchFilter(filter Filter, search *SearchFilter) Filter
+	MergeMatchFilters(filter Filter, matchFilters map[string]MatchFilter) Filter
 }
 
 type indexOrder bool

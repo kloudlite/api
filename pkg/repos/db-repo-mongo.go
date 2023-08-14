@@ -122,43 +122,6 @@ func (repo *dbRepo[T]) findOne(ctx context.Context, filter Filter) (T, error) {
 		return item, err
 	}
 	return item, nil
-
-	// var emptyResult T
-	//
-	// b2, err := bson.Marshal(one)
-	// if err != nil {
-	// 	return emptyResult, err
-	// }
-	//
-	// decoder, err := bson.NewDecoder(bsonrw.NewBSONDocumentReader(b2))
-	// if err != nil {
-	// 	return emptyResult, err
-	// }
-	// decoder.UseJSONStructTags()
-	//
-	// var result T
-	//
-	// if err := decoder.Decode(&result); err != nil {
-	// 	return emptyResult, err
-	// }
-	//
-	// return result, nil
-
-	// res := fn.NewTypeFromPointer[T]()
-	// var m map[string]any
-	// err := one.Decode(&m)
-	// if err != nil {
-	// 	fmt.Println("(debug/info) ERR: ", err)
-	// 	return res, err
-	// }
-	// b, err := json.Marshal(m)
-	// if err != nil {
-	// 	return res, err
-	// }
-	// if err := json.Unmarshal(b, &res); err != nil {
-	// 	return res, err
-	// }
-	// return res, nil
 }
 
 func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
@@ -171,27 +134,25 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 		return item, err
 	}
 	return item, nil
-
-	// br, err := one.DecodeBytes()
-	// if err != nil {
-	// return emptyResult, err
-	// }
-	// decoder, err := bson.NewDecoder(bsonrw.NewBSONDocumentReader(br))
-	// if err != nil {
-	// 	return emptyResult, err
-	// }
-	// decoder.UseJSONStructTags()
-	//
-	// var result T
-	//
-	// if err := decoder.Decode(&result); err != nil {
-	// 	return emptyResult, err
-	// }
-	//
-	// return result, nil
 }
 
 func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination t.CursorPagination) (*PaginatedRecord[T], error) {
+	if pagination.First != nil && pagination.Last != nil {
+		return nil, fmt.Errorf("first/last only one of these parameters could be passed on, you have specified both")
+	}
+
+	if pagination.After != nil && pagination.Before != nil {
+		return nil, fmt.Errorf("after/before only one of these parameters could be passed on, you have specified both")
+	}
+
+	if pagination.After != nil && pagination.First == nil {
+		return nil, fmt.Errorf("paramter `after` requires paramter `first` to be specified")
+	}
+
+	if pagination.Before != nil && pagination.Last == nil {
+		return nil, fmt.Errorf("paramter `before` requires paramter `last` to be specified")
+	}
+
 	queryFilter := Filter{}
 
 	for k, v := range filter {
@@ -222,16 +183,19 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		queryFilter["_id"] = bson.M{"$lt": objectID}
 	}
 
+	var limit int64
+	if pagination.Last != nil {
+		limit = *pagination.Last + 1
+	}
+
+	if pagination.First != nil {
+		limit = *pagination.First + 1
+	}
+
 	// var results []T
 	curr, err := repo.db.Collection(repo.collectionName).Find(
 		ctx, queryFilter, &options.FindOptions{
-			// Limit: fn.New(pagination.First + 1),
-			Limit: func() *int64 {
-				if pagination.Last != nil {
-					return fn.New(*pagination.Last + 1)
-				}
-				return fn.New(*pagination.First + 1)
-			}(),
+			Limit: &limit,
 			Sort: bson.M{pagination.OrderBy: func() int {
 				if pagination.SortDirection == t.SortDirectionDesc {
 					return -1
@@ -255,23 +219,24 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	if len(results) > 0 {
 		pageInfo.StartCursor = t.CursorToBase64(t.Cursor(string(results[0].GetPrimitiveID())))
-
 		pageInfo.EndCursor = t.CursorToBase64(t.Cursor(string(results[len(results)-1].GetPrimitiveID())))
 
 		if pagination.First != nil {
-			pageInfo.HasNextPage = len(results) > int(*pagination.First)
+			pageInfo.HasNextPage = fn.New(len(results) > int(*pagination.First))
+			if pageInfo.HasNextPage != nil && *pageInfo.HasNextPage {
+				results = append(results[:*pagination.First])
+			}
+			pageInfo.HasPrevPage = fn.New(pagination.After != nil)
 		}
 
 		if pagination.Last != nil {
-			pageInfo.HasPrevPage = len(results) > int(*pagination.Last)
-		}
-	}
+			pageInfo.HasNextPage = fn.New(pagination.Before != nil)
+			pageInfo.HasPrevPage = fn.New(len(results) > int(*pagination.Last))
 
-	if pageInfo.HasNextPage {
-		results = append(results[:*pagination.First])
-	}
-	if pageInfo.HasPrevPage {
-		results = append(results[:*pagination.Last])
+			if pageInfo.HasPrevPage != nil && *pageInfo.HasPrevPage {
+				results = append(results[:*pagination.Last])
+			}
+		}
 	}
 
 	edges := make([]RecordEdge[T], len(results))
@@ -622,20 +587,25 @@ func (repo *dbRepo[T]) SilentUpdateById(ctx context.Context, id ID, updatedData 
 func (repo *dbRepo[T]) ErrAlreadyExists(err error) bool {
 	return mongo.IsDuplicateKeyError(err)
 }
-func (repo *dbRepo[T]) MergeSearchFilter(filter Filter, searchFilter *SearchFilter) Filter {
+func (repo *dbRepo[T]) MergeMatchFilters(filter Filter, mFilter map[string]MatchFilter) Filter {
 	if filter == nil {
 		filter = map[string]any{}
 	}
 
-	if searchFilter != nil {
-		for _, f := range searchFilter.Fields {
-			_, ok := filter[f]
+	if mFilter != nil {
+		for k, v := range mFilter {
+			_, ok := filter[k]
 			if ok {
-				fmt.Printf("skipping search filter field %q, as it is already specified in filter", f)
+				fmt.Printf("skipping search filter field %q, as it is already specified in filter", k)
 				continue
 			}
-			if !ok {
-				filter[f] = map[string]any{"$regex": fmt.Sprintf("/.*%s.*/i", searchFilter.Keyword)}
+			switch v.MatchType {
+			case MatchTypeExact:
+				filter[k] = v.Exact
+			case MatchTypeArray:
+				filter[k] = bson.M{"$in": v.Array}
+			case MatchTypeRegex:
+				filter[k] = bson.M{"$regex": primitive.Regex{Pattern: *v.Regex, Options: "i"}}
 			}
 		}
 	}
