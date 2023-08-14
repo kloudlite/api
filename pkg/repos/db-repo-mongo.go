@@ -16,7 +16,6 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"kloudlite.io/pkg/errors"
 	fn "kloudlite.io/pkg/functions"
-	t "kloudlite.io/pkg/types"
 )
 
 type dbRepo[T Entity] struct {
@@ -136,7 +135,7 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 	return item, nil
 }
 
-func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination t.CursorPagination) (*PaginatedRecord[T], error) {
+func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination CursorPagination) (*PaginatedRecord[T], error) {
 	if pagination.First != nil && pagination.Last != nil {
 		return nil, fmt.Errorf("first/last only one of these parameters could be passed on, you have specified both")
 	}
@@ -160,7 +159,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	}
 
 	if pagination.After != nil {
-		aft, err := t.CursorFromBase64(*pagination.After)
+		aft, err := CursorFromBase64(*pagination.After)
 		if err != nil {
 			return nil, err
 		}
@@ -172,7 +171,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	}
 
 	if pagination.Before != nil {
-		bef, err := t.CursorFromBase64(*pagination.Before)
+		bef, err := CursorFromBase64(*pagination.Before)
 		if err != nil {
 			return nil, err
 		}
@@ -197,7 +196,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		ctx, queryFilter, &options.FindOptions{
 			Limit: &limit,
 			Sort: bson.M{pagination.OrderBy: func() int {
-				if pagination.SortDirection == t.SortDirectionDesc {
+				if pagination.SortDirection == SortDirectionDesc {
 					return -1
 				}
 				return 1
@@ -209,6 +208,9 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	}
 
 	results, err := cursorToStruct[T](ctx, curr)
+	if err != nil {
+		return nil, err
+	}
 
 	total, err := repo.db.Collection(repo.collectionName).CountDocuments(ctx, filter)
 	if err != nil {
@@ -218,13 +220,13 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	pageInfo := PageInfo{}
 
 	if len(results) > 0 {
-		pageInfo.StartCursor = t.CursorToBase64(t.Cursor(string(results[0].GetPrimitiveID())))
-		pageInfo.EndCursor = t.CursorToBase64(t.Cursor(string(results[len(results)-1].GetPrimitiveID())))
+		pageInfo.StartCursor = CursorToBase64(Cursor(string(results[0].GetPrimitiveID())))
+		pageInfo.EndCursor = CursorToBase64(Cursor(string(results[len(results)-1].GetPrimitiveID())))
 
 		if pagination.First != nil {
 			pageInfo.HasNextPage = fn.New(len(results) > int(*pagination.First))
 			if pageInfo.HasNextPage != nil && *pageInfo.HasNextPage {
-				results = append(results[:*pagination.First])
+				results = results[:*pagination.First]
 			}
 			pageInfo.HasPrevPage = fn.New(pagination.After != nil)
 		}
@@ -234,7 +236,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 			pageInfo.HasPrevPage = fn.New(len(results) > int(*pagination.Last))
 
 			if pageInfo.HasPrevPage != nil && *pageInfo.HasPrevPage {
-				results = append(results[:*pagination.Last])
+				results = results[:*pagination.Last]
 			}
 		}
 	}
@@ -243,7 +245,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	for i := range results {
 		edges[i] = RecordEdge[T]{
 			Node:   results[i],
-			Cursor: t.CursorToBase64(t.Cursor(results[i].GetPrimitiveID())),
+			Cursor: CursorToBase64(Cursor(results[i].GetPrimitiveID())),
 		}
 	}
 
@@ -290,23 +292,6 @@ func (repo *dbRepo[T]) Create(ctx context.Context, data T) (T, error) {
 		return emptyResult, err
 	}
 
-	// buff := new(bytes.Buffer)
-	// vw, err := bsonrw.NewBSONValueWriter(buff)
-	// if err != nil {
-	// 	return emptyResult, err
-	// }
-	//
-	// encoder, err := bson.NewEncoder(vw)
-	// if err != nil {
-	// 	return emptyResult, err
-	// }
-	//
-	// encoder.UseJSONStructTags()
-	// if err := encoder.Encode(data); err != nil {
-	// 	return emptyResult, err
-	// }
-
-	// r, e := repo.db.Collection(repo.collectionName).InsertOne(ctx, buff.Bytes())
 	r, err := repo.db.Collection(repo.collectionName).InsertOne(ctx, inputM)
 	if err != nil {
 		return emptyResult, err
@@ -314,27 +299,6 @@ func (repo *dbRepo[T]) Create(ctx context.Context, data T) (T, error) {
 
 	r2 := repo.db.Collection(repo.collectionName).FindOne(ctx, Filter{"_id": r.InsertedID})
 	return bsonToStruct[T](r2)
-
-	// decoder, err := bson.NewDecoder(bsonrw.NewBSONDocumentReader(b2))
-	// if err != nil {
-	// 	return emptyResult, err
-	// }
-	// decoder.UseJSONStructTags()
-	//
-	// if err := decoder.Decode(&result); err != nil {
-	// 	return emptyResult, err
-	// }
-
-	// var resultM map[string]any
-	// e = r2.Decode(&resultM)
-	//
-	// m2, err := json.Marshal(resultM)
-	// if err := json.Unmarshal(m2, &result); err != nil {
-	// 	var x T
-	// 	return x, err
-	// }
-	//
-	// return result, e
 }
 
 func (repo *dbRepo[T]) Exists(ctx context.Context, filter Filter) (bool, error) {
@@ -592,21 +556,19 @@ func (repo *dbRepo[T]) MergeMatchFilters(filter Filter, mFilter map[string]Match
 		filter = map[string]any{}
 	}
 
-	if mFilter != nil {
-		for k, v := range mFilter {
-			_, ok := filter[k]
-			if ok {
-				fmt.Printf("skipping search filter field %q, as it is already specified in filter", k)
-				continue
-			}
-			switch v.MatchType {
-			case MatchTypeExact:
-				filter[k] = v.Exact
-			case MatchTypeArray:
-				filter[k] = bson.M{"$in": v.Array}
-			case MatchTypeRegex:
-				filter[k] = bson.M{"$regex": primitive.Regex{Pattern: *v.Regex, Options: "i"}}
-			}
+	for k, v := range mFilter {
+		_, ok := filter[k]
+		if ok {
+			fmt.Printf("skipping search filter field %q, as it is already specified in filter", k)
+			continue
+		}
+		switch v.MatchType {
+		case MatchTypeExact:
+			filter[k] = v.Exact
+		case MatchTypeArray:
+			filter[k] = bson.M{"$in": v.Array}
+		case MatchTypeRegex:
+			filter[k] = bson.M{"$regex": primitive.Regex{Pattern: *v.Regex, Options: "i"}}
 		}
 	}
 	return filter

@@ -2,7 +2,8 @@ package repos
 
 import (
 	"context"
-	t "kloudlite.io/pkg/types"
+	"encoding/base64"
+	"kloudlite.io/pkg/functions"
 	"time"
 )
 
@@ -16,8 +17,9 @@ type Entity interface {
 	SetUpdateTime(time.Time)
 	IsZero() bool
 
-	// IncrementRecordVersion()
-	// GetRecordVersion() int
+	IncrementRecordVersion()
+	GetRecordVersion() int
+	IsMarkedForDeletion() bool
 }
 
 type Opts map[string]interface{}
@@ -71,7 +73,7 @@ type DbRepo[T Entity] interface {
 	NewId() ID
 	Find(ctx context.Context, query Query) ([]T, error)
 	FindOne(ctx context.Context, filter Filter) (T, error)
-	FindPaginated(ctx context.Context, filter Filter, pagination t.CursorPagination) (*PaginatedRecord[T], error)
+	FindPaginated(ctx context.Context, filter Filter, pagination CursorPagination) (*PaginatedRecord[T], error)
 	FindById(ctx context.Context, id ID) (T, error)
 	Create(ctx context.Context, data T) (T, error)
 	Exists(ctx context.Context, filter Filter) (bool, error)
@@ -109,4 +111,48 @@ type IndexKey struct {
 type IndexField struct {
 	Field  []IndexKey
 	Unique bool
+}
+
+func CursorFromBase64(b string) (Cursor, error) {
+	b2, err := base64.StdEncoding.DecodeString(b)
+	if err != nil {
+		return Cursor(""), err
+	}
+	return Cursor(b2), nil
+}
+
+func CursorToBase64(c Cursor) string {
+	return base64.StdEncoding.EncodeToString([]byte(c))
+}
+
+type CursorSortBy struct {
+	Field     string        `json:"field"`
+	Direction SortDirection `json:"sortDirection"`
+}
+
+type Cursor string
+
+type CursorPagination struct {
+	First *int64  `json:"first"`
+	After *string `json:"after,omitempty"`
+
+	Last   *int64  `json:"last,omitempty"`
+	Before *string `json:"before,omitempty"`
+
+	OrderBy       string        `json:"orderBy,omitempty" graphql:"default=\"_id\""`
+	SortDirection SortDirection `json:"sortDirection,omitempty" graphql:"enum=ASC;DESC,default=\"ASC\""`
+}
+
+type SortDirection string
+
+const (
+	SortDirectionAsc  SortDirection = "ASC"
+	SortDirectionDesc SortDirection = "DESC"
+)
+
+var DefaultCursorPagination = CursorPagination{
+	First:         functions.New(int64(10)),
+	After:         nil,
+	OrderBy:       "_id",
+	SortDirection: SortDirectionAsc,
 }
