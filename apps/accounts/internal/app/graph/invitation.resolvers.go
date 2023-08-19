@@ -22,29 +22,19 @@ func (r *invitationResolver) ID(ctx context.Context, obj *entities.Invitation) (
 	panic(fmt.Errorf("not implemented: ID - id"))
 }
 
-// Role is the resolver for the role field.
-func (r *invitationResolver) Role(ctx context.Context, obj *entities.Invitation) (string, error) {
-	panic(fmt.Errorf("not implemented: Role - role"))
-}
-
 // UpdateTime is the resolver for the updateTime field.
 func (r *invitationResolver) UpdateTime(ctx context.Context, obj *entities.Invitation) (string, error) {
 	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
 }
 
-// UserID is the resolver for the userId field.
-func (r *invitationResolver) UserID(ctx context.Context, obj *entities.Invitation) (string, error) {
-	panic(fmt.Errorf("not implemented: UserID - userId"))
+// UserRole is the resolver for the userRole field.
+func (r *invitationResolver) UserRole(ctx context.Context, obj *entities.Invitation) (string, error) {
+	panic(fmt.Errorf("not implemented: UserRole - userRole"))
 }
 
-// Role is the resolver for the role field.
-func (r *invitationInResolver) Role(ctx context.Context, obj *entities.Invitation, data string) error {
-	panic(fmt.Errorf("not implemented: Role - role"))
-}
-
-// UserID is the resolver for the userId field.
-func (r *invitationInResolver) UserID(ctx context.Context, obj *entities.Invitation, data string) error {
-	panic(fmt.Errorf("not implemented: UserID - userId"))
+// UserRole is the resolver for the userRole field.
+func (r *invitationInResolver) UserRole(ctx context.Context, obj *entities.Invitation, data string) error {
+	panic(fmt.Errorf("not implemented: UserRole - userRole"))
 }
 
 // Invitation returns generated.InvitationResolver implementation.
