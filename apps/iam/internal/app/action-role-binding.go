@@ -1,4 +1,4 @@
-package application
+package app
 
 import (
 	t "kloudlite.io/apps/iam/types"
@@ -12,6 +12,9 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	//t.ListAccounts:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 	t.UpdateAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.DeleteAccount: []t.Role{t.RoleAccountOwner},
+
+	t.DeactivateAccount: []t.Role{t.RoleAccountOwner},
+	t.ActivateAccount:   []t.Role{t.RoleAccountOwner},
 
 	t.InviteAccountAdmin:  []t.Role{t.RoleAccountOwner},
 	t.InviteAccountMember: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},

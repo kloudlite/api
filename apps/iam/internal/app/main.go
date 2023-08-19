@@ -1,28 +1,19 @@
-package application
+package app
 
 import (
 	"encoding/json"
+	"kloudlite.io/pkg/logging"
 	"os"
 
 	"go.uber.org/fx"
-	"google.golang.org/grpc"
 	"kloudlite.io/apps/iam/internal/domain/entities"
 	"kloudlite.io/apps/iam/internal/env"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
-	"kloudlite.io/pkg/logging"
 	"kloudlite.io/pkg/repos"
 )
 
-func fxServer(rbRepo repos.DbRepo[*entities.RoleBinding], rbm RoleBindingMap, logger logging.Logger) iam.IAMServer {
-	return &GrpcServer{
-		logger:         logger,
-		rbRepo:         rbRepo,
-		roleBindingMap: rbm,
-	}
-}
-
 var Module = fx.Module(
-	"application",
+	"app",
 	fx.Provide(func(ev *env.Env) (RoleBindingMap, error) {
 		if ev.ActionRoleMapFile != "" {
 			b, err := os.ReadFile(ev.ActionRoleMapFile)
@@ -38,10 +29,15 @@ var Module = fx.Module(
 
 		return roleBindings, nil
 	}),
-	fx.Provide(fxServer),
+
 	repos.NewFxMongoRepo[*entities.RoleBinding]("role_bindings", "rb", entities.RoleBindingIndices),
+
+	fx.Provide(func(logger logging.Logger, rbRepo repos.DbRepo[*entities.RoleBinding], rbm RoleBindingMap) iam.IAMServer {
+		return newIAMGrpcService(logger, rbRepo, rbm)
+	}),
+
 	fx.Invoke(
-		func(server *grpc.Server, iamService iam.IAMServer) {
+		func(server IAMGrpcServer, iamService iam.IAMServer) {
 			iam.RegisterIAMServer(server, iamService)
 		},
 	),
