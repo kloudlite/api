@@ -3,8 +3,12 @@ subject: "[KloudLite] Reset Password"
 plain: >-
   Hello {{.Name}},
   
-  Verify your email by navigating to the following link
+  We've received a request to reset password for your account.
+  To proceed, please follow the link below.
+
   {{.Link}}
+
+  If you did not request a password reset or need further assistance, please contact us immediately.
   
   Thanks,
   Team KloudLite

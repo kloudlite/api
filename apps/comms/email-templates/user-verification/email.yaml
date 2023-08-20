@@ -3,10 +3,12 @@ subject: "[KloudLite] Verify your email"
 plain: >-
   Hello {{.Name}},
   
-  We are happy you singed up for kloudlite. To start exploring kloudlite. 
+  Welcome to Kloudlite! We're excited to have you onboard.
   
-  Please confirm your email address, by opening url below
+  To start exploring Kloudlite, please follow the link below to verify your email address:
   {{.Link}}
+
+  If you didn't sign up for Kloudlite or have any questions, please contact us immediately.
   
   Thanks,
-  Team KloudLite
+  - Team KloudLite
