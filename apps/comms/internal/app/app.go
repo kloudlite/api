@@ -30,7 +30,7 @@ type UserVerificationEmail *EmailTemplate
 type WelcomeEmail *EmailTemplate
 
 func parseTemplate(et EmailTemplatesDir, templateName string, subject string) (*EmailTemplate, error) {
-	txtFile, err := et.ReadFile(fmt.Sprintf("email-templates/%v/email.yaml", templateName))
+	txtFile, err := et.ReadFile(fmt.Sprintf("email-templates/%v/email.txt", templateName))
 	if err != nil {
 		return nil, err
 	}
@@ -57,22 +57,22 @@ func parseTemplate(et EmailTemplatesDir, templateName string, subject string) (*
 
 var Module = fx.Module("app",
 	fx.Provide(func(et EmailTemplatesDir) (AccountInviteEmail, error) {
-		return parseTemplate(et, "account-invite", "Kloudlite Account Invite")
+		return parseTemplate(et, "account-invite", "[Kloudlite] Account Invite")
 	}),
 	fx.Provide(func(et EmailTemplatesDir) (ProjectInviteEmail, error) {
-		return parseTemplate(et, "project-invite", "Kloudlite Project Invite")
+		return parseTemplate(et, "project-invite", "[Kloudlite] Project Invite")
 	}),
 	fx.Provide(func(et EmailTemplatesDir) (RestPasswordEmail, error) {
-		return parseTemplate(et, "reset-password", "Kloudlite Reset Password")
+		return parseTemplate(et, "reset-password", "[Kloudlite] Reset Password")
 	}),
 	fx.Provide(func(et EmailTemplatesDir) (UserVerificationEmail, error) {
-		return parseTemplate(et, "user-verification", "Kloudlite Verify Email")
+		return parseTemplate(et, "user-verification", "[Kloudlite] Verify Email")
 	}),
 	fx.Provide(func(et EmailTemplatesDir) (WelcomeEmail, error) {
-		return parseTemplate(et, "welcome", "Welcome to Kloudlite")
+		return parseTemplate(et, "welcome", "[Kloudlite] Welcome to Kloudlite")
 	}),
 
-  fx.Provide(newCommsSvc),
+	fx.Provide(newCommsSvc),
 
 	fx.Invoke(func(server CommsGrpcServer, commsServer comms.CommsServer) {
 		comms.RegisterCommsServer(server, commsServer)

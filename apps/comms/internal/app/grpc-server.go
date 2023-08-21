@@ -45,7 +45,12 @@ func (r *commsSvc) sendSupportEmail(ctx context.Context, subject string, toEmail
 func (r *commsSvc) SendAccountMemberInviteEmail(ctx context.Context, input *comms.AccountMemberInviteEmailInput) (*comms.Void, error) {
 	plainText := new(bytes.Buffer)
 	args := map[string]any{
-		"Name":        input.Name,
+		"Name": func() string {
+			if input.Name != "" {
+				return input.Name
+			}
+			return "there"
+		}(),
 		"InvitedBy":   input.InvitedBy,
 		"AccountName": input.AccountName,
 		"Link":        fmt.Sprintf("%v?token=%v", r.ev.AccountsWebInviteUrl, input.InvitationToken),
@@ -69,7 +74,12 @@ func (r *commsSvc) SendAccountMemberInviteEmail(ctx context.Context, input *comm
 func (r *commsSvc) SendProjectMemberInviteEmail(ctx context.Context, input *comms.ProjectMemberInviteEmailInput) (*comms.Void, error) {
 	plainText := new(bytes.Buffer)
 	args := map[string]any{
-		"Name":        input.Name,
+		"Name": func() string {
+			if input.Name != "" {
+				return input.Name
+			}
+			return "there"
+		}(),
 		"InvitedBy":   input.InvitedBy,
 		"AccountName": input.ProjectName,
 		"Link":        fmt.Sprintf("%v?token=%v", r.ev.ProjectsWebInviteUrl, input.InvitationToken),
@@ -94,7 +104,12 @@ func (r *commsSvc) SendProjectMemberInviteEmail(ctx context.Context, input *comm
 func (r *commsSvc) SendPasswordResetEmail(ctx context.Context, input *comms.PasswordResetEmailInput) (*comms.Void, error) {
 	plainText := new(bytes.Buffer)
 	args := map[string]any{
-		"Name": input.Name,
+		"Name": func() string {
+			if input.Name != "" {
+				return input.Name
+			}
+			return "there"
+		}(),
 		"Link": fmt.Sprintf("%v?token=%v", r.ev.ResetPasswordWebUrl, input.ResetToken),
 	}
 
@@ -117,7 +132,12 @@ func (r *commsSvc) SendPasswordResetEmail(ctx context.Context, input *comms.Pass
 func (r *commsSvc) SendWelcomeEmail(ctx context.Context, input *comms.WelcomeEmailInput) (*comms.Void, error) {
 	plainText := new(bytes.Buffer)
 	args := map[string]any{
-		"Name": input.Name,
+		"Name": func() string {
+			if input.Name != "" {
+				return input.Name
+			}
+			return "there"
+		}(),
 	}
 
 	if err := r.welcomeEmail.PlainText.Execute(plainText, args); err != nil {
@@ -139,7 +159,12 @@ func (r *commsSvc) SendWelcomeEmail(ctx context.Context, input *comms.WelcomeEma
 func (r *commsSvc) SendVerificationEmail(ctx context.Context, input *comms.VerificationEmailInput) (*comms.Void, error) {
 	plainText := new(bytes.Buffer)
 	args := map[string]any{
-		"Name": input.Name,
+		"Name": func() string {
+			if input.Name != "" {
+				return input.Name
+			}
+			return "there"
+		}(),
 		"Link": fmt.Sprintf("%v?token=%v", r.ev.VerifyEmailWebUrl, input.VerificationToken),
 	}
 

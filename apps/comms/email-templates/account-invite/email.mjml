@@ -2,13 +2,13 @@
   <mj-body background-color="#f7f7f7">
     <mj-section padding="20px 0">
       <mj-column width="100%">
-        <mj-image align="left" width="100px" src="https://ik.imagekit.io/kloudlite/logo-scalable_c56EcJLdd.png?ik-sdk-version=javascript-1.4.3&updatedAt=1651786453856"></mj-image>
+        <mj-image align="left" width="100px" src="https://ik.imagekit.io/kloudlite/logo-scalable_c56EcJLdd.png?ik-sdk-version=javascript-1.4.3&updatedAt=1651786453856" alt="kloudlite logo"></mj-image>
         <mj-divider border-color="#ddd" border-width="1px"></mj-divider>
         <mj-text font-family="Open Sans, Arial" font-size="18px" color="#333" line-height="1.5">
           Hello {{.Name}},
         </mj-text>
         <mj-text font-family="Open Sans, Arial" font-size="16px" color="#555" line-height="1.5">
-          {{.InvitedBy}} has invited you to join kloudlite account <strong>{{.AccountName}}</strong>.
+          <strong>{{.InvitedBy}}</strong> has invited you to join Kloudlite Account - <strong>{{.AccountName}}</strong>
         </mj-text>
         <mj-text font-family="Open Sans, Arial" font-size="16px" color="#555" line-height="1.5">
           To accept, please click the button below.
@@ -31,5 +31,4 @@
     </mj-section>
   </mj-body>
 </mjml>
-
 
