@@ -151,16 +151,18 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		AccountsActivateAccount     func(childComplexity int, accountName string) int
-		AccountsCreateAccount       func(childComplexity int, account entities.Account) int
-		AccountsDeactivateAccount   func(childComplexity int, accountName string) int
-		AccountsDeleteAccount       func(childComplexity int, accountName string) int
-		AccountsDeleteInvitation    func(childComplexity int, accountName string, invitationID string) int
-		AccountsInviteMember        func(childComplexity int, accountName string, invitation entities.Invitation) int
-		AccountsRemoveAccountMember func(childComplexity int, accountName string, memberID repos.ID) int
-		AccountsResendInviteMail    func(childComplexity int, accountName string, invitationID string) int
-		AccountsUpdateAccount       func(childComplexity int, account entities.Account) int
-		AccountsUpdateAccountMember func(childComplexity int, accountName string, memberID repos.ID, role string) int
+		AccountsAcceptInvitation        func(childComplexity int, accountName string, inviteToken string) int
+		AccountsActivateAccount         func(childComplexity int, accountName string) int
+		AccountsCreateAccount           func(childComplexity int, account entities.Account) int
+		AccountsDeactivateAccount       func(childComplexity int, accountName string) int
+		AccountsDeleteAccount           func(childComplexity int, accountName string) int
+		AccountsDeleteInvitation        func(childComplexity int, accountName string, invitationID string) int
+		AccountsInviteMember            func(childComplexity int, accountName string, invitation entities.Invitation) int
+		AccountsRejectInvitation        func(childComplexity int, accountName string, inviteToken string) int
+		AccountsRemoveAccountMembership func(childComplexity int, accountName string, memberID repos.ID) int
+		AccountsResendInviteMail        func(childComplexity int, accountName string, invitationID string) int
+		AccountsUpdateAccount           func(childComplexity int, account entities.Account) int
+		AccountsUpdateAccountMembership func(childComplexity int, accountName string, memberID repos.ID, role string) int
 	}
 
 	PageInfo struct {
@@ -171,16 +173,17 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		AccountsCheckNameAvailability  func(childComplexity int, name string) int
-		AccountsGetAccount             func(childComplexity int, accountName string) int
-		AccountsGetAccountMembership   func(childComplexity int, accountName string) int
-		AccountsGetInvitation          func(childComplexity int, accountName string, invitationID string) int
-		AccountsListAccountMemberships func(childComplexity int) int
-		AccountsListAccounts           func(childComplexity int) int
-		AccountsListInvitations        func(childComplexity int, accountName string) int
-		AccountsResyncAccount          func(childComplexity int, accountName string) int
-		__resolve__service             func(childComplexity int) int
-		__resolve_entities             func(childComplexity int, representations []map[string]interface{}) int
+		AccountsCheckNameAvailability     func(childComplexity int, name string) int
+		AccountsGetAccount                func(childComplexity int, accountName string) int
+		AccountsGetAccountMembership      func(childComplexity int, accountName string) int
+		AccountsGetInvitation             func(childComplexity int, accountName string, invitationID string) int
+		AccountsListAccounts              func(childComplexity int) int
+		AccountsListInvitations           func(childComplexity int, accountName string) int
+		AccountsListMembershipsForAccount func(childComplexity int, accountName string) int
+		AccountsListMembershipsForUser    func(childComplexity int) int
+		AccountsResyncAccount             func(childComplexity int, accountName string) int
+		__resolve__service                func(childComplexity int) int
+		__resolve_entities                func(childComplexity int, representations []map[string]interface{}) int
 	}
 
 	User struct {
@@ -235,14 +238,16 @@ type MetadataResolver interface {
 type MutationResolver interface {
 	AccountsCreateAccount(ctx context.Context, account entities.Account) (*entities.Account, error)
 	AccountsUpdateAccount(ctx context.Context, account entities.Account) (*entities.Account, error)
-	AccountsRemoveAccountMember(ctx context.Context, accountName string, memberID repos.ID) (bool, error)
-	AccountsUpdateAccountMember(ctx context.Context, accountName string, memberID repos.ID, role string) (bool, error)
 	AccountsDeactivateAccount(ctx context.Context, accountName string) (bool, error)
 	AccountsActivateAccount(ctx context.Context, accountName string) (bool, error)
 	AccountsDeleteAccount(ctx context.Context, accountName string) (bool, error)
 	AccountsInviteMember(ctx context.Context, accountName string, invitation entities.Invitation) (*entities.Invitation, error)
 	AccountsResendInviteMail(ctx context.Context, accountName string, invitationID string) (bool, error)
 	AccountsDeleteInvitation(ctx context.Context, accountName string, invitationID string) (bool, error)
+	AccountsAcceptInvitation(ctx context.Context, accountName string, inviteToken string) (bool, error)
+	AccountsRejectInvitation(ctx context.Context, accountName string, inviteToken string) (bool, error)
+	AccountsRemoveAccountMembership(ctx context.Context, accountName string, memberID repos.ID) (bool, error)
+	AccountsUpdateAccountMembership(ctx context.Context, accountName string, memberID repos.ID, role string) (bool, error)
 }
 type QueryResolver interface {
 	AccountsListAccounts(ctx context.Context) ([]*entities.Account, error)
@@ -251,7 +256,8 @@ type QueryResolver interface {
 	AccountsListInvitations(ctx context.Context, accountName string) ([]*entities.Invitation, error)
 	AccountsGetInvitation(ctx context.Context, accountName string, invitationID string) (*entities.Invitation, error)
 	AccountsCheckNameAvailability(ctx context.Context, name string) (*domain.CheckNameAvailabilityOutput, error)
-	AccountsListAccountMemberships(ctx context.Context) ([]*entities.AccountMembership, error)
+	AccountsListMembershipsForUser(ctx context.Context) ([]*entities.AccountMembership, error)
+	AccountsListMembershipsForAccount(ctx context.Context, accountName string) ([]*entities.AccountMembership, error)
 	AccountsGetAccountMembership(ctx context.Context, accountName string) (*entities.AccountMembership, error)
 }
 type UserResolver interface {
@@ -676,6 +682,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Metadata.Namespace(childComplexity), true
 
+	case "Mutation.accounts_acceptInvitation":
+		if e.complexity.Mutation.AccountsAcceptInvitation == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_accounts_acceptInvitation_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AccountsAcceptInvitation(childComplexity, args["accountName"].(string), args["inviteToken"].(string)), true
+
 	case "Mutation.accounts_activateAccount":
 		if e.complexity.Mutation.AccountsActivateAccount == nil {
 			break
@@ -748,17 +766,29 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AccountsInviteMember(childComplexity, args["accountName"].(string), args["invitation"].(entities.Invitation)), true
 
-	case "Mutation.accounts_removeAccountMember":
-		if e.complexity.Mutation.AccountsRemoveAccountMember == nil {
+	case "Mutation.accounts_rejectInvitation":
+		if e.complexity.Mutation.AccountsRejectInvitation == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_accounts_removeAccountMember_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_accounts_rejectInvitation_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AccountsRemoveAccountMember(childComplexity, args["accountName"].(string), args["memberId"].(repos.ID)), true
+		return e.complexity.Mutation.AccountsRejectInvitation(childComplexity, args["accountName"].(string), args["inviteToken"].(string)), true
+
+	case "Mutation.accounts_removeAccountMembership":
+		if e.complexity.Mutation.AccountsRemoveAccountMembership == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_accounts_removeAccountMembership_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.AccountsRemoveAccountMembership(childComplexity, args["accountName"].(string), args["memberId"].(repos.ID)), true
 
 	case "Mutation.accounts_resendInviteMail":
 		if e.complexity.Mutation.AccountsResendInviteMail == nil {
@@ -784,17 +814,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.AccountsUpdateAccount(childComplexity, args["account"].(entities.Account)), true
 
-	case "Mutation.accounts_updateAccountMember":
-		if e.complexity.Mutation.AccountsUpdateAccountMember == nil {
+	case "Mutation.accounts_updateAccountMembership":
+		if e.complexity.Mutation.AccountsUpdateAccountMembership == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_accounts_updateAccountMember_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_accounts_updateAccountMembership_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AccountsUpdateAccountMember(childComplexity, args["accountName"].(string), args["memberId"].(repos.ID), args["role"].(string)), true
+		return e.complexity.Mutation.AccountsUpdateAccountMembership(childComplexity, args["accountName"].(string), args["memberId"].(repos.ID), args["role"].(string)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -872,13 +902,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.AccountsGetInvitation(childComplexity, args["accountName"].(string), args["invitationId"].(string)), true
 
-	case "Query.accounts_listAccountMemberships":
-		if e.complexity.Query.AccountsListAccountMemberships == nil {
-			break
-		}
-
-		return e.complexity.Query.AccountsListAccountMemberships(childComplexity), true
-
 	case "Query.accounts_listAccounts":
 		if e.complexity.Query.AccountsListAccounts == nil {
 			break
@@ -897,6 +920,25 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.AccountsListInvitations(childComplexity, args["accountName"].(string)), true
+
+	case "Query.accounts_listMembershipsForAccount":
+		if e.complexity.Query.AccountsListMembershipsForAccount == nil {
+			break
+		}
+
+		args, err := ec.field_Query_accounts_listMembershipsForAccount_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.AccountsListMembershipsForAccount(childComplexity, args["accountName"].(string)), true
+
+	case "Query.accounts_listMembershipsForUser":
+		if e.complexity.Query.AccountsListMembershipsForUser == nil {
+			break
+		}
+
+		return e.complexity.Query.AccountsListMembershipsForUser(childComplexity), true
 
 	case "Query.accounts_resyncAccount":
 		if e.complexity.Query.AccountsResyncAccount == nil {
@@ -1053,16 +1095,17 @@ type Query {
 
   accounts_checkNameAvailability(name: String!): AccountsCheckNameAvailabilityOutput! @isLoggedInAndVerified
 
-  accounts_listAccountMemberships: [AccountMembership!] @isLoggedInAndVerified
+  # accounts_listAccountMemberships: [AccountMembership!] @isLoggedInAndVerified
+  # accounts_listUserMembershios: [AccountMembership!] @isLoggedInAndVerified
+  accounts_listMembershipsForUser: [AccountMembership!] @isLoggedInAndVerified
+  accounts_listMembershipsForAccount(accountName: String!): [AccountMembership!] @isLoggedInAndVerified
+
   accounts_getAccountMembership(accountName: String!): AccountMembership @isLoggedInAndVerified
 }
 
 type Mutation {
   accounts_createAccount(account: AccountIn!): Account! @isLoggedInAndVerified
   accounts_updateAccount(account: AccountIn!): Account! @isLoggedInAndVerified
-
-  accounts_removeAccountMember(accountName: String!, memberId: ID!): Boolean! @isLoggedInAndVerified
-  accounts_updateAccountMember(accountName: String!, memberId: ID!, role: String!): Boolean! @isLoggedInAndVerified
 
   accounts_deactivateAccount(accountName: String!): Boolean! @isLoggedInAndVerified
   accounts_activateAccount(accountName: String!): Boolean! @isLoggedInAndVerified
@@ -1075,6 +1118,12 @@ type Mutation {
   accounts_resendInviteMail(accountName: String!, invitationId: String!): Boolean! @isLoggedInAndVerified
   # accounts_inviteUser(invitation: InvitationIn): Invitation @isLoggedInAndVerified @hasAccount
   accounts_deleteInvitation(accountName: String!, invitationId: String!): Boolean! @isLoggedInAndVerified
+
+  accounts_acceptInvitation(accountName: String!, inviteToken: String!): Boolean! @isLoggedInAndVerified
+  accounts_rejectInvitation(accountName: String!, inviteToken: String!): Boolean! @isLoggedInAndVerified
+
+  accounts_removeAccountMembership(accountName: String!, memberId: ID!): Boolean! @isLoggedInAndVerified
+  accounts_updateAccountMembership(accountName: String!, memberId: ID!, role: String!): Boolean! @isLoggedInAndVerified
 }
 
 extend type User @key(fields: "id") {
@@ -1278,6 +1327,30 @@ func (ec *executionContext) field_Entity_findUserByID_args(ctx context.Context, 
 	return args, nil
 }
 
+func (ec *executionContext) field_Mutation_accounts_acceptInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["accountName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accountName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["inviteToken"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inviteToken"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["inviteToken"] = arg1
+	return args, nil
+}
+
 func (ec *executionContext) field_Mutation_accounts_activateAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -1386,7 +1459,31 @@ func (ec *executionContext) field_Mutation_accounts_inviteMember_args(ctx contex
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_accounts_removeAccountMember_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_accounts_rejectInvitation_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["accountName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accountName"] = arg0
+	var arg1 string
+	if tmp, ok := rawArgs["inviteToken"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("inviteToken"))
+		arg1, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["inviteToken"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_accounts_removeAccountMembership_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1434,7 +1531,7 @@ func (ec *executionContext) field_Mutation_accounts_resendInviteMail_args(ctx co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_accounts_updateAccountMember_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_accounts_updateAccountMembership_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -1582,6 +1679,21 @@ func (ec *executionContext) field_Query_accounts_getInvitation_args(ctx context.
 }
 
 func (ec *executionContext) field_Query_accounts_listInvitations_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["accountName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["accountName"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_accounts_listMembershipsForAccount_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -4285,156 +4397,6 @@ func (ec *executionContext) fieldContext_Mutation_accounts_updateAccount(ctx con
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_accounts_removeAccountMember(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_accounts_removeAccountMember(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AccountsRemoveAccountMember(rctx, fc.Args["accountName"].(string), fc.Args["memberId"].(repos.ID))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_accounts_removeAccountMember(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_accounts_removeAccountMember_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_accounts_updateAccountMember(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_accounts_updateAccountMember(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AccountsUpdateAccountMember(rctx, fc.Args["accountName"].(string), fc.Args["memberId"].(repos.ID), fc.Args["role"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_accounts_updateAccountMember(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_accounts_updateAccountMember_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Mutation_accounts_deactivateAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_accounts_deactivateAccount(ctx, field)
 	if err != nil {
@@ -4907,6 +4869,306 @@ func (ec *executionContext) fieldContext_Mutation_accounts_deleteInvitation(ctx 
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_accounts_deleteInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_accounts_acceptInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_accounts_acceptInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AccountsAcceptInvitation(rctx, fc.Args["accountName"].(string), fc.Args["inviteToken"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_accounts_acceptInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_accounts_acceptInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_accounts_rejectInvitation(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_accounts_rejectInvitation(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AccountsRejectInvitation(rctx, fc.Args["accountName"].(string), fc.Args["inviteToken"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_accounts_rejectInvitation(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_accounts_rejectInvitation_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_accounts_removeAccountMembership(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_accounts_removeAccountMembership(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AccountsRemoveAccountMembership(rctx, fc.Args["accountName"].(string), fc.Args["memberId"].(repos.ID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_accounts_removeAccountMembership(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_accounts_removeAccountMembership_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_accounts_updateAccountMembership(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_accounts_updateAccountMembership(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().AccountsUpdateAccountMembership(rctx, fc.Args["accountName"].(string), fc.Args["memberId"].(repos.ID), fc.Args["role"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_accounts_updateAccountMembership(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_accounts_updateAccountMembership_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -5622,8 +5884,8 @@ func (ec *executionContext) fieldContext_Query_accounts_checkNameAvailability(ct
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_accounts_listAccountMemberships(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_accounts_listAccountMemberships(ctx, field)
+func (ec *executionContext) _Query_accounts_listMembershipsForUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_accounts_listMembershipsForUser(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -5637,7 +5899,7 @@ func (ec *executionContext) _Query_accounts_listAccountMemberships(ctx context.C
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().AccountsListAccountMemberships(rctx)
+			return ec.resolvers.Query().AccountsListMembershipsForUser(rctx)
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -5670,7 +5932,7 @@ func (ec *executionContext) _Query_accounts_listAccountMemberships(ctx context.C
 	return ec.marshalOAccountMembership2ᚕᚖkloudliteᚗioᚋappsᚋaccountsᚋinternalᚋentitiesᚐAccountMembershipᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_accounts_listAccountMemberships(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_accounts_listMembershipsForUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -5687,6 +5949,86 @@ func (ec *executionContext) fieldContext_Query_accounts_listAccountMemberships(c
 			}
 			return nil, fmt.Errorf("no field named %q was found under type AccountMembership", field.Name)
 		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_accounts_listMembershipsForAccount(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_accounts_listMembershipsForAccount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().AccountsListMembershipsForAccount(rctx, fc.Args["accountName"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+
+		tmp, err := directive1(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*entities.AccountMembership); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*kloudlite.io/apps/accounts/internal/entities.AccountMembership`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*entities.AccountMembership)
+	fc.Result = res
+	return ec.marshalOAccountMembership2ᚕᚖkloudliteᚗioᚋappsᚋaccountsᚋinternalᚋentitiesᚐAccountMembershipᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_accounts_listMembershipsForAccount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_AccountMembership_accountName(ctx, field)
+			case "role":
+				return ec.fieldContext_AccountMembership_role(ctx, field)
+			case "userId":
+				return ec.fieldContext_AccountMembership_userId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type AccountMembership", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_accounts_listMembershipsForAccount_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return
 	}
 	return fc, nil
 }
@@ -9163,24 +9505,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "accounts_removeAccountMember":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_accounts_removeAccountMember(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
-		case "accounts_updateAccountMember":
-
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_accounts_updateAccountMember(ctx, field)
-			})
-
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "accounts_deactivateAccount":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
@@ -9230,6 +9554,42 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_accounts_deleteInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accounts_acceptInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_accounts_acceptInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accounts_rejectInvitation":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_accounts_rejectInvitation(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accounts_removeAccountMembership":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_accounts_removeAccountMembership(ctx, field)
+			})
+
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
+		case "accounts_updateAccountMembership":
+
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_accounts_updateAccountMembership(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
@@ -9428,7 +9788,7 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			out.Concurrently(i, func() graphql.Marshaler {
 				return rrm(innerCtx)
 			})
-		case "accounts_listAccountMemberships":
+		case "accounts_listMembershipsForUser":
 			field := field
 
 			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
@@ -9437,7 +9797,27 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Query_accounts_listAccountMemberships(ctx, field)
+				res = ec._Query_accounts_listMembershipsForUser(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "accounts_listMembershipsForAccount":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_accounts_listMembershipsForAccount(ctx, field)
 				return res
 			}
 

@@ -124,7 +124,7 @@ func (repo *dbRepo[T]) findOne(ctx context.Context, filter Filter) (T, error) {
 }
 
 func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
-	one := repo.db.Collection(repo.collectionName).FindOne(ctx, filter)
+  one := repo.db.Collection(repo.collectionName).FindOne(ctx, filter)
 	item, err := bsonToStruct[T](one)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {

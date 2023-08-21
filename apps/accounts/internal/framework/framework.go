@@ -67,7 +67,7 @@ var Module = fx.Module("framework",
 
 	fx.Invoke(func(c1 app.AuthClient, c2 app.IAMClient, c3 app.CommsClient, c4 app.ContainerRegistryClient, c5 app.ConsoleClient, lf fx.Lifecycle) {
 		lf.Append(fx.Hook{
-			OnStop: func(ctx context.Context) error {
+			OnStop: func(context.Context) error {
 				if err := c1.Close(); err != nil {
 					return err
 				}

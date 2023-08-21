@@ -82,9 +82,9 @@ var Module = fx.Module("app",
 					return nil, fiber.ErrForbidden
 				}
 
-				nctx := context.WithValue(ctx, "kloudlite-user-id", string(sess.UserId))
-				// cc := domain.AccountsContext{Context: ctx, UserId: sess.UserId}
-				return next(nctx)
+				cc := context.WithValue(ctx, "kloudlite-user-id", string(sess.UserId))
+				cc = context.WithValue(cc, "kloudlite-user-email", sess.UserEmail)
+				return next(cc)
 			}
 
 			schema := generated.NewExecutableSchema(gqlConfig)

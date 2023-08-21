@@ -75,4 +75,3 @@ func (r *Resolver) AccountIn() generated.AccountInResolver { return &accountInRe
 
 type accountResolver struct{ *Resolver }
 type accountInResolver struct{ *Resolver }
-

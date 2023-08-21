@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"fmt"
 	nanoid "github.com/matoous/go-nanoid/v2"
 	"kloudlite.io/apps/accounts/internal/entities"
@@ -12,7 +13,7 @@ import (
 	"kloudlite.io/pkg/repos"
 )
 
-func (d *domain) findInvitation(ctx UserContext, accountName string, invitationId repos.ID) (*entities.Invitation, error) {
+func (d *domain) findInvitation(ctx context.Context, accountName string, invitationId repos.ID) (*entities.Invitation, error) {
 	inv, err := d.invitationRepo.FindOne(ctx, repos.Filter{
 		"accountName": accountName,
 		"id":          invitationId,
@@ -23,6 +24,23 @@ func (d *domain) findInvitation(ctx UserContext, accountName string, invitationI
 
 	if inv == nil {
 		return nil, fmt.Errorf("no invitation found with id=%s", invitationId)
+	}
+
+	return inv, nil
+}
+
+func (d *domain) findInvitationByInviteToken(ctx context.Context, accountName string, userEmail string, inviteToken string) (*entities.Invitation, error) {
+	inv, err := d.invitationRepo.FindOne(ctx, repos.Filter{
+		"userEmail":   userEmail,
+		"accountName": accountName,
+		"inviteToken": inviteToken,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if inv == nil {
+		return nil, fmt.Errorf("no invitation found, with given invite token")
 	}
 
 	return inv, nil
@@ -130,10 +148,14 @@ func (d *domain) DeleteInvitation(ctx UserContext, accountName string, invitatio
 	return true, nil
 }
 
-func (d *domain) AcceptInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error) {
-	inv, err := d.findInvitation(ctx, accountName, invitationId)
+func (d *domain) AcceptInvitation(ctx UserContext, accountName string, inviteToken string) (bool, error) {
+	inv, err := d.findInvitationByInviteToken(ctx, accountName, ctx.UserEmail, inviteToken)
 	if err != nil {
 		return false, err
+	}
+
+	if inv.Accepted != nil || inv.Rejected != nil {
+		return false, fmt.Errorf("invitation already accepted or rejected, won't process further")
 	}
 
 	inv.Accepted = fn.New(true)
@@ -141,13 +163,21 @@ func (d *domain) AcceptInvitation(ctx UserContext, accountName string, invitatio
 		return false, err
 	}
 
+	if err := d.addMembership(ctx, accountName, ctx.UserId, iamT.ResourceAccount, inv.UserRole); err != nil {
+		return false, err
+	}
+
 	return true, nil
 }
 
-func (d *domain) RejectInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error) {
-	inv, err := d.findInvitation(ctx, accountName, invitationId)
+func (d *domain) RejectInvitation(ctx UserContext, accountName string, inviteToken string) (bool, error) {
+	inv, err := d.findInvitationByInviteToken(ctx, accountName, ctx.UserEmail, inviteToken)
 	if err != nil {
 		return false, err
+	}
+
+	if inv.Accepted != nil || inv.Rejected != nil {
+		return false, fmt.Errorf("invitation already accepted or rejected, won't process further")
 	}
 
 	inv.Rejected = fn.New(true)

@@ -6,12 +6,12 @@ package graph
 
 import (
 	"context"
-	"fmt"
 
 	"kloudlite.io/apps/accounts/internal/app/graph/generated"
 	"kloudlite.io/apps/accounts/internal/app/graph/model"
 	"kloudlite.io/apps/accounts/internal/domain"
 	"kloudlite.io/apps/accounts/internal/entities"
+	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/pkg/repos"
 )
 
@@ -31,16 +31,6 @@ func (r *mutationResolver) AccountsUpdateAccount(ctx context.Context, account en
 		return nil, err
 	}
 	return r.domain.UpdateAccount(uc, account)
-}
-
-// AccountsRemoveAccountMember is the resolver for the accounts_removeAccountMember field.
-func (r *mutationResolver) AccountsRemoveAccountMember(ctx context.Context, accountName string, memberID repos.ID) (bool, error) {
-	panic(fmt.Errorf("not implemented: AccountsRemoveAccountMember - accounts_removeAccountMember"))
-}
-
-// AccountsUpdateAccountMember is the resolver for the accounts_updateAccountMember field.
-func (r *mutationResolver) AccountsUpdateAccountMember(ctx context.Context, accountName string, memberID repos.ID, role string) (bool, error) {
-	panic(fmt.Errorf("not implemented: AccountsUpdateAccountMember - accounts_updateAccountMember"))
 }
 
 // AccountsDeactivateAccount is the resolver for the accounts_deactivateAccount field.
@@ -95,6 +85,43 @@ func (r *mutationResolver) AccountsDeleteInvitation(ctx context.Context, account
 		return false, err
 	}
 	return r.domain.DeleteInvitation(uc, accountName, repos.ID(invitationID))
+}
+
+// AccountsAcceptInvitation is the resolver for the accounts_acceptInvitation field.
+func (r *mutationResolver) AccountsAcceptInvitation(ctx context.Context, accountName string, inviteToken string) (bool, error) {
+	uc, err := toUserContext(ctx)
+	if err != nil {
+		return false, err
+	}
+	return r.domain.AcceptInvitation(uc, accountName, inviteToken)
+}
+
+// AccountsRejectInvitation is the resolver for the accounts_rejectInvitation field.
+func (r *mutationResolver) AccountsRejectInvitation(ctx context.Context, accountName string, inviteToken string) (bool, error) {
+	uc, err := toUserContext(ctx)
+	if err != nil {
+		return false, err
+	}
+
+	return r.domain.RejectInvitation(uc, accountName, inviteToken)
+}
+
+// AccountsRemoveAccountMembership is the resolver for the accounts_removeAccountMembership field.
+func (r *mutationResolver) AccountsRemoveAccountMembership(ctx context.Context, accountName string, memberID repos.ID) (bool, error) {
+	uc, err := toUserContext(ctx)
+	if err != nil {
+		return false, err
+	}
+	return r.domain.RemoveAccountMembership(uc, accountName, memberID)
+}
+
+// AccountsUpdateAccountMembership is the resolver for the accounts_updateAccountMembership field.
+func (r *mutationResolver) AccountsUpdateAccountMembership(ctx context.Context, accountName string, memberID repos.ID, role string) (bool, error) {
+	uc, err := toUserContext(ctx)
+	if err != nil {
+		return false, err
+	}
+	return r.domain.UpdateAccountMembership(uc, accountName, memberID, iamT.Role(role))
 }
 
 // AccountsListAccounts is the resolver for the accounts_listAccounts field.
@@ -169,14 +196,23 @@ func (r *queryResolver) AccountsCheckNameAvailability(ctx context.Context, name 
 	return r.domain.CheckNameAvailability(ctx, name)
 }
 
-// AccountsListAccountMemberships is the resolver for the accounts_listAccountMemberships field.
-func (r *queryResolver) AccountsListAccountMemberships(ctx context.Context) ([]*entities.AccountMembership, error) {
+// AccountsListMembershipsForUser is the resolver for the accounts_listMembershipsForUser field.
+func (r *queryResolver) AccountsListMembershipsForUser(ctx context.Context) ([]*entities.AccountMembership, error) {
+	uc, err := toUserContext(ctx)
+	if err != nil {
+		return nil, err
+	}
+	return r.domain.ListMembershipsForUser(uc)
+}
+
+// AccountsListMembershipsForAccount is the resolver for the accounts_listMembershipsForAccount field.
+func (r *queryResolver) AccountsListMembershipsForAccount(ctx context.Context, accountName string) ([]*entities.AccountMembership, error) {
 	uc, err := toUserContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return r.domain.ListAccountMemberships(uc)
+	return r.domain.ListMembershipsForAccount(uc, accountName)
 }
 
 // AccountsGetAccountMembership is the resolver for the accounts_getAccountMembership field.
@@ -195,7 +231,7 @@ func (r *userResolver) AccountMemberships(ctx context.Context, obj *model.User) 
 	if err != nil {
 		return nil, err
 	}
-	return r.domain.ListAccountMemberships(uc)
+	return r.domain.ListMembershipsForUser(uc)
 }
 
 // AccountMembership is the resolver for the accountMembership field.

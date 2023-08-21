@@ -2,7 +2,6 @@ package domain_test
 
 import (
 	"context"
-	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
 	"github.com/kloudlite/operator/pkg/kubectl"
 	"google.golang.org/grpc"
 	"kloudlite.io/apps/accounts/internal/domain"
@@ -14,7 +13,6 @@ import (
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/container_registry"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	iamMock "kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam/mocks"
-	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"
 	"kloudlite.io/pkg/logging"
 	"kloudlite.io/pkg/repos"
@@ -43,6 +41,7 @@ func getDomain(f fields) domain.Domain {
 		f.authClient,
 		f.commsClient,
 		f.k8sYamlClient,
+		f.k8sExtendedClient,
 
 		f.accountRepo,
 		f.invitationRepo,
@@ -79,12 +78,12 @@ func Test_domain_ActivateAccount(t *testing.T) {
 					}
 					return cli
 				}(),
-				accountRepo: repos.NewInMemoryRepo[*entities.Account]("accounts", "account", map[repos.ID]*entities.Account{
-					"test": {
-						Account:  crdsv1.Account{},
-						IsActive: fn.New(false),
-					},
-				}),
+				//accountRepo: repos.NewInMemoryRepo[*entities.Account]("accounts", "account", map[repos.ID]*entities.Account{
+				//	"test": {
+				//		Account:  crdsv1.Account{},
+				//		IsActive: fn.New(false),
+				//	},
+				//}),
 			},
 			args:    args{},
 			want:    false,

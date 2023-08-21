@@ -46,18 +46,18 @@ type InvitationService interface {
 
 	DeleteInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
 
-	AcceptInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
-	RejectInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
+	AcceptInvitation(ctx UserContext, accountName string, inviteToken string) (bool, error)
+	RejectInvitation(ctx UserContext, accountName string, inviteToken string) (bool, error)
 }
 
 type MembershipService interface {
-	ListAccountMemberships(ctx UserContext) ([]*entities.AccountMembership, error)
+	ListMembershipsForUser(ctx UserContext) ([]*entities.AccountMembership, error)
+	ListMembershipsForAccount(ctx UserContext, accountName string) ([]*entities.AccountMembership, error)
+
 	GetAccountMembership(ctx UserContext, accountName string) (*entities.AccountMembership, error)
 
 	RemoveAccountMembership(ctx UserContext, accountName string, memberId repos.ID) (bool, error)
 	UpdateAccountMembership(ctx UserContext, accountName string, memberId repos.ID, role iamT.Role) (bool, error)
-
-	GetUserMemberships(ctx UserContext, accountName string, resourceRef string) ([]*entities.AccountMembership, error)
 }
 
 type Domain interface {

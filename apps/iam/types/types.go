@@ -44,7 +44,7 @@ const (
 	DeleteAccountInvitation Action = "delete-account-invitation"
 	DeleteProjectInvitation Action = "delete-project-invitation"
 
-	UpdateAccountMember Action = "update-account-member"
+	ListMembershipsForAccount Action = "list-memberships-for-account"
 
 	RemoveAccountMembership Action = "remove-account-membership"
 	UpdateAccountMembership Action = "update-account-membership"
@@ -91,6 +91,10 @@ const (
 	InviteProjectMember Action = "invite-project-member"
 
 	MutateResourcesInProject Action = "mutate-resources-in-project"
+
+	ListMembershipsForProject Action = "list-memberships-for-project"
+	UpdateProjectMembership   Action = "update-project-membership"
+	RemoveProjectMembership   Action = "remove-project-membership"
 )
 
 func NewResourceRef(accountName string, resourceType ResourceType, resourceName string) string {

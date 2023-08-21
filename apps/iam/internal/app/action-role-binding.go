@@ -9,7 +9,7 @@ type RoleBindingMap map[t.Action][]t.Role
 var roleBindings RoleBindingMap = RoleBindingMap{
 	t.CreateAccount: []t.Role{t.RoleAccountOwner},
 	t.GetAccount:    []t.Role{t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	//t.ListAccounts:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+
 	t.UpdateAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.DeleteAccount: []t.Role{t.RoleAccountOwner},
 
@@ -23,7 +23,10 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.InviteAccountAdmin:  []t.Role{t.RoleAccountOwner},
 	t.InviteAccountMember: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 
-	t.UpdateAccountMember: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+	t.UpdateAccountMembership: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+	t.RemoveAccountMembership: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+
+	t.ListMembershipsForAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 
 	t.CreateCluster: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.DeleteCluster: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
@@ -63,4 +66,8 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.DeleteProjectInvitation: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 
 	t.MutateResourcesInProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+
+	t.ListMembershipsForProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+	t.UpdateProjectMembership:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+	t.RemoveProjectMembership:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 }

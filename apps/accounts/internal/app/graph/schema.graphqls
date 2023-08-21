@@ -16,16 +16,17 @@ type Query {
 
   accounts_checkNameAvailability(name: String!): AccountsCheckNameAvailabilityOutput! @isLoggedInAndVerified
 
-  accounts_listAccountMemberships: [AccountMembership!] @isLoggedInAndVerified
+  # accounts_listAccountMemberships: [AccountMembership!] @isLoggedInAndVerified
+  # accounts_listUserMembershios: [AccountMembership!] @isLoggedInAndVerified
+  accounts_listMembershipsForUser: [AccountMembership!] @isLoggedInAndVerified
+  accounts_listMembershipsForAccount(accountName: String!): [AccountMembership!] @isLoggedInAndVerified
+
   accounts_getAccountMembership(accountName: String!): AccountMembership @isLoggedInAndVerified
 }
 
 type Mutation {
   accounts_createAccount(account: AccountIn!): Account! @isLoggedInAndVerified
   accounts_updateAccount(account: AccountIn!): Account! @isLoggedInAndVerified
-
-  accounts_removeAccountMember(accountName: String!, memberId: ID!): Boolean! @isLoggedInAndVerified
-  accounts_updateAccountMember(accountName: String!, memberId: ID!, role: String!): Boolean! @isLoggedInAndVerified
 
   accounts_deactivateAccount(accountName: String!): Boolean! @isLoggedInAndVerified
   accounts_activateAccount(accountName: String!): Boolean! @isLoggedInAndVerified
@@ -38,6 +39,12 @@ type Mutation {
   accounts_resendInviteMail(accountName: String!, invitationId: String!): Boolean! @isLoggedInAndVerified
   # accounts_inviteUser(invitation: InvitationIn): Invitation @isLoggedInAndVerified @hasAccount
   accounts_deleteInvitation(accountName: String!, invitationId: String!): Boolean! @isLoggedInAndVerified
+
+  accounts_acceptInvitation(accountName: String!, inviteToken: String!): Boolean! @isLoggedInAndVerified
+  accounts_rejectInvitation(accountName: String!, inviteToken: String!): Boolean! @isLoggedInAndVerified
+
+  accounts_removeAccountMembership(accountName: String!, memberId: ID!): Boolean! @isLoggedInAndVerified
+  accounts_updateAccountMembership(accountName: String!, memberId: ID!, role: String!): Boolean! @isLoggedInAndVerified
 }
 
 extend type User @key(fields: "id") {

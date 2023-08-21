@@ -48,6 +48,8 @@ autobind:
 # modelgen, the others will be allowed when binding to fields. Configure them to
 # your liking
 
+skip_mod_tidy: true
+
 models:
   ID:
     model:
@@ -85,11 +87,11 @@ models:
   #     #   resolver: true
   AccountMembership:
     model: kloudlite.io/apps/accounts/internal/entities.AccountMembership
-    fields:
-      user:
-        resolver: true
-      account:
-        resolver: true
+    # fields:
+    #   user:
+    #     resolver: true
+    #   account:
+    #     resolver: true
 
   Invitation: &invitation-model
     model: kloudlite.io/apps/accounts/internal/entities.Invitation
