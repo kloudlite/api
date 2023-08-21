@@ -15,8 +15,9 @@ service IAM {
 
   // Mutation
   rpc AddMembership(AddMembershipIn) returns (AddMembershipOut);
+  rpc UpdateMembership(UpdateMembershipIn) returns (UpdateMembershipOut);
   rpc InviteMembership(AddMembershipIn) returns (AddMembershipOut);
-  rpc ConfirmMembership(ConfirmMembershipIn) returns (ConfirmMembershipOut);
+//  rpc ConfirmMembership(ConfirmMembershipIn) returns (ConfirmMembershipOut);
   rpc RemoveMembership(RemoveMembershipIn) returns (RemoveMembershipOut);
   rpc RemoveResource(RemoveResourceIn) returns (RemoveResourceOut);
 }
@@ -51,6 +52,17 @@ message AddMembershipIn {
   string resourceRef = 3;
   string role = 4;
   string filter = 5;
+}
+
+message UpdateMembershipIn {
+  string userId = 1;
+  string resourceType = 2;
+  string resourceRef = 3;
+  string role = 4;
+}
+
+message UpdateMembershipOut { 
+  bool result = 1;
 }
 
 message GetMembershipOut {

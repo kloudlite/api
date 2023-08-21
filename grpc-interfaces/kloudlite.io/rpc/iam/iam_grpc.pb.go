@@ -27,8 +27,8 @@ const (
 	IAM_ListMembershipsByResource_FullMethodName = "/IAM/ListMembershipsByResource"
 	IAM_ListMembershipsForUser_FullMethodName    = "/IAM/ListMembershipsForUser"
 	IAM_AddMembership_FullMethodName             = "/IAM/AddMembership"
+	IAM_UpdateMembership_FullMethodName          = "/IAM/UpdateMembership"
 	IAM_InviteMembership_FullMethodName          = "/IAM/InviteMembership"
-	IAM_ConfirmMembership_FullMethodName         = "/IAM/ConfirmMembership"
 	IAM_RemoveMembership_FullMethodName          = "/IAM/RemoveMembership"
 	IAM_RemoveResource_FullMethodName            = "/IAM/RemoveResource"
 )
@@ -47,8 +47,9 @@ type IAMClient interface {
 	ListMembershipsForUser(ctx context.Context, in *MembershipsForUserIn, opts ...grpc.CallOption) (*ListMembershipsOut, error)
 	// Mutation
 	AddMembership(ctx context.Context, in *AddMembershipIn, opts ...grpc.CallOption) (*AddMembershipOut, error)
+	UpdateMembership(ctx context.Context, in *UpdateMembershipIn, opts ...grpc.CallOption) (*UpdateMembershipOut, error)
 	InviteMembership(ctx context.Context, in *AddMembershipIn, opts ...grpc.CallOption) (*AddMembershipOut, error)
-	ConfirmMembership(ctx context.Context, in *ConfirmMembershipIn, opts ...grpc.CallOption) (*ConfirmMembershipOut, error)
+	// rpc ConfirmMembership(ConfirmMembershipIn) returns (ConfirmMembershipOut);
 	RemoveMembership(ctx context.Context, in *RemoveMembershipIn, opts ...grpc.CallOption) (*RemoveMembershipOut, error)
 	RemoveResource(ctx context.Context, in *RemoveResourceIn, opts ...grpc.CallOption) (*RemoveResourceOut, error)
 }
@@ -133,18 +134,18 @@ func (c *iAMClient) AddMembership(ctx context.Context, in *AddMembershipIn, opts
 	return out, nil
 }
 
-func (c *iAMClient) InviteMembership(ctx context.Context, in *AddMembershipIn, opts ...grpc.CallOption) (*AddMembershipOut, error) {
-	out := new(AddMembershipOut)
-	err := c.cc.Invoke(ctx, IAM_InviteMembership_FullMethodName, in, out, opts...)
+func (c *iAMClient) UpdateMembership(ctx context.Context, in *UpdateMembershipIn, opts ...grpc.CallOption) (*UpdateMembershipOut, error) {
+	out := new(UpdateMembershipOut)
+	err := c.cc.Invoke(ctx, IAM_UpdateMembership_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *iAMClient) ConfirmMembership(ctx context.Context, in *ConfirmMembershipIn, opts ...grpc.CallOption) (*ConfirmMembershipOut, error) {
-	out := new(ConfirmMembershipOut)
-	err := c.cc.Invoke(ctx, IAM_ConfirmMembership_FullMethodName, in, out, opts...)
+func (c *iAMClient) InviteMembership(ctx context.Context, in *AddMembershipIn, opts ...grpc.CallOption) (*AddMembershipOut, error) {
+	out := new(AddMembershipOut)
+	err := c.cc.Invoke(ctx, IAM_InviteMembership_FullMethodName, in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -183,8 +184,9 @@ type IAMServer interface {
 	ListMembershipsForUser(context.Context, *MembershipsForUserIn) (*ListMembershipsOut, error)
 	// Mutation
 	AddMembership(context.Context, *AddMembershipIn) (*AddMembershipOut, error)
+	UpdateMembership(context.Context, *UpdateMembershipIn) (*UpdateMembershipOut, error)
 	InviteMembership(context.Context, *AddMembershipIn) (*AddMembershipOut, error)
-	ConfirmMembership(context.Context, *ConfirmMembershipIn) (*ConfirmMembershipOut, error)
+	// rpc ConfirmMembership(ConfirmMembershipIn) returns (ConfirmMembershipOut);
 	RemoveMembership(context.Context, *RemoveMembershipIn) (*RemoveMembershipOut, error)
 	RemoveResource(context.Context, *RemoveResourceIn) (*RemoveResourceOut, error)
 	mustEmbedUnimplementedIAMServer()
@@ -218,11 +220,11 @@ func (UnimplementedIAMServer) ListMembershipsForUser(context.Context, *Membershi
 func (UnimplementedIAMServer) AddMembership(context.Context, *AddMembershipIn) (*AddMembershipOut, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method AddMembership not implemented")
 }
+func (UnimplementedIAMServer) UpdateMembership(context.Context, *UpdateMembershipIn) (*UpdateMembershipOut, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method UpdateMembership not implemented")
+}
 func (UnimplementedIAMServer) InviteMembership(context.Context, *AddMembershipIn) (*AddMembershipOut, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method InviteMembership not implemented")
-}
-func (UnimplementedIAMServer) ConfirmMembership(context.Context, *ConfirmMembershipIn) (*ConfirmMembershipOut, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method ConfirmMembership not implemented")
 }
 func (UnimplementedIAMServer) RemoveMembership(context.Context, *RemoveMembershipIn) (*RemoveMembershipOut, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method RemoveMembership not implemented")
@@ -387,6 +389,24 @@ func _IAM_AddMembership_Handler(srv interface{}, ctx context.Context, dec func(i
 	return interceptor(ctx, in, info, handler)
 }
 
+func _IAM_UpdateMembership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(UpdateMembershipIn)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(IAMServer).UpdateMembership(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: IAM_UpdateMembership_FullMethodName,
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(IAMServer).UpdateMembership(ctx, req.(*UpdateMembershipIn))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
 func _IAM_InviteMembership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
 	in := new(AddMembershipIn)
 	if err := dec(in); err != nil {
@@ -401,24 +421,6 @@ func _IAM_InviteMembership_Handler(srv interface{}, ctx context.Context, dec fun
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
 		return srv.(IAMServer).InviteMembership(ctx, req.(*AddMembershipIn))
-	}
-	return interceptor(ctx, in, info, handler)
-}
-
-func _IAM_ConfirmMembership_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(ConfirmMembershipIn)
-	if err := dec(in); err != nil {
-		return nil, err
-	}
-	if interceptor == nil {
-		return srv.(IAMServer).ConfirmMembership(ctx, in)
-	}
-	info := &grpc.UnaryServerInfo{
-		Server:     srv,
-		FullMethod: IAM_ConfirmMembership_FullMethodName,
-	}
-	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(IAMServer).ConfirmMembership(ctx, req.(*ConfirmMembershipIn))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -499,12 +501,12 @@ var IAM_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _IAM_AddMembership_Handler,
 		},
 		{
-			MethodName: "InviteMembership",
-			Handler:    _IAM_InviteMembership_Handler,
+			MethodName: "UpdateMembership",
+			Handler:    _IAM_UpdateMembership_Handler,
 		},
 		{
-			MethodName: "ConfirmMembership",
-			Handler:    _IAM_ConfirmMembership_Handler,
+			MethodName: "InviteMembership",
+			Handler:    _IAM_InviteMembership_Handler,
 		},
 		{
 			MethodName: "RemoveMembership",
