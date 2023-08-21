@@ -36,7 +36,10 @@ const (
 	InviteAccountAdmin  Action = "invite-account-admin"
 
 	ListAccountInvitations Action = "list-account-invitations"
+	GetAccountInvitation   Action = "get-account-invitation"
+
 	ListProjectInvitations Action = "list-project-invitations"
+	GetProjectInvitation   Action = "get-project-invitation"
 
 	DeleteAccountInvitation Action = "delete-account-invitation"
 	DeleteProjectInvitation Action = "delete-project-invitation"

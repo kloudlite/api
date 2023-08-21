@@ -23,6 +23,33 @@ type GrpcService struct {
 	roleBindingMap map[t.Action][]t.Role
 }
 
+// UpdateMembership updates only the role for a user on already specified resource_ref
+func (s *GrpcService) UpdateMembership(ctx context.Context, in *iam.UpdateMembershipIn) (*iam.UpdateMembershipOut, error) {
+	rb, err := s.rbRepo.FindOne(
+		ctx, repos.Filter{
+			"user_id":       in.UserId,
+			"resource_ref":  in.ResourceRef,
+			"resource_type": in.ResourceType,
+		},
+	)
+	if err != nil {
+		return nil, err
+	}
+	if rb == nil {
+		return nil, fmt.Errorf("role binding for (userId=%q,  ResourceRef=%q, ResourceType=%q) not found", in.UserId, in.ResourceRef, in.ResourceType)
+	}
+
+	rb.Role = t.Role(in.Role)
+
+	if _, err = s.rbRepo.UpdateById(ctx, rb.Id, rb); err != nil {
+		return nil, err
+	}
+
+	return &iam.UpdateMembershipOut{
+		Result: true,
+	}, nil
+}
+
 func (s *GrpcService) findRoleBinding(ctx context.Context, userId repos.ID, resourceRef string) (*entities.RoleBinding, error) {
 	rb, err := s.rbRepo.FindOne(
 		ctx, repos.Filter{

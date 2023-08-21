@@ -13,6 +13,10 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.UpdateAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.DeleteAccount: []t.Role{t.RoleAccountOwner},
 
+	t.ListAccountInvitations:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+	t.GetAccountInvitation:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+	t.DeleteAccountInvitation: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+
 	t.DeactivateAccount: []t.Role{t.RoleAccountOwner},
 	t.ActivateAccount:   []t.Role{t.RoleAccountOwner},
 
@@ -53,6 +57,10 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 
 	t.InviteProjectAdmin:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.InviteProjectMember: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+
+	t.ListProjectInvitations:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+	t.GetProjectInvitation:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+	t.DeleteProjectInvitation: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 
 	t.MutateResourcesInProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
 }
