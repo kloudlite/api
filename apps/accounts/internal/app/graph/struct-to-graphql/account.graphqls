@@ -5,7 +5,6 @@ type Account @shareable {
   displayName: String!
   id: String!
   isActive: Boolean
-  isDeleted: Boolean
   kind: String!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
@@ -20,7 +19,6 @@ input AccountIn {
   contactEmail: String!
   displayName: String!
   isActive: Boolean
-  isDeleted: Boolean
   kind: String
   metadata: MetadataIn!
   spec: Map!

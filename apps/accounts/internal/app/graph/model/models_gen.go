@@ -51,8 +51,8 @@ type PageInfo struct {
 
 type User struct {
 	ID                 repos.ID                      `json:"id"`
-	AccountMemberships []*entities.AccountMembership `json:"accountMemberships"`
-	AccountMembership  *entities.AccountMembership   `json:"accountMembership"`
+	AccountMemberships []*entities.AccountMembership `json:"accountMemberships,omitempty"`
+	AccountMembership  *entities.AccountMembership   `json:"accountMembership,omitempty"`
 }
 
 func (User) IsEntity() {}

@@ -13,8 +13,8 @@ type Invitation struct {
 	UserName         string    `json:"userName,omitempty"`
 	UserRole         iamT.Role `json:"userRole"`
 	AccountName      string    `json:"accountName"`
-	Accepted         *bool     `json:"accepted,omitempty"`
-	Rejected         *bool     `json:"rejected,omitempty"`
+	Accepted         *bool     `json:"accepted,omitempty" graphql:"noinput"`
+	Rejected         *bool     `json:"rejected,omitempty" graphql:"noinput"`
 }
 
 var InvitationIndices = []repos.IndexField{

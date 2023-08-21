@@ -15,9 +15,7 @@ type Invitation @shareable {
 }
 
 input InvitationIn {
-  accepted: Boolean
   accountName: String!
-  rejected: Boolean
   userEmail: String
   userName: String
   userRole: String!

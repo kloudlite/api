@@ -5,15 +5,16 @@ import (
 	nanoid "github.com/matoous/go-nanoid/v2"
 	"kloudlite.io/apps/accounts/internal/entities"
 	iamT "kloudlite.io/apps/iam/types"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/auth"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/comms"
 	"kloudlite.io/pkg/errors"
 	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 )
 
-func (d *domain) findInvitation(ctx AccountsContext, invitationId repos.ID) (*entities.Invitation, error) {
+func (d *domain) findInvitation(ctx UserContext, accountName string, invitationId repos.ID) (*entities.Invitation, error) {
 	inv, err := d.invitationRepo.FindOne(ctx, repos.Filter{
-		"accountName": ctx.AccountName,
+		"accountName": accountName,
 		"id":          invitationId,
 	})
 	if err != nil {
@@ -27,12 +28,12 @@ func (d *domain) findInvitation(ctx AccountsContext, invitationId repos.ID) (*en
 	return inv, nil
 }
 
-func (d *domain) InviteUser(ctx AccountsContext, invitation entities.Invitation) (*entities.Invitation, error) {
-	if err := d.checkAccountAccess(ctx, ctx.AccountName, ctx.UserId, iamT.InviteAccountMember); err != nil {
+func (d *domain) InviteMember(ctx UserContext, accountName string, invitation entities.Invitation) (*entities.Invitation, error) {
+	if err := d.checkAccountAccess(ctx, accountName, ctx.UserId, iamT.InviteAccountMember); err != nil {
 		return nil, err
 	}
 
-	_, err := d.findAccount(ctx, ctx.AccountName)
+	_, err := d.findAccount(ctx, invitation.AccountName)
 	if err != nil {
 		return nil, err
 	}
@@ -42,14 +43,24 @@ func (d *domain) InviteUser(ctx AccountsContext, invitation entities.Invitation)
 		return nil, errors.NewEf(err, "failed to generate invite token")
 	}
 
+	user, err := d.authClient.GetUser(ctx, &auth.GetUserIn{
+		UserId: string(ctx.UserId),
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	invitation.InvitedBy = user.Name
+
 	inv, err := d.invitationRepo.Create(ctx, &invitation)
 	if err != nil {
 		return nil, errors.NewEf(err, "failed to create invitation")
 	}
 
 	if _, err := d.commsClient.SendAccountMemberInviteEmail(ctx, &comms.AccountMemberInviteEmailInput{
-		AccountName:     ctx.AccountName,
+		AccountName:     inv.AccountName,
 		InvitationToken: inv.InviteToken,
+		InvitedBy:       inv.InvitedBy,
 		Email:           inv.UserEmail,
 		Name:            inv.UserName,
 	}); err != nil {
@@ -59,8 +70,8 @@ func (d *domain) InviteUser(ctx AccountsContext, invitation entities.Invitation)
 	return inv, nil
 }
 
-func (d *domain) ResendInviteEmail(ctx AccountsContext, invitationId repos.ID) (bool, error) {
-	inv, err := d.findInvitation(ctx, invitationId)
+func (d *domain) ResendInviteEmail(ctx UserContext, accountName string, invitationId repos.ID) (bool, error) {
+	inv, err := d.findInvitation(ctx, accountName, invitationId)
 	if err != nil {
 		return false, err
 	}
@@ -70,27 +81,45 @@ func (d *domain) ResendInviteEmail(ctx AccountsContext, invitationId repos.ID) (
 		action = iamT.InviteAccountAdmin
 	}
 
-	if err := d.checkAccountAccess(ctx, ctx.AccountName, ctx.UserId, action); err != nil {
+	if err := d.checkAccountAccess(ctx, accountName, ctx.UserId, action); err != nil {
+		return false, err
+	}
+
+	if _, err := d.commsClient.SendAccountMemberInviteEmail(ctx, &comms.AccountMemberInviteEmailInput{
+		AccountName:     accountName,
+		InvitationToken: inv.InviteToken,
+		InvitedBy:       inv.InvitedBy,
+		Email:           inv.UserEmail,
+		Name:            accountName,
+	}); err != nil {
 		return false, err
 	}
 
 	return true, nil
 }
 
-func (d *domain) ListInvitations(ctx AccountsContext) ([]*entities.Invitation, error) {
-	if err := d.checkAccountAccess(ctx, ctx.AccountName, ctx.UserId, iamT.ListAccountInvitations); err != nil {
+func (d *domain) ListInvitations(ctx UserContext, accountName string) ([]*entities.Invitation, error) {
+	if err := d.checkAccountAccess(ctx, accountName, ctx.UserId, iamT.ListAccountInvitations); err != nil {
 		return nil, err
 	}
 
-	return d.invitationRepo.Find(ctx, repos.Query{Filter: repos.Filter{"accountName": ctx.AccountName}})
+	return d.invitationRepo.Find(ctx, repos.Query{Filter: repos.Filter{"accountName": accountName}})
 }
 
-func (d *domain) DeleteInvitation(ctx AccountsContext, invitationId repos.ID) (bool, error) {
-	if err := d.checkAccountAccess(ctx, ctx.AccountName, ctx.UserId, iamT.DeleteAccountInvitation); err != nil {
+func (d *domain) GetInvitation(ctx UserContext, accountName string, invitationId repos.ID) (*entities.Invitation, error) {
+	if err := d.checkAccountAccess(ctx, accountName, ctx.UserId, iamT.ListAccountInvitations); err != nil {
+		return nil, err
+	}
+
+	return d.invitationRepo.FindById(ctx, invitationId)
+}
+
+func (d *domain) DeleteInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error) {
+	if err := d.checkAccountAccess(ctx, accountName, ctx.UserId, iamT.DeleteAccountInvitation); err != nil {
 		return false, err
 	}
 
-	inv, err := d.findInvitation(ctx, invitationId)
+	inv, err := d.findInvitation(ctx, accountName, invitationId)
 	if err != nil {
 		return false, err
 	}
@@ -101,8 +130,8 @@ func (d *domain) DeleteInvitation(ctx AccountsContext, invitationId repos.ID) (b
 	return true, nil
 }
 
-func (d *domain) AcceptInvitation(ctx AccountsContext, invitationId repos.ID) (bool, error) {
-	inv, err := d.findInvitation(ctx, invitationId)
+func (d *domain) AcceptInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error) {
+	inv, err := d.findInvitation(ctx, accountName, invitationId)
 	if err != nil {
 		return false, err
 	}
@@ -115,8 +144,8 @@ func (d *domain) AcceptInvitation(ctx AccountsContext, invitationId repos.ID) (b
 	return true, nil
 }
 
-func (d *domain) RejectInvitation(ctx AccountsContext, invitationId repos.ID) (bool, error) {
-	inv, err := d.findInvitation(ctx, invitationId)
+func (d *domain) RejectInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error) {
+	inv, err := d.findInvitation(ctx, accountName, invitationId)
 	if err != nil {
 		return false, err
 	}

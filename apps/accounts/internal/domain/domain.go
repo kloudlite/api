@@ -38,23 +38,26 @@ type AccountService interface {
 }
 
 type InvitationService interface {
-	InviteUser(ctx AccountsContext, invitation entities.Invitation) (*entities.Invitation, error)
-	ResendInviteEmail(ctx AccountsContext, invitationId repos.ID) (bool, error)
-	ListInvitations(ctx AccountsContext) ([]*entities.Invitation, error)
-	DeleteInvitation(ctx AccountsContext, invitationId repos.ID) (bool, error)
+	InviteMember(ctx UserContext, accountName string, invitation entities.Invitation) (*entities.Invitation, error)
+	ResendInviteEmail(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
 
-	AcceptInvitation(ctx AccountsContext, invitationId repos.ID) (bool, error)
-	RejectInvitation(ctx AccountsContext, invitationId repos.ID) (bool, error)
+	ListInvitations(ctx UserContext, accountName string) ([]*entities.Invitation, error)
+	GetInvitation(ctx UserContext, accountName string, invitationId repos.ID) (*entities.Invitation, error)
+
+	DeleteInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
+
+	AcceptInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
+	RejectInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
 }
 
 type MembershipService interface {
-	ListAccountMemberships(ctx context.Context, userId repos.ID) ([]*entities.AccountMembership, error)
-	GetAccountMembership(ctx AccountsContext) (*entities.AccountMembership, error)
+	ListAccountMemberships(ctx UserContext) ([]*entities.AccountMembership, error)
+	GetAccountMembership(ctx UserContext, accountName string) (*entities.AccountMembership, error)
 
-	RemoveAccountMembership(ctx AccountsContext, memberId repos.ID) (bool, error)
-	UpdateAccountMembership(ctx AccountsContext, memberId repos.ID, role iamT.Role) (bool, error)
+	RemoveAccountMembership(ctx UserContext, accountName string, memberId repos.ID) (bool, error)
+	UpdateAccountMembership(ctx UserContext, accountName string, memberId repos.ID, role iamT.Role) (bool, error)
 
-	GetUserMemberships(ctx AccountsContext, resourceRef string) ([]*entities.AccountMembership, error)
+	GetUserMemberships(ctx UserContext, accountName string, resourceRef string) ([]*entities.AccountMembership, error)
 }
 
 type Domain interface {

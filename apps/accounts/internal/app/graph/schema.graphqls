@@ -15,6 +15,9 @@ type Query {
   accounts_getInvitation(accountName: String!, invitationId: String!): Invitation @isLoggedInAndVerified
 
   accounts_checkNameAvailability(name: String!): AccountsCheckNameAvailabilityOutput! @isLoggedInAndVerified
+
+  accounts_listAccountMemberships: [AccountMembership!] @isLoggedInAndVerified
+  accounts_getAccountMembership(accountName: String!): AccountMembership @isLoggedInAndVerified
 }
 
 type Mutation {
@@ -30,14 +33,15 @@ type Mutation {
   accounts_deleteAccount(accountName: String!): Boolean! @isLoggedInAndVerified
   # accounts_attachToCluster(accountId: ID!, clusterId: ID!): Boolean!
 
-
   # invitations
-  accounts_inviteUser(invitation: InvitationIn): Invitation @isLoggedInAndVerified @hasAccount
-  accounts_deleteInvitation(invitationId: String!): Boolean! @isLoggedInAndVerified @hasAccount
+  accounts_inviteMember(accountName: String!, invitation: InvitationIn!): Invitation! @isLoggedInAndVerified
+  accounts_resendInviteMail(accountName: String!, invitationId: String!): Boolean! @isLoggedInAndVerified
+  # accounts_inviteUser(invitation: InvitationIn): Invitation @isLoggedInAndVerified @hasAccount
+  accounts_deleteInvitation(accountName: String!, invitationId: String!): Boolean! @isLoggedInAndVerified
 }
 
 extend type User @key(fields: "id") {
   id: ID! @external
-  accountMemberships:[AccountMembership!]! @isLoggedInAndVerified # user-access 
-  accountMembership(accountName: String!):AccountMembership! @isLoggedInAndVerified # user-access
+  accountMemberships:[AccountMembership!] @isLoggedInAndVerified # user-access 
+  accountMembership(accountName: String!): AccountMembership @isLoggedInAndVerified # user-access
 }

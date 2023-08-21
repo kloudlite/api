@@ -9,8 +9,6 @@ import (
 	"kloudlite.io/pkg/repos"
 
 	"go.mongodb.org/mongo-driver/mongo"
-	"kloudlite.io/common"
-	httpServer "kloudlite.io/pkg/http-server"
 )
 
 // access
@@ -32,24 +30,24 @@ func mongoError(err error, descp string) error {
 	return nil
 }
 
-type AccountsContext struct {
-	context.Context
-	AccountName string
-	UserId      repos.ID
-}
+//type AccountContext struct {
+//	context.Context
+//	AccountName string
+//	UserId      repos.ID
+//}
 
 type UserContext struct {
 	context.Context
 	UserId repos.ID
 }
 
-func GetUser(ctx AccountsContext) (string, error) {
-	session := httpServer.GetSession[*common.AuthSession](ctx)
-	if session == nil {
-		return "", errors.New("Unauthorized")
-	}
-	return string(session.UserId), nil
-}
+//func GetUser(ctx AccountContext) (string, error) {
+//	session := httpServer.GetSession[*common.AuthSession](ctx)
+//	if session == nil {
+//		return "", errors.New("Unauthorized")
+//	}
+//	return string(session.UserId), nil
+//}
 
 func (d *domain) checkAccountAccess(ctx context.Context, accountName string, userId repos.ID, action iamT.Action) error {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{

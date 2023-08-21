@@ -34,7 +34,7 @@ var Module = fx.Module("framework",
 		func(ev *env.Env) app.AuthCacheClient {
 			return cache.NewRedisClient(
 				ev.AuthRedisHosts,
-				ev.AuthRedisUserName,
+				ev.AuthRedisUsername,
 				ev.AuthRedisPassword,
 				ev.AuthRedisPrefix,
 			)
