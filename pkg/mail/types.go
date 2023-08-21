@@ -1,13 +1,17 @@
 package mail
 
+import "context"
+
+type Email struct {
+	FromEmailAddress string
+	FromName         string
+	Subject          string
+	ToEmailAddress   string
+	ToName           string
+	PlainText        string
+	HtmlText         string
+}
+
 type Mailer interface {
-	SendEmail(
-		from string,
-		fromName string,
-		subject string,
-		to string,
-		toName string,
-		plaintextContent string,
-		htmlContent string,
-	) error
+	SendEmail(ctx context.Context, email Email) error
 }

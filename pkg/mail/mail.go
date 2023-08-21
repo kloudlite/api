@@ -1,35 +1,25 @@
 package mail
 
 import (
-	"fmt"
+	"context"
 	"github.com/sendgrid/sendgrid-go"
 	"github.com/sendgrid/sendgrid-go/helpers/mail"
-	"go.uber.org/fx"
 )
 
 type SendgridMailer struct {
 	client *sendgrid.Client
 }
 
-func (s SendgridMailer) SendEmail(
-	from string,
-	fromName string,
-	subject string,
-	to string,
-	toName string,
-	plaintextContent string,
-	htmlContent string,
-) error {
-	_, err := s.client.Send(mail.NewSingleEmail(mail.NewEmail(fromName, from), subject, mail.NewEmail(toName, to), plaintextContent, htmlContent))
-	fmt.Println(
-		from,
-		fromName,
-		subject,
-		to,
-		toName,
-		plaintextContent,
-		htmlContent, err)
-	if err != nil {
+func (s SendgridMailer) SendEmail(ctx context.Context, email Email) error {
+	if _, err := s.client.SendWithContext(
+		ctx,
+		mail.NewSingleEmail(
+			mail.NewEmail(email.FromName, email.FromEmailAddress),
+			email.Subject,
+			mail.NewEmail(email.ToName, email.ToEmailAddress),
+			email.PlainText, email.HtmlText,
+		),
+	); err != nil {
 		return err
 	}
 	return nil
@@ -37,15 +27,4 @@ func (s SendgridMailer) SendEmail(
 
 func NewSendgridMailer(apiKey string) Mailer {
 	return SendgridMailer{client: sendgrid.NewSendClient(apiKey)}
-}
-
-type SendgridMailerOptions interface {
-	GetSendGridApiKey() string
-}
-
-func NewSendGridMailerFx[T SendgridMailerOptions]() fx.Option {
-	return fx.Module("mailer", fx.Provide(func(o T) Mailer {
-		fmt.Println("NewSendGridMailerFx", o.GetSendGridApiKey())
-		return NewSendgridMailer(o.GetSendGridApiKey())
-	}))
 }
