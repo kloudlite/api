@@ -1,6 +1,7 @@
 package parser_test
 
 import (
+	"fmt"
 	parser "kloudlite.io/cmd/mocki/internal"
 	"reflect"
 	"testing"
@@ -118,11 +119,11 @@ func TestExtractDefinitionArgs(t *testing.T) {
 		imports  map[string]parser.ImportInfo
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    string
-		want1   map[string]parser.ImportInfo
-		wantErr bool
+		name       string
+		args       args
+		want       string
+		importsMap map[string]parser.ImportInfo
+		wantErr    bool
 	}{
 		{
 			name: "test 1: no arguments in function declaration",
@@ -130,9 +131,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func()",
 				imports:  nil,
 			},
-			want:    "()",
-			want1:   nil,
-			wantErr: false,
+			want:       "",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 2: one argument in function declaration",
@@ -140,9 +141,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(x int)",
 				imports:  nil,
 			},
-			want:    "(x int)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(x int)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 3: one pointer argument in function declaration",
@@ -150,9 +151,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(x *int)",
 				imports:  nil,
 			},
-			want:    "(x *int)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(x *int)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 4: multiple non-pointer argument in function declaration",
@@ -160,9 +161,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(x int, y string) int",
 				imports:  nil,
 			},
-			want:    "(x int, y string)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(x int, y string)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 5: multiple pointer argument in function declaration",
@@ -170,9 +171,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(x *int, y *string) int",
 				imports:  nil,
 			},
-			want:    "(x *int, y *string)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(x *int, y *string)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 6: mixed pointer and non-pointer argument in function declaration",
@@ -180,9 +181,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(x *int, y *string, z int) int",
 				imports:  nil,
 			},
-			want:    "(x *int, y *string, z int)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(x *int, y *string, z int)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 7: custom type argument in function declaration",
@@ -190,9 +191,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(x *int, y *string, z Sample) int",
 				imports:  nil,
 			},
-			want:    "(x *int, y *string, z Sample)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(x *int, y *string, z Sample)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 		{
 			name: "test 8: arguments without name",
@@ -200,9 +201,9 @@ func TestExtractDefinitionArgs(t *testing.T) {
 				funcDecl: "func(*int, *string, Sample) int",
 				imports:  nil,
 			},
-			want:    "(ka *int, kb *string, kc Sample)",
-			want1:   nil,
-			wantErr: false,
+			want:       "(ka *int, kb *string, kc Sample)",
+			importsMap: nil,
+			wantErr:    false,
 		},
 	}
 
@@ -216,8 +217,8 @@ func TestExtractDefinitionArgs(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("ExtractDefinitionArgs() got = %v, want %v", got, tt.want)
 			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ExtractDefinitionArgs() got1 = %v, want %v", got1, tt.want1)
+			if !reflect.DeepEqual(got1, tt.importsMap) {
+				t.Errorf("ExtractDefinitionArgs() got1 = %v, want %v", got1, tt.importsMap)
 			}
 		})
 	}
@@ -229,13 +230,102 @@ func TestExtractReturnValues(t *testing.T) {
 		imports  map[string]parser.ImportInfo
 	}
 	tests := []struct {
-		name    string
-		args    args
-		want    string
-		want1   map[string]parser.ImportInfo
-		wantErr bool
+		name       string
+		args       args
+		want       string
+		importsMap map[string]parser.ImportInfo
+		wantErr    bool
 	}{
-		// TODO: Add test cases.
+		{
+			name: "test 1: no return values",
+			args: args{
+				funcDecl: "func()",
+				imports:  nil,
+			},
+			want:       "",
+			importsMap: nil,
+			wantErr:    false,
+		},
+		{
+			name: "test 2: one return value",
+			args: args{
+				funcDecl: "func(x int) int",
+				imports:  nil,
+			},
+			want:       "(int)",
+			importsMap: nil,
+			wantErr:    false,
+		},
+		{
+			name: "test 3: one named return value",
+			args: args{
+				funcDecl: "func(x int) (y int)",
+				imports:  nil,
+			},
+			want:       "(y int)",
+			importsMap: nil,
+			wantErr:    false,
+		},
+		{
+			name: "test 4: one pointer return value",
+			args: args{
+				funcDecl: "func(x int) (*int)",
+				imports:  nil,
+			},
+			want:       "(*int)",
+			importsMap: nil,
+			wantErr:    false,
+		},
+		{
+			name: "test 5: one pointer named return value",
+			args: args{
+				funcDecl: "func(x int) (y *int)",
+				imports:  nil,
+			},
+			want:       "(y *int)",
+			importsMap: nil,
+			wantErr:    false,
+		},
+		{
+			name: "test 6: multiple return values",
+			args: args{
+				funcDecl: "func(x int) (y int, z *string)",
+				imports:  nil,
+			},
+			want:       "(y int, z *string)",
+			importsMap: nil,
+			wantErr:    false,
+		},
+		{
+			name: "test 7: return values with imported type",
+			args: args{
+				funcDecl: "func(x int) (crds.kloudlite.io/types.Sample)",
+				imports:  map[string]parser.ImportInfo{},
+			},
+			want: "(types1.Sample)",
+			importsMap: map[string]parser.ImportInfo{
+				"crds.kloudlite.io/types": {
+					Alias:       "types1",
+					PackagePath: fmt.Sprintf("%q", "crds.kloudlite.io/types"),
+				},
+			},
+			wantErr: false,
+		},
+		{
+			name: "test 8: return values with imported type pointer",
+			args: args{
+				funcDecl: "func(x int) (*crds.kloudlite.io/types.Sample)",
+				imports:  map[string]parser.ImportInfo{},
+			},
+			want: "(*types1.Sample)",
+			importsMap: map[string]parser.ImportInfo{
+				"crds.kloudlite.io/types": {
+					Alias:       "types1",
+					PackagePath: fmt.Sprintf("%q", "crds.kloudlite.io/types"),
+				},
+			},
+			wantErr: false,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
@@ -247,8 +337,8 @@ func TestExtractReturnValues(t *testing.T) {
 			if got != tt.want {
 				t.Errorf("ExtractReturnValues() got = %v, want %v", got, tt.want)
 			}
-			if !reflect.DeepEqual(got1, tt.want1) {
-				t.Errorf("ExtractReturnValues() got1 = %v, want %v", got1, tt.want1)
+			if !reflect.DeepEqual(got1, tt.importsMap) {
+				t.Errorf("ExtractReturnValues() got1 = %v, want %v", got1, tt.importsMap)
 			}
 		})
 	}

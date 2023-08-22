@@ -309,13 +309,17 @@ func FindAndParseInterface(packagePath string, interfaceName string) (*Info, err
 					buff := new(bytes.Buffer)
 					t := template.New("impl_gen")
 					t.Funcs(sprig.TxtFuncMap())
-					t.Parse(`func ({{.ReceiverName}} *{{.ReceiverStructName}}) {{.FunctionName}}{{.FunctionArgs}} {{.ReturnValues}} {
-  if {{.ReceiverName}}.{{.MockFunctionName}} != nil {
-    {{.ReceiverName}}.registerCall("{{.FunctionName}}", {{.CallArgs | join ", " | replace "..." "" }})
-    {{if .ReturnValues}}return {{end}}{{.ReceiverName}}.{{.MockFunctionName}}({{.CallArgs | join ", "}})
-  }
-  panic("not implemented, yet")
-}`)
+
+					if _, err := t.Parse(`func ({{.ReceiverName}} *{{.ReceiverStructName}}) {{.FunctionName}}{{.FunctionArgs}} {{.ReturnValues}} {
+	if {{.ReceiverName}}.{{.MockFunctionName}} != nil {
+		{{.ReceiverName}}.registerCall("{{.FunctionName}}", {{.CallArgs | join ", " | replace "..." "" }})
+		{{if .ReturnValues}}return {{end}}{{.ReceiverName}}.{{.MockFunctionName}}({{.CallArgs | join ", "}})
+	}
+	panic("not implemented, yet")
+}`); err != nil {
+						return nil, err
+					}
+
 					if err := t.ExecuteTemplate(buff, "impl_gen", map[string]any{
 						"ReceiverName":       receiverName,
 						"StructName":         info.StructName,
