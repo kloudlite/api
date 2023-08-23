@@ -1,7 +1,7 @@
-package types
+package example_types
 
 import (
-	types2 "kloudlite.io/cmd/struct-to-graphql/pkg/types"
+	io2 "io"
 )
 
 type Example interface {
@@ -18,10 +18,10 @@ type Sample[T any, K any] interface {
 	Age() int
 	hello() string
 	SetName(name string)
-	SetUser(name string, age int, ex Example)
+	SetUser(name string, age int, ex Example, writer io2.Writer)
 	//SetAndGetUser(name string, age int, ex kloudlite.io/cmd/interface-impl/types.Example) (*User, error)
 	SetAndGetUser(name string, age int, ex Example) *User
-	SetAndGetUser2(name string, age int, ex Example) (user types2.Sample)
-	SetAndGetUser3(name string, age int, ex Example, s1 T, s2 K) (user types2.Sample)
+	// SetAndGetUser2(name string, age int, ex Example) (user types2.Sample)
+	// SetAndGetUser3(name string, age int, ex Example, s1 T, s2 K) (user types2.Sample)
 	// Example
 }
