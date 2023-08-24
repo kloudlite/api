@@ -32,7 +32,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method1")
 		return tMock.MockMethod1()
 	}
-	panic("not implemented, yet")
+	panic("method 'Method1' not implemented, yet")
 }`,
 				},
 				MockFunctions: []string{
@@ -66,7 +66,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method1")
 		return tMock.MockMethod1()
 	}
-	panic("not implemented, yet")
+	panic("method 'Method1' not implemented, yet")
 }`,
 
 					`func (tMock *Type2[T]) Method2(x int) string {
@@ -74,7 +74,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method2", x)
 		return tMock.MockMethod2(x)
 	}
-	panic("not implemented, yet")
+	panic("method 'Method2' not implemented, yet")
 }`,
 
 					`func (tMock *Type2[T]) Method3(x int, y *int, z T, p *repos.DbRepo[test_data.X], q map[string]test_data.X, r *test_data.X, s []int, u ...test_data.X) string {
@@ -82,7 +82,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method3", x, y, z, p, q, r, s, u)
 		return tMock.MockMethod3(x, y, z, p, q, r, s, u...)
 	}
-	panic("not implemented, yet")
+	panic("method 'Method3' not implemented, yet")
 }`,
 				},
 				MockFunctions: []string{
@@ -114,7 +114,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method1")
 		return tMock.MockMethod1()
 	}
-	panic("not implemented, yet")
+	panic("method 'Method1' not implemented, yet")
 }`,
 				},
 				MockFunctions: []string{
@@ -144,7 +144,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method1", ka, kb)
 		return tMock.MockMethod1(ka, kb)
 	}
-	panic("not implemented, yet")
+	panic("method 'Method1' not implemented, yet")
 }`,
 				},
 				MockFunctions: []string{
@@ -169,7 +169,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method1")
 		tMock.MockMethod1()
 	}
-	panic("not implemented, yet")
+	panic("method 'Method1' not implemented, yet")
 }`,
 
 					`func (tMock *Type5) Method2(x int) {
@@ -177,7 +177,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method2", x)
 		tMock.MockMethod2(x)
 	}
-	panic("not implemented, yet")
+	panic("method 'Method2' not implemented, yet")
 }`,
 				},
 				MockFunctions: []string{
@@ -209,7 +209,7 @@ func TestFindAndParseInterface(t *testing.T) {
 		tMock.registerCall("Method1", writer)
 		tMock.MockMethod1(writer)
 	}
-	panic("not implemented, yet")
+	panic("method 'Method1' not implemented, yet")
 }`,
 				},
 				MockFunctions: []string{

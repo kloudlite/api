@@ -1,7 +1,7 @@
 package mocks
 
 import (
-	io "io"
+	io2 "io"
 	example_types "kloudlite.io/cmd/mocki/internal/example-types"
 )
 
@@ -15,7 +15,7 @@ type Sample[T any, K any] struct {
 	MockName          func() string
 	MockSetAndGetUser func(name string, age int, ex example_types.Example) *example_types.User
 	MockSetName       func(name string)
-	MockSetUser       func(name string, age int, ex example_types.Example, writer io.Writer)
+	MockSetUser       func(name string, age int, ex example_types.Example, writer io2.Writer)
 }
 
 func (m *Sample[T, K]) registerCall(funcName string, args ...any) {
@@ -30,7 +30,7 @@ func (sMock *Sample[T, K]) Age() int {
 		sMock.registerCall("Age")
 		return sMock.MockAge()
 	}
-	panic("not implemented, yet")
+	panic("method 'Age' not implemented, yet")
 }
 
 func (sMock *Sample[T, K]) Name() string {
@@ -38,7 +38,7 @@ func (sMock *Sample[T, K]) Name() string {
 		sMock.registerCall("Name")
 		return sMock.MockName()
 	}
-	panic("not implemented, yet")
+	panic("method 'Name' not implemented, yet")
 }
 
 func (sMock *Sample[T, K]) SetAndGetUser(name string, age int, ex example_types.Example) *example_types.User {
@@ -46,7 +46,7 @@ func (sMock *Sample[T, K]) SetAndGetUser(name string, age int, ex example_types.
 		sMock.registerCall("SetAndGetUser", name, age, ex)
 		return sMock.MockSetAndGetUser(name, age, ex)
 	}
-	panic("not implemented, yet")
+	panic("method 'SetAndGetUser' not implemented, yet")
 }
 
 func (sMock *Sample[T, K]) SetName(name string) {
@@ -54,15 +54,15 @@ func (sMock *Sample[T, K]) SetName(name string) {
 		sMock.registerCall("SetName", name)
 		sMock.MockSetName(name)
 	}
-	panic("not implemented, yet")
+	panic("method 'SetName' not implemented, yet")
 }
 
-func (sMock *Sample[T, K]) SetUser(name string, age int, ex example_types.Example, writer io.Writer) {
+func (sMock *Sample[T, K]) SetUser(name string, age int, ex example_types.Example, writer io2.Writer) {
 	if sMock.MockSetUser != nil {
 		sMock.registerCall("SetUser", name, age, ex, writer)
 		sMock.MockSetUser(name, age, ex, writer)
 	}
-	panic("not implemented, yet")
+	panic("method 'SetUser' not implemented, yet")
 }
 
 func NewSample[T any, K any]() *Sample[T, K] {

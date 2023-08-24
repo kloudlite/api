@@ -225,7 +225,7 @@ func GenerateImplementation(args ImplementationArgs) (string, error) {
 		{{.ReceiverName}}.registerCall("{{.FunctionName}}" {{- if .FunctionCallArgs}}, {{end}} {{- .FunctionCallArgs | join ", " | replace "..." "" }})
 		{{if .FunctionReturns}}return {{end}}{{.ReceiverName}}.{{.MockFunctionName}}({{.FunctionCallArgs | join ", "}})
 	}
-	panic("not implemented, yet")
+	panic("method '{{.FunctionName}}' not implemented, yet")
 }`); err != nil {
 		return "", err
 	}
