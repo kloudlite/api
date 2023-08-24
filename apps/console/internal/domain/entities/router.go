@@ -9,9 +9,12 @@ import (
 type Router struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 	crdsv1.Router    `json:",inline" graphql:"uri=k8s://routers.crds.kloudlite.io"`
-	AccountName      string       `json:"accountName" graphql:"noinput"`
-	ClusterName      string       `json:"clusterName" graphql:"noinput"`
-	SyncStatus       t.SyncStatus `json:"syncStatus" graphql:"noinput"`
+
+	DisplayName string `json:"displayName"`
+	AccountName string `json:"accountName" graphql:"noinput"`
+	ClusterName string `json:"clusterName" graphql:"noinput"`
+
+	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
 var RouterIndexes = []repos.IndexField{
