@@ -1,0 +1,584 @@
+package domain_test
+
+import (
+	"context"
+	"fmt"
+	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"reflect"
+	"sigs.k8s.io/controller-runtime/pkg/client"
+	"strings"
+	"testing"
+
+	"github.com/kloudlite/operator/pkg/kubectl"
+	"google.golang.org/grpc"
+	"kloudlite.io/apps/accounts/internal/domain"
+	"kloudlite.io/apps/accounts/internal/entities"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/auth"
+	authMock "kloudlite.io/grpc-interfaces/kloudlite.io/rpc/auth/mocks"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/comms"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/console"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/container_registry"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
+	iamMock "kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam/mocks"
+	fn "kloudlite.io/pkg/functions"
+	"kloudlite.io/pkg/k8s"
+	k8sMocks "kloudlite.io/pkg/k8s/mocks"
+	"kloudlite.io/pkg/logging"
+	"kloudlite.io/pkg/repos"
+	reposMock "kloudlite.io/pkg/repos/mocks"
+)
+
+type fields struct {
+	authClient              auth.AuthClient
+	iamClient               iam.IAMClient
+	consoleClient           console.ConsoleClient
+	containerRegistryClient container_registry.ContainerRegistryClient
+	commsClient             comms.CommsClient
+	accountRepo             repos.DbRepo[*entities.Account]
+	invitationRepo          repos.DbRepo[*entities.Invitation]
+	k8sYamlClient           *kubectl.YAMLClient
+	k8sExtendedClient       k8s.ExtendedK8sClient
+	logger                  logging.Logger
+}
+
+func getDomain(f fields) domain.Domain {
+	return domain.NewDomain(
+		f.iamClient,
+		f.consoleClient,
+		//f.containerRegistryClient,
+		f.authClient,
+		f.commsClient,
+		f.k8sYamlClient,
+		f.k8sExtendedClient,
+
+		f.accountRepo,
+		f.invitationRepo,
+
+		f.logger,
+	)
+}
+
+func Test_domain_ActivateAccount(t *testing.T) {
+	type args struct {
+		ctx  domain.UserContext
+		name string
+	}
+
+	tests := []struct {
+		name           string
+		fields         fields
+		args           args
+		want           bool
+		wantErr        bool
+		errMsgContains string
+	}{
+		{
+			name: "when user has no IAM permission to activate account",
+			fields: fields{
+				authClient: func() auth.AuthClient {
+					cli := authMock.NewAuthClient()
+					return cli
+				}(),
+				iamClient: func() iam.IAMClient {
+					cli := iamMock.NewIAMClient()
+
+					cli.MockCan = func(ctx context.Context, in *iam.CanIn, opts ...grpc.CallOption) (*iam.CanOut, error) {
+						return &iam.CanOut{Status: false}, nil
+					}
+					return cli
+				}(),
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return nil, fmt.Errorf("not found")
+					}
+
+					return m
+				}(),
+				// accountRepo: reposMock.New.NewInMemoryRepo[*entities.Account]("accounts", "account", map[repos.ID]*entities.Account{
+				// 	"test": {
+				// 		Account:  crdsv1.Account{},
+				// 		IsActive: fn.New(false),
+				// 	},
+				// }),
+			},
+			args:           args{},
+			want:           false,
+			wantErr:        true,
+			errMsgContains: "unauthorized",
+		},
+
+		{
+			name: "when user has IAM permission to activate but account does not exist",
+			fields: fields{
+				authClient: func() auth.AuthClient {
+					cli := authMock.NewAuthClient()
+					return cli
+				}(),
+				iamClient: func() iam.IAMClient {
+					cli := iamMock.NewIAMClient()
+
+					cli.MockCan = func(ctx context.Context, in *iam.CanIn, opts ...grpc.CallOption) (*iam.CanOut, error) {
+						return &iam.CanOut{Status: true}, nil
+					}
+					return cli
+				}(),
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return nil, fmt.Errorf("mock: account not found")
+					}
+
+					return m
+				}(),
+			},
+			args:           args{},
+			want:           false,
+			wantErr:        true,
+			errMsgContains: "mock: account not found",
+		},
+
+		{
+			name: "when account is already active",
+			fields: fields{
+				authClient: func() auth.AuthClient {
+					cli := authMock.NewAuthClient()
+					return cli
+				}(),
+				iamClient: func() iam.IAMClient {
+					cli := iamMock.NewIAMClient()
+
+					cli.MockCan = func(ctx context.Context, in *iam.CanIn, opts ...grpc.CallOption) (*iam.CanOut, error) {
+						return &iam.CanOut{Status: true}, nil
+					}
+					return cli
+				}(),
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return &entities.Account{IsActive: fn.New(true)}, nil
+					}
+
+					return m
+				}(),
+			},
+			args:           args{},
+			want:           false,
+			wantErr:        true,
+			errMsgContains: "already active",
+		},
+
+		{
+			name: "when account is deactivated, and user has permission to activate account",
+			fields: fields{
+				authClient: func() auth.AuthClient {
+					cli := authMock.NewAuthClient()
+					return cli
+				}(),
+
+				iamClient: func() iam.IAMClient {
+					cli := iamMock.NewIAMClient()
+
+					cli.MockCan = func(ctx context.Context, in *iam.CanIn, opts ...grpc.CallOption) (*iam.CanOut, error) {
+						return &iam.CanOut{Status: true}, nil
+					}
+					return cli
+				}(),
+
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return &entities.Account{IsActive: fn.New(false)}, nil
+					}
+
+					m.MockUpdateById = func(ctx context.Context, id repos.ID, updatedData *entities.Account, opts ...repos.UpdateOpts) (*entities.Account, error) {
+						return &entities.Account{IsActive: fn.New(true)}, nil
+					}
+
+					return m
+				}(),
+			},
+			args: args{},
+			want: true,
+		},
+	}
+
+	for _, _tt := range tests {
+		tt := _tt
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			got, err := d.ActivateAccount(tt.args.ctx, tt.args.name)
+
+			if err != nil {
+				if !tt.wantErr {
+					t.Errorf("ActivateAccount() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+
+				if tt.errMsgContains != "" {
+					if !strings.Contains(strings.ToLower(err.Error()), tt.errMsgContains) {
+						t.Errorf("ActivateAccount() error should container = %v, actual error message: %v", tt.errMsgContains, err)
+						return
+					}
+				}
+
+				return
+			}
+
+			if got != tt.want {
+				t.Errorf("ActivateAccount() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_domain_CreateAccount(t *testing.T) {
+	type args struct {
+		ctx     domain.UserContext
+		account entities.Account
+	}
+	tests := []struct {
+		name           string
+		fields         fields
+		args           args
+		want           *entities.Account
+		wantErr        bool
+		errMsgContains string
+	}{
+		{
+			name: "when account json schema is invalid",
+			fields: fields{
+				k8sExtendedClient: func() k8s.ExtendedK8sClient {
+					cli := k8sMocks.NewExtendedK8sClient()
+					cli.MockValidateStruct = func(ctx context.Context, obj client.Object) error {
+						return fmt.Errorf("invalid account")
+					}
+
+					return cli
+				}(),
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return &entities.Account{
+							Account: crdsv1.Account{
+								ObjectMeta: metav1.ObjectMeta{
+									Name: "sample",
+								},
+							},
+						}, nil
+					}
+
+					return m
+				}(),
+			},
+			args: args{},
+			want: &entities.Account{
+				Account: crdsv1.Account{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "sample",
+					},
+				},
+			},
+			wantErr:        true,
+			errMsgContains: "invalid account",
+		},
+
+		{
+			name: "when account, already exists",
+			fields: fields{
+				k8sExtendedClient: func() k8s.ExtendedK8sClient {
+					cli := k8sMocks.NewExtendedK8sClient()
+					cli.MockValidateStruct = func(ctx context.Context, obj client.Object) error {
+						return nil
+					}
+					return cli
+				}(),
+
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockCreate = func(ctx context.Context, data *entities.Account) (*entities.Account, error) {
+						return nil, fmt.Errorf("account already exists")
+					}
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return &entities.Account{
+							Account: crdsv1.Account{
+								ObjectMeta: metav1.ObjectMeta{
+									Name: "sample",
+								},
+							},
+						}, nil
+					}
+
+					return m
+				}(),
+			},
+			args: args{},
+			want: &entities.Account{
+				Account: crdsv1.Account{
+					ObjectMeta: metav1.ObjectMeta{
+						Name: "sample",
+					},
+				},
+			},
+			wantErr:        true,
+			errMsgContains: "account already exists",
+		},
+
+		{
+			name: "when account is created successfully",
+			fields: fields{
+				k8sExtendedClient: func() k8s.ExtendedK8sClient {
+					cli := k8sMocks.NewExtendedK8sClient()
+					cli.MockValidateStruct = func(ctx context.Context, obj client.Object) error {
+						return nil
+					}
+					return cli
+				}(),
+				accountRepo: func() repos.DbRepo[*entities.Account] {
+					m := reposMock.NewDbRepo[*entities.Account]()
+
+					m.MockCreate = func(ctx context.Context, data *entities.Account) (*entities.Account, error) {
+						acc := &entities.Account{
+							BaseEntity: repos.BaseEntity{},
+							Account: crdsv1.Account{
+								ObjectMeta: metav1.ObjectMeta{
+									Name: "sample",
+								},
+								Spec: crdsv1.AccountSpec{},
+							},
+							DisplayName:  "Sample Account",
+							ContactEmail: "sample@gmail.com",
+							IsActive:     fn.New(true),
+						}
+
+						acc.EnsureGVK()
+
+						return acc, nil
+					}
+
+					m.MockFindOne = func(ctx context.Context, filter repos.Filter) (*entities.Account, error) {
+						return &entities.Account{
+							Account: crdsv1.Account{
+								ObjectMeta: metav1.ObjectMeta{
+									Name: "sample",
+								},
+							},
+						}, nil
+					}
+
+					return m
+				}(),
+			},
+			args:           args{},
+			want:           nil,
+			wantErr:        false,
+			errMsgContains: "",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			got, err := d.CreateAccount(tt.args.ctx, tt.args.account)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("CreateAccount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+
+			if err != nil {
+				if !tt.wantErr {
+					t.Errorf("ActivateAccount() error = %v, wantErr %v", err, tt.wantErr)
+					return
+				}
+
+				if tt.errMsgContains != "" {
+					if !strings.Contains(strings.ToLower(err.Error()), tt.errMsgContains) {
+						t.Errorf("ActivateAccount() error should container = %v, actual error message: %v", tt.errMsgContains, err)
+						return
+					}
+				}
+
+				return
+			}
+
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("CreateAccount() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_domain_DeactivateAccount(t *testing.T) {
+	type args struct {
+		ctx  domain.UserContext
+		name string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			got, err := d.DeactivateAccount(tt.args.ctx, tt.args.name)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DeactivateAccount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("DeactivateAccount() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_domain_DeleteAccount(t *testing.T) {
+	type args struct {
+		ctx  domain.UserContext
+		name string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    bool
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			got, err := d.DeleteAccount(tt.args.ctx, tt.args.name)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("DeleteAccount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if got != tt.want {
+				t.Errorf("DeleteAccount() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_domain_GetAccount(t *testing.T) {
+	type args struct {
+		ctx  domain.UserContext
+		name string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    *entities.Account
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			got, err := d.GetAccount(tt.args.ctx, tt.args.name)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("GetAccount() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("GetAccount() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_domain_ListAccounts(t *testing.T) {
+	type args struct {
+		ctx         domain.UserContext
+		accountName string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		want    []*entities.Account
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			got, err := d.ListAccounts(tt.args.ctx)
+			if (err != nil) != tt.wantErr {
+				t.Errorf("ListAccounts() error = %v, wantErr %v", err, tt.wantErr)
+				return
+			}
+			if !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("ListAccounts() got = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_domain_ResyncAccount(t *testing.T) {
+	type args struct {
+		ctx  domain.UserContext
+		name string
+	}
+	tests := []struct {
+		name    string
+		fields  fields
+		args    args
+		wantErr bool
+	}{
+		// TODO: Add test cases.
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			d := getDomain(tt.fields)
+			if err := d.ResyncAccount(tt.args.ctx, tt.args.name); (err != nil) != tt.wantErr {
+				t.Errorf("ResyncAccount() error = %v, wantErr %v", err, tt.wantErr)
+			}
+		})
+	}
+}
+
+//func Test_domain_UpdateAccount(t *testing.T) {
+//	type args struct {
+//		ctx     domain.UserContext
+//		account *entities.Account
+//	}
+//	tests := []struct {
+//		name    string
+//		fields  fields
+//		args    args
+//		want    *entities.Account
+//		wantErr bool
+//	}{
+//		// TODO: Add test cases.
+//	}
+//	for _, tt := range tests {
+//		t.Run(tt.name, func(t *testing.T) {
+//			d := getDomain(tt.fields)
+//			got, err := d.UpdateAccount(tt.args.ctx, tt.args.account)
+//			if (err != nil) != tt.wantErr {
+//				t.Errorf("UpdateAccount() error = %v, wantErr %v", err, tt.wantErr)
+//				return
+//			}
+//			if !reflect.DeepEqual(got, tt.want) {
+//				t.Errorf("UpdateAccount() got = %v, want %v", got, tt.want)
+//			}
+//		})
+//	}
+//}
