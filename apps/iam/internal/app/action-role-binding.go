@@ -52,12 +52,6 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.UpdateProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
 	t.DeleteProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 
-	t.CreateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.ListEnvironments:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetEnvironment:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.UpdateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.DeleteEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
-
 	t.InviteProjectAdmin:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.InviteProjectMember: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 
@@ -70,4 +64,20 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.ListMembershipsForProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 	t.UpdateProjectMembership:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
 	t.RemoveProjectMembership:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin},
+
+	t.ListEnvironments:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.GetEnvironment:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.CreateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.UpdateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.DeleteEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+
+	t.ReadResourcesInEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+
+	t.ListWorkspaces:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.GetWorkspace:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.CreateWorkspace: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.UpdateWorkspace: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.DeleteWorkspace: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
+
+	t.ReadResourcesInWorkspace: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleProjectMember},
 }

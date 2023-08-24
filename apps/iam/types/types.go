@@ -7,6 +7,9 @@ type ResourceType string
 const (
 	ResourceAccount ResourceType = "account"
 	ResourceProject ResourceType = "project"
+
+	ResourceEnvironment ResourceType = "environment"
+	ResourceWorkspace   ResourceType = "workspace"
 )
 
 type Role string
@@ -79,13 +82,6 @@ const (
 	UpdateProject Action = "update-project"
 	DeleteProject Action = "delete-project"
 
-	// environments
-	CreateEnvironment Action = "create-environment"
-	UpdateEnvironment Action = "update-environment"
-	DeleteEnvironment Action = "delete-environment"
-	GetEnvironment    Action = "get-environment"
-	ListEnvironments  Action = "list-environments"
-
 	// invite
 	InviteProjectAdmin  Action = "invite-project-admin"
 	InviteProjectMember Action = "invite-project-member"
@@ -95,6 +91,24 @@ const (
 	ListMembershipsForProject Action = "list-memberships-for-project"
 	UpdateProjectMembership   Action = "update-project-membership"
 	RemoveProjectMembership   Action = "remove-project-membership"
+
+	CreateEnvironment Action = "create-environment"
+	UpdateEnvironment Action = "update-environment"
+	DeleteEnvironment Action = "delete-environment"
+	GetEnvironment    Action = "get-environment"
+	ListEnvironments  Action = "list-environments"
+
+	MutateResourcesInEnvironment Action = "mutate-resources-in-environment"
+	ReadResourcesInEnvironment   Action = "read-resources-in-environment"
+
+	CreateWorkspace Action = "create-workspace"
+	UpdateWorkspace Action = "update-workspace"
+	DeleteWorkspace Action = "delete-workspace"
+	GetWorkspace    Action = "get-workspace"
+	ListWorkspaces  Action = "list-workspaces"
+
+	MutateResourcesInWorkspace Action = "mutate-resources-in-workspace"
+	ReadResourcesInWorkspace   Action = "read-resources-in-workspace"
 )
 
 func NewResourceRef(accountName string, resourceType ResourceType, resourceName string) string {
