@@ -10,6 +10,7 @@ const (
 
 	ResourceEnvironment ResourceType = "environment"
 	ResourceWorkspace   ResourceType = "workspace"
+	ResourceVPNDevice   ResourceType = "vpn-device"
 )
 
 type Role string
@@ -109,6 +110,12 @@ const (
 
 	MutateResourcesInWorkspace Action = "mutate-resources-in-workspace"
 	ReadResourcesInWorkspace   Action = "read-resources-in-workspace"
+
+	ListVPNDevices  Action = "list-vpn-devices"
+	GetVPNDevice    Action = "get-vpn-device"
+	CreateVPNDevice Action = "create-vpn-device"
+	UpdateVPNDevice Action = "update-vpn-device"
+	DeleteVPNDevice Action = "delete-vpn-device"
 )
 
 func NewResourceRef(accountName string, resourceType ResourceType, resourceName string) string {
