@@ -4,6 +4,7 @@ type Config @shareable {
   clusterName: String!
   creationTime: Date!
   data: Map
+  displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
@@ -29,6 +30,7 @@ type ConfigPaginatedRecords @shareable {
 input ConfigIn {
   apiVersion: String
   data: Map
+  displayName: String!
   enabled: Boolean
   kind: String
   metadata: MetadataIn!

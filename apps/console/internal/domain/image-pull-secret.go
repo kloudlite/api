@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"time"
 
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )

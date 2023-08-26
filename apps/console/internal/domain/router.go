@@ -4,12 +4,10 @@ import (
 	"fmt"
 	"time"
 
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
-
-// query
 
 func (d *domain) ListRouters(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Router], error) {
 	if err := d.canReadResourcesInProject(ctx, namespace); err != nil {

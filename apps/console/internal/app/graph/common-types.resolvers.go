@@ -13,7 +13,7 @@ import (
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/apps/console/internal/app/graph/generated"
 	"kloudlite.io/apps/console/internal/app/graph/model"
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/types"
 )
@@ -64,11 +64,11 @@ func (r *github_com__kloudlite__operator__pkg__operator_StatusResolver) Resource
 }
 
 // Fields is the resolver for the fields field.
-func (r *kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver) Fields(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalDomainEntitiesInputField, error) {
+func (r *kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver) Fields(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalEntitiesInputField, error) {
 	if obj == nil {
 		return nil, nil
 	}
-	m := make([]*model.KloudliteIoAppsConsoleInternalDomainEntitiesInputField, len(obj.Fields))
+	m := make([]*model.KloudliteIoAppsConsoleInternalEntitiesInputField, len(obj.Fields))
 	if err := fn.JsonConversion(obj.Fields, &m); err != nil {
 		return nil, err
 	}
@@ -76,11 +76,11 @@ func (r *kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEnt
 }
 
 // Outputs is the resolver for the outputs field.
-func (r *kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver) Outputs(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalDomainEntitiesOutputField, error) {
+func (r *kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver) Outputs(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalEntitiesOutputField, error) {
 	if obj == nil {
 		return nil, nil
 	}
-	m := make([]*model.KloudliteIoAppsConsoleInternalDomainEntitiesOutputField, len(obj.Outputs))
+	m := make([]*model.KloudliteIoAppsConsoleInternalEntitiesOutputField, len(obj.Outputs))
 	if err := fn.JsonConversion(obj.Outputs, &m); err != nil {
 		return nil, err
 	}
@@ -88,11 +88,11 @@ func (r *kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEnt
 }
 
 // Resources is the resolver for the resources field.
-func (r *kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver) Resources(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalDomainEntitiesMresTemplate, error) {
+func (r *kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver) Resources(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate, error) {
 	if obj == nil {
 		return nil, nil
 	}
-	m := make([]*model.KloudliteIoAppsConsoleInternalDomainEntitiesMresTemplate, len(obj.Resources))
+	m := make([]*model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate, len(obj.Resources))
 	if err := fn.JsonConversion(obj.Resources, &m); err != nil {
 		return nil, err
 	}
@@ -195,9 +195,9 @@ func (r *Resolver) Github_com__kloudlite__operator__pkg__operator_Status() gener
 	return &github_com__kloudlite__operator__pkg__operator_StatusResolver{r}
 }
 
-// Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry returns generated.Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver implementation.
-func (r *Resolver) Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntry() generated.Kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver {
-	return &kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver{r}
+// Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry returns generated.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver implementation.
+func (r *Resolver) Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry() generated.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver {
+	return &kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver{r}
 }
 
 // Kloudlite_io__pkg__types_SyncStatus returns generated.Kloudlite_io__pkg__types_SyncStatusResolver implementation.
@@ -212,7 +212,7 @@ func (r *Resolver) Metadata() generated.MetadataResolver { return &metadataResol
 func (r *Resolver) MetadataIn() generated.MetadataInResolver { return &metadataInResolver{r} }
 
 type github_com__kloudlite__operator__pkg__operator_StatusResolver struct{ *Resolver }
-type kloudlite_io__apps__console__internal__domain__entities_MsvcTemplateEntryResolver struct{ *Resolver }
+type kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver struct{ *Resolver }
 type kloudlite_io__pkg__types_SyncStatusResolver struct{ *Resolver }
 type metadataResolver struct{ *Resolver }
 type metadataInResolver struct{ *Resolver }

@@ -2,6 +2,7 @@ package entities
 
 import (
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	apiExtensionsV1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -41,4 +42,8 @@ var ProjectIndexes = []repos.IndexField{
 		},
 		Unique: true,
 	},
+}
+
+func ValidateProject(project *Project, projectJsonSchema *apiExtensionsV1.JSONSchemaProps) (bool, error) {
+  return false, nil
 }

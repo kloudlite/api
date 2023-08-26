@@ -3,6 +3,7 @@ type ManagedService @shareable {
   apiVersion: String!
   clusterName: String!
   creationTime: Date!
+  displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
@@ -28,6 +29,7 @@ type ManagedServicePaginatedRecords @shareable {
 
 input ManagedServiceIn {
   apiVersion: String
+  displayName: String!
   enabled: Boolean
   kind: String
   metadata: MetadataIn!

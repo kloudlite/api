@@ -4,15 +4,18 @@ import (
 	"fmt"
 	"time"
 
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
 
-// query
-
 func (d *domain) ListApps(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.App], error) {
-	if err := d.canReadResourcesInWorkspace(ctx, namespace); err != nil {
+	ws, err := d.findWorkspaceByTargetNs(ctx, namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := d.canReadResourcesInWorkspaceOrEnv(ctx, ws.ProjectName, ws); err != nil {
 		return nil, err
 	}
 
@@ -52,7 +55,12 @@ func (d *domain) GetApp(ctx ConsoleContext, namespace string, name string) (*ent
 // mutations
 
 func (d *domain) CreateApp(ctx ConsoleContext, app entities.App) (*entities.App, error) {
-	if err := d.canMutateResourcesInWorkspace(ctx, app.Namespace); err != nil {
+	ws, err := d.findWorkspaceByTargetNs(ctx, app.Namespace)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := d.canMutateResourcesInWorkspaceOrEnv(ctx, ws.ProjectName, ws); err != nil {
 		return nil, err
 	}
 
@@ -64,6 +72,8 @@ func (d *domain) CreateApp(ctx ConsoleContext, app entities.App) (*entities.App,
 	app.IncrementRecordVersion()
 	app.AccountName = ctx.AccountName
 	app.ClusterName = ctx.ClusterName
+	app.ProjectName = ws.ProjectName
+	app.WorkspaceName = ws.Name
 	app.SyncStatus = t.GenSyncStatus(t.SyncActionApply, app.RecordVersion)
 
 	nApp, err := d.appRepo.Create(ctx, &app)

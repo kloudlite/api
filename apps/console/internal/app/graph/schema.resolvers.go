@@ -10,7 +10,7 @@ import (
 	"kloudlite.io/apps/console/internal/app/graph/generated"
 	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/apps/console/internal/domain"
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 )
@@ -48,12 +48,12 @@ func (r *mutationResolver) CoreDeleteImagePullSecret(ctx context.Context, namesp
 }
 
 // CoreCreateEnvironment is the resolver for the core_createEnvironment field.
-func (r *mutationResolver) CoreCreateEnvironment(ctx context.Context, env entities.Environment) (*entities.Environment, error) {
+func (r *mutationResolver) CoreCreateEnvironment(ctx context.Context, env entities.Workspace) (*entities.Workspace, error) {
 	return r.Domain.CreateEnvironment(toConsoleContext(ctx), env)
 }
 
 // CoreUpdateEnvironment is the resolver for the core_updateEnvironment field.
-func (r *mutationResolver) CoreUpdateEnvironment(ctx context.Context, env entities.Environment) (*entities.Environment, error) {
+func (r *mutationResolver) CoreUpdateEnvironment(ctx context.Context, env entities.Workspace) (*entities.Workspace, error) {
 	return r.Domain.UpdateEnvironment(toConsoleContext(ctx), env)
 }
 
@@ -186,6 +186,24 @@ func (r *mutationResolver) CoreUpdateManagedResource(ctx context.Context, mres e
 // CoreDeleteManagedResource is the resolver for the core_deleteManagedResource field.
 func (r *mutationResolver) CoreDeleteManagedResource(ctx context.Context, namespace string, name string) (bool, error) {
 	if err := r.Domain.DeleteManagedResource(toConsoleContext(ctx), namespace, name); err != nil {
+		return false, err
+	}
+	return true, nil
+}
+
+// CoreCreateVPNDevice is the resolver for the core_createVPNDevice field.
+func (r *mutationResolver) CoreCreateVPNDevice(ctx context.Context, vpnDevice entities.VPNDevice) (*entities.VPNDevice, error) {
+	return r.Domain.CreateVPNDevice(toConsoleContext(ctx), vpnDevice)
+}
+
+// CoreUpdateVPNDevice is the resolver for the core_updateVPNDevice field.
+func (r *mutationResolver) CoreUpdateVPNDevice(ctx context.Context, vpnDevice entities.VPNDevice) (*entities.VPNDevice, error) {
+	return r.Domain.UpdateVPNDevice(toConsoleContext(ctx), vpnDevice)
+}
+
+// CoreDeleteVPNDevice is the resolver for the core_deleteVPNDevice field.
+func (r *mutationResolver) CoreDeleteVPNDevice(ctx context.Context, deviceName string) (bool, error) {
+	if err := r.Domain.DeleteVPNDevice(toConsoleContext(ctx), deviceName); err != nil {
 		return false, err
 	}
 	return true, nil
@@ -395,7 +413,7 @@ func (r *queryResolver) CoreResyncWorkspace(ctx context.Context, project model.P
 }
 
 // CoreListEnvironments is the resolver for the core_listEnvironments field.
-func (r *queryResolver) CoreListEnvironments(ctx context.Context, project model.ProjectID, search *model.SearchWorkspaces, pq *repos.CursorPagination) (*model.EnvironmentPaginatedRecords, error) {
+func (r *queryResolver) CoreListEnvironments(ctx context.Context, project model.ProjectID, search *model.SearchWorkspaces, pq *repos.CursorPagination) (*model.WorkspacePaginatedRecords, error) {
 	filter := map[string]repos.MatchFilter{}
 	if search != nil {
 		if search.Text != nil {
@@ -412,20 +430,20 @@ func (r *queryResolver) CoreListEnvironments(ctx context.Context, project model.
 		return nil, err
 	}
 
-	pw, err := r.Domain.ListEnvironments(toConsoleContext(ctx), namespace, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+	pw, err := r.Domain.ListWorkspaces(toConsoleContext(ctx), namespace, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, err
 	}
 
-	ee := make([]*model.EnvironmentEdge, len(pw.Edges))
+	ee := make([]*model.WorkspaceEdge, len(pw.Edges))
 	for i := range pw.Edges {
-		ee[i] = &model.EnvironmentEdge{
+		ee[i] = &model.WorkspaceEdge{
 			Node:   pw.Edges[i].Node,
 			Cursor: pw.Edges[i].Cursor,
 		}
 	}
 
-	m := model.EnvironmentPaginatedRecords{
+	m := model.WorkspacePaginatedRecords{
 		Edges: ee,
 		PageInfo: &model.PageInfo{
 			EndCursor:       &pw.PageInfo.EndCursor,
@@ -440,7 +458,7 @@ func (r *queryResolver) CoreListEnvironments(ctx context.Context, project model.
 }
 
 // CoreGetEnvironment is the resolver for the core_getEnvironment field.
-func (r *queryResolver) CoreGetEnvironment(ctx context.Context, project model.ProjectID, name string) (*entities.Environment, error) {
+func (r *queryResolver) CoreGetEnvironment(ctx context.Context, project model.ProjectID, name string) (*entities.Workspace, error) {
 	namespace, err := r.getNamespaceFromProjectID(ctx, project)
 	if err != nil {
 		return nil, err
@@ -851,6 +869,47 @@ func (r *queryResolver) CoreResyncManagedResource(ctx context.Context, project m
 		return false, err
 	}
 	return true, nil
+}
+
+// CoreListVPNDevices is the resolver for the core_listVPNDevices field.
+func (r *queryResolver) CoreListVPNDevices(ctx context.Context, search *model.SearchVPNDevices, pq *repos.CursorPagination) (*model.VPNDevicePaginatedRecords, error) {
+	filter := map[string]repos.MatchFilter{}
+	if search != nil {
+		if search.Text != nil {
+			filter["metadata.name"] = *search.Text
+		}
+	}
+
+	devices, err := r.Domain.ListVPNDevices(toConsoleContext(ctx), filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+	if err != nil {
+		return nil, err
+	}
+
+	ve := make([]*model.VPNDeviceEdge, len(devices.Edges))
+	for i := range devices.Edges {
+		ve[i] = &model.VPNDeviceEdge{
+			Node:   devices.Edges[i].Node,
+			Cursor: devices.Edges[i].Cursor,
+		}
+	}
+
+	m := model.VPNDevicePaginatedRecords{
+		Edges: ve,
+		PageInfo: &model.PageInfo{
+			EndCursor:       &devices.PageInfo.EndCursor,
+			HasNextPage:     devices.PageInfo.HasNextPage,
+			HasPreviousPage: devices.PageInfo.HasPrevPage,
+			StartCursor:     &devices.PageInfo.StartCursor,
+		},
+		TotalCount: int(devices.TotalCount),
+	}
+
+	return &m, nil
+}
+
+// CoreGetVPNDevice is the resolver for the core_getVPNDevice field.
+func (r *queryResolver) CoreGetVPNDevice(ctx context.Context, name string) (*entities.VPNDevice, error) {
+	return r.Domain.GetVPNDevice(toConsoleContext(ctx), name)
 }
 
 // Mutation returns generated.MutationResolver implementation.

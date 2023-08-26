@@ -3,13 +3,19 @@ package domain
 import (
 	"context"
 
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/pkg/repos"
 )
 
 type ConsoleContext struct {
 	context.Context
 	ClusterName string
+	AccountName string
+	UserId      repos.ID
+}
+
+type UserAndAccountsContext struct {
+	context.Context
 	AccountName string
 	UserId      repos.ID
 }
@@ -62,18 +68,14 @@ type Domain interface {
 
 	ResyncProject(ctx ConsoleContext, name string) error
 
-	ListEnvironments(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Environment], error)
-	GetEnvironment(ctx ConsoleContext, namespace, name string) (*entities.Environment, error)
+	ListEnvironments(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
+	GetEnvironment(ctx ConsoleContext, namespace, name string) (*entities.Workspace, error)
 
-	CreateEnvironment(ctx ConsoleContext, env entities.Environment) (*entities.Environment, error)
-	UpdateEnvironment(ctx ConsoleContext, env entities.Environment) (*entities.Environment, error)
+	CreateEnvironment(ctx ConsoleContext, env entities.Workspace) (*entities.Workspace, error)
+	UpdateEnvironment(ctx ConsoleContext, env entities.Workspace) (*entities.Workspace, error)
 	DeleteEnvironment(ctx ConsoleContext, namespace, name string) error
 
 	ResyncEnvironment(ctx ConsoleContext, namespace, name string) error
-
-	OnApplyEnvironmentError(ctx ConsoleContext, errMsg, namespace, name string) error
-	OnDeleteEnvironmentMessage(ctx ConsoleContext, cluster entities.Environment) error
-	OnUpdateEnvironmentMessage(ctx ConsoleContext, cluster entities.Environment) error
 
 	ListWorkspaces(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
 	GetWorkspace(ctx ConsoleContext, namespace, name string) (*entities.Workspace, error)
@@ -183,4 +185,14 @@ type Domain interface {
 	OnUpdateImagePullSecretMessage(ctx ConsoleContext, mres entities.ImagePullSecret) error
 
 	ResyncImagePullSecret(ctx ConsoleContext, namespace, name string) error
+
+	ListVPNDevices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VPNDevice], error)
+	GetVPNDevice(ctx ConsoleContext, deviceName string) (*entities.VPNDevice, error)
+	CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
+	UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
+	DeleteVPNDevice(ctx ConsoleContext, name string) error
+
+	OnVPNDeviceApplyError(ctx ConsoleContext, errMsg string, name string) error
+	OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.VPNDevice) error
+	OnVPNDeviceUpdateMessage(ctx ConsoleContext, device entities.VPNDevice) error
 }

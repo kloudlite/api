@@ -17,7 +17,7 @@ import (
 	"kloudlite.io/apps/console/internal/app/graph"
 	"kloudlite.io/apps/console/internal/app/graph/generated"
 	domain "kloudlite.io/apps/console/internal/domain"
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/apps/console/internal/env"
 	"kloudlite.io/common"
 	"kloudlite.io/constants"
@@ -60,7 +60,6 @@ func toConsoleContext(requestCtx context.Context, accountCookieName string, clus
 var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.Project]("projects", "prj", entities.ProjectIndexes),
 	repos.NewFxMongoRepo[*entities.Workspace]("workspaces", "ws", entities.WorkspaceIndexes),
-	repos.NewFxMongoRepo[*entities.Environment]("environments", "env", entities.EnvironmentIndices),
 	repos.NewFxMongoRepo[*entities.App]("apps", "app", entities.AppIndexes),
 	repos.NewFxMongoRepo[*entities.Config]("configs", "cfg", entities.ConfigIndexes),
 	repos.NewFxMongoRepo[*entities.Secret]("secrets", "scrt", entities.SecretIndexes),
@@ -68,6 +67,7 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.ManagedService]("managed_services", "msvc", entities.MsvcIndexes),
 	repos.NewFxMongoRepo[*entities.Router]("routers", "rt", entities.RouterIndexes),
 	repos.NewFxMongoRepo[*entities.ImagePullSecret]("image_pull_secrets", "ips", entities.ImagePullSecretIndexes),
+	repos.NewFxMongoRepo[*entities.VPNDevice]("vpn_devices", "vdev", entities.VPNDeviceIndexes),
 
 	// streaming logs
 	fx.Invoke(

@@ -2,13 +2,14 @@ package domain
 
 import (
 	"fmt"
-	"kloudlite.io/constants"
+	iamT "kloudlite.io/apps/iam/types"
 	"time"
 
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"kloudlite.io/constants"
 
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -44,6 +45,10 @@ func (d *domain) ListWorkspaces(ctx ConsoleContext, namespace string, search map
 		return nil, err
 	}
 
+	return d.listWorkspaces(ctx, namespace, search, pq)
+}
+
+func (d *domain) listWorkspaces(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error) {
 	filter := repos.Filter{
 		"accountName":        ctx.AccountName,
 		"clusterName":        ctx.ClusterName,
@@ -73,12 +78,30 @@ func (d *domain) findWorkspaceByTargetNs(ctx ConsoleContext, targetNs string) (*
 // mutations
 
 func (d *domain) CreateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*entities.Workspace, error) {
-	ws.EnsureGVK()
-	if err := d.k8sExtendedClient.ValidateStruct(ctx, &ws.Workspace); err != nil {
+	p, err := d.findProjectByTargetNs(ctx, ws.Namespace)
+	if err != nil {
 		return nil, err
 	}
 
-	if err := d.canMutateResourcesInProject(ctx, ws.Namespace); err != nil {
+	if err := d.checkProjectAccess(ctx, p.Name, iamT.CreateWorkspace); err != nil {
+		return nil, err
+	}
+
+	if ws.Spec.IsEnvironment != nil {
+		return nil, fmt.Errorf(".Spec.IsEnvironment can not be set, to create environments, use CreateEnvironment")
+	}
+
+	ws.ProjectName = p.Name
+	return d.createWorkspace(ctx, ws)
+}
+
+func (d *domain) createWorkspace(ctx ConsoleContext, ws entities.Workspace) (*entities.Workspace, error) {
+	if ws.ProjectName == "" {
+		return nil, fmt.Errorf(".ProjectName can not be empty")
+	}
+
+	ws.EnsureGVK()
+	if err := d.k8sExtendedClient.ValidateStruct(ctx, &ws.Workspace); err != nil {
 		return nil, err
 	}
 
@@ -104,12 +127,16 @@ func (d *domain) CreateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 }
 
 func (d *domain) UpdateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*entities.Workspace, error) {
-	ws.EnsureGVK()
-	if err := d.k8sExtendedClient.ValidateStruct(ctx, &ws.Workspace); err != nil {
+	if err := d.canMutateResourcesInProject(ctx, ws.Namespace); err != nil {
 		return nil, err
 	}
 
-	if err := d.canMutateResourcesInProject(ctx, ws.Namespace); err != nil {
+	return d.updateWorkspace(ctx, ws)
+}
+
+func (d *domain) updateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*entities.Workspace, error) {
+	ws.EnsureGVK()
+	if err := d.k8sExtendedClient.ValidateStruct(ctx, &ws.Workspace); err != nil {
 		return nil, err
 	}
 
@@ -124,7 +151,6 @@ func (d *domain) UpdateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 
 	exWs.Labels = ws.Labels
 	exWs.Annotations = ws.Annotations
-	exWs.Spec = ws.Spec
 	exWs.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exWs.RecordVersion)
 
 	upWs, err := d.workspaceRepo.UpdateById(ctx, exWs.Id, exWs)
@@ -140,12 +166,16 @@ func (d *domain) UpdateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 }
 
 func (d *domain) DeleteWorkspace(ctx ConsoleContext, namespace, name string) error {
-	ws, err := d.findWorkspace(ctx, namespace, name)
-	if err != nil {
+	if err := d.canMutateResourcesInProject(ctx, namespace); err != nil {
 		return err
 	}
 
-	if err := d.canMutateResourcesInProject(ctx, ws.Namespace); err != nil {
+	return d.deleteWorkspace(ctx, namespace, name)
+}
+
+func (d *domain) deleteWorkspace(ctx ConsoleContext, namespace string, name string) error {
+	ws, err := d.findWorkspace(ctx, namespace, name)
+	if err != nil {
 		return err
 	}
 
@@ -222,6 +252,10 @@ func (d *domain) ResyncWorkspace(ctx ConsoleContext, namespace, name string) err
 		return err
 	}
 
+	return d.resyncWorkspace(ctx, namespace, name)
+}
+
+func (d *domain) resyncWorkspace(ctx ConsoleContext, namespace string, name string) error {
 	e, err := d.findWorkspace(ctx, namespace, name)
 	if err != nil {
 		return err

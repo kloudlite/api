@@ -7,7 +7,7 @@ import (
 	"io"
 	"strconv"
 
-	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/apps/console/internal/entities"
 	"kloudlite.io/pkg/repos"
 )
 
@@ -36,17 +36,6 @@ type ConfigPaginatedRecords struct {
 type EnvOrWorkspaceOrProjectID struct {
 	Type EnvOrWorkspaceOrProjectIDType `json:"type"`
 	Name string                        `json:"name"`
-}
-
-type EnvironmentEdge struct {
-	Cursor string                `json:"cursor"`
-	Node   *entities.Environment `json:"node"`
-}
-
-type EnvironmentPaginatedRecords struct {
-	Edges      []*EnvironmentEdge `json:"edges"`
-	PageInfo   *PageInfo          `json:"pageInfo"`
-	TotalCount int                `json:"totalCount"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSpec struct {
@@ -331,16 +320,6 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn struct {
 	Value             *string `json:"value,omitempty"`
 }
 
-type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec struct {
-	ProjectName     string `json:"projectName"`
-	TargetNamespace string `json:"targetNamespace"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn struct {
-	ProjectName     string `json:"projectName"`
-	TargetNamespace string `json:"targetNamespace"`
-}
-
 type GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpec struct {
 	Inputs   map[string]interface{}                                           `json:"inputs,omitempty"`
 	MresKind *GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpecMresKind `json:"mresKind"`
@@ -533,6 +512,28 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
 	TargetNamespace string `json:"targetNamespace"`
 }
 
+type GithubComKloudliteOperatorApisWireguardV1DeviceSpec struct {
+	Offset     int                                                         `json:"offset"`
+	Ports      []*GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts `json:"ports,omitempty"`
+	ServerName string                                                      `json:"serverName"`
+}
+
+type GithubComKloudliteOperatorApisWireguardV1DeviceSpecIn struct {
+	Offset     int                                                           `json:"offset"`
+	Ports      []*GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn `json:"ports,omitempty"`
+	ServerName string                                                        `json:"serverName"`
+}
+
+type GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts struct {
+	Port       *int `json:"port,omitempty"`
+	TargetPort *int `json:"targetPort,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn struct {
+	Port       *int `json:"port,omitempty"`
+	TargetPort *int `json:"targetPort,omitempty"`
+}
+
 type GithubComKloudliteOperatorPkgOperatorCheck struct {
 	Generation *int    `json:"generation,omitempty"`
 	Message    *string `json:"message,omitempty"`
@@ -561,7 +562,7 @@ type ImagePullSecretPaginatedRecords struct {
 	TotalCount int                    `json:"totalCount"`
 }
 
-type KloudliteIoAppsConsoleInternalDomainEntitiesInputField struct {
+type KloudliteIoAppsConsoleInternalEntitiesInputField struct {
 	DefaultValue interface{} `json:"defaultValue"`
 	InputType    string      `json:"inputType"`
 	Label        string      `json:"label"`
@@ -572,15 +573,15 @@ type KloudliteIoAppsConsoleInternalDomainEntitiesInputField struct {
 	Unit         *string     `json:"unit,omitempty"`
 }
 
-type KloudliteIoAppsConsoleInternalDomainEntitiesMresTemplate struct {
-	Description string                                                     `json:"description"`
-	DisplayName string                                                     `json:"displayName"`
-	Fields      []*KloudliteIoAppsConsoleInternalDomainEntitiesInputField  `json:"fields"`
-	Name        string                                                     `json:"name"`
-	Outputs     []*KloudliteIoAppsConsoleInternalDomainEntitiesOutputField `json:"outputs"`
+type KloudliteIoAppsConsoleInternalEntitiesMresTemplate struct {
+	Description string                                               `json:"description"`
+	DisplayName string                                               `json:"displayName"`
+	Fields      []*KloudliteIoAppsConsoleInternalEntitiesInputField  `json:"fields"`
+	Name        string                                               `json:"name"`
+	Outputs     []*KloudliteIoAppsConsoleInternalEntitiesOutputField `json:"outputs"`
 }
 
-type KloudliteIoAppsConsoleInternalDomainEntitiesOutputField struct {
+type KloudliteIoAppsConsoleInternalEntitiesOutputField struct {
 	Description string `json:"description"`
 	Label       string `json:"label"`
 	Name        string `json:"name"`
@@ -679,6 +680,10 @@ type SearchSecrets struct {
 	Text *repos.MatchFilter `json:"text,omitempty"`
 }
 
+type SearchVPNDevices struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
 type SearchWorkspaces struct {
 	Text        *repos.MatchFilter `json:"text,omitempty"`
 	ProjectName *repos.MatchFilter `json:"projectName,omitempty"`
@@ -693,6 +698,17 @@ type SecretPaginatedRecords struct {
 	Edges      []*SecretEdge `json:"edges"`
 	PageInfo   *PageInfo     `json:"pageInfo"`
 	TotalCount int           `json:"totalCount"`
+}
+
+type VPNDeviceEdge struct {
+	Cursor string              `json:"cursor"`
+	Node   *entities.VPNDevice `json:"node"`
+}
+
+type VPNDevicePaginatedRecords struct {
+	Edges      []*VPNDeviceEdge `json:"edges"`
+	PageInfo   *PageInfo        `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
 }
 
 type WorkspaceEdge struct {

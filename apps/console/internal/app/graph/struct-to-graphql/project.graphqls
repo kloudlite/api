@@ -3,6 +3,7 @@ type Project @shareable {
   apiVersion: String!
   clusterName: String!
   creationTime: Date!
+  displayName: String!
   id: String!
   kind: String!
   markedForDeletion: Boolean
@@ -27,6 +28,7 @@ type ProjectPaginatedRecords @shareable {
 
 input ProjectIn {
   apiVersion: String
+  displayName: String!
   kind: String
   metadata: MetadataIn!
   spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn!
