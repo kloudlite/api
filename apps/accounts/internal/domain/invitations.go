@@ -173,7 +173,7 @@ func (d *domain) AcceptInvitation(ctx UserContext, accountName string, inviteTok
 		return false, err
 	}
 
-	if err := d.addMembership(ctx, accountName, ctx.UserId, iamT.ResourceAccount, inv.UserRole); err != nil {
+	if err := d.addMembership(ctx, accountName, ctx.UserId, inv.UserRole); err != nil {
 		return false, err
 	}
 

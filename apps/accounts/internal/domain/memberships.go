@@ -2,19 +2,19 @@ package domain
 
 import (
 	"context"
+	"kloudlite.io/apps/accounts/internal/entities"
 	"strings"
 
-	"kloudlite.io/apps/accounts/internal/entities"
 	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/errors"
 	"kloudlite.io/pkg/repos"
 )
 
-func (d *domain) addMembership(ctx context.Context, accountName string, userId repos.ID, resourceType iamT.ResourceType, role iamT.Role) error {
+func (d *domain) addMembership(ctx context.Context, accountName string, userId repos.ID, role iamT.Role) error {
 	if _, err := d.iamClient.AddMembership(ctx, &iam.AddMembershipIn{
 		UserId:       string(userId),
-		ResourceType: string(resourceType),
+		ResourceType: string(iamT.ResourceAccount),
 		ResourceRef:  iamT.NewResourceRef(accountName, iamT.ResourceAccount, accountName),
 		Role:         string(role),
 	}); err != nil {

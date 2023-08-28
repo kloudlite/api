@@ -26,6 +26,7 @@ func (d *domain) checkAccountAccess(ctx context.Context, accountName string, use
 	// }
 
 	if err != nil || !co.Status {
+		d.logger.Errorf(err, "iam.can check for action: ", action)
 		return fmt.Errorf("unauthorized to perform action: %s", action)
 	}
 

@@ -63,7 +63,7 @@ tasks:
       - sh: '[ -n "{{.Tag}}" ]'
         msg: 'var Tag must have a value'
     vars:
-      Dockerfile: "./Dockerfile.dev"
+      Dockerfile: "./Dockerfile.ci"
       APP: accounts
       Image: "{{.ImagePrefix}}/{{.APP}}:{{.Tag}}"
     cmds:

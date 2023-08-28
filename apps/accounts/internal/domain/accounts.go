@@ -73,10 +73,6 @@ func (d *domain) GetAccount(ctx UserContext, name string) (*entities.Account, er
 }
 
 func (d *domain) CreateAccount(ctx UserContext, account entities.Account) (*entities.Account, error) {
-	//if err := d.checkAccountAccess(ctx, account.Name, ctx.UserId, iamT.CreateAccount); err != nil {
-	//	return nil, err
-	//}
-
 	account.EnsureGVK()
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &account.Account); err != nil {
 		return nil, err
@@ -88,7 +84,7 @@ func (d *domain) CreateAccount(ctx UserContext, account entities.Account) (*enti
 		return nil, err
 	}
 
-	if err := d.addMembership(ctx, acc.Name, ctx.UserId, iamT.ResourceAccount, iamT.RoleAccountOwner); err != nil {
+	if err := d.addMembership(ctx, acc.Name, ctx.UserId, iamT.RoleAccountOwner); err != nil {
 		return nil, err
 	}
 
