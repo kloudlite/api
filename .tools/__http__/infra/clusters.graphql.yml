@@ -17,7 +17,6 @@ query: |+
       }
       spec {
         accountName
-        providerName
       }
     }
   }
@@ -29,29 +28,100 @@ variables:
       name: "{{.clusterName}}"
     spec:
       accountName: "{{.accountName}}"
-      providerName: "{{.providerName}}"
-      provider: aws
-      count: 1
+      cloudProvider: 'aws'
+      availabilityMode: 'dev'
       region: ap-south-1
-      config: '{"instanceType":"c6a.large","vpc":""}'
+      credentialsRef:
+        name: provider-sample
+      # agentHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
+      #   key: "asdfasf"
+      # operatorsHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
+      #   key: "asdfasf"
 ---
 
 label: List Clusters
 query: |+
-  query Query {
-    infra_listClusters {
-      # syncStatus {
-      #   status
-      # }
-      clusterToken
-      metadata {
-        name
-      }
-      spec {
-        accountName
+  query Infra_listClusters($search: SearchFilter, $pagination: PaginationQueryArgs) {
+    infra_listClusters(search: $search, pagination: $pagination) {
+      edges {
+        cursor
+        node {
+          id
+          kind
+          metadata {
+            name
+            namespace
+          }
+          status {
+            checks
+          }
+          markedForDeletion
+          syncStatus {
+            action
+            error
+            lastSyncedAt
+            state
+            syncScheduledAt
+            recordVersion
+          }
+        }
       }
     }
   }
+variables:
+  search: 
+    keyword: "ple"
+    fields:
+      - metadata.name
+  pagination:
+    first: 10
+
+---
+
+label: List Clusters
+query: |+
+  query Infra_listClusters($search: SearchCluster, $pagination: PaginationQueryArgs) {
+    infra_listClusters(search: $search, pagination: $pagination) {
+      edges {
+        cursor
+        node {
+          id
+          kind
+          metadata {
+            name
+            namespace
+          }
+          status {
+            checks
+          }
+          markedForDeletion
+          syncStatus {
+            action
+            error
+            lastSyncedAt
+            state
+            syncScheduledAt
+            recordVersion
+          }
+        }
+      }
+    }
+  }
+variables:
+  search: 
+    text: 
+      # matchType: regex
+      # regex: "sam$"
+      # matchType: exact
+      # exact: "sample"
+      matchType: 'array'
+      array: ["sample"]
+  pagination:
+    first: 10
 
 ---
 
@@ -63,8 +133,14 @@ query: |+
       metadata {
         name
       }
+      recordVersion
+      markedForDeletion
       spec {
-        provider
+        cloudProvider
+        credentialsRef {
+          name
+          namespace
+        }
       }
     }
   }
@@ -74,8 +150,15 @@ variables:
 ---
 label: Update Cluster
 query: |+
-  mutation Infra_updateCluster($cluster: Cluster!) {
-    infra_updateCluster(cluster: $cluster)
+  mutation Infra_updateCluster($cluster: ClusterIn!) {
+    infra_updateCluster(cluster: $cluster) {
+      metadata {
+        name
+      }
+      spec {
+        accountName
+      }
+    }
   }
 variables:
   cluster:
@@ -83,13 +166,21 @@ variables:
       name: "{{.clusterName}}"
     spec:
       accountName: "{{.accountName}}"
-      providerName: "{{.providerName}}"
-      provider: aws
-      count: 2
+      cloudProvider: 'aws'
+      availabilityMode: 'dev'
       region: ap-south-1
-      config: '{"instanceType":"c6a.large","vpc":""}'
+      credentialsRef:
+        name: sdfaf2
+        namespace: asdfasdf
+      # agentHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
+      # operatorsHelmValuesRef:
+      #   name: adfdasf
+      #   namespace: asfafs
 
 ---
+
 label: Delete Cluster
 query: |+
   mutation Infra_deleteCluster($name: String!) {
@@ -97,6 +188,7 @@ query: |+
   }
 variables:
   name: "{{.clusterName}}"
+
 ---
 
 

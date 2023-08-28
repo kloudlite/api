@@ -65,6 +65,10 @@ models:
     model: k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta
   MetadataIn: *metadata-model
 
+  Account: &account-model
+    model: kloudlite.io/apps/console/internal/domain/entities.Account
+  AccountIn: *account-model
+
   Project: &project-model
     model: kloudlite.io/apps/console/internal/domain/entities.Project
   ProjectIn: *project-model
@@ -72,6 +76,10 @@ models:
   Workspace: &workspace-model
     model: kloudlite.io/apps/console/internal/domain/entities.Workspace
   WorkspaceIn: *workspace-model
+
+  Environment: &environment-model
+    model: kloudlite.io/apps/console/internal/domain/entities.Environment
+  EnvironmentIn: *environment-model
 
   Secret: &secret-model
     model: kloudlite.io/apps/console/internal/domain/entities.Secret
@@ -137,5 +145,16 @@ models:
   ConsoleCheckNameAvailabilityOutput:
     model: kloudlite.io/apps/console/internal/domain.CheckNameAvailabilityOutput
 
-  PaginationQueryArgs:
-    model: kloudlite.io/pkg/types.CursorPagination
+  MatchFilter: &match-filter-model
+    model: kloudlite.io/pkg/repos.MatchFilter
+  MatchFilterIn: *match-filter-model
+
+  MatchFilterMatchType:
+    model: kloudlite.io/pkg/repos.MatchType
+
+  CursorPagination: &cursor-pagination-model
+    model: kloudlite.io/pkg/repos.CursorPagination
+  CursorPaginationIn: *cursor-pagination-model
+
+  CursorPaginationSortDirection: &cursor-pagination-sort-direction
+    model: kloudlite.io/pkg/repos.SortDirection

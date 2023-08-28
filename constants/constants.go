@@ -28,6 +28,11 @@ const (
 )
 
 const (
+	// source: kubectl apply with an incorrect resource name
+	K8sNameValidatorRegex = `^[a-z0-9]([-a-z0-9]*[a-z0-9])?([.][a-z0-9]([-a-z0-9]*[a-z0-9])?)*$`
+)
+
+const (
 	ProviderGithub = "github"
 	ProviderGitlab = "gitlab"
 	ProviderGoogle = "google"
@@ -140,4 +145,6 @@ const (
 	ClusterNameKey string = "kloudlite.io/cluster.name"
 	EdgeNameKey    string = "kloudlite.io/edge.name"
 	AccountNameKey string = "kloudlite.io/account.name"
+
+	EnvNameKey string = "kloudlite.io/env.name"
 )

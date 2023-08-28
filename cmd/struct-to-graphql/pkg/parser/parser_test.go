@@ -2,50 +2,298 @@ package parser
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"os/exec"
-	"path/filepath"
+	"strings"
 	"testing"
 
-	// "github.com/maxatome/go-testdeep/td"
-	// "github.com/andreyvit/diff"
-	// "github.com/sergi/go-diff/diffmatchpatch"
-	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
-	"k8s.io/client-go/rest"
-	"kloudlite.io/pkg/k8s"
+	rApi "github.com/kloudlite/operator/pkg/operator"
+	apiExtensionsV1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+
+	"sigs.k8s.io/yaml"
+
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"kloudlite.io/pkg/types"
 )
 
-func Test_GeneratedGraphqlSchema(t *testing.T) {
-	kCli, err := func() (k8s.ExtendedK8sClient, error) {
-		return k8s.NewExtendedK8sClient(&rest.Config{Host: "localhost:8080"})
-	}()
-	if err != nil {
-		t.Error(err)
+type ExampleJson struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+	Spec              struct {
+		ClusterName  string   `json:"clusterName"`
+		NodePoolName string   `json:"nodePoolName"`
+		NodeType     string   `json:"nodeType"`
+		Taints       []string `json:"taints"`
+	}
+}
+
+type ProjectSpec struct {
+	AccountName     string `json:"accountName"`
+	ClusterName     string `json:"clusterName"`
+	DisplayName     string `json:"displayName,omitempty"`
+	TargetNamespace string `json:"targetNamespace"`
+	Logo            string `json:"logo,omitempty"`
+}
+
+type Project struct {
+	metav1.TypeMeta   `json:",inline"`
+	metav1.ObjectMeta `json:"metadata,omitempty"`
+	Spec              ProjectSpec `json:"spec,omitempty"`
+	Status            rApi.Status `json:"status,omitempty"`
+}
+
+func exampleJsonSchema() ([]byte, error) {
+	var x = `description: Node is the Schema for the nodes API
+properties:
+  apiVersion:
+    description: 'sample description'
+    type: string
+  kind:
+    description: 'sample description'
+    type: string
+  metadata:
+    type: object
+  spec:
+    properties:
+      clusterName:
+        type: string
+      nodePoolName:
+        type: string
+      nodeType:
+        enum:
+          - worker
+          - master
+          - cluster
+        type: string
+      taints:
+        items:
+          type: string
+        type: array
+    required:
+      - nodeType
+      - clusterName
+      - nodePoolName
+    type: object
+required:
+  - spec
+type: object
+`
+
+	return yaml.YAMLToJSON([]byte(x))
+}
+
+func exampleProjectCRD() ([]byte, error) {
+	var x = `apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.8.0
+  creationTimestamp: "2023-06-27T06:11:21Z"
+  generation: 5
+  name: projects.crds.kloudlite.io
+  resourceVersion: "141980035"
+  uid: ba912e2c-1211-4e1c-bc26-84c11de0c46c
+spec:
+  conversion:
+    strategy: None
+  group: crds.kloudlite.io
+  names:
+    kind: Project
+    listKind: ProjectList
+    plural: projects
+    singular: project
+  scope: Cluster
+  versions:
+  - additionalPrinterColumns:
+    - jsonPath: .spec.accountName
+      name: AccountName
+      type: string
+    - jsonPath: .spec.clusterName
+      name: ClusterName
+      type: string
+    - jsonPath: .spec.targetNamespace
+      name: target-namespace
+      type: string
+    - jsonPath: .status.isReady
+      name: Ready
+      type: boolean
+    - jsonPath: .metadata.creationTimestamp
+      name: Age
+      type: date
+    name: v1
+    schema:
+      openAPIV3Schema:
+        description: Project is the Schema for the projects API
+        properties:
+          apiVersion:
+            description: 'APIVersion defines the versioned schema of this representation
+              of an object. Servers should convert recognized schemas to the latest
+              internal value, and may reject unrecognized values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+            type: string
+          kind:
+            description: 'Kind is a string value representing the REST resource this
+              object represents. Servers may infer this from the endpoint the client
+              submits requests to. Cannot be updated. In CamelCase. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+            type: string
+          metadata:
+            type: object
+          spec:
+            description: ProjectSpec defines the desired state of Project
+            properties:
+              accountName:
+                type: string
+              clusterName:
+                type: string
+              displayName:
+                type: string
+              logo:
+                type: string
+              targetNamespace:
+                type: string
+            required:
+            - accountName
+            - clusterName
+            - targetNamespace
+            type: object
+          status:
+            properties:
+              checks:
+                additionalProperties:
+                  properties:
+                    generation:
+                      format: int64
+                      type: integer
+                    message:
+                      type: string
+                    status:
+                      type: boolean
+                  required:
+                  - status
+                  type: object
+                type: object
+              isReady:
+                type: boolean
+              lastReconcileTime:
+                format: date-time
+                type: string
+              message:
+                type: object
+                x-kubernetes-preserve-unknown-fields: true
+              resources:
+                items:
+                  properties:
+                    apiVersion:
+                      description: 'APIVersion defines the versioned schema of this
+                        representation of an object. Servers should convert recognized
+                        schemas to the latest internal value, and may reject unrecognized
+                        values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
+                      type: string
+                    kind:
+                      description: 'Kind is a string value representing the REST resource
+                        this object represents. Servers may infer this from the endpoint
+                        the client submits requests to. Cannot be updated. In CamelCase.
+                        More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds'
+                      type: string
+                    name:
+                      type: string
+                    namespace:
+                      type: string
+                  required:
+                  - name
+                  - namespace
+                  type: object
+                type: array
+            type: object
+        required:
+        - spec
+        type: object
+    served: true
+    storage: true
+    subresources:
+      status: {}
+`
+
+	return yaml.YAMLToJSON([]byte(x))
+}
+
+type schemaClient struct{}
+
+func (s schemaClient) GetK8sJsonSchema(name string) (*apiExtensionsV1.JSONSchemaProps, error) {
+	if name == "projects.crds.kloudlite.io" {
+		b, err := exampleProjectCRD()
+		if err != nil {
+			return nil, err
+		}
+
+		crd := apiExtensionsV1.CustomResourceDefinition{}
+		if err := json.Unmarshal(b, &crd); err != nil {
+			return nil, err
+		}
+
+		b2, err := json.Marshal(crd.Spec.Versions[0].Schema.OpenAPIV3Schema)
+		if err != nil {
+			return nil, err
+		}
+
+		var m apiExtensionsV1.JSONSchemaProps
+		if err := json.Unmarshal(b2, &m); err != nil {
+			return nil, err
+		}
+		return &m, nil
 	}
 
-	t.Parallel()
+	panic("unknown k8s crd resource name")
+}
+
+func (s schemaClient) GetHttpJsonSchema(url string) (*apiExtensionsV1.JSONSchemaProps, error) {
+	if strings.HasSuffix(url, "example-json-schema") {
+		schema, err := exampleJsonSchema()
+		if err != nil {
+			return nil, err
+		}
+
+		var m apiExtensionsV1.JSONSchemaProps
+		if err := json.Unmarshal(schema, &m); err != nil {
+			return nil, err
+		}
+		return &m, nil
+	}
+	panic("unknown http route")
+}
+
+func Test_GeneratedGraphqlSchema(t *testing.T) {
+	//schemaCli, err := func() (kubernetes.Clientset, error) {
+	//	// kc := kubernetesClient{}
+	//	// return k8s.NewExtendedK8sClient()
+	//	return kubernetesClient{}, nil
+	//	// return k8s.NewExtendedK8sClient(&rest.Config{Host: "localhost:8080"})
+	//}()
+
+	schemaCli := &schemaClient{}
 
 	type fields struct {
-		structs map[string]*Struct
-		kCli    k8s.ExtendedK8sClient
+		structs   map[string]*Struct
+		schemaCli SchemaClient
 	}
+
 	type args struct {
 		name           string
 		data           any
-		withPagination bool
+		withPagination []string
 	}
 	tests := []struct {
-		name   string
-		fields fields
-		args   args
-		want   map[string]*Struct
+		name    string
+		fields  fields
+		args    args
+		want    map[string]*Struct
+		wantErr bool
 	}{
 		{
 			name: "test case 1 (without any json tag)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "User",
@@ -78,8 +326,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 2 (with json tags, for naming)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "User",
@@ -112,8 +360,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 3 (with json tags for naming, and graphql enum tags)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "User",
@@ -151,8 +399,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 5 (with struct containing slice field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Post",
@@ -188,8 +436,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 6 (with struct containing pointer field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Address",
@@ -222,8 +470,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 7 (with struct containing nested anonymous struct field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Employee",
@@ -267,8 +515,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 8 (with struct containing nested struct field with json tags)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Employee",
@@ -312,8 +560,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 9 (with struct containing struct pointer field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Company",
@@ -357,8 +605,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 11 (with struct containing struct slice field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Organization",
@@ -402,8 +650,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 12 (with struct containing struct slice field with json tags)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Organization",
@@ -447,8 +695,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 13 (with struct containing enum field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Product",
@@ -487,8 +735,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 14 (with struct containing struct slice to pointer of a inline struct)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Organization",
@@ -532,8 +780,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		{
 			name: "test case 16 (with struct containing map field)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "User",
@@ -570,16 +818,16 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 16 (with struct containing nested kloudlite CRD)",
+			name: "test case 17 (with struct containing nested kloudlite CRD)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "Project",
 				data: struct {
 					AccountName string
-					Project     crdsv1.Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
+					Project     Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 				}{},
 			},
 			want: map[string]*Struct{
@@ -589,25 +837,26 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"AccountName: String!",
 							"apiVersion: String!",
 							"kind: String!",
+							// "metadata: Metadata!",
 							"metadata: Metadata! @goField(name: \"objectMeta\")",
-							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpec!",
 							"status: Github_com__kloudlite__operator__pkg__operator_Status",
 						},
 					},
 					Inputs: map[string][]string{
 						"ProjectIn": {
 							"AccountName: String!",
-							"apiVersion: String!",
-							"kind: String!",
+							"apiVersion: String",
+							"kind: String",
 							"metadata: MetadataIn!",
-							"spec: Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpecIn!",
 						},
 					},
 					Enums: map[string][]string{},
 				},
 				"common-types": {
 					Types: map[string][]string{
-						"Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpec": {
 							"accountName: String!",
 							"clusterName: String!",
 							"displayName: String",
@@ -641,10 +890,12 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"labels: Map",
 							"annotations: Map",
 							"generation: Int!",
+							"creationTimestamp: Date!",
+							"deletionTimestamp: Date",
 						},
 					},
 					Inputs: map[string][]string{
-						"Github_com__kloudlite__operator__apis__crds__v1_ProjectSpecIn": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpecIn": {
 							"accountName: String!",
 							"clusterName: String!",
 							"displayName: String",
@@ -663,10 +914,10 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 17 (with pagination enabled)",
+			name: "test case 18 (with pagination enabled)",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "User",
@@ -675,7 +926,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Username string
 					Gender   string
 				}{},
-				withPagination: true,
+				withPagination: []string{"User"},
 			},
 			want: map[string]*Struct{
 				"User": {
@@ -707,8 +958,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				"common-types": {
 					Types: map[string][]string{
 						"PageInfo": {
-							"hasNextPage: Boolean!",
-							"hasPreviousPage: Boolean!",
+							"hasNextPage: Boolean",
+							"hasPreviousPage: Boolean",
 							"startCursor: String",
 							"endCursor: String",
 						},
@@ -717,10 +968,10 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 18 (with graphql (noinput))",
+			name: "test case 19 (with graphql (noinput))",
 			fields: fields{
-				structs: map[string]*Struct{},
-				kCli:    kCli,
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
 			},
 			args: args{
 				name: "User",
@@ -743,7 +994,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						"Kloudlite_io__pkg__types_SyncStatus": {
 							"action: Kloudlite_io__pkg__types_SyncStatusAction!",
 							"error: String",
-							"generation: Int!",
+							"recordVersion: Int!",
 							"lastSyncedAt: Date",
 							"state: Kloudlite_io__pkg__types_SyncStatusState!",
 							"syncScheduledAt: Date",
@@ -756,11 +1007,198 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						},
 						"Kloudlite_io__pkg__types_SyncStatusState": {
 							"IDLE",
-							"IN_PROGRESS",
-							"NOT_READY",
-							"READY",
+							"APPLIED_AT_AGENT",
+							"ERRORED_AT_AGENT",
+							"IN_QUEUE",
+							"RECEIVED_UPDATE_FROM_AGENT",
 						},
 					},
+				},
+			},
+		},
+		{
+			name: "test case 20 (with json schema http uri)",
+			fields: fields{
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
+			},
+			args: args{
+				name: "Example",
+				data: struct {
+					// Example ExampleJson `json:"example" graphql:"uri=http://localhost:30017/example-json-schema"`
+					Example ExampleJson `json:"example" graphql:"uri=http://example.com/example-json-schema"`
+				}{},
+			},
+			want: map[string]*Struct{
+				"Example": {
+					Types: map[string][]string{
+						"Example": {
+							"example: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJson!",
+						},
+					},
+					Inputs: map[string][]string{
+						"ExampleIn": {
+							"example: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonIn!",
+						},
+					},
+					Enums: map[string][]string{},
+				},
+				"common-types": {
+					Types: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJson": {
+							"apiVersion: String!",
+							"kind: String!",
+							"metadata: Metadata! @goField(name: \"objectMeta\")",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpec!",
+						},
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpec": {
+							"clusterName: String!",
+							"nodePoolName: String!",
+							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType!",
+							"taints: [String]",
+						},
+						"Metadata": {
+							"annotations: Map",
+							"labels: Map",
+							"name: String!",
+							"namespace: String",
+							"creationTimestamp: Date!",
+							"deletionTimestamp: Date",
+							"generation: Int!",
+						},
+					},
+					Inputs: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonIn": {
+							"apiVersion: String",
+							"kind: String",
+							"metadata: MetadataIn!",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecIn!",
+						},
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecIn": {
+							"clusterName: String!",
+							"nodePoolName: String!",
+							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType!",
+							"taints: [String]",
+						},
+						"MetadataIn": {
+							"annotations: Map",
+							"labels: Map",
+							"name: String!",
+							"namespace: String",
+						},
+					},
+					Enums: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType": {
+							"worker",
+							"master",
+							"cluster",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "test case 21 (with some empty enums)",
+			fields: fields{
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
+			},
+			args: args{
+				name: "User",
+				data: struct {
+					Example string `json:"example" graphql:"enum=e1;e2;;e3;;e4"`
+				}{},
+			},
+			want: map[string]*Struct{
+				"Example": {
+					Types: map[string][]string{
+						"User": {
+							"example: UserExample!",
+						},
+					},
+					Inputs: map[string][]string{
+						"UserIn": {
+							"example: UserExample!",
+						},
+					},
+					Enums: map[string][]string{
+						"UserExample": {
+							"e1",
+							"e2",
+							"e3",
+							"e4",
+						},
+					},
+				},
+			},
+		},
+		{
+			name: "test case 22 (with default values for fields, with single-quoted string as default)",
+			fields: fields{
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
+			},
+			args: args{
+				name: "Account",
+				data: struct {
+					IsActive bool   `json:"isActive" graphql:"default=true"`
+					Country  string `json:"country" graphql:"default='INDIA'"`
+					Region   string `json:"region" graphql:"default=\"us-east-1\""`
+				}{},
+			},
+			wantErr: true,
+			want: map[string]*Struct{
+				"Account": {
+					Types: map[string][]string{
+						"Account": {
+							"isActive: Boolean!",
+							"country: String!",
+							"region: String!",
+						},
+					},
+					Inputs: map[string][]string{
+						"AccountIn": {
+							"isActive: Boolean! = true",
+							"country: String! = 'INDIA'",
+							"region: String! = \"us-east-1\"",
+						},
+					},
+					Enums: map[string][]string{},
+				},
+			},
+		},
+
+		{
+			name: "test case 23 (with default values for fields, with correct defaults)",
+			fields: fields{
+				structs:   map[string]*Struct{},
+				schemaCli: schemaCli,
+			},
+			args: args{
+				name: "Account",
+				data: struct {
+					IsActive bool   `json:"isActive" graphql:"default=true"`
+					Country  string `json:"country" graphql:"default=\"INDIA\""`
+					Region   string `json:"region" graphql:"default=\"us-east-1\""`
+				}{},
+			},
+			want: map[string]*Struct{
+				"Account": {
+					Types: map[string][]string{
+						"Account": {
+							"isActive: Boolean!",
+							"country: String!",
+							"region: String!",
+						},
+					},
+					Inputs: map[string][]string{
+						"AccountIn": {
+							"isActive: Boolean! = true",
+							"country: String! = \"INDIA\"",
+							"region: String! = \"us-east-1\"",
+						},
+					},
+					Enums: map[string][]string{},
 				},
 			},
 		},
@@ -768,18 +1206,24 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 
 	for _, _tt := range tests {
 		tt := _tt
-
 		t.Run(tt.name, func(t *testing.T) {
+			// t.Parallel()
+
 			p := &parser{
-				structs: tt.fields.structs,
-				kCli:    tt.fields.kCli,
+				structs:   tt.fields.structs,
+				schemaCli: tt.fields.schemaCli,
 			}
 
-			p.LoadStruct(tt.args.name, tt.args.data)
-			buf := new(bytes.Buffer)
-			if tt.args.withPagination {
-				p.WithPagination()
+			err := p.LoadStruct(tt.args.name, tt.args.data)
+			if err != nil {
+				if tt.wantErr {
+					return
+				}
+				t.Error(err)
 			}
+
+			buf := new(bytes.Buffer)
+			p.WithPagination(tt.args.withPagination)
 			p.PrintSchema(buf)
 			got := buf.String()
 
@@ -791,26 +1235,29 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			want := buf2.String()
 
 			if got != want {
-				dir := "/tmp/x"
-				g, err2 := os.Create(filepath.Join(dir, "./got.txt"))
-				if err2 != nil {
-					t.Error(err2)
+				// dir := "/tmp/x"
+				g, err := os.CreateTemp("", "got.txt")
+				// g, err2 := os.Create(filepath.Join(dir, "./got.txt"))
+				if err != nil {
+					t.Error(err)
 				}
 				g.WriteString(got)
 
-				w, err2 := os.Create(filepath.Join(dir, "./want.txt"))
-				if err2 != nil {
-					t.Error(err2)
+				w, err := os.CreateTemp("", "want.txt")
+				// w, err2 := os.Create(filepath.Join(dir, "./want.txt"))
+				if err != nil {
+					t.Error(err)
 				}
 				w.WriteString(want)
 
-				cmd := exec.Command("delta", filepath.Join(dir, "./got.txt"), filepath.Join(dir, "./want.txt"), "-s")
+				t.Logf("diff %s %s", g.Name(), w.Name())
+				cmd := exec.Command("diff", g.Name(), w.Name())
 				b, err := cmd.CombinedOutput()
 				if err != nil {
 					t.Error(err)
 				}
 
-				t.Errorf(string(b))
+				t.Errorf("diff output:\n%s\n", string(b))
 			}
 		})
 	}

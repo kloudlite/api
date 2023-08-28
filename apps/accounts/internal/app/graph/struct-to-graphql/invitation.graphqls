@@ -1,0 +1,23 @@
+type Invitation @shareable {
+  accepted: Boolean
+  accountName: String!
+  creationTime: Date!
+  id: String!
+  invitedBy: String!
+  inviteToken: String!
+  markedForDeletion: Boolean
+  recordVersion: Int!
+  rejected: Boolean
+  updateTime: Date!
+  userEmail: String
+  userName: String
+  userRole: String!
+}
+
+input InvitationIn {
+  accountName: String!
+  userEmail: String
+  userName: String
+  userRole: String!
+}
+

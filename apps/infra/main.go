@@ -4,18 +4,16 @@ import (
 	"context"
 	"flag"
 	"fmt"
-	cmgrV1 "github.com/kloudlite/cluster-operator/apis/cmgr/v1"
-	infraV1 "github.com/kloudlite/cluster-operator/apis/infra/v1"
+	"os"
+	"time"
+
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
 	"github.com/kloudlite/operator/pkg/kubectl"
-	wgV1 "github.com/kloudlite/wg-operator/apis/wg/v1"
 	"k8s.io/apimachinery/pkg/runtime"
 	"k8s.io/client-go/rest"
 	"kloudlite.io/pkg/config"
-	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"
 	"sigs.k8s.io/controller-runtime/pkg/client"
-	"time"
 
 	"go.uber.org/fx"
 	"kloudlite.io/apps/infra/internal/env"
@@ -31,14 +29,17 @@ func main() {
 	flag.BoolVar(&isDev, "dev", false, "--dev")
 	flag.Parse()
 
+	logger, err := logging.New(&logging.Options{Name: "infra", Dev: isDev})
+	if err != nil {
+		panic(err)
+	}
+
 	app := fx.New(
-		fx.Provide(
-			func() (logging.Logger, error) {
-				return logging.New(&logging.Options{Name: "infra", Dev: isDev})
-			},
-		),
 		fx.NopLogger,
-		fn.FxErrorHandler(),
+
+		fx.Provide(func() logging.Logger {
+			return logger
+		}),
 
 		fx.Provide(func() (*env.Env, error) {
 			ev, err := config.LoadEnv[env.Env]()()
@@ -61,16 +62,10 @@ func main() {
 			scheme := runtime.NewScheme()
 			utilruntime.Must(k8sScheme.AddToScheme(scheme))
 			utilruntime.Must(crdsv1.AddToScheme(scheme))
-			utilruntime.Must(infraV1.AddToScheme(scheme))
-			utilruntime.Must(cmgrV1.AddToScheme(scheme))
-			utilruntime.Must(wgV1.AddToScheme(scheme))
 
 			return client.New(restCfg, client.Options{
 				Scheme: scheme,
 				Mapper: nil,
-				Opts: client.WarningHandlerOptions{
-					SuppressWarnings: true,
-				},
 			})
 		}),
 
@@ -89,7 +84,8 @@ func main() {
 
 	defer cancel()
 	if err := app.Start(ctx); err != nil {
-		panic(err)
+		logger.Errorf(err, "failed to start app")
+		os.Exit(1)
 	}
 
 	fmt.Println(

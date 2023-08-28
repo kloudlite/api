@@ -8,6 +8,7 @@ import (
 	"strconv"
 
 	"kloudlite.io/apps/console/internal/domain/entities"
+	"kloudlite.io/pkg/repos"
 )
 
 type AppEdge struct {
@@ -30,6 +31,22 @@ type ConfigPaginatedRecords struct {
 	Edges      []*ConfigEdge `json:"edges"`
 	PageInfo   *PageInfo     `json:"pageInfo"`
 	TotalCount int           `json:"totalCount"`
+}
+
+type EnvOrWorkspaceOrProjectID struct {
+	Type EnvOrWorkspaceOrProjectIDType `json:"type"`
+	Name string                        `json:"name"`
+}
+
+type EnvironmentEdge struct {
+	Cursor string                `json:"cursor"`
+	Node   *entities.Environment `json:"node"`
+}
+
+type EnvironmentPaginatedRecords struct {
+	Edges      []*EnvironmentEdge `json:"edges"`
+	PageInfo   *PageInfo          `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSpec struct {
@@ -111,7 +128,7 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbe struct {
 	Interval         *int                                                                       `json:"interval,omitempty"`
 	Shell            *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeShell   `json:"shell,omitempty"`
 	TCP              *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTCP     `json:"tcp,omitempty"`
-	Type             string                                                                     `json:"type"`
+	Type             GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType     `json:"type"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeHTTPGet struct {
@@ -133,7 +150,7 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeIn struct
 	Interval         *int                                                                         `json:"interval,omitempty"`
 	Shell            *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeShellIn   `json:"shell,omitempty"`
 	TCP              *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTCPIn     `json:"tcp,omitempty"`
-	Type             string                                                                       `json:"type"`
+	Type             GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType       `json:"type"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeShell struct {
@@ -159,7 +176,7 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbe struct 
 	Interval         *int                                                                        `json:"interval,omitempty"`
 	Shell            *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeShell   `json:"shell,omitempty"`
 	TCP              *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTCP     `json:"tcp,omitempty"`
-	Type             string                                                                      `json:"type"`
+	Type             GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType     `json:"type"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeHTTPGet struct {
@@ -181,7 +198,7 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeIn struc
 	Interval         *int                                                                          `json:"interval,omitempty"`
 	Shell            *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeShellIn   `json:"shell,omitempty"`
 	TCP              *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTCPIn     `json:"tcp,omitempty"`
-	Type             string                                                                        `json:"type"`
+	Type             GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType       `json:"type"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeShell struct {
@@ -312,6 +329,16 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn struct {
 	Operator          *string `json:"operator,omitempty"`
 	TolerationSeconds *int    `json:"tolerationSeconds,omitempty"`
 	Value             *string `json:"value,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec struct {
+	ProjectName     string `json:"projectName"`
+	TargetNamespace string `json:"targetNamespace"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn struct {
+	ProjectName     string `json:"projectName"`
+	TargetNamespace string `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpec struct {
@@ -581,27 +608,21 @@ type ManagedServicePaginatedRecords struct {
 	TotalCount int                   `json:"totalCount"`
 }
 
-type MsvcTemplateEdge struct {
-	Cursor string                 `json:"cursor"`
-	Node   *entities.MsvcTemplate `json:"node"`
-}
-
-type MsvcTemplatePaginatedRecords struct {
-	Edges      []*MsvcTemplateEdge `json:"edges"`
-	PageInfo   *PageInfo           `json:"pageInfo"`
-	TotalCount int                 `json:"totalCount"`
-}
-
 type PageInfo struct {
 	EndCursor       *string `json:"endCursor,omitempty"`
-	HasNextPage     bool    `json:"hasNextPage"`
-	HasPreviousPage bool    `json:"hasPreviousPage"`
+	HasNextPage     *bool   `json:"hasNextPage,omitempty"`
+	HasPreviousPage *bool   `json:"hasPreviousPage,omitempty"`
 	StartCursor     *string `json:"startCursor,omitempty"`
 }
 
 type ProjectEdge struct {
 	Cursor string            `json:"cursor"`
 	Node   *entities.Project `json:"node"`
+}
+
+type ProjectID struct {
+	Type  ProjectIDType `json:"type"`
+	Value string        `json:"value"`
 }
 
 type ProjectPaginatedRecords struct {
@@ -621,6 +642,48 @@ type RouterPaginatedRecords struct {
 	TotalCount int           `json:"totalCount"`
 }
 
+type SearchApps struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchConfigs struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchEnvironments struct {
+	Text        *repos.MatchFilter `json:"text,omitempty"`
+	ProjectName *repos.MatchFilter `json:"projectName,omitempty"`
+}
+
+type SearchImagePullSecrets struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchManagedResources struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchManagedServices struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchProjects struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchRouters struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchSecrets struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchWorkspaces struct {
+	Text        *repos.MatchFilter `json:"text,omitempty"`
+	ProjectName *repos.MatchFilter `json:"projectName,omitempty"`
+}
+
 type SecretEdge struct {
 	Cursor string           `json:"cursor"`
 	Node   *entities.Secret `json:"node"`
@@ -637,10 +700,150 @@ type WorkspaceEdge struct {
 	Node   *entities.Workspace `json:"node"`
 }
 
+type WorkspaceOrEnvID struct {
+	Type  WorkspaceOrEnvIDType `json:"type"`
+	Value string               `json:"value"`
+}
+
 type WorkspacePaginatedRecords struct {
 	Edges      []*WorkspaceEdge `json:"edges"`
 	PageInfo   *PageInfo        `json:"pageInfo"`
 	TotalCount int              `json:"totalCount"`
+}
+
+type EnvOrWorkspaceOrProjectIDType string
+
+const (
+	EnvOrWorkspaceOrProjectIDTypeWorkspaceName              EnvOrWorkspaceOrProjectIDType = "workspaceName"
+	EnvOrWorkspaceOrProjectIDTypeWorkspaceTargetNamespace   EnvOrWorkspaceOrProjectIDType = "workspaceTargetNamespace"
+	EnvOrWorkspaceOrProjectIDTypeEnvironmentName            EnvOrWorkspaceOrProjectIDType = "environmentName"
+	EnvOrWorkspaceOrProjectIDTypeEnvironmentTargetNamespace EnvOrWorkspaceOrProjectIDType = "environmentTargetNamespace"
+	EnvOrWorkspaceOrProjectIDTypeProjectName                EnvOrWorkspaceOrProjectIDType = "projectName"
+	EnvOrWorkspaceOrProjectIDTypeProjectTargetNamespace     EnvOrWorkspaceOrProjectIDType = "projectTargetNamespace"
+)
+
+var AllEnvOrWorkspaceOrProjectIDType = []EnvOrWorkspaceOrProjectIDType{
+	EnvOrWorkspaceOrProjectIDTypeWorkspaceName,
+	EnvOrWorkspaceOrProjectIDTypeWorkspaceTargetNamespace,
+	EnvOrWorkspaceOrProjectIDTypeEnvironmentName,
+	EnvOrWorkspaceOrProjectIDTypeEnvironmentTargetNamespace,
+	EnvOrWorkspaceOrProjectIDTypeProjectName,
+	EnvOrWorkspaceOrProjectIDTypeProjectTargetNamespace,
+}
+
+func (e EnvOrWorkspaceOrProjectIDType) IsValid() bool {
+	switch e {
+	case EnvOrWorkspaceOrProjectIDTypeWorkspaceName, EnvOrWorkspaceOrProjectIDTypeWorkspaceTargetNamespace, EnvOrWorkspaceOrProjectIDTypeEnvironmentName, EnvOrWorkspaceOrProjectIDTypeEnvironmentTargetNamespace, EnvOrWorkspaceOrProjectIDTypeProjectName, EnvOrWorkspaceOrProjectIDTypeProjectTargetNamespace:
+		return true
+	}
+	return false
+}
+
+func (e EnvOrWorkspaceOrProjectIDType) String() string {
+	return string(e)
+}
+
+func (e *EnvOrWorkspaceOrProjectIDType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = EnvOrWorkspaceOrProjectIDType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid EnvOrWorkspaceOrProjectIdType", str)
+	}
+	return nil
+}
+
+func (e EnvOrWorkspaceOrProjectIDType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType string
+
+const (
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeHTTPGet GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType = "httpGet"
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeShell   GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType = "shell"
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeTCP     GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType = "tcp"
+)
+
+var AllGithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType = []GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType{
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeHTTPGet,
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeShell,
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeTCP,
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeHTTPGet, GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeShell, GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeTypeTCP:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType string
+
+const (
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeHTTPGet GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType = "httpGet"
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeShell   GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType = "shell"
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeTCP     GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType = "tcp"
+)
+
+var AllGithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType = []GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType{
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeHTTPGet,
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeShell,
+	GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeTCP,
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeHTTPGet, GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeShell, GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeTypeTCP:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1AppSpecContainersReadinessProbeType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type KloudliteIoPkgTypesSyncStatusAction string
@@ -731,43 +934,88 @@ func (e KloudliteIoPkgTypesSyncStatusState) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
-type PaginationSortOrder string
+type ProjectIDType string
 
 const (
-	PaginationSortOrderAsc  PaginationSortOrder = "ASC"
-	PaginationSortOrderDesc PaginationSortOrder = "DESC"
+	ProjectIDTypeName            ProjectIDType = "name"
+	ProjectIDTypeTargetNamespace ProjectIDType = "targetNamespace"
 )
 
-var AllPaginationSortOrder = []PaginationSortOrder{
-	PaginationSortOrderAsc,
-	PaginationSortOrderDesc,
+var AllProjectIDType = []ProjectIDType{
+	ProjectIDTypeName,
+	ProjectIDTypeTargetNamespace,
 }
 
-func (e PaginationSortOrder) IsValid() bool {
+func (e ProjectIDType) IsValid() bool {
 	switch e {
-	case PaginationSortOrderAsc, PaginationSortOrderDesc:
+	case ProjectIDTypeName, ProjectIDTypeTargetNamespace:
 		return true
 	}
 	return false
 }
 
-func (e PaginationSortOrder) String() string {
+func (e ProjectIDType) String() string {
 	return string(e)
 }
 
-func (e *PaginationSortOrder) UnmarshalGQL(v interface{}) error {
+func (e *ProjectIDType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
 		return fmt.Errorf("enums must be strings")
 	}
 
-	*e = PaginationSortOrder(str)
+	*e = ProjectIDType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid PaginationSortOrder", str)
+		return fmt.Errorf("%s is not a valid ProjectIdType", str)
 	}
 	return nil
 }
 
-func (e PaginationSortOrder) MarshalGQL(w io.Writer) {
+func (e ProjectIDType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type WorkspaceOrEnvIDType string
+
+const (
+	WorkspaceOrEnvIDTypeWorkspaceName              WorkspaceOrEnvIDType = "workspaceName"
+	WorkspaceOrEnvIDTypeWorkspaceTargetNamespace   WorkspaceOrEnvIDType = "workspaceTargetNamespace"
+	WorkspaceOrEnvIDTypeEnvironmentName            WorkspaceOrEnvIDType = "environmentName"
+	WorkspaceOrEnvIDTypeEnvironmentTargetNamespace WorkspaceOrEnvIDType = "environmentTargetNamespace"
+)
+
+var AllWorkspaceOrEnvIDType = []WorkspaceOrEnvIDType{
+	WorkspaceOrEnvIDTypeWorkspaceName,
+	WorkspaceOrEnvIDTypeWorkspaceTargetNamespace,
+	WorkspaceOrEnvIDTypeEnvironmentName,
+	WorkspaceOrEnvIDTypeEnvironmentTargetNamespace,
+}
+
+func (e WorkspaceOrEnvIDType) IsValid() bool {
+	switch e {
+	case WorkspaceOrEnvIDTypeWorkspaceName, WorkspaceOrEnvIDTypeWorkspaceTargetNamespace, WorkspaceOrEnvIDTypeEnvironmentName, WorkspaceOrEnvIDTypeEnvironmentTargetNamespace:
+		return true
+	}
+	return false
+}
+
+func (e WorkspaceOrEnvIDType) String() string {
+	return string(e)
+}
+
+func (e *WorkspaceOrEnvIDType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = WorkspaceOrEnvIDType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid WorkspaceOrEnvIdType", str)
+	}
+	return nil
+}
+
+func (e WorkspaceOrEnvIDType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

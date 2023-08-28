@@ -4,6 +4,7 @@ import (
 	"context"
 	"flag"
 	"fmt"
+	"os"
 	"time"
 
 	"go.uber.org/fx"
@@ -11,7 +12,6 @@ import (
 
 	"kloudlite.io/apps/console/internal/env"
 	"kloudlite.io/apps/console/internal/framework"
-	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/k8s"
 	"kloudlite.io/pkg/logging"
 )
@@ -21,17 +21,22 @@ func main() {
 	flag.BoolVar(&isDev, "dev", false, "--dev")
 	flag.Parse()
 
+	logger, err := logging.New(&logging.Options{Name: "console", Dev: isDev})
+	if err != nil {
+		panic(err)
+	}
+
 	app := fx.New(
+		// fx.ErrorHook(&fn.ErrH{Logger: logger.WithKV("component", "fx-error-handler")}),
 		fx.NopLogger,
-		fn.FxErrorHandler(),
 
-		fx.Provide(env.LoadEnv),
+		fx.Provide(func() logging.Logger {
+			return logger
+		}),
 
-		fx.Provide(
-			func() (logging.Logger, error) {
-				return logging.New(&logging.Options{Name: "console", Dev: isDev})
-			},
-		),
+		fx.Provide(func() (*env.Env, error) {
+			return env.LoadEnv()
+		}),
 
 		fx.Provide(func() (*rest.Config, error) {
 			if isDev {
@@ -54,7 +59,9 @@ func main() {
 	defer cancelFunc()
 
 	if err := app.Start(ctx); err != nil {
-		panic(err)
+		logger.Errorf(err, "console startup errors")
+		logger.Infof("EXITING as errors encountered during startup")
+		os.Exit(1)
 	}
 
 	fmt.Println(
