@@ -88,7 +88,7 @@ func (d *domain) CreateAccount(ctx UserContext, account entities.Account) (*enti
 		return nil, err
 	}
 
-	if err := d.addMembership(ctx, acc.Name, ctx.UserId, "", iamT.RoleAccountOwner); err != nil {
+	if err := d.addMembership(ctx, acc.Name, ctx.UserId, iamT.ResourceAccount, iamT.RoleAccountOwner); err != nil {
 		return nil, err
 	}
 
