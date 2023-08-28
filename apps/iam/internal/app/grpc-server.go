@@ -133,7 +133,6 @@ func (s *GrpcService) GetMembership(ctx context.Context, in *iam.GetMembershipIn
 		UserId:      rb.UserId,
 		ResourceRef: rb.ResourceRef,
 		Role:        string(rb.Role),
-		//Accepted:    rb.Accepted,
 	}, nil
 }
 
@@ -173,7 +172,6 @@ func (s *GrpcService) Can(ctx context.Context, in *iam.CanIn) (*iam.CanOut, erro
 		ctx, repos.Filter{
 			"resource_ref": map[string]any{"$in": in.ResourceRefs},
 			"user_id":      in.UserId,
-			"accepted":     true,
 		},
 	)
 

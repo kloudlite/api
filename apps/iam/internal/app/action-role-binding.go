@@ -8,7 +8,7 @@ type RoleBindingMap map[t.Action][]t.Role
 
 var roleBindings RoleBindingMap = RoleBindingMap{
 	t.CreateAccount: []t.Role{t.RoleAccountOwner},
-	t.GetAccount:    []t.Role{t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.GetAccount:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
 
 	t.UpdateAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.DeleteAccount: []t.Role{t.RoleAccountOwner},
