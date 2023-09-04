@@ -23,7 +23,7 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.InviteAccountAdmin:  []t.Role{t.RoleAccountOwner},
 	t.InviteAccountMember: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 
-	t.UpdateAccountMembership: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+	t.UpdateAccountMembership: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin}, // should not update role of himself
 	t.RemoveAccountMembership: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 
 	t.ListMembershipsForAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
