@@ -1055,7 +1055,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"clusterName: String!",
 							"nodePoolName: String!",
 							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType!",
-							"taints: [String]",
+							"taints: [String!]",
 						},
 						"Metadata": {
 							"annotations: Map",
@@ -1078,7 +1078,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"clusterName: String!",
 							"nodePoolName: String!",
 							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType!",
-							"taints: [String]",
+							"taints: [String!]",
 						},
 						"MetadataIn": {
 							"annotations: Map",

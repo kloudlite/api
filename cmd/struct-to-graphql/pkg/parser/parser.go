@@ -387,16 +387,16 @@ func (p *parser) NavigateTree(s *Struct, name string, tree *apiExtensionsV1.JSON
 
 		if v.Type == "array" {
 			if v.Items.Schema != nil && v.Items.Schema.Type == "object" {
-				fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", typeName+genTypeName(k)), m[k]))
-				inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%sIn]", typeName+genTypeName(k)), m[k]))
+				fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s!]", typeName+genTypeName(k)), m[k]))
+				inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%sIn!]", typeName+genTypeName(k)), m[k]))
 				if err := p.NavigateTree(s, typeName+genTypeName(k), v.Items.Schema, currDepth+1); err != nil {
 					return err
 				}
 				continue
 			}
 
-			fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s]", genTypeName(v.Items.Schema.Type)), m[k]))
-			inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%s]", genTypeName(v.Items.Schema.Type)), m[k]))
+			fields = append(fields, genFieldEntry(k, fmt.Sprintf("[%s!]", genTypeName(v.Items.Schema.Type)), m[k]))
+			inputFields = append(inputFields, genFieldEntry(k, fmt.Sprintf("[%s!]", genTypeName(v.Items.Schema.Type)), m[k]))
 			continue
 		}
 
