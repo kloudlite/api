@@ -81,15 +81,6 @@ func (d *domain) InviteMember(ctx UserContext, accountName string, invitation en
 		InvitedBy:       inv.InvitedBy,
 		Email:           inv.UserEmail,
 		// TODO: verify user name, if it is not empty, then use it, otherwise use email
-		/* status:
-		   isReady: <running-status>
-		   syncStatus:
-		     action: <action>
-		     recordVersion: <record-version>
-		     lastSyncedAt: <last-synced-at>
-		     status: <status>
-		*/
-
 		Name: inv.UserName,
 	}); err != nil {
 		return nil, err

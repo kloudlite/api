@@ -60,11 +60,9 @@ var Module = fx.Module("app",
 		return comms.NewCommsClient(conn)
 	}),
 
-	fx.Provide(
-		func(conn AuthClient) auth.AuthClient {
-			return auth.NewAuthClient(conn)
-		},
-	),
+	fx.Provide(func(conn AuthClient) auth.AuthClient {
+		return auth.NewAuthClient(conn)
+	}),
 
 	domain.Module,
 
