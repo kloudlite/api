@@ -18,32 +18,53 @@ import (
 	"sigs.k8s.io/yaml"
 )
 
+type K3sCommonFlags struct {
+	Token       string            `json:"token"`
+	NodeName    string            `json:"nodeName"`
+	Taints      []string          `json:"taints"`
+	Labels      map[string]string `json:"labels"`
+	Annotations map[string]string `json:"annotations"`
+}
+
+func (kcf K3sCommonFlags) ParseIntoFlags() []string {
+	flags := make([]string, 0, 2*(len(kcf.Taints)+len(kcf.Labels)+len(kcf.Annotations)+2))
+
+	flags = append(flags, "--node-name", kcf.NodeName)
+	flags = append(flags, "--token", kcf.Token)
+
+	for i := range kcf.Taints {
+		flags = append(flags, "--node-taint", kcf.Taints[i])
+	}
+
+	for k, v := range kcf.Labels {
+		flags = append(flags, "--node-label", fmt.Sprintf("%s=%s", k, v))
+	}
+
+	// INFO: k3s does not support node-annotation yet
+	// for k, v := range kcf.Annotations {
+	// 	flags = append(flags, "--node-annotation", fmt.Sprintf("%s=%s", k, v))
+	// }
+	//
+	return flags
+}
+
 type AgentConfig struct {
-	PublicIP string            `json:"publicIP"`
-	ServerIP string            `json:"serverIP"`
-	Token    string            `json:"token"`
-	NodeName string            `json:"nodeName"`
-	Taints   []string          `json:"taints"`
-	Labels   map[string]string `json:"labels"`
+	PublicIP       string `json:"publicIP"`
+	ServerIP       string `json:"serverIP"`
+	K3sCommonFlags `json:",inline"`
 }
 
 type PrimaryMasterConfig struct {
-	PublicIP string            `json:"publicIP"`
-	Token    string            `json:"token"`
-	NodeName string            `json:"nodeName"`
-	Taints   []string          `json:"taints"`
-	Labels   map[string]string `json:"labels"`
-	SANs     []string          `json:"SANs"`
+	PublicIP       string   `json:"publicIP"`
+	SANs           []string `json:"SANs"`
+	K3sCommonFlags `json:",inline"`
 }
 
 type SecondaryMasterConfig struct {
-	PublicIP string            `json:"publicIP"`
-	ServerIP string            `json:"serverIP"`
-	Token    string            `json:"token"`
-	NodeName string            `json:"nodeName"`
-	Taints   []string          `json:"taints"`
-	Labels   map[string]string `json:"labels"`
-	SANs     []string          `json:"SANs"`
+	PublicIP       string   `json:"publicIP"`
+	ServerIP       string   `json:"serverIP"`
+	SANs           []string `json:"SANs"`
+	K3sCommonFlags `json:",inline"`
 }
 
 type RunAsMode string
@@ -239,8 +260,6 @@ func StartPrimaryK3sMaster(ctx context.Context, pmc *PrimaryMasterConfig) error 
 		"--disable", "traefik",
 		"--disable", "servicelb",
 		"--flannel-backend", "wireguard-native",
-		"--node-name", pmc.NodeName,
-		"--token", pmc.Token,
 		"--write-kubeconfig-mode", "644",
 		"--node-label", fmt.Sprintf("%s=%s", constants.PublicIpKey, pmc.PublicIP),
 		"--node-label", fmt.Sprintf("%s=%s", constants.NodeNameKey, pmc.NodeName),
@@ -251,9 +270,7 @@ func StartPrimaryK3sMaster(ctx context.Context, pmc *PrimaryMasterConfig) error 
 		argsAndFlags = append(argsAndFlags, "--tls-san", pmc.SANs[i])
 	}
 
-	for k, v := range pmc.Labels {
-		argsAndFlags = append(argsAndFlags, "--node-label", fmt.Sprintf("%s=%s", k, v))
-	}
+	argsAndFlags = append(argsAndFlags, pmc.K3sCommonFlags.ParseIntoFlags()...)
 
 	return execK3s(ctx, argsAndFlags...)
 }
@@ -266,8 +283,6 @@ func StartSecondaryK3sMaster(ctx context.Context, smc *SecondaryMasterConfig) er
 		"--disable", "traefik",
 		"--disable", "servicelb",
 		"--flannel-backend", "wireguard-native",
-		"--node-name", smc.NodeName,
-		"--token", smc.Token,
 		"--write-kubeconfig-mode", "644",
 		"--node-label", fmt.Sprintf("%s=%s", constants.PublicIpKey, smc.PublicIP),
 		"--node-label", fmt.Sprintf("%s=%s", constants.NodeNameKey, smc.NodeName),
@@ -278,9 +293,7 @@ func StartSecondaryK3sMaster(ctx context.Context, smc *SecondaryMasterConfig) er
 		argsAndFlags = append(argsAndFlags, "--tls-san", smc.SANs[i])
 	}
 
-	for k, v := range smc.Labels {
-		argsAndFlags = append(argsAndFlags, "--node-label", fmt.Sprintf("%s=%s", k, v))
-	}
+	argsAndFlags = append(argsAndFlags, smc.K3sCommonFlags.ParseIntoFlags()...)
 
 	return execK3s(ctx, argsAndFlags...)
 }
@@ -301,11 +314,11 @@ func StartK3sAgent(ctx context.Context, agentCfg *AgentConfig) error {
 	argsAndFlags := []string{
 		"agent",
 		"--server", fmt.Sprintf("https://%s:6443", agentCfg.ServerIP),
-		"--token", agentCfg.Token,
-		"--node-name", agentCfg.NodeName,
 		"--node-label", fmt.Sprintf("%s=%s", constants.PublicIpKey, ip),
 		"--node-label", fmt.Sprintf("%s=%s", constants.NodeNameKey, agentCfg.NodeName),
 	}
+
+	argsAndFlags = append(argsAndFlags, agentCfg.K3sCommonFlags.ParseIntoFlags()...)
 
 	return execK3s(ctx, argsAndFlags...)
 }
