@@ -229,7 +229,7 @@ query: |
     auth_resetPassword(token: $token, password: $password)
   }
 variables:
-  token: "******"
+  token: reset-0nomjtf4w0bh03zsqon-pe-l7lo4
   password: "{{.password}}"
 
 ---
