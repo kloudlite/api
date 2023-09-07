@@ -20,6 +20,7 @@ import (
 	k8sMock "kloudlite.io/pkg/k8s/mocks"
 	"kloudlite.io/pkg/logging"
 	"kloudlite.io/pkg/repos"
+	"sigs.k8s.io/controller-runtime/pkg/client"
 
 	// "kloudlite.io/pkg/repos"
 	reposMock "kloudlite.io/pkg/repos/mocks"
@@ -36,7 +37,11 @@ var _ = Describe("domain.ActivateAccount says", func() {
 	var invitationRepo *reposMock.DbRepo[*entities.Invitation]
 	var k8sYamlClient *kubectl.YAMLClient
 	var k8sExtendedClient *k8sMock.ExtendedK8sClient
-	var logger logging.Logger
+
+	logger, err := logging.New(&logging.Options{Name: "test"})
+	if err != nil {
+		panic(err)
+	}
 
 	BeforeEach(func() {
 		authClient = authMock.NewAuthClient()
@@ -48,7 +53,6 @@ var _ = Describe("domain.ActivateAccount says", func() {
 		invitationRepo = reposMock.NewDbRepo[*entities.Invitation]()
 		// k8sYamlClient = kubectl.NewYAMLClient()
 		k8sExtendedClient = k8sMock.NewExtendedK8sClient()
-		// logger = logging.NewLogger()
 	})
 
 	getDomain := func() domain.Domain {
@@ -140,6 +144,114 @@ var _ = Describe("domain.ActivateAccount says", func() {
 				}
 				_, err := d.ActivateAccount(domain.UserContext{}, "sample")
 				Expect(err).ToNot(HaveOccurred())
+			})
+		})
+	})
+})
+
+var _ = Describe("domain.CreateAccount() says", func() {
+	// Given("an account", func() {})
+	var authClient *authMock.AuthClient
+	var iamClient *iamMock.IAMClient
+	var consoleClient *consoleMock.ConsoleClient
+	// var containerRegistryClient container_registry.ContainerRegistryClient
+	var commsClient *commsMock.CommsClient
+	var accountRepo *reposMock.DbRepo[*entities.Account]
+	var invitationRepo *reposMock.DbRepo[*entities.Invitation]
+	var k8sYamlClient *kubectl.YAMLClient
+	var k8sExtendedClient *k8sMock.ExtendedK8sClient
+
+	logger, err := logging.New(&logging.Options{Name: "test"})
+	if err != nil {
+		panic(err)
+	}
+
+	BeforeEach(func() {
+		authClient = authMock.NewAuthClient()
+		iamClient = iamMock.NewIAMClient()
+		consoleClient = consoleMock.NewConsoleClient()
+		// containerRegistryClient = container_registry.NewContainerRegistryClient()
+		commsClient = commsMock.NewCommsClient()
+		accountRepo = reposMock.NewDbRepo[*entities.Account]()
+		invitationRepo = reposMock.NewDbRepo[*entities.Invitation]()
+		// k8sYamlClient = kubectl.NewYAMLClient()
+		k8sExtendedClient = k8sMock.NewExtendedK8sClient()
+	})
+
+	getDomain := func() domain.Domain {
+		return domain.NewDomain(
+			iamClient,
+			consoleClient,
+			//f.containerRegistryClient,
+			authClient,
+			commsClient,
+			k8sYamlClient,
+			k8sExtendedClient,
+
+			accountRepo,
+			invitationRepo,
+
+			logger,
+		)
+	}
+
+	When("account already exists", func() {
+		It("fails", func() {
+			d := getDomain()
+
+			// iamClient.MockCan = func(ctx context.Context, in *iam.CanIn, opts ...grpc.CallOption) (*iam.CanOut, error) { }
+
+			accountRepo.MockCreate = func(ctx context.Context, data *entities.Account) (*entities.Account, error) {
+				return nil, fmt.Errorf("account already exists")
+			}
+
+			k8sExtendedClient.MockValidateStruct = func(ctx context.Context, obj client.Object) error {
+				return nil
+			}
+
+			_, err := d.CreateAccount(domain.UserContext{}, entities.Account{})
+			Expect(err).To(HaveOccurred())
+			Expect(err.Error()).To(ContainSubstring("account already exists"))
+		})
+	})
+
+	When("account does not exist", func() {
+		Context("but account is not valid", func() {
+			BeforeEach(func() {
+				k8sExtendedClient.MockValidateStruct = func(ctx context.Context, obj client.Object) error {
+					return fmt.Errorf("invalid account data")
+				}
+			})
+
+			It("fails", func() {
+				d := getDomain()
+
+				accountRepo.MockCreate = func(ctx context.Context, data *entities.Account) (*entities.Account, error) {
+					return nil, fmt.Errorf("account already exists")
+				}
+
+				_, err := d.CreateAccount(domain.UserContext{}, entities.Account{})
+				Expect(err).To(HaveOccurred())
+				Expect(err.Error()).To(ContainSubstring("invalid account data"))
+			})
+		})
+
+		Context("account is valid", func() {
+			BeforeEach(func() {
+				k8sExtendedClient.MockValidateStruct = func(ctx context.Context, obj client.Object) error {
+					return nil
+				}
+			})
+
+			It("succeeds", func() {
+				d := getDomain()
+
+				accountRepo.MockCreate = func(ctx context.Context, data *entities.Account) (*entities.Account, error) {
+					return &entities.Account{}, nil
+				}
+
+				_, err := d.CreateAccount(domain.UserContext{}, entities.Account{})
+				Expect(err).To(BeNil())
 			})
 		})
 	})

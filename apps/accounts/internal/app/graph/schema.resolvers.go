@@ -15,6 +15,13 @@ import (
 	"kloudlite.io/pkg/repos"
 )
 
+// User is the resolver for the User field.
+func (r *accountMembershipResolver) User(ctx context.Context, obj *entities.AccountMembership) (*model.User, error) {
+	return &model.User{
+		ID: obj.UserId,
+	}, nil
+}
+
 // AccountsCreateAccount is the resolver for the accounts_createAccount field.
 func (r *mutationResolver) AccountsCreateAccount(ctx context.Context, account entities.Account) (*entities.Account, error) {
 	uc, err := toUserContext(ctx)
@@ -225,23 +232,14 @@ func (r *queryResolver) AccountsGetAccountMembership(ctx context.Context, accoun
 	return r.domain.GetAccountMembership(uc, accountName)
 }
 
-// AccountMemberships is the resolver for the accountMemberships field.
-func (r *userResolver) AccountMemberships(ctx context.Context, obj *model.User) ([]*entities.AccountMembership, error) {
+// Accounts is the resolver for the accounts field.
+func (r *userResolver) Accounts(ctx context.Context, obj *model.User) ([]*entities.AccountMembership, error) {
 	uc, err := toUserContext(ctx)
 	if err != nil {
 		return nil, err
 	}
+
 	return r.domain.ListMembershipsForUser(uc)
-}
-
-// AccountMembership is the resolver for the accountMembership field.
-func (r *userResolver) AccountMembership(ctx context.Context, obj *model.User, accountName string) (*entities.AccountMembership, error) {
-	uc, err := toUserContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
-	return r.domain.GetAccountMembership(uc, accountName)
 }
 
 // Mutation returns generated.MutationResolver implementation.
