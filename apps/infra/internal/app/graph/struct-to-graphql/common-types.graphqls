@@ -2,11 +2,11 @@ type Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpec @shareable {
   accountName: String!
   displayName: String
   incomingKafkaTopic: String!
-  ingressClasses: [String]
+  ingressClasses: [String!]
   provider: String!
-  publicIps: [String]
+  publicIps: [String!]
   region: String!
-  storageClasses: [String]
+  storageClasses: [String!]
 }
 
 type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpec @shareable {
@@ -15,7 +15,7 @@ type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpec @shareable 
   availabilityMode: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAvailabilityMode!
   cloudProvider: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCloudProvider!
   credentialsRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCredentialsRef!
-  nodeIps: [String]
+  nodeIps: [String!]
   operatorsHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRef
   region: String!
   vpc: String
@@ -40,8 +40,10 @@ type Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHel
 
 type Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpec @shareable {
   awsNodeConfig: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfig
+  labels: Map
   maxCount: Int!
   minCount: Int!
+  taints: [String!]
   targetCount: Int!
 }
 
@@ -68,9 +70,10 @@ type Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConf
 
 type Github_com__kloudlite__operator__apis__clusters__v1_NodeSpec @shareable {
   clusterName: String
+  labels: Map
   nodePoolName: String
   nodeType: Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecNodeType!
-  taints: [String]
+  taints: [String!]
 }
 
 type Github_com__kloudlite__operator__pkg__operator_Check @shareable {
@@ -133,11 +136,11 @@ input Github_com__kloudlite__operator__apis__clusters__v1_BYOCSpecIn {
   accountName: String!
   displayName: String
   incomingKafkaTopic: String!
-  ingressClasses: [String]
+  ingressClasses: [String!]
   provider: String!
-  publicIps: [String]
+  publicIps: [String!]
   region: String!
-  storageClasses: [String]
+  storageClasses: [String!]
 }
 
 input Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAgentHelmValuesRefIn {
@@ -157,7 +160,7 @@ input Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecIn {
   availabilityMode: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecAvailabilityMode!
   cloudProvider: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCloudProvider!
   credentialsRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecCredentialsRefIn!
-  nodeIps: [String]
+  nodeIps: [String!]
   operatorsHelmValuesRef: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecOperatorsHelmValuesRefIn
   region: String!
   vpc: String
@@ -192,16 +195,19 @@ input Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeCon
 
 input Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecIn {
   awsNodeConfig: Github_com__kloudlite__operator__apis__clusters__v1_NodePoolSpecAwsNodeConfigIn
+  labels: Map
   maxCount: Int!
   minCount: Int!
+  taints: [String!]
   targetCount: Int!
 }
 
 input Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecIn {
   clusterName: String
+  labels: Map
   nodePoolName: String
   nodeType: Github_com__kloudlite__operator__apis__clusters__v1_NodeSpecNodeType!
-  taints: [String]
+  taints: [String!]
 }
 
 input MetadataIn {

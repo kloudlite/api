@@ -7,10 +7,13 @@ import (
 )
 
 type Cluster struct {
-	repos.BaseEntity   `json:",inline" graphql:"noinput"`
+	repos.BaseEntity `json:",inline" graphql:"noinput"`
+
 	clustersv1.Cluster `json:",inline" graphql:"uri=k8s://clusters.clusters.kloudlite.io"`
-	AccountName        string       `json:"accountName" graphql:"noinput"`
-	SyncStatus         t.SyncStatus `json:"syncStatus" graphql:"noinput"`
+
+	DisplayName string       `json:"displayName"`
+	AccountName string       `json:"accountName" graphql:"noinput"`
+	SyncStatus  t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
 var ClusterIndices = []repos.IndexField{

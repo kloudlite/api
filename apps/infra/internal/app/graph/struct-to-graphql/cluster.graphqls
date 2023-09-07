@@ -2,6 +2,7 @@ type Cluster @shareable {
   accountName: String!
   apiVersion: String!
   creationTime: Date!
+  displayName: String!
   id: String!
   kind: String!
   markedForDeletion: Boolean
@@ -26,6 +27,7 @@ type ClusterPaginatedRecords @shareable {
 
 input ClusterIn {
   apiVersion: String
+  displayName: String!
   kind: String
   metadata: MetadataIn!
   spec: Github_com__kloudlite__operator__apis__clusters__v1_ClusterSpecIn
