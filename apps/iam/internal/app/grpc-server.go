@@ -168,18 +168,18 @@ func (s *GrpcService) ListMembershipsForResource(ctx context.Context, in *iam.Me
 }
 
 func (s *GrpcService) Can(ctx context.Context, in *iam.CanIn) (*iam.CanOut, error) {
-	rb, err := s.rbRepo.FindOne(
-		ctx, repos.Filter{
+	rbs, err := s.rbRepo.Find(
+		ctx, repos.Query{Filter: repos.Filter{
 			"resource_ref": map[string]any{"$in": in.ResourceRefs},
 			"user_id":      in.UserId,
-		},
+		}},
 	)
 
 	if err != nil {
 		return nil, errors.NewEf(err, "could not find rolebindings for (resourceRefs=%s)", strings.Join(in.ResourceRefs, ","))
 	}
 
-	if rb == nil {
+	if rbs == nil {
 		return nil, fmt.Errorf("no rolebinding found for (userId=%s, resourceRefs=%s)", in.UserId, strings.Join(in.ResourceRefs, ","))
 	}
 
@@ -187,9 +187,12 @@ func (s *GrpcService) Can(ctx context.Context, in *iam.CanIn) (*iam.CanOut, erro
 		return &iam.CanOut{Status: true}, nil
 	}
 
-	for _, role := range s.roleBindingMap[t.Action(in.Action)] {
-		if role == rb.Role {
-			return &iam.CanOut{Status: true}, nil
+	for i := range rbs {
+		// 2nd loop, but very small length (always < #roles), so it's not exactly O(n^2), much like XO(n)
+		for _, role := range s.roleBindingMap[t.Action(in.Action)] {
+			if role == rbs[i].Role {
+				return &iam.CanOut{Status: true}, nil
+			}
 		}
 	}
 

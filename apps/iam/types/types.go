@@ -16,6 +16,8 @@ const (
 type Role string
 
 const (
+	RoleResourceOwner Role = "resource-owner"
+
 	RoleAccountOwner  Role = "account-owner"
 	RoleAccountAdmin  Role = "account-admin"
 	RoleAccountMember Role = "account-member"
