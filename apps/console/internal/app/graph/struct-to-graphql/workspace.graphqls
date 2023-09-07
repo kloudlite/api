@@ -2,10 +2,12 @@ type Workspace @shareable {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__apps__console__internal__entities_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__apps__console__internal__entities_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   projectName: String!

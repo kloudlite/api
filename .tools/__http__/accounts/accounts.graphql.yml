@@ -1,7 +1,7 @@
 ---
 global:
-  # accountName: kloudlite-dev
-  accountName: not-sample
+  accountName: kloudlite-dev
+  # accountName: not-sample
 ---
 
 label: List Accounts

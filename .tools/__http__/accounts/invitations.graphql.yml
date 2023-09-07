@@ -45,7 +45,7 @@ variables:
   accountName: "{{.accountName}}"
   invitation:
     accountName: "{{.accountName}}"
-    userEmail: "pavan@kloudlite.io"
+    userEmail: "anshuman@kloudlite.io"
     userRole: "account-admin"
 
 ---

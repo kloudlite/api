@@ -387,6 +387,7 @@ type ComplexityRoot struct {
 	}
 
 	Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec struct {
+		IsEnvironment   func(childComplexity int) int
 		ProjectName     func(childComplexity int) int
 		TargetNamespace func(childComplexity int) int
 	}
@@ -2347,6 +2348,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes.Rewrite(childComplexity), true
+
+	case "Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec.isEnvironment":
+		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec.IsEnvironment == nil {
+			break
+		}
+
+		return e.complexity.Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec.IsEnvironment(childComplexity), true
 
 	case "Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec.projectName":
 		if e.complexity.Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec.ProjectName == nil {
@@ -5100,7 +5108,7 @@ input AppIn {
 
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github_com__kloudlite__operator__apis__crds__v1_AppSpec @shareable {
-  containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers]!
+  containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers!]!
   displayName: String
   freeze: Boolean
   hpa: Github_com__kloudlite__operator__apis__crds__v1_AppSpecHpa
@@ -5109,15 +5117,15 @@ input AppIn {
   region: String
   replicas: Int
   serviceAccount: String
-  services: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecServices]
-  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations]
+  services: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecServices!]
+  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers @shareable {
-  args: [String]
-  command: [String]
-  env: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv]
-  envFrom: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom]
+  args: [String!]
+  command: [String!]
+  env: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv!]
+  envFrom: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom!]
   image: String!
   imagePullPolicy: String
   livenessProbe: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbe
@@ -5125,7 +5133,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers @shareabl
   readinessProbe: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbe
   resourceCpu: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceCpu
   resourceMemory: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceMemory
-  volumes: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes]
+  volumes: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv @shareable {
@@ -5133,13 +5141,13 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv @share
   optional: Boolean
   refKey: String
   refName: String
-  type: String
+  type: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType
   value: String
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom @shareable {
   refName: String!
-  type: String!
+  type: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType!
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbe @shareable {
@@ -5159,7 +5167,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessPr
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeShell @shareable {
-  command: [String]
+  command: [String!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeTcp @shareable {
@@ -5183,7 +5191,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessP
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeShell @shareable {
-  command: [String]
+  command: [String!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeTcp @shareable {
@@ -5201,10 +5209,10 @@ type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceMe
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes @shareable {
-  items: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems]
+  items: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems!]
   mountPath: String!
   refName: String!
-  type: String!
+  type: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType!
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems @shareable {
@@ -5261,7 +5269,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec @shareab
   msvcKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKind!
   nodeSelector: Map
   region: String
-  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations]
+  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKind @shareable {
@@ -5289,13 +5297,13 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpec @shareable {
   backendProtocol: String
   basicAuth: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth
   cors: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors
-  domains: [String]!
+  domains: [String!]!
   https: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttps
   ingressClass: String
   maxBodySizeInMB: Int
   rateLimit: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimit
   region: String
-  routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes]
+  routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth @shareable {
@@ -5307,7 +5315,7 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth @sharea
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors @shareable {
   allowCredentials: Boolean
   enabled: Boolean
-  origins: [String]
+  origins: [String!]
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttps @shareable {
@@ -5332,13 +5340,14 @@ type Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes @shareable
 }
 
 type Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec @shareable {
+  isEnvironment: Boolean
   projectName: String!
   targetNamespace: String!
 }
 
 type Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpec @shareable {
   offset: Int!
-  ports: [Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts]
+  ports: [Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts!]
   serverName: String!
 }
 
@@ -5436,7 +5445,7 @@ type PageInfo @shareable {
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn {
   refName: String!
-  type: String!
+  type: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType!
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn {
@@ -5444,15 +5453,15 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn {
   optional: Boolean
   refKey: String
   refName: String
-  type: String
+  type: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType
   value: String
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn {
-  args: [String]
-  command: [String]
-  env: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn]
-  envFrom: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn]
+  args: [String!]
+  command: [String!]
+  env: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn!]
+  envFrom: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn!]
   image: String!
   imagePullPolicy: String
   livenessProbe: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeIn
@@ -5460,7 +5469,7 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn {
   readinessProbe: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeIn
   resourceCpu: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceCpuIn
   resourceMemory: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceMemoryIn
-  volumes: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn]
+  volumes: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeHttpGetIn {
@@ -5480,7 +5489,7 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessP
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeShellIn {
-  command: [String]
+  command: [String!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeTcpIn {
@@ -5504,7 +5513,7 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadiness
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeShellIn {
-  command: [String]
+  command: [String!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeTcpIn {
@@ -5522,10 +5531,10 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersResourceM
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn {
-  items: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn]
+  items: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn!]
   mountPath: String!
   refName: String!
-  type: String!
+  type: Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType!
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn {
@@ -5542,7 +5551,7 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecHpaIn {
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecIn {
-  containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn]!
+  containers: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn!]!
   displayName: String
   freeze: Boolean
   hpa: Github_com__kloudlite__operator__apis__crds__v1_AppSpecHpaIn
@@ -5551,8 +5560,8 @@ input Github_com__kloudlite__operator__apis__crds__v1_AppSpecIn {
   region: String
   replicas: Int
   serviceAccount: String
-  services: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn]
-  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn]
+  services: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn!]
+  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_AppSpecInterceptIn {
@@ -5596,7 +5605,7 @@ input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecIn {
   msvcKind: Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKindIn!
   nodeSelector: Map
   region: String
-  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn]
+  tolerations: [Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecMsvcKindIn {
@@ -5629,7 +5638,7 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn {
 input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCorsIn {
   allowCredentials: Boolean
   enabled: Boolean
-  origins: [String]
+  origins: [String!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttpsIn {
@@ -5642,13 +5651,13 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecIn {
   backendProtocol: String
   basicAuth: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuthIn
   cors: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCorsIn
-  domains: [String]!
+  domains: [String!]!
   https: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecHttpsIn
   ingressClass: String
   maxBodySizeInMB: Int
   rateLimit: Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimitIn
   region: String
-  routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn]
+  routes: [Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn!]
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRateLimitIn {
@@ -5667,13 +5676,14 @@ input Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn {
 }
 
 input Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpecIn {
+  isEnvironment: Boolean
   projectName: String!
   targetNamespace: String!
 }
 
 input Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecIn {
   offset: Int!
-  ports: [Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn]
+  ports: [Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn!]
   serverName: String!
 }
 
@@ -5689,6 +5699,16 @@ input MetadataIn {
   namespace: String
 }
 
+enum Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType {
+  config
+  secret
+}
+
+enum Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType {
+  config
+  secret
+}
+
 enum Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeType {
   httpGet
   shell
@@ -5699,6 +5719,11 @@ enum Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessP
   httpGet
   shell
   tcp
+}
+
+enum Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType {
+  config
+  secret
 }
 
 enum Kloudlite_io__pkg__types_SyncStatusAction {
@@ -10240,7 +10265,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainers)
 	fc.Result = res
-	return ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainers(ctx, field.Selections, res)
+	return ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpec_containers(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10653,7 +10678,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServices)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServices(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpec_services(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10704,7 +10729,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerations)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerations(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpec_tolerations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10755,9 +10780,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers_args(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10796,9 +10821,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers_command(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10839,7 +10864,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers_env(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -10894,7 +10919,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers_envFrom(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11278,7 +11303,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers_volumes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11494,9 +11519,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*string)
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType)
 	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11506,7 +11531,7 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -11623,9 +11648,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -11635,7 +11660,7 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12099,9 +12124,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeShell_command(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12619,9 +12644,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersReadinessProbeShell_command(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -12870,7 +12895,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes_items(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13006,9 +13031,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_App
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -13018,7 +13043,7 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -14286,7 +14311,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Man
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpec_tolerations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -14983,9 +15008,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Rou
 		}
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalNString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterSpec_domains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15249,7 +15274,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Rou
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterSpec_routes(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -15508,9 +15533,9 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Rou
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.([]*string)
+	res := resTmp.([]string)
 	fc.Result = res
-	return ec.marshalOString2ᚕᚖstring(ctx, field.Selections, res)
+	return ec.marshalOString2ᚕstringᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_RouterSpecCors_origins(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -16027,6 +16052,47 @@ func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__
 	return fc, nil
 }
 
+func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_isEnvironment(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_isEnvironment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsEnvironment, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_isEnvironment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_projectName(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_projectName(ctx, field)
 	if err != nil {
@@ -16184,7 +16250,7 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__wireguard__v
 	}
 	res := resTmp.([]*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts)
 	fc.Result = res
-	return ec.marshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts(ctx, field.Selections, res)
+	return ec.marshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsᚄ(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpec_ports(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -32616,6 +32682,8 @@ func (ec *executionContext) fieldContext_Workspace_spec(ctx context.Context, fie
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "isEnvironment":
+				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_isEnvironment(ctx, field)
 			case "projectName":
 				return ec.fieldContext_Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_projectName(ctx, field)
 			case "targetNamespace":
@@ -35149,7 +35217,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			it.Type, err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35209,7 +35277,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			it.Type, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35245,7 +35313,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("args"))
-			it.Args, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			it.Args, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35253,7 +35321,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
-			it.Command, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			it.Command, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35261,7 +35329,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("env"))
-			it.Env, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn(ctx, v)
+			it.Env, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35269,7 +35337,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("envFrom"))
-			it.EnvFrom, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn(ctx, v)
+			it.EnvFrom, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35333,7 +35401,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("volumes"))
-			it.Volumes, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn(ctx, v)
+			it.Volumes, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35481,7 +35549,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
-			it.Command, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			it.Command, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35657,7 +35725,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("command"))
-			it.Command, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			it.Command, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35785,7 +35853,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("items"))
-			it.Items, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn(ctx, v)
+			it.Items, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35809,7 +35877,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
-			it.Type, err = ec.unmarshalNString2string(ctx, v)
+			it.Type, err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -35933,7 +36001,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("containers"))
-			it.Containers, err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn(ctx, v)
+			it.Containers, err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36005,7 +36073,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("services"))
-			it.Services, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn(ctx, v)
+			it.Services, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36013,7 +36081,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tolerations"))
-			it.Tolerations, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn(ctx, v)
+			it.Tolerations, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36337,7 +36405,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("tolerations"))
-			it.Tolerations, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn(ctx, v)
+			it.Tolerations, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36581,7 +36649,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("origins"))
-			it.Origins, err = ec.unmarshalOString2ᚕᚖstring(ctx, v)
+			it.Origins, err = ec.unmarshalOString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36677,7 +36745,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("domains"))
-			it.Domains, err = ec.unmarshalNString2ᚕᚖstring(ctx, v)
+			it.Domains, err = ec.unmarshalNString2ᚕstringᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36725,7 +36793,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("routes"))
-			it.Routes, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn(ctx, v)
+			it.Routes, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36854,13 +36922,21 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectName", "targetNamespace"}
+	fieldsInOrder := [...]string{"isEnvironment", "projectName", "targetNamespace"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "isEnvironment":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isEnvironment"))
+			it.IsEnvironment, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "projectName":
 			var err error
 
@@ -36909,7 +36985,7 @@ func (ec *executionContext) unmarshalInputGithub_com__kloudlite__operator__apis_
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ports"))
-			it.Ports, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn(ctx, v)
+			it.Ports, err = ec.unmarshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsInᚄ(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -39996,6 +40072,10 @@ func (ec *executionContext) _Github_com__kloudlite__operator__apis__crds__v1_Wor
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec")
+		case "isEnvironment":
+
+			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_isEnvironment(ctx, field, obj)
+
 		case "projectName":
 
 			out.Values[i] = ec._Github_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec_projectName(ctx, field, obj)
@@ -44544,7 +44624,7 @@ func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds_
 	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpec(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainers(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainers) graphql.Marshaler {
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainers) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	var wg sync.WaitGroup
 	isLen1 := len(v) == 1
@@ -44568,7 +44648,7 @@ func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainers(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainers(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -44579,10 +44659,66 @@ func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn, error) {
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainers(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainers) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType(ctx context.Context, v interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType, error) {
+	var res model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn, error) {
 	var vSlice []interface{}
 	if v != nil {
 		vSlice = graphql.CoerceList(v)
@@ -44591,12 +44727,17 @@ func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbeType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType(ctx context.Context, v interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbeType, error) {
@@ -44619,6 +44760,46 @@ func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds_
 	return v
 }
 
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType(ctx context.Context, v interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType, error) {
+	var res model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesType2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesType) graphql.Marshaler {
+	return v
+}
+
 func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecIn2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecIn(ctx context.Context, v interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn, error) {
 	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecIn(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -44626,6 +44807,36 @@ func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crd
 
 func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn, error) {
 	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServices(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecServices) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecServices(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerations(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerations) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -44722,6 +44933,21 @@ func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_ProjectSpec2kloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ProjectSpec(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteOperatorApisCrdsV1ProjectSpec) graphql.Marshaler {
 	return ec._Github_com__kloudlite__operator__apis__crds__v1_ProjectSpec(ctx, sel, &v)
 }
@@ -44767,6 +44993,36 @@ func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crd
 
 func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecIn, error) {
 	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn, error) {
+	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
@@ -45538,16 +45794,16 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 	return res
 }
 
-func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
 	var vSlice []interface{}
 	if v != nil {
 		vSlice = graphql.CoerceList(v)
 	}
 	var err error
-	res := make([]*string, len(vSlice))
+	res := make([]string, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -45555,10 +45811,16 @@ func (ec *executionContext) unmarshalNString2ᚕᚖstring(ctx context.Context, v
 	return res, nil
 }
 
-func (ec *executionContext) marshalNString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
 	ret := make(graphql.Array, len(v))
 	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
 	}
 
 	return ret
@@ -46148,14 +46410,7 @@ func (ec *executionContext) marshalOFloat2ᚖfloat64(ctx context.Context, sel as
 	return graphql.WrapContextMarshaler(ctx, res)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainers2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainers(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainers) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainers(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46182,7 +46437,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46193,17 +46448,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnv) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnv(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46230,7 +46484,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46241,17 +46495,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFrom) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFrom(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46263,7 +46516,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -46271,15 +46524,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvFromIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvFromIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46291,7 +46536,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -46299,20 +46544,20 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
+	var res = new(model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersIn, error) {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersEnvType2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersEnvType) graphql.Marshaler {
 	if v == nil {
-		return nil, nil
+		return graphql.Null
 	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
+	return v
 }
 
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersLivenessProbe2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbe(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersLivenessProbe) graphql.Marshaler {
@@ -46465,7 +46710,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46492,7 +46737,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46503,17 +46748,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumes) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumes(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46525,7 +46769,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -46533,15 +46777,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46568,7 +46804,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46579,17 +46815,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItems) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItems(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46601,20 +46836,12 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecContainersVolumesItemsIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecContainersVolumesItemsIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecHpa2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecHpa(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecHpa) graphql.Marshaler {
@@ -46647,7 +46874,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServices(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServices) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServices) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46674,7 +46901,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServices(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServices(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46685,17 +46912,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServices2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServices(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecServices) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecServices(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46707,7 +46933,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -46715,15 +46941,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecServicesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecServicesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerations(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerations) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerations) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46750,7 +46968,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerations(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerations(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46761,17 +46979,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerations(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerations) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_AppSpecTolerations(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46783,7 +47000,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
@@ -46791,15 +47008,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return res, nil
 }
 
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecTolerationsIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_AppSpecTolerationsIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46826,7 +47035,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46837,17 +47046,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerations) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerations(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46859,20 +47067,12 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecTolerationsIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_ManagedServiceSpecTolerationsIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecBasicAuth2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecBasicAuth(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1RouterSpecBasicAuth) graphql.Marshaler {
@@ -46935,7 +47135,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -46962,7 +47162,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -46973,17 +47173,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds_
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutes) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutes(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46995,20 +47194,12 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crd
 	res := make([]*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1RouterSpecRoutesIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__crds__v1_RouterSpecRoutesIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__crds__v1_WorkspaceSpec2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkspaceSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec) graphql.Marshaler {
@@ -47041,7 +47232,7 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__wir
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -47068,7 +47259,7 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__wireg
 			if !isLen1 {
 				defer wg.Done()
 			}
-			ret[i] = ec.marshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts(ctx, sel, v[i])
+			ret[i] = ec.marshalNGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts(ctx, sel, v[i])
 		}
 		if isLen1 {
 			f(i)
@@ -47079,17 +47270,16 @@ func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__wireg
 	}
 	wg.Wait()
 
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
 	return ret
 }
 
-func (ec *executionContext) marshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPorts) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._Github_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPorts(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn, error) {
+func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsInᚄ(ctx context.Context, v interface{}) ([]*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -47101,20 +47291,12 @@ func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__wir
 	res := make([]*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn, len(vSlice))
 	for i := range vSlice {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn(ctx, vSlice[i])
+		res[i], err = ec.unmarshalNGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn(ctx, vSlice[i])
 		if err != nil {
 			return nil, err
 		}
 	}
 	return res, nil
-}
-
-func (ec *executionContext) unmarshalOGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecPortsIn, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputGithub_com__kloudlite__operator__apis__wireguard__v1_DeviceSpecPortsIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOGithub_com__kloudlite__operator__pkg__operator_ResourceRef2ᚕᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorResourceRefᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorPkgOperatorResourceRef) graphql.Marshaler {
@@ -47492,38 +47674,6 @@ func (ec *executionContext) marshalOString2ᚕstringᚄ(ctx context.Context, sel
 		if e == graphql.Null {
 			return graphql.Null
 		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) unmarshalOString2ᚕᚖstring(ctx context.Context, v interface{}) ([]*string, error) {
-	if v == nil {
-		return nil, nil
-	}
-	var vSlice []interface{}
-	if v != nil {
-		vSlice = graphql.CoerceList(v)
-	}
-	var err error
-	res := make([]*string, len(vSlice))
-	for i := range vSlice {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
-		res[i], err = ec.unmarshalOString2ᚖstring(ctx, vSlice[i])
-		if err != nil {
-			return nil, err
-		}
-	}
-	return res, nil
-}
-
-func (ec *executionContext) marshalOString2ᚕᚖstring(ctx context.Context, sel ast.SelectionSet, v []*string) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	ret := make(graphql.Array, len(v))
-	for i := range v {
-		ret[i] = ec.marshalOString2ᚖstring(ctx, sel, v[i])
 	}
 
 	return ret

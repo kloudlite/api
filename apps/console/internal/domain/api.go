@@ -11,7 +11,10 @@ type ConsoleContext struct {
 	context.Context
 	ClusterName string
 	AccountName string
-	UserId      repos.ID
+
+	UserId    repos.ID
+	UserEmail string
+	UserName  string
 }
 
 type UserAndAccountsContext struct {
@@ -26,8 +29,9 @@ func (c ConsoleContext) GetAccountName() string {
 
 func NewConsoleContext(parent context.Context, userId repos.ID, accountName, clusterName string) ConsoleContext {
 	return ConsoleContext{
-		Context:     parent,
-		UserId:      userId,
+		Context: parent,
+		UserId:  userId,
+
 		ClusterName: clusterName,
 		AccountName: accountName,
 	}

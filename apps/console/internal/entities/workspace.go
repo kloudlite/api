@@ -2,6 +2,7 @@ package entities
 
 import (
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -10,10 +11,12 @@ type Workspace struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
 	crdsv1.Workspace `json:",inline" graphql:"uri=k8s://workspaces.crds.kloudlite.io"`
-	DisplayName      string `json:"displayName"`
-	AccountName      string `json:"accountName" graphql:"noinput"`
-	ClusterName      string `json:"clusterName" graphql:"noinput"`
-	ProjectName      string `json:"projectName" graphql:"noinput"`
+
+	common.ResourceMetadata `json:",inline" graphql:"noinput"`
+
+	AccountName string `json:"accountName" graphql:"noinput"`
+	ClusterName string `json:"clusterName" graphql:"noinput"`
+	ProjectName string `json:"projectName" graphql:"noinput"`
 
 	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }

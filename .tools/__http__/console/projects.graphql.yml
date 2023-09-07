@@ -8,7 +8,7 @@ global:
 
 label: List Projects
 query: |+
-  query Core_listProjects($clusterName: String, $pq: PaginationQueryArgs) {
+  query Core_listProjects($clusterName: String, $pq: CursorPaginationIn) {
     core_listProjects(clusterName: $clusterName, pq: $pq) {
       edges {
         cursor

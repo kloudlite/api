@@ -1,7 +1,6 @@
 ---
 global:
-  hello: world
-  password: "*****"
+  password: "************"
 ---
 query: |
   mutation Auth_signup($name: String!, $email: String!, $password: String!) {
@@ -46,8 +45,8 @@ query: |
     }
   }
 variables:
-  email: sample@gmail.com
-  password: sample
+  email: sample@gmail.com2
+  password: "{{.password}}"
 
 ---
 label: "OAuth Login Request"
@@ -83,6 +82,7 @@ query: |
       avatar
       id
       email
+      name
       providerGitlab
       providerGithub
       verified
@@ -215,20 +215,22 @@ variables:
   repoId: "26232015"
 ---
 
-
+label: Request Reset Password
 query: |
-  mutation Auth_resetPassword($email: String!) {
+  mutation Auth_requestResetPassword($email: String!) {
     auth_requestResetPassword(email: $email)
   }
 variables:
-  email: shashwatsingh005@gmail.com
+  email: "sample@gmail.com2"
 ---
+label: Reset Password
 query: |
   mutation Auth_resetPassword($token: String!, $password: String!) {
     auth_resetPassword(token: $token, password: $password)
   }
 variables:
-  token:
+  token: "******"
+  password: "{{.password}}"
 
 ---
 query: |+
