@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -70,6 +71,14 @@ func (d *domain) CreateApp(ctx ConsoleContext, app entities.App) (*entities.App,
 	}
 
 	app.IncrementRecordVersion()
+
+	app.CreatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+	app.LastUpdatedBy = app.CreatedBy
+
 	app.AccountName = ctx.AccountName
 	app.ClusterName = ctx.ClusterName
 	app.ProjectName = ws.ProjectName
@@ -128,6 +137,13 @@ func (d *domain) UpdateApp(ctx ConsoleContext, app entities.App) (*entities.App,
 	}
 
 	exApp.IncrementRecordVersion()
+
+	exApp.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	exApp.Labels = app.Labels
 	exApp.Annotations = app.Annotations
 	exApp.Spec = app.Spec

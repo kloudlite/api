@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	wireguardV1 "github.com/kloudlite/operator/apis/wireguard/v1"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -13,10 +14,10 @@ type VPNDevice struct {
 
 	wireguardV1.Device `json:",inline" graphql:"uri=k8s://devices.wireguard.kloudlite.io"`
 
-	DisplayName string   `json:"displayName"`
-	CreatedBy   repos.ID `json:"createdBy" graphql:"noinput"`
-	AccountName string   `json:"accountName" graphql:"noinput"`
-	ClusterName string   `json:"clusterName" graphql:"noinput"`
+	common.ResourceMetadata `json:",inline"`
+
+	AccountName string `json:"accountName" graphql:"noinput"`
+	ClusterName string `json:"clusterName" graphql:"noinput"`
 
 	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
@@ -39,9 +40,6 @@ var VPNDeviceIndexes = []repos.IndexField{
 
 func ValidateVPNDevice(d *VPNDevice) error {
 	errMsgs := []string{}
-	if d.CreatedBy == "" {
-		errMsgs = append(errMsgs, "createdBy is required")
-	}
 
 	if d.DisplayName == "" {
 		errMsgs = append(errMsgs, "displayName is required")

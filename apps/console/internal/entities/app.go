@@ -2,6 +2,7 @@ package entities
 
 import (
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -11,7 +12,8 @@ type App struct {
 
 	crdsv1.App `json:",inline" graphql:"uri=k8s://apps.crds.kloudlite.io"`
 
-	DisplayName   string `json:"displayName"`
+	common.ResourceMetadata `json:",inline"`
+
 	AccountName   string `json:"accountName" graphql:"noinput"`
 	ClusterName   string `json:"clusterName" graphql:"noinput"`
 	ProjectName   string `json:"projectName" graphql:"noinput"`

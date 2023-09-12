@@ -21,6 +21,7 @@ import (
 	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/apps/console/internal/domain"
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	"kloudlite.io/pkg/types"
 )
@@ -48,6 +49,7 @@ type ResolverRoot interface {
 	Github_com__kloudlite__operator__pkg__operator_Status() Github_com__kloudlite__operator__pkg__operator_StatusResolver
 	ImagePullSecret() ImagePullSecretResolver
 	Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry() Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver
+	Kloudlite_io__common_CreatedOrUpdatedBy() Kloudlite_io__common_CreatedOrUpdatedByResolver
 	Kloudlite_io__pkg__types_SyncStatus() Kloudlite_io__pkg__types_SyncStatusResolver
 	ManagedResource() ManagedResourceResolver
 	ManagedService() ManagedServiceResolver
@@ -84,11 +86,13 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Enabled           func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		ProjectName       func(childComplexity int) int
@@ -115,12 +119,14 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		Data              func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Enabled           func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -487,6 +493,12 @@ type ComplexityRoot struct {
 		Name        func(childComplexity int) int
 	}
 
+	Kloudlite_io__common_CreatedOrUpdatedBy struct {
+		UserEmail func(childComplexity int) int
+		UserID    func(childComplexity int) int
+		UserName  func(childComplexity int) int
+	}
+
 	Kloudlite_io__pkg__types_SyncStatus struct {
 		Action          func(childComplexity int) int
 		Error           func(childComplexity int) int
@@ -500,11 +512,13 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Enabled           func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -529,11 +543,13 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Enabled           func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -623,10 +639,12 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -671,7 +689,7 @@ type ComplexityRoot struct {
 		CoreListProjects                func(childComplexity int, clusterName *string, search *model.SearchProjects, pq *repos.CursorPagination) int
 		CoreListRouters                 func(childComplexity int, project model.ProjectID, scope model.WorkspaceOrEnvID, search *model.SearchRouters, pq *repos.CursorPagination) int
 		CoreListSecrets                 func(childComplexity int, project model.ProjectID, scope model.WorkspaceOrEnvID, search *model.SearchSecrets, pq *repos.CursorPagination) int
-		CoreListVPNDevices              func(childComplexity int, search *model.SearchVPNDevices, pq *repos.CursorPagination) int
+		CoreListVPNDevices              func(childComplexity int, clusterName *string, search *model.SearchVPNDevices, pq *repos.CursorPagination) int
 		CoreListWorkspaces              func(childComplexity int, project model.ProjectID, search *model.SearchWorkspaces, pq *repos.CursorPagination) int
 		CoreResyncApp                   func(childComplexity int, project model.ProjectID, scope model.WorkspaceOrEnvID, name string) int
 		CoreResyncConfig                func(childComplexity int, project model.ProjectID, scope model.WorkspaceOrEnvID, name string) int
@@ -690,11 +708,13 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Enabled           func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -719,12 +739,14 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		Data              func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Enabled           func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -755,6 +777,7 @@ type ComplexityRoot struct {
 		DisplayName       func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
@@ -779,10 +802,12 @@ type ComplexityRoot struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		ClusterName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		ProjectName       func(childComplexity int) int
@@ -848,6 +873,9 @@ type Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver i
 
 	Outputs(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalEntitiesOutputField, error)
 	Resources(ctx context.Context, obj *entities.MsvcTemplateEntry) ([]*model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate, error)
+}
+type Kloudlite_io__common_CreatedOrUpdatedByResolver interface {
+	UserID(ctx context.Context, obj *common.CreatedOrUpdatedBy) (string, error)
 }
 type Kloudlite_io__pkg__types_SyncStatusResolver interface {
 	Action(ctx context.Context, obj *types.SyncStatus) (model.KloudliteIoPkgTypesSyncStatusAction, error)
@@ -959,7 +987,7 @@ type QueryResolver interface {
 	CoreListManagedResources(ctx context.Context, project model.ProjectID, scope model.WorkspaceOrEnvID, search *model.SearchManagedResources, pq *repos.CursorPagination) (*model.ManagedResourcePaginatedRecords, error)
 	CoreGetManagedResource(ctx context.Context, project model.ProjectID, scope model.WorkspaceOrEnvID, name string) (*entities.ManagedResource, error)
 	CoreResyncManagedResource(ctx context.Context, project model.ProjectID, scope model.WorkspaceOrEnvID, name string) (bool, error)
-	CoreListVPNDevices(ctx context.Context, search *model.SearchVPNDevices, pq *repos.CursorPagination) (*model.VPNDevicePaginatedRecords, error)
+	CoreListVPNDevices(ctx context.Context, clusterName *string, search *model.SearchVPNDevices, pq *repos.CursorPagination) (*model.VPNDevicePaginatedRecords, error)
 	CoreGetVPNDevice(ctx context.Context, name string) (*entities.VPNDevice, error)
 }
 type RouterResolver interface {
@@ -983,7 +1011,6 @@ type SecretResolver interface {
 	UpdateTime(ctx context.Context, obj *entities.Secret) (string, error)
 }
 type VPNDeviceResolver interface {
-	CreatedBy(ctx context.Context, obj *entities.VPNDevice) (string, error)
 	CreationTime(ctx context.Context, obj *entities.VPNDevice) (string, error)
 
 	ID(ctx context.Context, obj *entities.VPNDevice) (string, error)
@@ -1089,6 +1116,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.App.ClusterName(childComplexity), true
 
+	case "App.createdBy":
+		if e.complexity.App.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.App.CreatedBy(childComplexity), true
+
 	case "App.creationTime":
 		if e.complexity.App.CreationTime == nil {
 			break
@@ -1123,6 +1157,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.App.Kind(childComplexity), true
+
+	case "App.lastUpdatedBy":
+		if e.complexity.App.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.App.LastUpdatedBy(childComplexity), true
 
 	case "App.markedForDeletion":
 		if e.complexity.App.MarkedForDeletion == nil {
@@ -1243,6 +1284,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Config.ClusterName(childComplexity), true
 
+	case "Config.createdBy":
+		if e.complexity.Config.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Config.CreatedBy(childComplexity), true
+
 	case "Config.creationTime":
 		if e.complexity.Config.CreationTime == nil {
 			break
@@ -1284,6 +1332,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Config.Kind(childComplexity), true
+
+	case "Config.lastUpdatedBy":
+		if e.complexity.Config.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Config.LastUpdatedBy(childComplexity), true
 
 	case "Config.markedForDeletion":
 		if e.complexity.Config.MarkedForDeletion == nil {
@@ -2762,6 +2817,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Kloudlite_io__apps__console__internal__entities_OutputField.Name(childComplexity), true
 
+	case "Kloudlite_io__common_CreatedOrUpdatedBy.userEmail":
+		if e.complexity.Kloudlite_io__common_CreatedOrUpdatedBy.UserEmail == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__common_CreatedOrUpdatedBy.UserEmail(childComplexity), true
+
+	case "Kloudlite_io__common_CreatedOrUpdatedBy.userId":
+		if e.complexity.Kloudlite_io__common_CreatedOrUpdatedBy.UserID == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__common_CreatedOrUpdatedBy.UserID(childComplexity), true
+
+	case "Kloudlite_io__common_CreatedOrUpdatedBy.userName":
+		if e.complexity.Kloudlite_io__common_CreatedOrUpdatedBy.UserName == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__common_CreatedOrUpdatedBy.UserName(childComplexity), true
+
 	case "Kloudlite_io__pkg__types_SyncStatus.action":
 		if e.complexity.Kloudlite_io__pkg__types_SyncStatus.Action == nil {
 			break
@@ -2825,6 +2901,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManagedResource.ClusterName(childComplexity), true
 
+	case "ManagedResource.createdBy":
+		if e.complexity.ManagedResource.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.ManagedResource.CreatedBy(childComplexity), true
+
 	case "ManagedResource.creationTime":
 		if e.complexity.ManagedResource.CreationTime == nil {
 			break
@@ -2859,6 +2942,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManagedResource.Kind(childComplexity), true
+
+	case "ManagedResource.lastUpdatedBy":
+		if e.complexity.ManagedResource.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.ManagedResource.LastUpdatedBy(childComplexity), true
 
 	case "ManagedResource.markedForDeletion":
 		if e.complexity.ManagedResource.MarkedForDeletion == nil {
@@ -2965,6 +3055,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ManagedService.ClusterName(childComplexity), true
 
+	case "ManagedService.createdBy":
+		if e.complexity.ManagedService.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.ManagedService.CreatedBy(childComplexity), true
+
 	case "ManagedService.creationTime":
 		if e.complexity.ManagedService.CreationTime == nil {
 			break
@@ -2999,6 +3096,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManagedService.Kind(childComplexity), true
+
+	case "ManagedService.lastUpdatedBy":
+		if e.complexity.ManagedService.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.ManagedService.LastUpdatedBy(childComplexity), true
 
 	case "ManagedService.markedForDeletion":
 		if e.complexity.ManagedService.MarkedForDeletion == nil {
@@ -3615,6 +3719,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Project.ClusterName(childComplexity), true
 
+	case "Project.createdBy":
+		if e.complexity.Project.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Project.CreatedBy(childComplexity), true
+
 	case "Project.creationTime":
 		if e.complexity.Project.CreationTime == nil {
 			break
@@ -3642,6 +3753,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Project.Kind(childComplexity), true
+
+	case "Project.lastUpdatedBy":
+		if e.complexity.Project.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Project.LastUpdatedBy(childComplexity), true
 
 	case "Project.markedForDeletion":
 		if e.complexity.Project.MarkedForDeletion == nil {
@@ -4008,7 +4126,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.CoreListVPNDevices(childComplexity, args["search"].(*model.SearchVPNDevices), args["pq"].(*repos.CursorPagination)), true
+		return e.complexity.Query.CoreListVPNDevices(childComplexity, args["clusterName"].(*string), args["search"].(*model.SearchVPNDevices), args["pq"].(*repos.CursorPagination)), true
 
 	case "Query.core_listWorkspaces":
 		if e.complexity.Query.CoreListWorkspaces == nil {
@@ -4170,6 +4288,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Router.ClusterName(childComplexity), true
 
+	case "Router.createdBy":
+		if e.complexity.Router.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Router.CreatedBy(childComplexity), true
+
 	case "Router.creationTime":
 		if e.complexity.Router.CreationTime == nil {
 			break
@@ -4204,6 +4329,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Router.Kind(childComplexity), true
+
+	case "Router.lastUpdatedBy":
+		if e.complexity.Router.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Router.LastUpdatedBy(childComplexity), true
 
 	case "Router.markedForDeletion":
 		if e.complexity.Router.MarkedForDeletion == nil {
@@ -4310,6 +4442,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Secret.ClusterName(childComplexity), true
 
+	case "Secret.createdBy":
+		if e.complexity.Secret.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Secret.CreatedBy(childComplexity), true
+
 	case "Secret.creationTime":
 		if e.complexity.Secret.CreationTime == nil {
 			break
@@ -4351,6 +4490,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Secret.Kind(childComplexity), true
+
+	case "Secret.lastUpdatedBy":
+		if e.complexity.Secret.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Secret.LastUpdatedBy(childComplexity), true
 
 	case "Secret.markedForDeletion":
 		if e.complexity.Secret.MarkedForDeletion == nil {
@@ -4499,6 +4645,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.VPNDevice.Kind(childComplexity), true
 
+	case "VPNDevice.lastUpdatedBy":
+		if e.complexity.VPNDevice.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.VPNDevice.LastUpdatedBy(childComplexity), true
+
 	case "VPNDevice.markedForDeletion":
 		if e.complexity.VPNDevice.MarkedForDeletion == nil {
 			break
@@ -4604,6 +4757,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Workspace.ClusterName(childComplexity), true
 
+	case "Workspace.createdBy":
+		if e.complexity.Workspace.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Workspace.CreatedBy(childComplexity), true
+
 	case "Workspace.creationTime":
 		if e.complexity.Workspace.CreationTime == nil {
 			break
@@ -4631,6 +4791,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Workspace.Kind(childComplexity), true
+
+	case "Workspace.lastUpdatedBy":
+		if e.complexity.Workspace.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Workspace.LastUpdatedBy(childComplexity), true
 
 	case "Workspace.markedForDeletion":
 		if e.complexity.Workspace.MarkedForDeletion == nil {
@@ -4872,10 +5039,11 @@ enum ConsoleResType {
   config
   secret
   router
-  managedservice
-  managedresource
+  managed_service
+  managed_resource
   workspace
   environment
+  vpn_device
 }
 
 type ConsoleCheckNameAvailabilityOutput @shareable {
@@ -5016,7 +5184,7 @@ type Query {
   core_getManagedResource(project: ProjectId!, scope: WorkspaceOrEnvId!, name: String!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_resyncManagedResource(project: ProjectId!, scope: WorkspaceOrEnvId!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
 
-  core_listVPNDevices(search: SearchVPNDevices, pq: CursorPaginationIn): VPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccountAndCluster
+  core_listVPNDevices(clusterName: String, search: SearchVPNDevices, pq: CursorPaginationIn): VPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccount
   core_getVPNDevice(name: String!): VPNDevice @isLoggedInAndVerified @hasAccountAndCluster
 }
 
@@ -5070,11 +5238,13 @@ type Mutation {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   projectName: String!
@@ -5417,6 +5587,12 @@ type Kloudlite_io__apps__console__internal__entities_OutputField @shareable {
   name: String!
 }
 
+type Kloudlite_io__common_CreatedOrUpdatedBy @shareable {
+  userEmail: String!
+  userId: String!
+  userName: String!
+}
+
 type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
@@ -5744,12 +5920,14 @@ enum Kloudlite_io__pkg__types_SyncStatusState {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   data: Map
   displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -5803,7 +5981,7 @@ enum CursorPaginationSortDirection {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/directives.graphqls", Input: `extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable"])
+	{Name: "../struct-to-graphql/directives.graphqls", Input: `extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable", "@external"])
 
 directive @goField(
 	forceResolver: Boolean
@@ -5847,11 +6025,13 @@ input ImagePullSecretIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -5886,11 +6066,13 @@ input ManagedResourceIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -5953,10 +6135,12 @@ enum MatchFilterMatchType {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -5990,11 +6174,13 @@ input ProjectIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -6034,12 +6220,14 @@ scalar Date
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   data: Map
   displayName: String!
   enabled: Boolean
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -6077,11 +6265,12 @@ input SecretIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
-  createdBy: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   recordVersion: Int!
@@ -6115,10 +6304,12 @@ input VPNDeviceIn {
   accountName: String!
   apiVersion: String!
   clusterName: String!
+  createdBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
   id: String!
   kind: String!
+  lastUpdatedBy: Kloudlite_io__common_CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   metadata: Metadata! @goField(name: "objectMeta")
   projectName: String!
@@ -7485,24 +7676,33 @@ func (ec *executionContext) field_Query_core_listSecrets_args(ctx context.Contex
 func (ec *executionContext) field_Query_core_listVPNDevices_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	var arg0 *model.SearchVPNDevices
+	var arg0 *string
+	if tmp, ok := rawArgs["clusterName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
+		arg0, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["clusterName"] = arg0
+	var arg1 *model.SearchVPNDevices
 	if tmp, ok := rawArgs["search"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
-		arg0, err = ec.unmarshalOSearchVPNDevices2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchVPNDevices(ctx, tmp)
+		arg1, err = ec.unmarshalOSearchVPNDevices2ᚖkloudliteᚗioᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchVPNDevices(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["search"] = arg0
-	var arg1 *repos.CursorPagination
+	args["search"] = arg1
+	var arg2 *repos.CursorPagination
 	if tmp, ok := rawArgs["pq"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pq"))
-		arg1, err = ec.unmarshalOCursorPaginationIn2ᚖkloudliteᚗioᚋpkgᚋreposᚐCursorPagination(ctx, tmp)
+		arg2, err = ec.unmarshalOCursorPaginationIn2ᚖkloudliteᚗioᚋpkgᚋreposᚐCursorPagination(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["pq"] = arg1
+	args["pq"] = arg2
 	return args, nil
 }
 
@@ -8003,6 +8203,58 @@ func (ec *executionContext) fieldContext_App_clusterName(ctx context.Context, fi
 	return fc, nil
 }
 
+func (ec *executionContext) _App_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_App_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_App_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _App_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.App) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_App_creationTime(ctx, field)
 	if err != nil {
@@ -8215,6 +8467,58 @@ func (ec *executionContext) fieldContext_App_kind(ctx context.Context, field gra
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _App_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_App_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_App_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -8765,6 +9069,8 @@ func (ec *executionContext) fieldContext_AppEdge_node(ctx context.Context, field
 				return ec.fieldContext_App_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_App_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_App_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_App_creationTime(ctx, field)
 			case "displayName":
@@ -8775,6 +9081,8 @@ func (ec *executionContext) fieldContext_AppEdge_node(ctx context.Context, field
 				return ec.fieldContext_App_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_App_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_App_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_App_markedForDeletion(ctx, field)
 			case "metadata":
@@ -9080,6 +9388,58 @@ func (ec *executionContext) fieldContext_Config_clusterName(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Config_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.Config) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Config_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Config_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Config",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Config_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.Config) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Config_creationTime(ctx, field)
 	if err != nil {
@@ -9333,6 +9693,58 @@ func (ec *executionContext) fieldContext_Config_kind(ctx context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Config_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.Config) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Config_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Config_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Config",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -9727,6 +10139,8 @@ func (ec *executionContext) fieldContext_ConfigEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Config_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Config_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Config_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Config_creationTime(ctx, field)
 			case "data":
@@ -9739,6 +10153,8 @@ func (ec *executionContext) fieldContext_ConfigEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Config_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Config_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Config_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Config_markedForDeletion(ctx, field)
 			case "metadata":
@@ -18705,6 +19121,138 @@ func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__
 	return fc, nil
 }
 
+func (ec *executionContext) _Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx context.Context, field graphql.CollectedField, obj *common.CreatedOrUpdatedBy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserEmail, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__common_CreatedOrUpdatedBy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx context.Context, field graphql.CollectedField, obj *common.CreatedOrUpdatedBy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Kloudlite_io__common_CreatedOrUpdatedBy().UserID(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__common_CreatedOrUpdatedBy",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx context.Context, field graphql.CollectedField, obj *common.CreatedOrUpdatedBy) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__common_CreatedOrUpdatedBy",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus_action(ctx context.Context, field graphql.CollectedField, obj *types.SyncStatus) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Kloudlite_io__pkg__types_SyncStatus_action(ctx, field)
 	if err != nil {
@@ -19092,6 +19640,58 @@ func (ec *executionContext) fieldContext_ManagedResource_clusterName(ctx context
 	return fc, nil
 }
 
+func (ec *executionContext) _ManagedResource_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ManagedResource_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ManagedResource_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ManagedResource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ManagedResource_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_creationTime(ctx, field)
 	if err != nil {
@@ -19304,6 +19904,58 @@ func (ec *executionContext) fieldContext_ManagedResource_kind(ctx context.Contex
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ManagedResource_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ManagedResource_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ManagedResource_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ManagedResource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -19750,6 +20402,8 @@ func (ec *executionContext) fieldContext_ManagedResourceEdge_node(ctx context.Co
 				return ec.fieldContext_ManagedResource_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedResource_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedResource_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedResource_creationTime(ctx, field)
 			case "displayName":
@@ -19760,6 +20414,8 @@ func (ec *executionContext) fieldContext_ManagedResourceEdge_node(ctx context.Co
 				return ec.fieldContext_ManagedResource_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedResource_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedResource_markedForDeletion(ctx, field)
 			case "metadata":
@@ -20061,6 +20717,58 @@ func (ec *executionContext) fieldContext_ManagedService_clusterName(ctx context.
 	return fc, nil
 }
 
+func (ec *executionContext) _ManagedService_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ManagedService_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ManagedService_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ManagedService",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ManagedService_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedService_creationTime(ctx, field)
 	if err != nil {
@@ -20273,6 +20981,58 @@ func (ec *executionContext) fieldContext_ManagedService_kind(ctx context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ManagedService_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedService) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ManagedService_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ManagedService_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ManagedService",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -20723,6 +21483,8 @@ func (ec *executionContext) fieldContext_ManagedServiceEdge_node(ctx context.Con
 				return ec.fieldContext_ManagedService_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedService_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedService_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedService_creationTime(ctx, field)
 			case "displayName":
@@ -20733,6 +21495,8 @@ func (ec *executionContext) fieldContext_ManagedServiceEdge_node(ctx context.Con
 				return ec.fieldContext_ManagedService_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedService_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedService_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedService_markedForDeletion(ctx, field)
 			case "metadata":
@@ -21583,6 +22347,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createProject(ctx context
 				return ec.fieldContext_Project_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Project_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Project_creationTime(ctx, field)
 			case "displayName":
@@ -21591,6 +22357,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createProject(ctx context
 				return ec.fieldContext_Project_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Project_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Project_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Project_markedForDeletion(ctx, field)
 			case "metadata":
@@ -21691,6 +22459,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateProject(ctx context
 				return ec.fieldContext_Project_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Project_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Project_creationTime(ctx, field)
 			case "displayName":
@@ -21699,6 +22469,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateProject(ctx context
 				return ec.fieldContext_Project_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Project_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Project_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Project_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22059,6 +22831,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createEnvironment(ctx con
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -22067,6 +22841,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createEnvironment(ctx con
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22169,6 +22945,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateEnvironment(ctx con
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -22177,6 +22955,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateEnvironment(ctx con
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22360,6 +23140,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createWorkspace(ctx conte
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -22368,6 +23150,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createWorkspace(ctx conte
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22470,6 +23254,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateWorkspace(ctx conte
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -22478,6 +23264,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateWorkspace(ctx conte
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22661,6 +23449,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createApp(ctx context.Con
 				return ec.fieldContext_App_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_App_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_App_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_App_creationTime(ctx, field)
 			case "displayName":
@@ -22671,6 +23461,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createApp(ctx context.Con
 				return ec.fieldContext_App_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_App_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_App_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_App_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22775,6 +23567,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateApp(ctx context.Con
 				return ec.fieldContext_App_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_App_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_App_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_App_creationTime(ctx, field)
 			case "displayName":
@@ -22785,6 +23579,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateApp(ctx context.Con
 				return ec.fieldContext_App_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_App_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_App_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_App_markedForDeletion(ctx, field)
 			case "metadata":
@@ -22970,6 +23766,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createConfig(ctx context.
 				return ec.fieldContext_Config_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Config_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Config_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Config_creationTime(ctx, field)
 			case "data":
@@ -22982,6 +23780,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createConfig(ctx context.
 				return ec.fieldContext_Config_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Config_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Config_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Config_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23080,6 +23880,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateConfig(ctx context.
 				return ec.fieldContext_Config_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Config_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Config_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Config_creationTime(ctx, field)
 			case "data":
@@ -23092,6 +23894,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateConfig(ctx context.
 				return ec.fieldContext_Config_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Config_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Config_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Config_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23271,6 +24075,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createSecret(ctx context.
 				return ec.fieldContext_Secret_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Secret_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Secret_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Secret_creationTime(ctx, field)
 			case "data":
@@ -23283,6 +24089,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createSecret(ctx context.
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Secret_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Secret_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23385,6 +24193,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateSecret(ctx context.
 				return ec.fieldContext_Secret_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Secret_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Secret_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Secret_creationTime(ctx, field)
 			case "data":
@@ -23397,6 +24207,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateSecret(ctx context.
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Secret_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Secret_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23580,6 +24392,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createRouter(ctx context.
 				return ec.fieldContext_Router_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Router_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Router_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
 			case "displayName":
@@ -23590,6 +24404,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createRouter(ctx context.
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Router_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Router_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23690,6 +24506,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateRouter(ctx context.
 				return ec.fieldContext_Router_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Router_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Router_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
 			case "displayName":
@@ -23700,6 +24518,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateRouter(ctx context.
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Router_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Router_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23881,6 +24701,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedService(ctx 
 				return ec.fieldContext_ManagedService_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedService_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedService_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedService_creationTime(ctx, field)
 			case "displayName":
@@ -23891,6 +24713,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedService(ctx 
 				return ec.fieldContext_ManagedService_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedService_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedService_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedService_markedForDeletion(ctx, field)
 			case "metadata":
@@ -23991,6 +24815,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedService(ctx 
 				return ec.fieldContext_ManagedService_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedService_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedService_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedService_creationTime(ctx, field)
 			case "displayName":
@@ -24001,6 +24827,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedService(ctx 
 				return ec.fieldContext_ManagedService_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedService_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedService_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedService_markedForDeletion(ctx, field)
 			case "metadata":
@@ -24182,6 +25010,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedResource(ctx
 				return ec.fieldContext_ManagedResource_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedResource_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedResource_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedResource_creationTime(ctx, field)
 			case "displayName":
@@ -24192,6 +25022,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedResource(ctx
 				return ec.fieldContext_ManagedResource_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedResource_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedResource_markedForDeletion(ctx, field)
 			case "metadata":
@@ -24292,6 +25124,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedResource(ctx
 				return ec.fieldContext_ManagedResource_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedResource_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedResource_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedResource_creationTime(ctx, field)
 			case "displayName":
@@ -24302,6 +25136,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedResource(ctx
 				return ec.fieldContext_ManagedResource_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedResource_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedResource_markedForDeletion(ctx, field)
 			case "metadata":
@@ -24493,6 +25329,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createVPNDevice(ctx conte
 				return ec.fieldContext_VPNDevice_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_VPNDevice_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_VPNDevice_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_VPNDevice_markedForDeletion(ctx, field)
 			case "metadata":
@@ -24603,6 +25441,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateVPNDevice(ctx conte
 				return ec.fieldContext_VPNDevice_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_VPNDevice_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_VPNDevice_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_VPNDevice_markedForDeletion(ctx, field)
 			case "metadata":
@@ -25012,6 +25852,58 @@ func (ec *executionContext) fieldContext_Project_clusterName(ctx context.Context
 	return fc, nil
 }
 
+func (ec *executionContext) _Project_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Project_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.Project) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Project_creationTime(ctx, field)
 	if err != nil {
@@ -25183,6 +26075,58 @@ func (ec *executionContext) fieldContext_Project_kind(ctx context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Project_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.Project) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Project_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Project_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Project",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -25633,6 +26577,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Project_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Project_creationTime(ctx, field)
 			case "displayName":
@@ -25641,6 +26587,8 @@ func (ec *executionContext) fieldContext_ProjectEdge_node(ctx context.Context, f
 				return ec.fieldContext_Project_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Project_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Project_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Project_markedForDeletion(ctx, field)
 			case "metadata":
@@ -26051,6 +26999,8 @@ func (ec *executionContext) fieldContext_Query_core_getProject(ctx context.Conte
 				return ec.fieldContext_Project_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Project_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Project_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Project_creationTime(ctx, field)
 			case "displayName":
@@ -26059,6 +27009,8 @@ func (ec *executionContext) fieldContext_Query_core_getProject(ctx context.Conte
 				return ec.fieldContext_Project_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Project_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Project_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Project_markedForDeletion(ctx, field)
 			case "metadata":
@@ -26591,6 +27543,8 @@ func (ec *executionContext) fieldContext_Query_core_getWorkspace(ctx context.Con
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -26599,6 +27553,8 @@ func (ec *executionContext) fieldContext_Query_core_getWorkspace(ctx context.Con
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -26868,6 +27824,8 @@ func (ec *executionContext) fieldContext_Query_core_getEnvironment(ctx context.C
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -26876,6 +27834,8 @@ func (ec *executionContext) fieldContext_Query_core_getEnvironment(ctx context.C
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -27145,6 +28105,8 @@ func (ec *executionContext) fieldContext_Query_core_getApp(ctx context.Context, 
 				return ec.fieldContext_App_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_App_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_App_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_App_creationTime(ctx, field)
 			case "displayName":
@@ -27155,6 +28117,8 @@ func (ec *executionContext) fieldContext_Query_core_getApp(ctx context.Context, 
 				return ec.fieldContext_App_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_App_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_App_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_App_markedForDeletion(ctx, field)
 			case "metadata":
@@ -27426,6 +28390,8 @@ func (ec *executionContext) fieldContext_Query_core_getConfig(ctx context.Contex
 				return ec.fieldContext_Config_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Config_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Config_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Config_creationTime(ctx, field)
 			case "data":
@@ -27438,6 +28404,8 @@ func (ec *executionContext) fieldContext_Query_core_getConfig(ctx context.Contex
 				return ec.fieldContext_Config_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Config_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Config_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Config_markedForDeletion(ctx, field)
 			case "metadata":
@@ -27703,6 +28671,8 @@ func (ec *executionContext) fieldContext_Query_core_getSecret(ctx context.Contex
 				return ec.fieldContext_Secret_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Secret_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Secret_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Secret_creationTime(ctx, field)
 			case "data":
@@ -27715,6 +28685,8 @@ func (ec *executionContext) fieldContext_Query_core_getSecret(ctx context.Contex
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Secret_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Secret_markedForDeletion(ctx, field)
 			case "metadata":
@@ -27984,6 +28956,8 @@ func (ec *executionContext) fieldContext_Query_core_getRouter(ctx context.Contex
 				return ec.fieldContext_Router_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Router_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Router_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
 			case "displayName":
@@ -27994,6 +28968,8 @@ func (ec *executionContext) fieldContext_Query_core_getRouter(ctx context.Contex
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Router_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Router_markedForDeletion(ctx, field)
 			case "metadata":
@@ -28380,6 +29356,8 @@ func (ec *executionContext) fieldContext_Query_core_getManagedService(ctx contex
 				return ec.fieldContext_ManagedService_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedService_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedService_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedService_creationTime(ctx, field)
 			case "displayName":
@@ -28390,6 +29368,8 @@ func (ec *executionContext) fieldContext_Query_core_getManagedService(ctx contex
 				return ec.fieldContext_ManagedService_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedService_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedService_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedService_markedForDeletion(ctx, field)
 			case "metadata":
@@ -28657,6 +29637,8 @@ func (ec *executionContext) fieldContext_Query_core_getManagedResource(ctx conte
 				return ec.fieldContext_ManagedResource_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_ManagedResource_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ManagedResource_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_ManagedResource_creationTime(ctx, field)
 			case "displayName":
@@ -28667,6 +29649,8 @@ func (ec *executionContext) fieldContext_Query_core_getManagedResource(ctx conte
 				return ec.fieldContext_ManagedResource_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_ManagedResource_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ManagedResource_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_ManagedResource_markedForDeletion(ctx, field)
 			case "metadata":
@@ -28795,7 +29779,7 @@ func (ec *executionContext) _Query_core_listVPNDevices(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().CoreListVPNDevices(rctx, fc.Args["search"].(*model.SearchVPNDevices), fc.Args["pq"].(*repos.CursorPagination))
+			return ec.resolvers.Query().CoreListVPNDevices(rctx, fc.Args["clusterName"].(*string), fc.Args["search"].(*model.SearchVPNDevices), fc.Args["pq"].(*repos.CursorPagination))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -28804,10 +29788,10 @@ func (ec *executionContext) _Query_core_listVPNDevices(ctx context.Context, fiel
 			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
 		}
 		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccountAndCluster == nil {
-				return nil, errors.New("directive hasAccountAndCluster is not implemented")
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
 			}
-			return ec.directives.HasAccountAndCluster(ctx, nil, directive1)
+			return ec.directives.HasAccount(ctx, nil, directive1)
 		}
 
 		tmp, err := directive2(rctx)
@@ -28944,6 +29928,8 @@ func (ec *executionContext) fieldContext_Query_core_getVPNDevice(ctx context.Con
 				return ec.fieldContext_VPNDevice_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_VPNDevice_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_VPNDevice_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_VPNDevice_markedForDeletion(ctx, field)
 			case "metadata":
@@ -29285,6 +30271,58 @@ func (ec *executionContext) fieldContext_Router_clusterName(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Router_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.Router) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Router_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Router_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Router",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Router_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.Router) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Router_creationTime(ctx, field)
 	if err != nil {
@@ -29497,6 +30535,58 @@ func (ec *executionContext) fieldContext_Router_kind(ctx context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Router_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.Router) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Router_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Router_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Router",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -29957,6 +31047,8 @@ func (ec *executionContext) fieldContext_RouterEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Router_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Router_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Router_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Router_creationTime(ctx, field)
 			case "displayName":
@@ -29967,6 +31059,8 @@ func (ec *executionContext) fieldContext_RouterEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Router_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Router_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Router_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Router_markedForDeletion(ctx, field)
 			case "metadata":
@@ -30268,6 +31362,58 @@ func (ec *executionContext) fieldContext_Secret_clusterName(ctx context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _Secret_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Secret_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Secret_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Secret_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Secret_creationTime(ctx, field)
 	if err != nil {
@@ -30521,6 +31667,58 @@ func (ec *executionContext) fieldContext_Secret_kind(ctx context.Context, field 
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Secret_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Secret_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Secret_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -30997,6 +32195,8 @@ func (ec *executionContext) fieldContext_SecretEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Secret_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Secret_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Secret_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Secret_creationTime(ctx, field)
 			case "data":
@@ -31009,6 +32209,8 @@ func (ec *executionContext) fieldContext_SecretEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Secret_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Secret_markedForDeletion(ctx, field)
 			case "metadata":
@@ -31326,7 +32528,7 @@ func (ec *executionContext) _VPNDevice_createdBy(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.VPNDevice().CreatedBy(rctx, obj)
+		return obj.CreatedBy, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -31338,19 +32540,27 @@ func (ec *executionContext) _VPNDevice_createdBy(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(common.CreatedOrUpdatedBy)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_VPNDevice_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "VPNDevice",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -31527,6 +32737,58 @@ func (ec *executionContext) fieldContext_VPNDevice_kind(ctx context.Context, fie
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _VPNDevice_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.VPNDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_VPNDevice_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_VPNDevice_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "VPNDevice",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -31980,6 +33242,8 @@ func (ec *executionContext) fieldContext_VPNDeviceEdge_node(ctx context.Context,
 				return ec.fieldContext_VPNDevice_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_VPNDevice_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_VPNDevice_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_VPNDevice_markedForDeletion(ctx, field)
 			case "metadata":
@@ -32281,6 +33545,58 @@ func (ec *executionContext) fieldContext_Workspace_clusterName(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Workspace_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Workspace_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.Workspace) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Workspace_creationTime(ctx, field)
 	if err != nil {
@@ -32452,6 +33768,58 @@ func (ec *executionContext) fieldContext_Workspace_kind(ctx context.Context, fie
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workspace_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.Workspace) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workspace_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workspace",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__common_CreatedOrUpdatedBy", field.Name)
 		},
 	}
 	return fc, nil
@@ -32939,6 +34307,8 @@ func (ec *executionContext) fieldContext_WorkspaceEdge_node(ctx context.Context,
 				return ec.fieldContext_Workspace_apiVersion(ctx, field)
 			case "clusterName":
 				return ec.fieldContext_Workspace_clusterName(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workspace_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Workspace_creationTime(ctx, field)
 			case "displayName":
@@ -32947,6 +34317,8 @@ func (ec *executionContext) fieldContext_WorkspaceEdge_node(ctx context.Context,
 				return ec.fieldContext_Workspace_id(ctx, field)
 			case "kind":
 				return ec.fieldContext_Workspace_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workspace_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workspace_markedForDeletion(ctx, field)
 			case "metadata":
@@ -38180,6 +39552,13 @@ func (ec *executionContext) _App(ctx context.Context, sel ast.SelectionSet, obj 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._App_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -38234,6 +39613,13 @@ func (ec *executionContext) _App(ctx context.Context, sel ast.SelectionSet, obj 
 		case "kind":
 
 			out.Values[i] = ec._App_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._App_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -38440,6 +39826,13 @@ func (ec *executionContext) _Config(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._Config_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -38511,6 +39904,13 @@ func (ec *executionContext) _Config(ctx context.Context, sel ast.SelectionSet, o
 		case "kind":
 
 			out.Values[i] = ec._Config_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._Config_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -40888,6 +42288,61 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Out
 	return out
 }
 
+var kloudlite_io__common_CreatedOrUpdatedByImplementors = []string{"Kloudlite_io__common_CreatedOrUpdatedBy"}
+
+func (ec *executionContext) _Kloudlite_io__common_CreatedOrUpdatedBy(ctx context.Context, sel ast.SelectionSet, obj *common.CreatedOrUpdatedBy) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, kloudlite_io__common_CreatedOrUpdatedByImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Kloudlite_io__common_CreatedOrUpdatedBy")
+		case "userEmail":
+
+			out.Values[i] = ec._Kloudlite_io__common_CreatedOrUpdatedBy_userEmail(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "userId":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Kloudlite_io__common_CreatedOrUpdatedBy_userId(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "userName":
+
+			out.Values[i] = ec._Kloudlite_io__common_CreatedOrUpdatedBy_userName(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var kloudlite_io__pkg__types_SyncStatusImplementors = []string{"Kloudlite_io__pkg__types_SyncStatus"}
 
 func (ec *executionContext) _Kloudlite_io__pkg__types_SyncStatus(ctx context.Context, sel ast.SelectionSet, obj *types.SyncStatus) graphql.Marshaler {
@@ -41025,6 +42480,13 @@ func (ec *executionContext) _ManagedResource(ctx context.Context, sel ast.Select
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._ManagedResource_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -41079,6 +42541,13 @@ func (ec *executionContext) _ManagedResource(ctx context.Context, sel ast.Select
 		case "kind":
 
 			out.Values[i] = ec._ManagedResource_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._ManagedResource_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -41271,6 +42740,13 @@ func (ec *executionContext) _ManagedService(ctx context.Context, sel ast.Selecti
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._ManagedService_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -41325,6 +42801,13 @@ func (ec *executionContext) _ManagedService(ctx context.Context, sel ast.Selecti
 		case "kind":
 
 			out.Values[i] = ec._ManagedService_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._ManagedService_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -42001,6 +43484,13 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._Project_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -42051,6 +43541,13 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 		case "kind":
 
 			out.Values[i] = ec._Project_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._Project_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -43041,6 +44538,13 @@ func (ec *executionContext) _Router(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._Router_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -43095,6 +44599,13 @@ func (ec *executionContext) _Router(ctx context.Context, sel ast.SelectionSet, o
 		case "kind":
 
 			out.Values[i] = ec._Router_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._Router_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -43287,6 +44798,13 @@ func (ec *executionContext) _Secret(ctx context.Context, sel ast.SelectionSet, o
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._Secret_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -43358,6 +44876,13 @@ func (ec *executionContext) _Secret(ctx context.Context, sel ast.SelectionSet, o
 		case "kind":
 
 			out.Values[i] = ec._Secret_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._Secret_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -43565,25 +45090,12 @@ func (ec *executionContext) _VPNDevice(ctx context.Context, sel ast.SelectionSet
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "createdBy":
-			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._VPNDevice_createdBy(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._VPNDevice_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "creationTime":
 			field := field
 
@@ -43634,6 +45146,13 @@ func (ec *executionContext) _VPNDevice(ctx context.Context, sel ast.SelectionSet
 		case "kind":
 
 			out.Values[i] = ec._VPNDevice_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._VPNDevice_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -43823,6 +45342,13 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "createdBy":
+
+			out.Values[i] = ec._Workspace_createdBy(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "creationTime":
 			field := field
 
@@ -43873,6 +45399,13 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 		case "kind":
 
 			out.Values[i] = ec._Workspace_kind(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
+		case "lastUpdatedBy":
+
+			out.Values[i] = ec._Workspace_lastUpdatedBy(ctx, field, obj)
 
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
@@ -44381,12 +45914,12 @@ func (ec *executionContext) ___Type(ctx context.Context, sel ast.SelectionSet, o
 
 // region    ***************************** type.gotpl *****************************
 
-func (ec *executionContext) unmarshalNAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
+func (ec *executionContext) unmarshalNAny2interface(ctx context.Context, v interface{}) (any, error) {
 	res, err := graphql.UnmarshalAny(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
+func (ec *executionContext) marshalNAny2interface(ctx context.Context, sel ast.SelectionSet, v any) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -45343,6 +46876,10 @@ func (ec *executionContext) marshalNKloudlite_io__apps__console__internal__entit
 		return graphql.Null
 	}
 	return ec._Kloudlite_io__apps__console__internal__entities_OutputField(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNKloudlite_io__common_CreatedOrUpdatedBy2kloudliteᚗioᚋcommonᚐCreatedOrUpdatedBy(ctx context.Context, sel ast.SelectionSet, v common.CreatedOrUpdatedBy) graphql.Marshaler {
+	return ec._Kloudlite_io__common_CreatedOrUpdatedBy(ctx, sel, &v)
 }
 
 func (ec *executionContext) marshalNKloudlite_io__pkg__types_SyncStatus2kloudliteᚗioᚋpkgᚋtypesᚐSyncStatus(ctx context.Context, sel ast.SelectionSet, v types.SyncStatus) graphql.Marshaler {

@@ -14,6 +14,7 @@ import (
 	"kloudlite.io/apps/console/internal/app/graph/generated"
 	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/types"
 )
@@ -97,6 +98,14 @@ func (r *kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolv
 		return nil, err
 	}
 	return m, nil
+}
+
+// UserID is the resolver for the userId field.
+func (r *kloudlite_io__common_CreatedOrUpdatedByResolver) UserID(ctx context.Context, obj *common.CreatedOrUpdatedBy) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("createdOrUpdatedBy is nil")
+	}
+	return string(obj.UserId), nil
 }
 
 // Action is the resolver for the action field.
@@ -200,6 +209,11 @@ func (r *Resolver) Kloudlite_io__apps__console__internal__entities_MsvcTemplateE
 	return &kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver{r}
 }
 
+// Kloudlite_io__common_CreatedOrUpdatedBy returns generated.Kloudlite_io__common_CreatedOrUpdatedByResolver implementation.
+func (r *Resolver) Kloudlite_io__common_CreatedOrUpdatedBy() generated.Kloudlite_io__common_CreatedOrUpdatedByResolver {
+	return &kloudlite_io__common_CreatedOrUpdatedByResolver{r}
+}
+
 // Kloudlite_io__pkg__types_SyncStatus returns generated.Kloudlite_io__pkg__types_SyncStatusResolver implementation.
 func (r *Resolver) Kloudlite_io__pkg__types_SyncStatus() generated.Kloudlite_io__pkg__types_SyncStatusResolver {
 	return &kloudlite_io__pkg__types_SyncStatusResolver{r}
@@ -213,6 +227,7 @@ func (r *Resolver) MetadataIn() generated.MetadataInResolver { return &metadataI
 
 type github_com__kloudlite__operator__pkg__operator_StatusResolver struct{ *Resolver }
 type kloudlite_io__apps__console__internal__entities_MsvcTemplateEntryResolver struct{ *Resolver }
+type kloudlite_io__common_CreatedOrUpdatedByResolver struct{ *Resolver }
 type kloudlite_io__pkg__types_SyncStatusResolver struct{ *Resolver }
 type metadataResolver struct{ *Resolver }
 type metadataInResolver struct{ *Resolver }

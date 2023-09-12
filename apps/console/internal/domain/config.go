@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -59,6 +60,14 @@ func (d *domain) CreateConfig(ctx ConsoleContext, config entities.Config) (*enti
 	}
 
 	config.IncrementRecordVersion()
+
+	config.CreatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+	config.LastUpdatedBy = config.CreatedBy
+
 	config.AccountName = ctx.AccountName
 	config.ClusterName = ctx.ClusterName
 	config.SyncStatus = t.GenSyncStatus(t.SyncActionApply, config.RecordVersion)
@@ -95,6 +104,13 @@ func (d *domain) UpdateConfig(ctx ConsoleContext, config entities.Config) (*enti
 	}
 
 	exConfig.IncrementRecordVersion()
+
+	exConfig.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	exConfig.ObjectMeta.Labels = config.ObjectMeta.Labels
 	exConfig.ObjectMeta.Annotations = config.ObjectMeta.Annotations
 	exConfig.Data = config.Data

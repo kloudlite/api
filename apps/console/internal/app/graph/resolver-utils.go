@@ -3,26 +3,36 @@ package graph
 import (
 	"context"
 	"fmt"
+	"strings"
+
 	"kloudlite.io/apps/console/internal/app/graph/model"
 	"kloudlite.io/common"
+	"kloudlite.io/pkg/errors"
 
 	"kloudlite.io/apps/console/internal/domain"
 )
 
 func toConsoleContext(ctx context.Context) (domain.ConsoleContext, error) {
 	session, ok := ctx.Value("user-session").(*common.AuthSession)
+
+	errMsgs := []string{}
 	if !ok {
-		return domain.ConsoleContext{}, fmt.Errorf("context values %q is missing", "user-session")
+		errMsgs = append(errMsgs, fmt.Sprintf("context values %q is missing", "user-session"))
 	}
 
 	accountName, ok := ctx.Value("account-name").(string)
 	if !ok {
-		return domain.ConsoleContext{}, fmt.Errorf("context values %q is missing", "account-name")
+		errMsgs = append(errMsgs, fmt.Sprintf("context values %q is missing", "account-name"))
 	}
 
 	clusterName, ok := ctx.Value("cluster-name").(string)
 	if !ok {
-		return domain.ConsoleContext{}, fmt.Errorf("context values %q is missing", "cluster-name")
+		errMsgs = append(errMsgs, fmt.Sprintf("context values %q is missing", "cluster-name"))
+	}
+
+	var err error
+	if len(errMsgs) != 0 {
+		err = errors.NewE(fmt.Errorf("%v", strings.Join(errMsgs, ",")))
 	}
 
 	return domain.ConsoleContext{
@@ -33,7 +43,7 @@ func toConsoleContext(ctx context.Context) (domain.ConsoleContext, error) {
 		UserId:    session.UserId,
 		UserEmail: session.UserEmail,
 		UserName:  session.UserName,
-	}, nil
+	}, err
 }
 
 func (r *queryResolver) getNamespaceFromProjectID(ctx context.Context, project model.ProjectID) (string, error) {

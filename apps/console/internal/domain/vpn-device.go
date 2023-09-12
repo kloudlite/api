@@ -1,18 +1,22 @@
 package domain
 
 import (
+	"context"
 	"fmt"
 	"time"
 
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
 
-func (d *domain) ListVPNDevices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VPNDevice], error) {
+func (d *domain) ListVPNDevices(ctx context.Context, accountName string, clusterName *string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VPNDevice], error) {
 	filter := repos.Filter{
-		"accountName": ctx.AccountName,
-		"clusterName": ctx.ClusterName,
+		"accountName": accountName,
+	}
+	if clusterName != nil {
+		filter["clusterName"] = *clusterName
 	}
 
 	return d.vpnDeviceRepo.FindPaginated(ctx, d.workspaceRepo.MergeMatchFilters(filter, search), pagination)
@@ -22,8 +26,7 @@ func (d *domain) GetVPNDevice(ctx ConsoleContext, deviceName string) (*entities.
 	return d.vpnDeviceRepo.FindOne(ctx, repos.Filter{"metadata.name": deviceName})
 }
 
-func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error) {
-	// QUERY:
+func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error) { // QUERY:
 	// 1. I belong to a project in this account => I should be able to create a VPN device ? How ?
 	// 2. I don't belong to this project => I should not be able to create a VPN device ? How ?
 
@@ -43,6 +46,13 @@ func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 	}
 
 	device.IncrementRecordVersion()
+	device.CreatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+	device.LastUpdatedBy = device.CreatedBy
+
 	device.AccountName = ctx.AccountName
 	device.ClusterName = ctx.ClusterName
 	device.SyncStatus = t.GenSyncStatus(t.SyncActionApply, device.RecordVersion)
@@ -75,6 +85,12 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 	}
 
 	exDevice.IncrementRecordVersion()
+	exDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	exDevice.Labels = device.Labels
 	exDevice.Annotations = device.Annotations
 

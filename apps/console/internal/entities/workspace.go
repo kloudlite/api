@@ -12,7 +12,7 @@ type Workspace struct {
 
 	crdsv1.Workspace `json:",inline" graphql:"uri=k8s://workspaces.crds.kloudlite.io"`
 
-	common.ResourceMetadata `json:",inline" graphql:"noinput"`
+	common.ResourceMetadata `json:",inline"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
 	ClusterName string `json:"clusterName" graphql:"noinput"`

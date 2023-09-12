@@ -16,14 +16,6 @@ import (
 	fn "kloudlite.io/pkg/functions"
 )
 
-// CreatedBy is the resolver for the createdBy field.
-func (r *vPNDeviceResolver) CreatedBy(ctx context.Context, obj *entities.VPNDevice) (string, error) {
-	if obj == nil {
-		return "", fmt.Errorf("obj is nil")
-	}
-	return string(obj.CreatedBy), nil
-}
-
 // CreationTime is the resolver for the creationTime field.
 func (r *vPNDeviceResolver) CreationTime(ctx context.Context, obj *entities.VPNDevice) (string, error) {
 	if obj == nil {

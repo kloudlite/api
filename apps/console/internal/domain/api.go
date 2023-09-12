@@ -52,8 +52,9 @@ const (
 	ResTypeConfig          ResType = "config"
 	ResTypeSecret          ResType = "secret"
 	ResTypeRouter          ResType = "router"
-	ResTypeManagedService  ResType = "managedservice"
-	ResTypeManagedResource ResType = "managedresource"
+	ResTypeManagedService  ResType = "managed_service"
+	ResTypeManagedResource ResType = "managed_resource"
+	ResTypeVPNDevice       ResType = "vpn_device"
 )
 
 type Domain interface {
@@ -190,7 +191,7 @@ type Domain interface {
 
 	ResyncImagePullSecret(ctx ConsoleContext, namespace, name string) error
 
-	ListVPNDevices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VPNDevice], error)
+	ListVPNDevices(ctx context.Context, accountName string, clusterName *string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VPNDevice], error)
 	GetVPNDevice(ctx ConsoleContext, deviceName string) (*entities.VPNDevice, error)
 	CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
 	UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)

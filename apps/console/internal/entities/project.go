@@ -3,6 +3,7 @@ package entities
 import (
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
 	apiExtensionsV1 "k8s.io/apiextensions-apiserver/pkg/apis/apiextensions/v1"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -12,7 +13,8 @@ type Project struct {
 
 	crdsv1.Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 
-	DisplayName string `json:"displayName"`
+	common.ResourceMetadata `json:",inline"`
+
 	AccountName string `json:"accountName" graphql:"noinput"`
 	ClusterName string `json:"clusterName" graphql:"noinput"`
 
@@ -45,5 +47,5 @@ var ProjectIndexes = []repos.IndexField{
 }
 
 func ValidateProject(project *Project, projectJsonSchema *apiExtensionsV1.JSONSchemaProps) (bool, error) {
-  return false, nil
+	return false, nil
 }

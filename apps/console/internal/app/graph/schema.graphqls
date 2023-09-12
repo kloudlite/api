@@ -9,10 +9,11 @@ enum ConsoleResType {
   config
   secret
   router
-  managedservice
-  managedresource
+  managed_service
+  managed_resource
   workspace
   environment
+  vpn_device
 }
 
 type ConsoleCheckNameAvailabilityOutput @shareable {
@@ -153,7 +154,7 @@ type Query {
   core_getManagedResource(project: ProjectId!, scope: WorkspaceOrEnvId!, name: String!): ManagedResource @isLoggedInAndVerified @hasAccountAndCluster
   core_resyncManagedResource(project: ProjectId!, scope: WorkspaceOrEnvId!, name: String!): Boolean! @isLoggedInAndVerified @hasAccountAndCluster
 
-  core_listVPNDevices(search: SearchVPNDevices, pq: CursorPaginationIn): VPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccountAndCluster
+  core_listVPNDevices(clusterName: String, search: SearchVPNDevices, pq: CursorPaginationIn): VPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccount
   core_getVPNDevice(name: String!): VPNDevice @isLoggedInAndVerified @hasAccountAndCluster
 }
 

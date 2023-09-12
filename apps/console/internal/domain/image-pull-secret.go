@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -54,6 +55,14 @@ func (d *domain) CreateImagePullSecret(ctx ConsoleContext, ips entities.ImagePul
 	}
 
 	ips.IncrementRecordVersion()
+
+	ips.CreatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+	ips.LastUpdatedBy = ips.CreatedBy
+
 	ips.AccountName = ctx.AccountName
 	ips.ClusterName = ctx.ClusterName
 	ips.SyncStatus = t.GenSyncStatus(t.SyncActionApply, ips.RecordVersion)
@@ -86,6 +95,13 @@ func (d *domain) UpdateImagePullSecret(ctx ConsoleContext, ips entities.ImagePul
 	}
 
 	exIps.IncrementRecordVersion()
+
+	ips.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	exIps.Annotations = ips.Annotations
 	exIps.Labels = ips.Labels
 
@@ -97,7 +113,7 @@ func (d *domain) UpdateImagePullSecret(ctx ConsoleContext, ips entities.ImagePul
 		return nil, err
 	}
 
-	if err := d.applyK8sResource(ctx, &upIps.ImagePullSecret, 0); err != nil {
+	if err := d.applyK8sResource(ctx, &upIps.ImagePullSecret, ips.RecordVersion); err != nil {
 		return nil, err
 	}
 

@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -66,6 +67,14 @@ func (d *domain) CreateManagedResource(ctx ConsoleContext, mres entities.Managed
 	}
 
 	mres.IncrementRecordVersion()
+
+	mres.CreatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+	mres.LastUpdatedBy = mres.CreatedBy
+
 	mres.AccountName = ctx.AccountName
 	mres.ClusterName = ctx.ClusterName
 	mres.SyncStatus = t.GenSyncStatus(t.SyncActionApply, mres.RecordVersion)
@@ -102,6 +111,12 @@ func (d *domain) UpdateManagedResource(ctx ConsoleContext, mres entities.Managed
 	}
 
 	m.IncrementRecordVersion()
+	m.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	m.Labels = mres.Labels
 	m.Annotations = mres.Annotations
 

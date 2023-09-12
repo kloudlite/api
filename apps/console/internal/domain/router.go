@@ -5,6 +5,7 @@ import (
 	"time"
 
 	"kloudlite.io/apps/console/internal/entities"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -59,6 +60,14 @@ func (d *domain) CreateRouter(ctx ConsoleContext, router entities.Router) (*enti
 	}
 
 	router.IncrementRecordVersion()
+
+	router.CreatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+	router.LastUpdatedBy = router.CreatedBy
+
 	router.AccountName = ctx.AccountName
 	router.ClusterName = ctx.ClusterName
 	router.SyncStatus = t.GenSyncStatus(t.SyncActionApply, router.RecordVersion)
@@ -95,6 +104,12 @@ func (d *domain) UpdateRouter(ctx ConsoleContext, router entities.Router) (*enti
 	}
 
 	exRouter.IncrementRecordVersion()
+	exRouter.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	exRouter.Annotations = router.Annotations
 	exRouter.Labels = router.Labels
 

@@ -340,22 +340,26 @@ func (r *mutationResolver) CoreDeleteVPNDevice(ctx context.Context, deviceName s
 func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, resType domain.ResType, namespace *string, name string) (*domain.CheckNameAvailabilityOutput, error) {
 	cc, err := toConsoleContext(ctx)
 	if err != nil {
-		return nil, err
+		if cc.AccountName == "" {
+			return nil, err
+		}
 	}
 	return r.Domain.CheckNameAvailability(ctx, resType, cc.AccountName, namespace, name)
 }
 
 // CoreListProjects is the resolver for the core_listProjects field.
 func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *string, search *model.SearchProjects, pq *repos.CursorPagination) (*model.ProjectPaginatedRecords, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-
 	filter := map[string]repos.MatchFilter{}
 	if search != nil {
 		if search.Text != nil {
 			filter["metadata.name"] = *search.Text
+		}
+	}
+
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		if cc.UserId == "" || cc.AccountName == "" {
+			return nil, err
 		}
 	}
 
@@ -1122,11 +1126,7 @@ func (r *queryResolver) CoreResyncManagedResource(ctx context.Context, project m
 }
 
 // CoreListVPNDevices is the resolver for the core_listVPNDevices field.
-func (r *queryResolver) CoreListVPNDevices(ctx context.Context, search *model.SearchVPNDevices, pq *repos.CursorPagination) (*model.VPNDevicePaginatedRecords, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return nil, err
-	}
+func (r *queryResolver) CoreListVPNDevices(ctx context.Context, clusterName *string, search *model.SearchVPNDevices, pq *repos.CursorPagination) (*model.VPNDevicePaginatedRecords, error) {
 	filter := map[string]repos.MatchFilter{}
 	if search != nil {
 		if search.Text != nil {
@@ -1134,7 +1134,14 @@ func (r *queryResolver) CoreListVPNDevices(ctx context.Context, search *model.Se
 		}
 	}
 
-	devices, err := r.Domain.ListVPNDevices(cc, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		if cc.AccountName == "" {
+			return nil, err
+		}
+	}
+
+	devices, err := r.Domain.ListVPNDevices(cc, cc.AccountName, clusterName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, err
 	}

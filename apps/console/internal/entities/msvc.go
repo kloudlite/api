@@ -2,6 +2,7 @@ package entities
 
 import (
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -9,9 +10,10 @@ import (
 type ManagedService struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
-	crdsv1.ManagedService `json:",inline" graphql:"uri=k8s://managedservices.crds.kloudlite.io"`
+	crdsv1.ManagedService   `json:",inline" graphql:"uri=k8s://managedservices.crds.kloudlite.io"`
 
-	DisplayName string `json:"displayName"`
+	common.ResourceMetadata `json:",inline"`
+
 	AccountName string `json:"accountName" graphql:"noinput"`
 	ClusterName string `json:"clusterName" graphql:"noinput"`
 
