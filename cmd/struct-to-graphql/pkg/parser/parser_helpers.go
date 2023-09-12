@@ -18,6 +18,8 @@ func (f *Field) handleString() (fieldType string, inputType string, err error) {
 	return toFieldType("String", !f.OmitEmpty), toFieldType("String", !f.OmitEmpty), err
 }
 
+// all the field level structs, need to drop to the common-types, as
+// we never know, this filed has been used in other top-level structs
 func (f *Field) handleStruct() (fieldType string, inputFieldType string, err error) {
 	pkgPath := fixPackagePath(f.PkgPath)
 
@@ -58,6 +60,7 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string, err err
 		if f.Inline {
 			p2 := newParser(f.Parser.schemaCli)
 			p2.structs[structName] = newStruct()
+
 			if err := p2.GenerateFromJsonSchema(p2.structs[structName], childType, jsonSchema); err != nil {
 				return "", "", err
 			}
@@ -90,7 +93,8 @@ func (f *Field) handleStruct() (fieldType string, inputFieldType string, err err
 	}
 
 	if f.Inline {
-		fields2, inputFields2 := f.Parser.structs[f.StructName].mergeParser(p2.structs[structName], childType)
+		fields2, inputFields2 := f.Parser.structs[structName].mergeParser(p2.structs[structName], childType)
+		// fmt.Printf("f.Parser.structs[%s]: %#v\n", f.StructName, f.Parser.structs[structName])
 		if !f.GraphqlTag.OnlyInput {
 			*f.Fields = append(*f.Fields, fields2...)
 		}

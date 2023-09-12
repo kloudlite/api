@@ -1,10 +1,12 @@
-package parser
+package parser_test
 
 import (
 	"bytes"
 	"encoding/json"
+	"fmt"
 	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 	"testing"
 
@@ -14,6 +16,8 @@ import (
 	"sigs.k8s.io/yaml"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"kloudlite.io/cmd/struct-to-graphql/pkg/parser"
+	types2 "kloudlite.io/cmd/struct-to-graphql/pkg/parser/testdata/types"
 	"kloudlite.io/pkg/types"
 )
 
@@ -273,8 +277,8 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 	schemaCli := &schemaClient{}
 
 	type fields struct {
-		structs   map[string]*Struct
-		schemaCli SchemaClient
+		structs   map[string]*parser.Struct
+		schemaCli parser.SchemaClient
 	}
 
 	type args struct {
@@ -286,13 +290,13 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		name    string
 		fields  fields
 		args    args
-		want    map[string]*Struct
+		want    map[string]*parser.Struct
 		wantErr bool
 	}{
 		{
-			name: "test case 1 (without any json tag)",
+			name: "test 1. without any json tag",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -303,7 +307,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Gender   string
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"User": {
 					Types: map[string][]string{
 						"User": {
@@ -324,9 +328,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 2 (with json tags, for naming)",
+			name: "test 2. with json tags, for naming",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -337,7 +341,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Gender   string `json:"gender"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"User": {
 					Types: map[string][]string{
 						"User": {
@@ -358,9 +362,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 3 (with json tags for naming, and graphql enum tags)",
+			name: "test 3. with json tags for naming, and graphql enum tags",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -371,7 +375,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Gender   string `json:"gender" graphql:"enum=MALE;FEMALE"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"User": {
 					Types: map[string][]string{
 						"User": {
@@ -397,9 +401,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 5 (with struct containing slice field)",
+			name: "test 4. with struct containing slice field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -411,7 +415,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Tags    []string
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Post": {
 					Types: map[string][]string{
 						"Post": {
@@ -434,9 +438,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 6 (with struct containing pointer field)",
+			name: "test 5. with struct containing pointer field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -447,7 +451,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Country *string
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Address": {
 					Types: map[string][]string{
 						"Address": {
@@ -468,9 +472,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 7 (with struct containing nested anonymous struct field)",
+			name: "test 6. with struct containing nested anonymous struct field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -484,7 +488,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					}
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Employee": {
 					Types: map[string][]string{
 						"Employee": {
@@ -513,9 +517,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 8 (with struct containing nested struct field with json tags)",
+			name: "test 7. with struct containing nested struct field with json tags",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -529,7 +533,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					} `json:"address"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Employee": {
 					Types: map[string][]string{
 						"Employee": {
@@ -558,9 +562,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 9 (with struct containing struct pointer field)",
+			name: "test 8. with struct containing struct pointer field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -574,7 +578,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					}
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Company": {
 					Types: map[string][]string{
 						"Company": {
@@ -603,9 +607,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 11 (with struct containing struct slice field)",
+			name: "test 9. with struct containing struct slice field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -619,7 +623,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					}
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Organization": {
 					Types: map[string][]string{
 						"Organization": {
@@ -648,9 +652,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 12 (with struct containing struct slice field with json tags)",
+			name: "test 10. with struct containing struct slice field with json tags",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -664,7 +668,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					} `json:"employees"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Organization": {
 					Types: map[string][]string{
 						"Organization": {
@@ -693,9 +697,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 13 (with struct containing enum field)",
+			name: "test 11. with struct containing enum field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -706,7 +710,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Category string `graphql:"enum=ELECTRONICS;FASHION;SPORTS"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Product": {
 					Types: map[string][]string{
 						"Product": {
@@ -733,9 +737,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 14 (with struct containing struct slice to pointer of a inline struct)",
+			name: "test 12. with struct containing struct slice to pointer of a inline struct",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -749,7 +753,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					} `json:"employees"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Organization": {
 					Types: map[string][]string{
 						"Organization": {
@@ -778,9 +782,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 16 (with struct containing map field)",
+			name: "test 13. with struct containing map field",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -793,7 +797,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					KVs   map[string]any `json:"kvs"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"User": {
 					Types: map[string][]string{
 						"User": {
@@ -818,9 +822,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 17 (with struct containing nested kloudlite CRD)",
+			name: "test 14. with struct containing nested kloudlite CRD",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -830,16 +834,15 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Project     Project `json:",inline" graphql:"uri=k8s://projects.crds.kloudlite.io"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Project": {
 					Types: map[string][]string{
 						"Project": {
 							"AccountName: String!",
 							"apiVersion: String!",
 							"kind: String!",
-							// "metadata: Metadata!",
 							"metadata: Metadata! @goField(name: \"objectMeta\")",
-							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpec!",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ProjectSpec!",
 							"status: Github_com__kloudlite__operator__pkg__operator_Status",
 						},
 					},
@@ -849,14 +852,14 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"apiVersion: String",
 							"kind: String",
 							"metadata: MetadataIn!",
-							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpecIn!",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ProjectSpecIn!",
 						},
 					},
 					Enums: map[string][]string{},
 				},
 				"common-types": {
 					Types: map[string][]string{
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpec": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ProjectSpec": {
 							"accountName: String!",
 							"clusterName: String!",
 							"displayName: String",
@@ -895,7 +898,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						},
 					},
 					Inputs: map[string][]string{
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ProjectSpecIn": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ProjectSpecIn": {
 							"accountName: String!",
 							"clusterName: String!",
 							"displayName: String",
@@ -914,9 +917,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 18 (with pagination enabled)",
+			name: "test 15. with pagination enabled",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -928,7 +931,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				}{},
 				withPagination: []string{"User"},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"User": {
 					Types: map[string][]string{
 						"User": {
@@ -968,9 +971,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 19 (with graphql (noinput))",
+			name: "test 16. (with graphql (noinput))",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -979,7 +982,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					SyncStatus types.SyncStatus `json:"syncStatus" graphql:"noinput"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"User": {
 					Types: map[string][]string{
 						"User": {
@@ -1017,9 +1020,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 20 (with json schema http uri)",
+			name: "test 17. with json schema http uri",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -1029,32 +1032,32 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Example ExampleJson `json:"example" graphql:"uri=http://example.com/example-json-schema"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Example": {
 					Types: map[string][]string{
 						"Example": {
-							"example: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJson!",
+							"example: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJson!",
 						},
 					},
 					Inputs: map[string][]string{
 						"ExampleIn": {
-							"example: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonIn!",
+							"example: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonIn!",
 						},
 					},
 					Enums: map[string][]string{},
 				},
 				"common-types": {
 					Types: map[string][]string{
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJson": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJson": {
 							"apiVersion: String!",
 							"kind: String!",
 							"metadata: Metadata! @goField(name: \"objectMeta\")",
-							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpec!",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpec!",
 						},
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpec": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpec": {
 							"clusterName: String!",
 							"nodePoolName: String!",
-							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType!",
+							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpecNodeType!",
 							"taints: [String!]",
 						},
 						"Metadata": {
@@ -1068,16 +1071,16 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						},
 					},
 					Inputs: map[string][]string{
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonIn": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonIn": {
 							"apiVersion: String",
 							"kind: String",
 							"metadata: MetadataIn!",
-							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecIn!",
+							"spec: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpecIn!",
 						},
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecIn": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpecIn": {
 							"clusterName: String!",
 							"nodePoolName: String!",
-							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType!",
+							"nodeType: Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpecNodeType!",
 							"taints: [String!]",
 						},
 						"MetadataIn": {
@@ -1088,7 +1091,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						},
 					},
 					Enums: map[string][]string{
-						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_ExampleJsonSpecNodeType": {
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser_test_ExampleJsonSpecNodeType": {
 							"worker",
 							"master",
 							"cluster",
@@ -1098,9 +1101,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 21 (with some empty enums)",
+			name: "test 18. with some empty enums",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -1109,7 +1112,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Example string `json:"example" graphql:"enum=e1;e2;;e3;;e4"`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Example": {
 					Types: map[string][]string{
 						"User": {
@@ -1133,9 +1136,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 			},
 		},
 		{
-			name: "test case 22 (with default values for fields, with single-quoted string as default)",
+			name: "test 19. with default values for fields, with single-quoted string as default",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -1147,7 +1150,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				}{},
 			},
 			wantErr: true,
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Account": {
 					Types: map[string][]string{
 						"Account": {
@@ -1169,9 +1172,9 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 		},
 
 		{
-			name: "test case 23 (with default values for fields, with correct defaults)",
+			name: "test 20. with default values for fields, with correct defaults",
 			fields: fields{
-				structs:   map[string]*Struct{},
+				structs:   map[string]*parser.Struct{},
 				schemaCli: schemaCli,
 			},
 			args: args{
@@ -1182,7 +1185,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 					Region   string `json:"region" graphql:"default=\"us-east-1\""`
 				}{},
 			},
-			want: map[string]*Struct{
+			want: map[string]*parser.Struct{
 				"Account": {
 					Types: map[string][]string{
 						"Account": {
@@ -1202,18 +1205,104 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				},
 			},
 		},
+
+		{
+			name:   "test 21. embedded struct with json inline tags",
+			fields: fields{structs: map[string]*parser.Struct{}, schemaCli: schemaCli},
+			args: args{
+				name: "Sample",
+				data: struct {
+					Name        string `json:"name"`
+					ProjectSpec `json:",inline"`
+				}{},
+			},
+			want: map[string]*parser.Struct{
+				"Sample": {
+					Types: map[string][]string{
+						"Sample": {
+							"name: String!",
+							"accountName: String!",
+							"clusterName: String!",
+							"displayName: String",
+							"logo: String",
+							"targetNamespace: String!",
+						},
+					},
+					Inputs: map[string][]string{
+						"SampleIn": {
+							"name: String!",
+							"accountName: String!",
+							"clusterName: String!",
+							"displayName: String",
+							"logo: String",
+							"targetNamespace: String!",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+
+		{
+			name:   "test 22. embedded struct (imported from other package) with json inline tags",
+			fields: fields{structs: map[string]*parser.Struct{}, schemaCli: schemaCli},
+			args: args{
+				name: "Sample",
+				data: struct {
+					Name          string `json:"name"`
+					types2.Sample `json:",inline"`
+				}{},
+			},
+			want: map[string]*parser.Struct{
+				"Sample": {
+					Types: map[string][]string{
+						"Sample": {
+							"name: String!",
+							"displayName: String!",
+							"age: Int!",
+							"createdBy: Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMeta!",
+							"updatedBy: Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMeta!",
+						},
+					},
+					Inputs: map[string][]string{
+						"SampleIn": {
+							"name: String!",
+							"displayName: String!",
+							"age: Int!",
+							"createdBy: Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMetaIn!",
+							"updatedBy: Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMetaIn!",
+						},
+					},
+				},
+				"common-types": {
+					Types: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMeta": {
+							"firstName: String!",
+							"lastName: String!",
+						},
+					},
+					Inputs: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMetaIn": {
+							"firstName: String!",
+							"lastName: String!",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
 	}
 
-	for _, _tt := range tests {
+	for _idx, _tt := range tests {
+		idx := _idx
 		tt := _tt
+		// if idx+1 != 8 {
+		// 	continue
+		// }
 		t.Run(tt.name, func(t *testing.T) {
 			// t.Parallel()
 
-			p := &parser{
-				structs:   tt.fields.structs,
-				schemaCli: tt.fields.schemaCli,
-			}
-
+			p := parser.NewParser(tt.fields.schemaCli)
 			err := p.LoadStruct(tt.args.name, tt.args.data)
 			if err != nil {
 				if tt.wantErr {
@@ -1222,42 +1311,69 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 				t.Error(err)
 			}
 
-			buf := new(bytes.Buffer)
 			p.WithPagination(tt.args.withPagination)
-			p.PrintSchema(buf)
-			got := buf.String()
 
-			buf2 := new(bytes.Buffer)
-			p2 := &parser{
-				structs: tt.want,
+			testDir := filepath.Join(os.TempDir(), fmt.Sprintf("struct-to-graphql-testcase-%d", idx+1))
+			os.Mkdir(testDir, 0755)
+			t.Logf("testcase output directory: %s", testDir)
+
+			gbuft := new(bytes.Buffer)
+			gbufc := new(bytes.Buffer)
+			p.PrintTypes(gbuft)
+			p.PrintCommonTypes(gbufc)
+			gotTypes := gbuft.String()
+			gotCommonTypes := gbufc.String()
+
+			wantParser := parser.NewUnsafeParser(tt.want, nil)
+			wbuft := new(bytes.Buffer)
+			wbufc := new(bytes.Buffer)
+			wantParser.PrintTypes(wbuft)
+			wantParser.PrintCommonTypes(wbufc)
+			wantTypes := wbuft.String()
+			wantCommonTypes := wbufc.String()
+
+			g, err := os.Create(filepath.Join(testDir, "./got.types.graphql"))
+			if err != nil {
+				t.Error(err)
 			}
-			p2.PrintSchema(buf2)
-			want := buf2.String()
+			g.WriteString(gotTypes)
 
-			if got != want {
-				// dir := "/tmp/x"
-				g, err := os.CreateTemp("", "got.txt")
-				// g, err2 := os.Create(filepath.Join(dir, "./got.txt"))
-				if err != nil {
-					t.Error(err)
-				}
-				g.WriteString(got)
+			w, err := os.Create(filepath.Join(testDir, "./want.types.graphql"))
+			if err != nil {
+				t.Error(err)
+			}
+			w.WriteString(wantTypes)
 
-				w, err := os.CreateTemp("", "want.txt")
-				// w, err2 := os.Create(filepath.Join(dir, "./want.txt"))
-				if err != nil {
-					t.Error(err)
-				}
-				w.WriteString(want)
-
+			if gotTypes != wantTypes {
 				t.Logf("diff %s %s", g.Name(), w.Name())
-				cmd := exec.Command("diff", g.Name(), w.Name())
-				b, err := cmd.CombinedOutput()
+				b, err := exec.Command("diff", g.Name(), w.Name()).CombinedOutput()
 				if err != nil {
 					t.Error(err)
 				}
 
-				t.Errorf("diff output:\n%s\n", string(b))
+				t.Errorf("diff output: \n%s\n", b)
+			}
+
+			g, err = os.Create(filepath.Join(testDir, "./got.common-types.graphql"))
+			if err != nil {
+				t.Error(err)
+			}
+			g.WriteString(gotCommonTypes)
+
+			w, err = os.Create(filepath.Join(testDir, "./want.common-types.graphql"))
+			if err != nil {
+				t.Error(err)
+			}
+			w.WriteString(wantCommonTypes)
+
+			if gotCommonTypes != wantCommonTypes {
+				t.Logf("diff %s %s", g.Name(), w.Name())
+				b, err := exec.Command("diff", g.Name(), w.Name()).CombinedOutput()
+				if err != nil {
+					t.Error(err)
+				}
+
+				t.Errorf("diff output: \n%s\n", b)
 			}
 		})
 	}
