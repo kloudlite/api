@@ -14,5 +14,5 @@ type ResourceMetadata struct {
 	DisplayName string `json:"displayName"`
 
 	CreatedBy     CreatedOrUpdatedBy `json:"createdBy" graphql:"noinput"`
-	LastUpdatedBy CreatedOrUpdatedBy `json:"updatedBy" graphql:"noinput"`
+	LastUpdatedBy CreatedOrUpdatedBy `json:"lastUpdatedBy" graphql:"noinput"`
 }

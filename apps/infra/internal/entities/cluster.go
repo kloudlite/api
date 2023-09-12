@@ -2,6 +2,7 @@ package entities
 
 import (
 	clustersv1 "github.com/kloudlite/operator/apis/clusters/v1"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 	t "kloudlite.io/pkg/types"
 )
@@ -11,7 +12,8 @@ type Cluster struct {
 
 	clustersv1.Cluster `json:",inline" graphql:"uri=k8s://clusters.clusters.kloudlite.io"`
 
-	DisplayName string       `json:"displayName"`
+	common.ResourceMetadata `json:",inline"`
+
 	AccountName string       `json:"accountName" graphql:"noinput"`
 	SyncStatus  t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }

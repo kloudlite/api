@@ -106,6 +106,12 @@ type Kloudlite_io__apps__infra__internal__entities_HelmStatusVal @shareable {
   message: String!
 }
 
+type Kloudlite_io__common_CreatedOrUpdatedBy @shareable {
+  userEmail: String!
+  userId: String!
+  userName: String!
+}
+
 type Kloudlite_io__pkg__types_SyncStatus @shareable {
   action: Kloudlite_io__pkg__types_SyncStatusAction!
   error: String
