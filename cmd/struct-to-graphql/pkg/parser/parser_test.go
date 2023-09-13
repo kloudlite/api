@@ -16,6 +16,7 @@ import (
 	"sigs.k8s.io/yaml"
 
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	exampleTypes "kloudlite.io/cmd/struct-to-graphql/internal/example/types"
 	"kloudlite.io/cmd/struct-to-graphql/pkg/parser"
 	types2 "kloudlite.io/cmd/struct-to-graphql/pkg/parser/testdata/types"
 	"kloudlite.io/pkg/types"
@@ -33,11 +34,11 @@ type ExampleJson struct {
 }
 
 type ProjectSpec struct {
-	AccountName     string `json:"accountName"`
-	ClusterName     string `json:"clusterName"`
-	DisplayName     string `json:"displayName,omitempty"`
-	TargetNamespace string `json:"targetNamespace"`
-	Logo            string `json:"logo,omitempty"`
+	AccountName     string                    `json:"accountName"`
+	ClusterName     string                    `json:"clusterName"`
+	DisplayName     exampleTypes.SampleString `json:"displayName,omitempty"`
+	TargetNamespace string                    `json:"targetNamespace"`
+	Logo            string                    `json:"logo,omitempty"`
 }
 
 type Project struct {
@@ -1223,7 +1224,7 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"name: String!",
 							"accountName: String!",
 							"clusterName: String!",
-							"displayName: String",
+							"displayName: Kloudlite_io__cmd__struct___to___graphql__internal__example__types_SampleString",
 							"logo: String",
 							"targetNamespace: String!",
 						},
@@ -1233,9 +1234,17 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 							"name: String!",
 							"accountName: String!",
 							"clusterName: String!",
-							"displayName: String",
+							"displayName: Kloudlite_io__cmd__struct___to___graphql__internal__example__types_SampleString",
 							"logo: String",
 							"targetNamespace: String!",
+						},
+					},
+				},
+				"common-types": {
+					Enums: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__internal__example__types_SampleString": {
+							"item_1",
+							"item_2",
 						},
 					},
 				},
@@ -1285,6 +1294,43 @@ func Test_GeneratedGraphqlSchema(t *testing.T) {
 						"Kloudlite_io__cmd__struct___to___graphql__pkg__parser__testdata__types_ActionMetaIn": {
 							"firstName: String!",
 							"lastName: String!",
+						},
+					},
+				},
+			},
+			wantErr: false,
+		},
+
+		{
+			name:   "test 23. string type as an enum of constants defined in pkg",
+			fields: fields{structs: map[string]*parser.Struct{}, schemaCli: schemaCli},
+			args: args{
+				name: "Sample",
+				data: struct {
+					Name       string                    `json:"name"`
+					SampleName exampleTypes.SampleString `json:"sampleName,omitempty"`
+				}{},
+			},
+			want: map[string]*parser.Struct{
+				"Sample": {
+					Types: map[string][]string{
+						"Sample": {
+							"name: String!",
+							"sampleName: Kloudlite_io__cmd__struct___to___graphql__internal__example__types_SampleString",
+						},
+					},
+					Inputs: map[string][]string{
+						"SampleIn": {
+							"name: String!",
+							"sampleName: Kloudlite_io__cmd__struct___to___graphql__internal__example__types_SampleString",
+						},
+					},
+				},
+				"common-types": {
+					Enums: map[string][]string{
+						"Kloudlite_io__cmd__struct___to___graphql__internal__example__types_SampleString": {
+							"item_1",
+							"item_2",
 						},
 					},
 				},

@@ -15,6 +15,20 @@ func (f *Field) handleString() (fieldType string, inputType string, err error) {
 		return toFieldType(childType, !f.OmitEmpty), toFieldType(childType, !f.OmitEmpty), err
 	}
 
+	if f.PkgPath != "" {
+		enums, err := parseConstantsFromPkg(f.PkgPath, f.Type.Name())
+		if err != nil {
+			return "", "", err
+		}
+
+		childType = genTypeName(fixPackagePath(f.PkgPath) + "_" + f.Type.Name())
+
+		if len(enums) > 0 {
+			f.Parser.structs[commonLabel].Enums[childType] = enums
+			return toFieldType(childType, !f.OmitEmpty), toFieldType(childType, !f.OmitEmpty), err
+		}
+	}
+
 	return toFieldType("String", !f.OmitEmpty), toFieldType("String", !f.OmitEmpty), err
 }
 
