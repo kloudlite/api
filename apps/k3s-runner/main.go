@@ -52,19 +52,22 @@ type AgentConfig struct {
 	PublicIP       string `json:"publicIP"`
 	ServerIP       string `json:"serverIP"`
 	K3sCommonFlags `json:",inline"`
+	ExtraAgentArgs []string `json:"extraAgentArgs"`
 }
 
 type PrimaryMasterConfig struct {
-	PublicIP       string   `json:"publicIP"`
-	SANs           []string `json:"SANs"`
-	K3sCommonFlags `json:",inline"`
+	PublicIP        string   `json:"publicIP"`
+	SANs            []string `json:"SANs"`
+	K3sCommonFlags  `json:",inline"`
+	ExtraServerArgs []string `json:"extraServerArgs"`
 }
 
 type SecondaryMasterConfig struct {
-	PublicIP       string   `json:"publicIP"`
-	ServerIP       string   `json:"serverIP"`
-	SANs           []string `json:"SANs"`
-	K3sCommonFlags `json:",inline"`
+	PublicIP        string   `json:"publicIP"`
+	ServerIP        string   `json:"serverIP"`
+	SANs            []string `json:"SANs"`
+	K3sCommonFlags  `json:",inline"`
+	ExtraServerArgs []string `json:"extraServerArgs"`
 }
 
 type RunAsMode string
@@ -103,31 +106,6 @@ func execK3s(ctx context.Context, args ...string) error {
 	fmt.Printf("executing this shell command: %s\n", cmd.String())
 	if err := cmd.Run(); err != nil {
 		fmt.Printf("[ERROR]: %s", err.Error())
-		return err
-	}
-	return nil
-}
-
-func ExecCmd2(cmdString string, logStr string) error {
-	r := csv.NewReader(strings.NewReader(cmdString))
-	r.Comma = ' '
-	cmdArr, err := r.Read()
-	if err != nil {
-		return err
-	}
-
-	if logStr != "" {
-		fmt.Printf("[#] %s\n", logStr)
-	} else {
-		fmt.Printf("[#] %s\n", strings.Join(cmdArr, " "))
-	}
-
-	cmd := exec.Command(cmdArr[0], cmdArr[1:]...)
-	cmd.Stderr = os.Stderr
-	// cmd.Stdout = os.Stdout
-
-	if err := cmd.Run(); err != nil {
-		fmt.Printf("err occurred: %v\n", err.Error())
 		return err
 	}
 	return nil
@@ -253,17 +231,19 @@ func ExecCmdWithOutput(cmdString string, logStr string) ([]byte, error) {
 func StartPrimaryK3sMaster(ctx context.Context, pmc *PrimaryMasterConfig) error {
 	fmt.Printf("starting as primary master, with configuration: %#v\n", *pmc)
 
+	// "--disable-helm-controller",
+	// "--disable", "traefik",
+	// "--disable", "servicelb",
+
 	argsAndFlags := []string{
 		"server",
 		"--cluster-init",
-		"--disable-helm-controller",
-		"--disable", "traefik",
-		"--disable", "servicelb",
 		"--flannel-backend", "wireguard-native",
 		"--write-kubeconfig-mode", "644",
+		"--flannel-backend", "wireguard-native",
 		"--node-label", fmt.Sprintf("%s=%s", constants.PublicIpKey, pmc.PublicIP),
 		"--node-label", fmt.Sprintf("%s=%s", constants.NodeNameKey, pmc.NodeName),
-		"--tls-san", pmc.PublicIP,
+		// "--tls-san", pmc.PublicIP,
 	}
 
 	for i := range pmc.SANs {
@@ -272,6 +252,8 @@ func StartPrimaryK3sMaster(ctx context.Context, pmc *PrimaryMasterConfig) error 
 
 	argsAndFlags = append(argsAndFlags, pmc.K3sCommonFlags.ParseIntoFlags()...)
 
+	argsAndFlags = append(argsAndFlags, pmc.ExtraServerArgs...)
+
 	return execK3s(ctx, argsAndFlags...)
 }
 
@@ -279,14 +261,11 @@ func StartSecondaryK3sMaster(ctx context.Context, smc *SecondaryMasterConfig) er
 	argsAndFlags := []string{
 		"server",
 		"--server", fmt.Sprintf("https://%s:6443", smc.ServerIP),
-		"--disable-helm-controller",
-		"--disable", "traefik",
-		"--disable", "servicelb",
 		"--flannel-backend", "wireguard-native",
 		"--write-kubeconfig-mode", "644",
 		"--node-label", fmt.Sprintf("%s=%s", constants.PublicIpKey, smc.PublicIP),
 		"--node-label", fmt.Sprintf("%s=%s", constants.NodeNameKey, smc.NodeName),
-		"--tls-san", smc.PublicIP,
+		// "--tls-san", smc.PublicIP,
 	}
 
 	for i := range smc.SANs {
@@ -294,6 +273,8 @@ func StartSecondaryK3sMaster(ctx context.Context, smc *SecondaryMasterConfig) er
 	}
 
 	argsAndFlags = append(argsAndFlags, smc.K3sCommonFlags.ParseIntoFlags()...)
+
+	argsAndFlags = append(argsAndFlags, smc.ExtraServerArgs...)
 
 	return execK3s(ctx, argsAndFlags...)
 }
@@ -319,6 +300,8 @@ func StartK3sAgent(ctx context.Context, agentCfg *AgentConfig) error {
 	}
 
 	argsAndFlags = append(argsAndFlags, agentCfg.K3sCommonFlags.ParseIntoFlags()...)
+
+	argsAndFlags = append(argsAndFlags, agentCfg.ExtraAgentArgs...)
 
 	return execK3s(ctx, argsAndFlags...)
 }
