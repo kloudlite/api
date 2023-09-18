@@ -77,7 +77,7 @@ func (d *domain) UpdateAccountMembership(ctx UserContext, accountName string, me
 	return out.Result, nil
 }
 
-func (d *domain) ListMembershipsForAccount(ctx UserContext, accountName string) ([]*entities.AccountMembership, error) {
+func (d *domain) ListMembershipsForAccount(ctx UserContext, accountName string, role *iamT.Role) ([]*entities.AccountMembership, error) {
 	if err := d.checkAccountAccess(ctx, accountName, ctx.UserId, iamT.ListMembershipsForAccount); err != nil {
 		return nil, err
 	}

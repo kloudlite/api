@@ -4,13 +4,14 @@ package model
 
 import (
 	"kloudlite.io/apps/accounts/internal/entities"
+	"kloudlite.io/apps/iam/types"
 	"kloudlite.io/pkg/repos"
 )
 
 type AccountMembershipIn struct {
-	AccountName string `json:"accountName"`
-	Role        string `json:"role"`
-	UserID      string `json:"userId"`
+	AccountName string     `json:"accountName"`
+	Role        types.Role `json:"role"`
+	UserID      string     `json:"userId"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheck struct {

@@ -3,6 +3,7 @@ package domain_test
 import (
 	"context"
 	"fmt"
+	"kloudlite.io/common"
 
 	"github.com/kloudlite/operator/pkg/kubectl"
 	. "github.com/onsi/ginkgo/v2"
@@ -35,7 +36,7 @@ var _ = Describe("domain.ActivateAccount says", func() {
 	var commsClient *commsMock.CommsClient
 	var accountRepo *reposMock.DbRepo[*entities.Account]
 	var invitationRepo *reposMock.DbRepo[*entities.Invitation]
-	var k8sYamlClient *kubectl.YAMLClient
+	var k8sYamlClient kubectl.YAMLClient
 	var k8sExtendedClient *k8sMock.ExtendedK8sClient
 
 	logger, err := logging.New(&logging.Options{Name: "test"})
@@ -158,7 +159,7 @@ var _ = Describe("domain.CreateAccount() says", func() {
 	var commsClient *commsMock.CommsClient
 	var accountRepo *reposMock.DbRepo[*entities.Account]
 	var invitationRepo *reposMock.DbRepo[*entities.Invitation]
-	var k8sYamlClient *kubectl.YAMLClient
+	var k8sYamlClient kubectl.YAMLClient
 	var k8sExtendedClient *k8sMock.ExtendedK8sClient
 
 	logger, err := logging.New(&logging.Options{Name: "test"})
@@ -247,11 +248,32 @@ var _ = Describe("domain.CreateAccount() says", func() {
 				d := getDomain()
 
 				accountRepo.MockCreate = func(ctx context.Context, data *entities.Account) (*entities.Account, error) {
-					return &entities.Account{}, nil
+					return data, nil
 				}
 
-				_, err := d.CreateAccount(domain.UserContext{}, entities.Account{})
+				iamClient.MockAddMembership = func(ctx context.Context, in *iam.AddMembershipIn, opts ...grpc.CallOption) (*iam.AddMembershipOut, error) {
+					return &iam.AddMembershipOut{Result: true}, nil
+				}
+
+				acc, err := d.CreateAccount(domain.UserContext{
+					Context:   context.TODO(),
+					UserId:    "sample-userid",
+					UserName:  "sample-username",
+					UserEmail: "sample-useremail",
+				}, entities.Account{})
+
 				Expect(err).To(BeNil())
+
+				Expect(acc.CreatedBy).To(BeEquivalentTo(common.CreatedOrUpdatedBy{
+					UserId:    "sample-userid",
+					UserName:  "sample-username",
+					UserEmail: "sample-useremail",
+				}))
+				Expect(acc.LastUpdatedBy).To(BeEquivalentTo(common.CreatedOrUpdatedBy{
+					UserId:    "sample-userid",
+					UserName:  "sample-username",
+					UserEmail: "sample-useremail",
+				}))
 			})
 		})
 	})

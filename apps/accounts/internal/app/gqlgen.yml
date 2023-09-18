@@ -109,3 +109,6 @@ models:
   AccountsCheckNameAvailabilityOutput:
     model: kloudlite.io/apps/accounts/internal/domain.CheckNameAvailabilityOutput
 
+  Kloudlite_io__apps__iam__types_Role:
+    model: kloudlite.io/apps/iam/types.Role
+

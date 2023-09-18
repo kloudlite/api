@@ -123,7 +123,7 @@ func (r *mutationResolver) AccountsRemoveAccountMembership(ctx context.Context, 
 }
 
 // AccountsUpdateAccountMembership is the resolver for the accounts_updateAccountMembership field.
-func (r *mutationResolver) AccountsUpdateAccountMembership(ctx context.Context, accountName string, memberID repos.ID, role string) (bool, error) {
+func (r *mutationResolver) AccountsUpdateAccountMembership(ctx context.Context, accountName string, memberID repos.ID, role iamT.Role) (bool, error) {
 	uc, err := toUserContext(ctx)
 	if err != nil {
 		return false, err
@@ -213,13 +213,13 @@ func (r *queryResolver) AccountsListMembershipsForUser(ctx context.Context) ([]*
 }
 
 // AccountsListMembershipsForAccount is the resolver for the accounts_listMembershipsForAccount field.
-func (r *queryResolver) AccountsListMembershipsForAccount(ctx context.Context, accountName string) ([]*entities.AccountMembership, error) {
+func (r *queryResolver) AccountsListMembershipsForAccount(ctx context.Context, accountName string, role *iamT.Role) ([]*entities.AccountMembership, error) {
 	uc, err := toUserContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	return r.domain.ListMembershipsForAccount(uc, accountName)
+	return r.domain.ListMembershipsForAccount(uc, accountName, nil)
 }
 
 // AccountsGetAccountMembership is the resolver for the accounts_getAccountMembership field.

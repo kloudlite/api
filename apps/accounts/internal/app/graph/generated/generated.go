@@ -21,6 +21,7 @@ import (
 	"kloudlite.io/apps/accounts/internal/app/graph/model"
 	"kloudlite.io/apps/accounts/internal/domain"
 	"kloudlite.io/apps/accounts/internal/entities"
+	"kloudlite.io/apps/iam/types"
 	"kloudlite.io/pkg/repos"
 )
 
@@ -52,7 +53,6 @@ type ResolverRoot interface {
 	Query() QueryResolver
 	User() UserResolver
 	AccountIn() AccountInResolver
-	InvitationIn() InvitationInResolver
 	MetadataIn() MetadataInResolver
 }
 
@@ -163,7 +163,7 @@ type ComplexityRoot struct {
 		AccountsRemoveAccountMembership func(childComplexity int, accountName string, memberID repos.ID) int
 		AccountsResendInviteMail        func(childComplexity int, accountName string, invitationID string) int
 		AccountsUpdateAccount           func(childComplexity int, account entities.Account) int
-		AccountsUpdateAccountMembership func(childComplexity int, accountName string, memberID repos.ID, role string) int
+		AccountsUpdateAccountMembership func(childComplexity int, accountName string, memberID repos.ID, role types.Role) int
 	}
 
 	PageInfo struct {
@@ -180,7 +180,7 @@ type ComplexityRoot struct {
 		AccountsGetInvitation             func(childComplexity int, accountName string, invitationID string) int
 		AccountsListAccounts              func(childComplexity int) int
 		AccountsListInvitations           func(childComplexity int, accountName string) int
-		AccountsListMembershipsForAccount func(childComplexity int, accountName string) int
+		AccountsListMembershipsForAccount func(childComplexity int, accountName string, role *types.Role) int
 		AccountsListMembershipsForUser    func(childComplexity int) int
 		AccountsResyncAccount             func(childComplexity int, accountName string) int
 		__resolve__service                func(childComplexity int) int
@@ -207,7 +207,6 @@ type AccountResolver interface {
 	UpdateTime(ctx context.Context, obj *entities.Account) (string, error)
 }
 type AccountMembershipResolver interface {
-	Role(ctx context.Context, obj *entities.AccountMembership) (string, error)
 	UserID(ctx context.Context, obj *entities.AccountMembership) (string, error)
 	User(ctx context.Context, obj *entities.AccountMembership) (*model.User, error)
 }
@@ -226,8 +225,6 @@ type InvitationResolver interface {
 	ID(ctx context.Context, obj *entities.Invitation) (string, error)
 
 	UpdateTime(ctx context.Context, obj *entities.Invitation) (string, error)
-
-	UserRole(ctx context.Context, obj *entities.Invitation) (string, error)
 }
 type MetadataResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
@@ -248,7 +245,7 @@ type MutationResolver interface {
 	AccountsAcceptInvitation(ctx context.Context, accountName string, inviteToken string) (bool, error)
 	AccountsRejectInvitation(ctx context.Context, accountName string, inviteToken string) (bool, error)
 	AccountsRemoveAccountMembership(ctx context.Context, accountName string, memberID repos.ID) (bool, error)
-	AccountsUpdateAccountMembership(ctx context.Context, accountName string, memberID repos.ID, role string) (bool, error)
+	AccountsUpdateAccountMembership(ctx context.Context, accountName string, memberID repos.ID, role types.Role) (bool, error)
 }
 type QueryResolver interface {
 	AccountsListAccounts(ctx context.Context) ([]*entities.Account, error)
@@ -258,7 +255,7 @@ type QueryResolver interface {
 	AccountsGetInvitation(ctx context.Context, accountName string, invitationID string) (*entities.Invitation, error)
 	AccountsCheckNameAvailability(ctx context.Context, name string) (*domain.CheckNameAvailabilityOutput, error)
 	AccountsListMembershipsForUser(ctx context.Context) ([]*entities.AccountMembership, error)
-	AccountsListMembershipsForAccount(ctx context.Context, accountName string) ([]*entities.AccountMembership, error)
+	AccountsListMembershipsForAccount(ctx context.Context, accountName string, role *types.Role) ([]*entities.AccountMembership, error)
 	AccountsGetAccountMembership(ctx context.Context, accountName string) (*entities.AccountMembership, error)
 }
 type UserResolver interface {
@@ -268,9 +265,6 @@ type UserResolver interface {
 type AccountInResolver interface {
 	Metadata(ctx context.Context, obj *entities.Account, data *v1.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.Account, data map[string]interface{}) error
-}
-type InvitationInResolver interface {
-	UserRole(ctx context.Context, obj *entities.Invitation, data string) error
 }
 type MetadataInResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
@@ -831,7 +825,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.AccountsUpdateAccountMembership(childComplexity, args["accountName"].(string), args["memberId"].(repos.ID), args["role"].(string)), true
+		return e.complexity.Mutation.AccountsUpdateAccountMembership(childComplexity, args["accountName"].(string), args["memberId"].(repos.ID), args["role"].(types.Role)), true
 
 	case "PageInfo.endCursor":
 		if e.complexity.PageInfo.EndCursor == nil {
@@ -938,7 +932,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.AccountsListMembershipsForAccount(childComplexity, args["accountName"].(string)), true
+		return e.complexity.Query.AccountsListMembershipsForAccount(childComplexity, args["accountName"].(string), args["role"].(*types.Role)), true
 
 	case "Query.accounts_listMembershipsForUser":
 		if e.complexity.Query.AccountsListMembershipsForUser == nil {
@@ -1095,7 +1089,7 @@ type Query {
   accounts_checkNameAvailability(name: String!): AccountsCheckNameAvailabilityOutput! @isLoggedInAndVerified
 
   accounts_listMembershipsForUser: [AccountMembership!] @isLoggedInAndVerified
-  accounts_listMembershipsForAccount(accountName: String!): [AccountMembership!] @isLoggedInAndVerified
+  accounts_listMembershipsForAccount(accountName: String!, role: Kloudlite_io__apps__iam__types_Role): [AccountMembership!] @isLoggedInAndVerified
 
   accounts_getAccountMembership(accountName: String!): AccountMembership @isLoggedInAndVerified
 }
@@ -1120,7 +1114,7 @@ type Mutation {
   accounts_rejectInvitation(accountName: String!, inviteToken: String!): Boolean! @isLoggedInAndVerified
 
   accounts_removeAccountMembership(accountName: String!, memberId: ID!): Boolean! @isLoggedInAndVerified
-  accounts_updateAccountMembership(accountName: String!, memberId: ID!, role: String!): Boolean! @isLoggedInAndVerified
+  accounts_updateAccountMembership(accountName: String!, memberId: ID!, role: Kloudlite_io__apps__iam__types_Role!): Boolean! @isLoggedInAndVerified
 }
 
 extend type User @key(fields: "id") {
@@ -1157,13 +1151,13 @@ input AccountIn {
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/accountmembership.graphqls", Input: `type AccountMembership @shareable {
   accountName: String!
-  role: String!
+  role: Kloudlite_io__apps__iam__types_Role!
   userId: String!
 }
 
 input AccountMembershipIn {
   accountName: String!
-  role: String!
+  role: Kloudlite_io__apps__iam__types_Role!
   userId: String!
 }
 
@@ -1217,6 +1211,15 @@ input MetadataIn {
   namespace: String
 }
 
+enum Kloudlite_io__apps__iam__types_Role {
+  account_admin
+  account_member
+  account_owner
+  project_admin
+  project_member
+  resource_owner
+}
+
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/directives.graphqls", Input: `extend schema @link(url: "https://specs.apollo.dev/federation/v2.0", import: ["@key", "@shareable", "@external"])
 
@@ -1238,14 +1241,13 @@ directive @goField(
   updateTime: Date!
   userEmail: String
   userName: String
-  userRole: String!
+  userRole: Kloudlite_io__apps__iam__types_Role!
 }
 
 input InvitationIn {
-  accountName: String!
   userEmail: String
   userName: String
-  userRole: String!
+  userRole: Kloudlite_io__apps__iam__types_Role!
 }
 
 `, BuiltIn: false},
@@ -1548,10 +1550,10 @@ func (ec *executionContext) field_Mutation_accounts_updateAccountMembership_args
 		}
 	}
 	args["memberId"] = arg1
-	var arg2 string
+	var arg2 types.Role
 	if tmp, ok := rawArgs["role"]; ok {
 		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		arg2, err = ec.unmarshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
@@ -1701,6 +1703,15 @@ func (ec *executionContext) field_Query_accounts_listMembershipsForAccount_args(
 		}
 	}
 	args["accountName"] = arg0
+	var arg1 *types.Role
+	if tmp, ok := rawArgs["role"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+		arg1, err = ec.unmarshalOKloudlite_io__apps__iam__types_Role2ᚖkloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["role"] = arg1
 	return args, nil
 }
 
@@ -2406,7 +2417,7 @@ func (ec *executionContext) _AccountMembership_role(ctx context.Context, field g
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.AccountMembership().Role(rctx, obj)
+		return obj.Role, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2418,19 +2429,19 @@ func (ec *executionContext) _AccountMembership_role(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(types.Role)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_AccountMembership_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "AccountMembership",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Kloudlite_io__apps__iam__types_Role does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3762,7 +3773,7 @@ func (ec *executionContext) _Invitation_userRole(ctx context.Context, field grap
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Invitation().UserRole(rctx, obj)
+		return obj.UserRole, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3774,19 +3785,19 @@ func (ec *executionContext) _Invitation_userRole(ctx context.Context, field grap
 		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(types.Role)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Invitation_userRole(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Invitation",
 		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
+		IsMethod:   false,
+		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Kloudlite_io__apps__iam__types_Role does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5144,7 +5155,7 @@ func (ec *executionContext) _Mutation_accounts_updateAccountMembership(ctx conte
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().AccountsUpdateAccountMembership(rctx, fc.Args["accountName"].(string), fc.Args["memberId"].(repos.ID), fc.Args["role"].(string))
+			return ec.resolvers.Mutation().AccountsUpdateAccountMembership(rctx, fc.Args["accountName"].(string), fc.Args["memberId"].(repos.ID), fc.Args["role"].(types.Role))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -5999,7 +6010,7 @@ func (ec *executionContext) _Query_accounts_listMembershipsForAccount(ctx contex
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().AccountsListMembershipsForAccount(rctx, fc.Args["accountName"].(string))
+			return ec.resolvers.Query().AccountsListMembershipsForAccount(rctx, fc.Args["accountName"].(string), fc.Args["role"].(*types.Role))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -8397,7 +8408,7 @@ func (ec *executionContext) unmarshalInputAccountMembershipIn(ctx context.Contex
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
-			it.Role, err = ec.unmarshalNString2string(ctx, v)
+			it.Role, err = ec.unmarshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -8422,21 +8433,13 @@ func (ec *executionContext) unmarshalInputInvitationIn(ctx context.Context, obj 
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"accountName", "userEmail", "userName", "userRole"}
+	fieldsInOrder := [...]string{"userEmail", "userName", "userRole"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "accountName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
-			it.AccountName, err = ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
 		case "userEmail":
 			var err error
 
@@ -8457,11 +8460,8 @@ func (ec *executionContext) unmarshalInputInvitationIn(ctx context.Context, obj 
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userRole"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			it.UserRole, err = ec.unmarshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx, v)
 			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.InvitationIn().UserRole(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -8769,25 +8769,12 @@ func (ec *executionContext) _AccountMembership(ctx context.Context, sel ast.Sele
 				atomic.AddUint32(&invalids, 1)
 			}
 		case "role":
-			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._AccountMembership_role(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._AccountMembership_role(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "userId":
 			field := field
 
@@ -9243,25 +9230,12 @@ func (ec *executionContext) _Invitation(ctx context.Context, sel ast.SelectionSe
 			out.Values[i] = ec._Invitation_userName(ctx, field, obj)
 
 		case "userRole":
-			field := field
 
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Invitation_userRole(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
+			out.Values[i] = ec._Invitation_userRole(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
 			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -10410,6 +10384,22 @@ func (ec *executionContext) unmarshalNInvitationIn2kloudliteᚗioᚋappsᚋaccou
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx context.Context, v interface{}) (types.Role, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := types.Role(tmp)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNKloudlite_io__apps__iam__types_Role2kloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx context.Context, sel ast.SelectionSet, v types.Role) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {
 	res, err := graphql.UnmarshalMap(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -11123,6 +11113,23 @@ func (ec *executionContext) marshalOInvitation2ᚖkloudliteᚗioᚋappsᚋaccoun
 		return graphql.Null
 	}
 	return ec._Invitation(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOKloudlite_io__apps__iam__types_Role2ᚖkloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx context.Context, v interface{}) (*types.Role, error) {
+	if v == nil {
+		return nil, nil
+	}
+	tmp, err := graphql.UnmarshalString(v)
+	res := types.Role(tmp)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOKloudlite_io__apps__iam__types_Role2ᚖkloudliteᚗioᚋappsᚋiamᚋtypesᚐRole(ctx context.Context, sel ast.SelectionSet, v *types.Role) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	res := graphql.MarshalString(string(*v))
+	return res
 }
 
 func (ec *executionContext) unmarshalOMap2map(ctx context.Context, v interface{}) (map[string]interface{}, error) {

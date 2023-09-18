@@ -21,7 +21,7 @@ type Query {
   accounts_checkNameAvailability(name: String!): AccountsCheckNameAvailabilityOutput! @isLoggedInAndVerified
 
   accounts_listMembershipsForUser: [AccountMembership!] @isLoggedInAndVerified
-  accounts_listMembershipsForAccount(accountName: String!): [AccountMembership!] @isLoggedInAndVerified
+  accounts_listMembershipsForAccount(accountName: String!, role: Kloudlite_io__apps__iam__types_Role): [AccountMembership!] @isLoggedInAndVerified
 
   accounts_getAccountMembership(accountName: String!): AccountMembership @isLoggedInAndVerified
 }
@@ -46,7 +46,7 @@ type Mutation {
   accounts_rejectInvitation(accountName: String!, inviteToken: String!): Boolean! @isLoggedInAndVerified
 
   accounts_removeAccountMembership(accountName: String!, memberId: ID!): Boolean! @isLoggedInAndVerified
-  accounts_updateAccountMembership(accountName: String!, memberId: ID!, role: String!): Boolean! @isLoggedInAndVerified
+  accounts_updateAccountMembership(accountName: String!, memberId: ID!, role: Kloudlite_io__apps__iam__types_Role!): Boolean! @isLoggedInAndVerified
 }
 
 extend type User @key(fields: "id") {
