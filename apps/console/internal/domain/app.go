@@ -54,7 +54,6 @@ func (d *domain) GetApp(ctx ConsoleContext, namespace string, name string) (*ent
 }
 
 // mutations
-
 func (d *domain) CreateApp(ctx ConsoleContext, app entities.App) (*entities.App, error) {
 	ws, err := d.findWorkspaceByTargetNs(ctx, app.Namespace)
 	if err != nil {
@@ -143,6 +142,8 @@ func (d *domain) UpdateApp(ctx ConsoleContext, app entities.App) (*entities.App,
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+
+	exApp.DisplayName = app.DisplayName
 
 	exApp.Labels = app.Labels
 	exApp.Annotations = app.Annotations

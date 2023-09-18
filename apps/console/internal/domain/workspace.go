@@ -167,8 +167,16 @@ func (d *domain) updateWorkspace(ctx ConsoleContext, ws entities.Workspace) (*en
 		return nil, errAlreadyMarkedForDeletion("workspace", "", ws.Name)
 	}
 
+	exWs.IncrementRecordVersion()
+	exWs.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
 	exWs.Labels = ws.Labels
 	exWs.Annotations = ws.Annotations
+
 	exWs.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exWs.RecordVersion)
 
 	upWs, err := d.workspaceRepo.UpdateById(ctx, exWs.Id, exWs)

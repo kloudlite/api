@@ -297,16 +297,20 @@ var Module = fx.Module("app",
 							msg := make([]byte, 0xffff)
 							for {
 								n, err := r.Read(msg)
+
 								if err != nil {
 									if err != io.EOF {
 										conn.WriteMessage(fWebsocket.CloseInternalServerErr, []byte(err.Error()))
 										return
 									}
+									if conn.Conn == nil {
+										break
+									}
 									conn.WriteMessage(fWebsocket.TextMessage, msg[:n])
 									return
 								}
 
-								conn.WriteMessage(fWebsocket.TextMessage, msg)
+								conn.WriteMessage(fWebsocket.TextMessage, msg[:n])
 							}
 						}()
 

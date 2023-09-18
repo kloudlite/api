@@ -109,6 +109,7 @@ func (d *domain) UpdateRouter(ctx ConsoleContext, router entities.Router) (*enti
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+	exRouter.DisplayName = router.DisplayName
 
 	exRouter.Annotations = router.Annotations
 	exRouter.Labels = router.Labels

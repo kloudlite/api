@@ -116,6 +116,7 @@ func (d *domain) UpdateManagedResource(ctx ConsoleContext, mres entities.Managed
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+	m.DisplayName = mres.DisplayName
 
 	m.Labels = mres.Labels
 	m.Annotations = mres.Annotations

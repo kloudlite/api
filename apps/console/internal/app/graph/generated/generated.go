@@ -469,18 +469,22 @@ type ComplexityRoot struct {
 	}
 
 	Kloudlite_io__apps__console__internal__entities_MresTemplate struct {
+		APIVersion  func(childComplexity int) int
 		Description func(childComplexity int) int
 		DisplayName func(childComplexity int) int
 		Fields      func(childComplexity int) int
+		Kind        func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Outputs     func(childComplexity int) int
 	}
 
 	Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry struct {
 		Active      func(childComplexity int) int
+		ApiVersion  func(childComplexity int) int
 		Description func(childComplexity int) int
 		DisplayName func(childComplexity int) int
 		Fields      func(childComplexity int) int
+		Kind        func(childComplexity int) int
 		LogoUrl     func(childComplexity int) int
 		Name        func(childComplexity int) int
 		Outputs     func(childComplexity int) int
@@ -2705,6 +2709,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Kloudlite_io__apps__console__internal__entities_InputField.Unit(childComplexity), true
 
+	case "Kloudlite_io__apps__console__internal__entities_MresTemplate.apiVersion":
+		if e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.APIVersion == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.APIVersion(childComplexity), true
+
 	case "Kloudlite_io__apps__console__internal__entities_MresTemplate.description":
 		if e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.Description == nil {
 			break
@@ -2725,6 +2736,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.Fields(childComplexity), true
+
+	case "Kloudlite_io__apps__console__internal__entities_MresTemplate.kind":
+		if e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.Kind == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.Kind(childComplexity), true
 
 	case "Kloudlite_io__apps__console__internal__entities_MresTemplate.name":
 		if e.complexity.Kloudlite_io__apps__console__internal__entities_MresTemplate.Name == nil {
@@ -2747,6 +2765,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.Active(childComplexity), true
 
+	case "Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.apiVersion":
+		if e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.ApiVersion == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.ApiVersion(childComplexity), true
+
 	case "Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.description":
 		if e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.Description == nil {
 			break
@@ -2767,6 +2792,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.Fields(childComplexity), true
+
+	case "Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.kind":
+		if e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.Kind == nil {
+			break
+		}
+
+		return e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.Kind(childComplexity), true
 
 	case "Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.logoUrl":
 		if e.complexity.Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry.LogoUrl == nil {
@@ -5552,7 +5584,7 @@ type Github_com__kloudlite__operator__pkg__raw___json_RawJson @shareable {
 }
 
 type Kloudlite_io__apps__console__internal__entities_InputField @shareable {
-  defaultValue: Any!
+  defaultValue: Any
   inputType: String!
   label: String!
   max: Float
@@ -5563,18 +5595,22 @@ type Kloudlite_io__apps__console__internal__entities_InputField @shareable {
 }
 
 type Kloudlite_io__apps__console__internal__entities_MresTemplate @shareable {
+  apiVersion: String
   description: String!
   displayName: String!
   fields: [Kloudlite_io__apps__console__internal__entities_InputField!]!
+  kind: String
   name: String!
   outputs: [Kloudlite_io__apps__console__internal__entities_OutputField!]!
 }
 
 type Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry @shareable {
   active: Boolean!
+  apiVersion: String
   description: String!
   displayName: String!
   fields: [Kloudlite_io__apps__console__internal__entities_InputField!]!
+  kind: String
   logoUrl: String!
   name: String!
   outputs: [Kloudlite_io__apps__console__internal__entities_OutputField!]!
@@ -18034,14 +18070,11 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Inp
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(interface{})
 	fc.Result = res
-	return ec.marshalNAny2interface(ctx, field.Selections, res)
+	return ec.marshalOAny2interface(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__entities_InputField_defaultValue(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -18353,6 +18386,47 @@ func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__
 	return fc, nil
 }
 
+func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_MresTemplate_apiVersion(ctx context.Context, field graphql.CollectedField, obj *model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__apps__console__internal__entities_MresTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_MresTemplate_description(ctx context.Context, field graphql.CollectedField, obj *model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_description(ctx, field)
 	if err != nil {
@@ -18503,6 +18577,47 @@ func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__
 	return fc, nil
 }
 
+func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_MresTemplate_kind(ctx context.Context, field graphql.CollectedField, obj *model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__apps__console__internal__entities_MresTemplate",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_MresTemplate_name(ctx context.Context, field graphql.CollectedField, obj *model.KloudliteIoAppsConsoleInternalEntitiesMresTemplate) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_name(ctx, field)
 	if err != nil {
@@ -18638,6 +18753,47 @@ func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.MsvcTemplateEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ApiVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -18788,6 +18944,47 @@ func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_InputField_unit(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Kloudlite_io__apps__console__internal__entities_InputField", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_kind(ctx context.Context, field graphql.CollectedField, obj *entities.MsvcTemplateEntry) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -18972,12 +19169,16 @@ func (ec *executionContext) fieldContext_Kloudlite_io__apps__console__internal__
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "apiVersion":
+				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_apiVersion(ctx, field)
 			case "description":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_description(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_displayName(ctx, field)
 			case "fields":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_fields(ctx, field)
+			case "kind":
+				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_kind(ctx, field)
 			case "name":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MresTemplate_name(ctx, field)
 			case "outputs":
@@ -22258,12 +22459,16 @@ func (ec *executionContext) fieldContext_MsvcTemplate_items(ctx context.Context,
 			switch field.Name {
 			case "active":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_active(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_apiVersion(ctx, field)
 			case "description":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_description(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_displayName(ctx, field)
 			case "fields":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_fields(ctx, field)
+			case "kind":
+				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_kind(ctx, field)
 			case "logoUrl":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_logoUrl(ctx, field)
 			case "name":
@@ -29170,12 +29375,16 @@ func (ec *executionContext) fieldContext_Query_core_getManagedServiceTemplate(ct
 			switch field.Name {
 			case "active":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_active(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_apiVersion(ctx, field)
 			case "description":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_description(ctx, field)
 			case "displayName":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_displayName(ctx, field)
 			case "fields":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_fields(ctx, field)
+			case "kind":
+				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_kind(ctx, field)
 			case "logoUrl":
 				return ec.fieldContext_Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_logoUrl(ctx, field)
 			case "name":
@@ -42023,9 +42232,6 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Inp
 
 			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_InputField_defaultValue(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				invalids++
-			}
 		case "inputType":
 
 			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_InputField_inputType(ctx, field, obj)
@@ -42084,6 +42290,10 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Mre
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Kloudlite_io__apps__console__internal__entities_MresTemplate")
+		case "apiVersion":
+
+			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MresTemplate_apiVersion(ctx, field, obj)
+
 		case "description":
 
 			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MresTemplate_description(ctx, field, obj)
@@ -42105,6 +42315,10 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Mre
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "kind":
+
+			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MresTemplate_kind(ctx, field, obj)
+
 		case "name":
 
 			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MresTemplate_name(ctx, field, obj)
@@ -42147,6 +42361,10 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Msv
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&invalids, 1)
 			}
+		case "apiVersion":
+
+			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_apiVersion(ctx, field, obj)
+
 		case "description":
 
 			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_description(ctx, field, obj)
@@ -42181,6 +42399,10 @@ func (ec *executionContext) _Kloudlite_io__apps__console__internal__entities_Msv
 				return innerFunc(ctx)
 
 			})
+		case "kind":
+
+			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_kind(ctx, field, obj)
+
 		case "logoUrl":
 
 			out.Values[i] = ec._Kloudlite_io__apps__console__internal__entities_MsvcTemplateEntry_logoUrl(ctx, field, obj)
@@ -47788,7 +48010,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (any, error) {
+func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -47796,7 +48018,7 @@ func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v inter
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v any) graphql.Marshaler {
+func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

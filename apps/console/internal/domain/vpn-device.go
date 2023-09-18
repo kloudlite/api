@@ -27,19 +27,6 @@ func (d *domain) GetVPNDevice(ctx ConsoleContext, deviceName string) (*entities.
 }
 
 func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error) { // QUERY:
-	// 1. I belong to a project in this account => I should be able to create a VPN device ? How ?
-	// 2. I don't belong to this project => I should not be able to create a VPN device ? How ?
-
-	// d.iamClient.Can(ctx, &iam.CanIn{
-	// 	UserId: string(ctx.UserId),
-	// 	ResourceRefs: []string{
-	// 		iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
-	// 	},
-	// 	Action: string(iamT.CreateVPNDevice),
-	// })
-
-	// TODO(nxtcoder17): implement IAM
-
 	device.EnsureGVK()
 	if err := d.k8sExtendedClient.ValidateStruct(ctx, &device.Device); err != nil {
 		return nil, err
@@ -79,24 +66,25 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 		return nil, err
 	}
 
-	exDevice, err := d.findVPNDevice(ctx, device.Name)
+	currDevice, err := d.findVPNDevice(ctx, device.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	exDevice.IncrementRecordVersion()
-	exDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
+	currDevice.IncrementRecordVersion()
+	currDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+	currDevice.DisplayName = device.DisplayName
 
-	exDevice.Labels = device.Labels
-	exDevice.Annotations = device.Annotations
+	currDevice.Labels = device.Labels
+	currDevice.Annotations = device.Annotations
 
-	exDevice.Spec.Ports = device.Spec.Ports
+	currDevice.Spec.Ports = device.Spec.Ports
 
-	exDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exDevice.RecordVersion)
+	currDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currDevice.RecordVersion)
 
 	nDevice, err := d.vpnDeviceRepo.UpdateById(ctx, device.Id, &device)
 	if err != nil {

@@ -29,7 +29,7 @@ import (
 
 type domain struct {
 	k8sExtendedClient k8s.ExtendedK8sClient
-	k8sYamlClient     *kubectl.YAMLClient
+	k8sYamlClient     kubectl.YAMLClient
 
 	producer redpanda.Producer
 
@@ -38,13 +38,13 @@ type domain struct {
 	projectRepo   repos.DbRepo[*entities.Project]
 	workspaceRepo repos.DbRepo[*entities.Workspace]
 
-	appRepo    repos.DbRepo[*entities.App]
-	configRepo repos.DbRepo[*entities.Config]
-	secretRepo repos.DbRepo[*entities.Secret]
-	routerRepo repos.DbRepo[*entities.Router]
-	msvcRepo   repos.DbRepo[*entities.ManagedService]
-	mresRepo   repos.DbRepo[*entities.ManagedResource]
-	ipsRepo    repos.DbRepo[*entities.ImagePullSecret]
+	appRepo         repos.DbRepo[*entities.App]
+	configRepo      repos.DbRepo[*entities.Config]
+	secretRepo      repos.DbRepo[*entities.Secret]
+	routerRepo      repos.DbRepo[*entities.Router]
+	msvcRepo        repos.DbRepo[*entities.ManagedService]
+	mresRepo        repos.DbRepo[*entities.ManagedResource]
+	pullSecretsRepo repos.DbRepo[*entities.ImagePullSecret]
 
 	vpnDeviceRepo repos.DbRepo[*entities.VPNDevice]
 
@@ -367,7 +367,7 @@ func (d *domain) canReadResourcesInWorkspaceOrEnv(ctx ConsoleContext, projectNam
 
 var Module = fx.Module("domain",
 	fx.Provide(func(
-		k8sYamlClient *kubectl.YAMLClient,
+		k8sYamlClient kubectl.YAMLClient,
 		k8sExtendedClient k8s.ExtendedK8sClient,
 
 		producer redpanda.Producer,
@@ -423,16 +423,16 @@ var Module = fx.Module("domain",
 
 			iamClient: iamClient,
 
-			projectRepo:   projectRepo,
-			workspaceRepo: workspaceRepo,
-			appRepo:       appRepo,
-			configRepo:    configRepo,
-			routerRepo:    routerRepo,
-			secretRepo:    secretRepo,
-			msvcRepo:      msvcRepo,
-			mresRepo:      mresRepo,
-			ipsRepo:       ipsRepo,
-			vpnDeviceRepo: vpnDeviceRepo,
+			projectRepo:     projectRepo,
+			workspaceRepo:   workspaceRepo,
+			appRepo:         appRepo,
+			configRepo:      configRepo,
+			routerRepo:      routerRepo,
+			secretRepo:      secretRepo,
+			msvcRepo:        msvcRepo,
+			mresRepo:        mresRepo,
+			pullSecretsRepo: ipsRepo,
+			vpnDeviceRepo:   vpnDeviceRepo,
 
 			envVars: ev,
 

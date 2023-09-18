@@ -115,6 +115,8 @@ func (d *domain) UpdateSecret(ctx ConsoleContext, secret entities.Secret) (*enti
 		UserEmail: ctx.UserEmail,
 	}
 
+	exSecret.DisplayName = secret.DisplayName
+
 	exSecret.ObjectMeta.Labels = secret.ObjectMeta.Labels
 	exSecret.ObjectMeta.Annotations = secret.ObjectMeta.Annotations
 	exSecret.Data = secret.Data

@@ -565,7 +565,7 @@ type ImagePullSecretPaginatedRecords struct {
 }
 
 type KloudliteIoAppsConsoleInternalEntitiesInputField struct {
-	DefaultValue interface{} `json:"defaultValue"`
+	DefaultValue interface{} `json:"defaultValue,omitempty"`
 	InputType    string      `json:"inputType"`
 	Label        string      `json:"label"`
 	Max          *float64    `json:"max,omitempty"`
@@ -576,9 +576,11 @@ type KloudliteIoAppsConsoleInternalEntitiesInputField struct {
 }
 
 type KloudliteIoAppsConsoleInternalEntitiesMresTemplate struct {
+	APIVersion  *string                                              `json:"apiVersion,omitempty"`
 	Description string                                               `json:"description"`
 	DisplayName string                                               `json:"displayName"`
 	Fields      []*KloudliteIoAppsConsoleInternalEntitiesInputField  `json:"fields"`
+	Kind        *string                                              `json:"kind,omitempty"`
 	Name        string                                               `json:"name"`
 	Outputs     []*KloudliteIoAppsConsoleInternalEntitiesOutputField `json:"outputs"`
 }

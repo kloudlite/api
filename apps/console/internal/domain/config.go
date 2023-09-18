@@ -98,25 +98,27 @@ func (d *domain) UpdateConfig(ctx ConsoleContext, config entities.Config) (*enti
 		return nil, err
 	}
 
-	exConfig, err := d.findConfig(ctx, config.Namespace, config.Name)
+	currConfig, err := d.findConfig(ctx, config.Namespace, config.Name)
 	if err != nil {
 		return nil, err
 	}
 
-	exConfig.IncrementRecordVersion()
+	currConfig.IncrementRecordVersion()
 
-	exConfig.LastUpdatedBy = common.CreatedOrUpdatedBy{
+	currConfig.LastUpdatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+	currConfig.DisplayName = config.DisplayName
 
-	exConfig.ObjectMeta.Labels = config.ObjectMeta.Labels
-	exConfig.ObjectMeta.Annotations = config.ObjectMeta.Annotations
-	exConfig.Data = config.Data
-	exConfig.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exConfig.RecordVersion)
+	currConfig.Labels = config.Labels
+	currConfig.Annotations = config.Annotations
+	currConfig.Data = config.Data
 
-	upConfig, err := d.configRepo.UpdateById(ctx, exConfig.Id, exConfig)
+	currConfig.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currConfig.RecordVersion)
+
+	upConfig, err := d.configRepo.UpdateById(ctx, currConfig.Id, currConfig)
 	if err != nil {
 		return nil, err
 	}

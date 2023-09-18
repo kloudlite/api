@@ -108,6 +108,7 @@ func (d *domain) UpdateManagedService(ctx ConsoleContext, msvc entities.ManagedS
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+	m.DisplayName = msvc.DisplayName
 
 	m.Annotations = msvc.Annotations
 	m.Labels = msvc.Labels

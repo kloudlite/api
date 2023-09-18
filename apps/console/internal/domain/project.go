@@ -243,11 +243,12 @@ func (d *domain) UpdateProject(ctx ConsoleContext, project entities.Project) (*e
 
 	exProject.IncrementRecordVersion()
 
-	project.LastUpdatedBy = common.CreatedOrUpdatedBy{
+	exProject.LastUpdatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+	exProject.DisplayName = project.DisplayName
 
 	exProject.Spec = project.Spec
 	exProject.SyncStatus = t.GenSyncStatus(t.SyncActionApply, exProject.RecordVersion)
