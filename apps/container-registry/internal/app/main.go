@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/gofiber/fiber/v2"
 	"go.uber.org/fx"
@@ -16,7 +17,6 @@ import (
 	"kloudlite.io/constants"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/container_registry"
 	"kloudlite.io/pkg/cache"
-	"kloudlite.io/pkg/harbor"
 	httpServer "kloudlite.io/pkg/http-server"
 	"kloudlite.io/pkg/repos"
 )
@@ -24,25 +24,13 @@ import (
 type AuthCacheClient cache.Client
 
 var Module = fx.Module("app",
-	repos.NewFxMongoRepo[*entities.HarborProject]("project", "prj", entities.HarborProjectIndexes),
-	repos.NewFxMongoRepo[*entities.HarborRobotUser]("robot_users", "rob", entities.HarborRobotUserIndexes),
+	repos.NewFxMongoRepo[*entities.Repository]("repositories", "prj", entities.RepositoryIndexes),
+	repos.NewFxMongoRepo[*entities.Credential]("credentials", "rob", entities.CredentialIndexes),
 
 	fx.Provide(fxRPCServer),
 	fx.Invoke(
 		func(server *grpc.Server, crServer container_registry.ContainerRegistryServer) {
 			container_registry.RegisterContainerRegistryServer(server, crServer)
-		},
-	),
-
-	fx.Provide(
-		func(ev *env.Env) (*harbor.Client, error) {
-			return harbor.NewClient(
-				harbor.Args{
-					HarborAdminUsername: ev.HarborAdminUsername,
-					HarborAdminPassword: ev.HarborAdminPassword,
-					HarborRegistryHost:  ev.HarborRegistryHost,
-				},
-			)
 		},
 	),
 

@@ -2,11 +2,12 @@ package domain
 
 import (
 	"context"
+
 	"kloudlite.io/apps/container-registry/internal/domain/entities"
-	"kloudlite.io/pkg/harbor"
 	"kloudlite.io/pkg/repos"
-	opHarbor "github.com/kloudlite/operator/pkg/harbor"
 )
+
+type Tag string
 
 func NewRegistryContext(parent context.Context, userId repos.ID, accountName string) RegistryContext {
 	return RegistryContext{
@@ -17,18 +18,17 @@ func NewRegistryContext(parent context.Context, userId repos.ID, accountName str
 }
 
 type Domain interface {
-	GetHarborImages(ctx RegistryContext) ([]harbor.Repository, error)
-	GetRepoArtifacts(ctx RegistryContext, repoName string) ([]harbor.Artifact, error)
+	// registry
+	ListRepositories(ctx RegistryContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Repository], error)
+	CreateRepository(ctx RegistryContext, repoName string) error
+	DeleteRepository(ctx RegistryContext, repoName string) error
 
-	// query:harbor robots
-	ListHarborRobots(ctx RegistryContext) ([]*entities.HarborRobotUser, error)
+	// tags
+	ListRepositoryTags(ctx RegistryContext, repoName string, limit *int, after *string) ([]Tag, error)
+	DeleteRepositoryTag(ctx RegistryContext, repoName string, tag Tag) error
 
-	// mutation:harbor robots
-	CreateHarborRobot(ctx RegistryContext, hru *entities.HarborRobotUser) (*entities.HarborRobotUser, error)
-	DeleteHarborRobot(ctx RegistryContext, robotId int) error
-	UpdateHarborRobot(ctx RegistryContext, name string, permissions []opHarbor.Permission) (*entities.HarborRobotUser, error)
-	ReSyncHarborRobot(ctx RegistryContext, name string) error
-
-	// CreateHarborProject(ctx RegistryContext) (*entities.HarborProject, error)
-	GetHarborCredentials(ctx RegistryContext) (*entities.HarborCredentials, error)
+	// credential
+	ListCredentials(ctx RegistryContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Credential], error)
+	CreateCredential(ctx RegistryContext, credName string, username string, access entities.RepoAccess, expiration string) error
+	DeleteCredential(ctx RegistryContext, credName string) error
 }

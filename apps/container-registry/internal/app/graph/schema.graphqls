@@ -5,18 +5,20 @@ directive @canActOnAccount(action: String) on FIELD_DEFINITION
 type Repo {
   id: Int!
   name: String!
-  artifactCount: Int!
-  pullCount: Int!
 }
 
-enum HarborPermission {
-  PushRepository
-  PullRepository
+
+enum RepoAccess {
+  read 
+  read_write
 }
 
-type Artifact {
-  size: Int!
-  tags: [ImageTag!]!
+type RegistryCred{
+  id: Int!
+  name: String!
+  username: String!
+  token: String!
+  access: ReposAccess!
 }
 
 type ImageTag {
@@ -26,10 +28,21 @@ type ImageTag {
   pushedAt: String!
 }
 
+input SearchRepos {
+  text: MatchFilterIn
+}
+
+input  SearchCreds {
+  text: MatchFilterIn
+}
+
+
 type Query {
-  cr_listRepos :[Repo!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
-  cr_listArtifacts(repoName:String!) :[Artifact!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
-  cr_listRobots :[HarborRobotUser!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
+  cr_listRepos(search:SearchRepos, pagination:CursorPaginationIn) :[Repo!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
+  cr_listCreds(search:SearchCreds, pagination:CursorPaginationIn) :[RegistryCred!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
+  # cr_listRepos :[Repo!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
+  # cr_listArtifacts(repoName:String!) :[Artifact!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
+  # cr_listRobots :[HarborRobotUser!]! @hasAccount @isLoggedIn @canActOnAccount(action: "read-container-registry")
 }
 
 type Mutation {
