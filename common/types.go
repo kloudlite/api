@@ -1,6 +1,7 @@
 package common
 
 import (
+	"encoding/json"
 	"kloudlite.io/pkg/repos"
 )
 
@@ -15,4 +16,17 @@ type ResourceMetadata struct {
 
 	CreatedBy     CreatedOrUpdatedBy `json:"createdBy" graphql:"noinput"`
 	LastUpdatedBy CreatedOrUpdatedBy `json:"lastUpdatedBy" graphql:"noinput"`
+}
+
+type ValidationError struct {
+	Label  string
+	Errors []string
+}
+
+func (v ValidationError) Error() string {
+	b, _ := json.Marshal(map[string]any{
+		"label":  v.Label,
+		"errors": v.Errors,
+	})
+	return string(b)
 }

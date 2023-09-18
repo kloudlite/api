@@ -31,7 +31,8 @@ query: |+
     }
   }
 variables:
-  accountName: "{{.accountName}}"
+  # accountName: "{{.accountName}}"
+  accountName: "sample"
 
 ---
 

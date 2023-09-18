@@ -25,6 +25,13 @@ query: |+
             name
             namespace
           }
+          createdBy{
+            userId
+            userName
+          }
+          lastUpdatedBy{
+            userName
+          }
           spec { 
             targetNamespace
           }
@@ -110,14 +117,18 @@ query: |+
     core_updateWorkspace(env: $env) {
       syncStatus {
         action
-        generation
+        recordVersion
         lastSyncedAt
         state
         syncScheduledAt
       }
       status {
         isReady
-        displayVars
+        resources {
+          kind
+          name
+          namespace
+        }
         checks
       }
       kind
@@ -133,6 +144,7 @@ query: |+
   }
 variables:
   env:
+    displayName: This is sample workspace
     metadata:
       name: sample
       namespace: "{{.projectTargetNamespace}}"
