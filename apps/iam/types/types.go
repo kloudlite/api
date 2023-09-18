@@ -10,20 +10,20 @@ const (
 
 	ResourceEnvironment ResourceType = "environment"
 	ResourceWorkspace   ResourceType = "workspace"
-	ResourceVPNDevice   ResourceType = "vpn-device"
+	ResourceVPNDevice   ResourceType = "vpn_device"
 )
 
 type Role string
 
 const (
-	RoleResourceOwner Role = "resource-owner"
+	RoleResourceOwner Role = "resource_owner"
 
-	RoleAccountOwner  Role = "account-owner"
-	RoleAccountAdmin  Role = "account-admin"
-	RoleAccountMember Role = "account-member"
+	RoleAccountOwner  Role = "account_owner"
+	RoleAccountAdmin  Role = "account_admin"
+	RoleAccountMember Role = "account_member"
 
-	RoleProjectAdmin  Role = "project-admin"
-	RoleProjectMember Role = "project-member"
+	RoleProjectAdmin  Role = "project_admin"
+	RoleProjectMember Role = "project_member"
 )
 
 type Action string

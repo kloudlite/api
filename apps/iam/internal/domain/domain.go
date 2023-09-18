@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"fmt"
+	"strings"
 
 	"kloudlite.io/apps/iam/internal/entities"
 	t "kloudlite.io/apps/iam/types"
@@ -18,10 +19,10 @@ type Domain interface {
 
 	GetRoleBinding(ctx context.Context, userId repos.ID, resourceRef string) (*entities.RoleBinding, error)
 
-	ListRoleBindingsForResource(ctx context.Context, resourceRef string) ([]*entities.RoleBinding, error)
-	ListRoleBindingsForUser(ctx context.Context, userId repos.ID) ([]*entities.RoleBinding, error)
+	ListRoleBindingsForResource(ctx context.Context, resourceType t.ResourceType, resourceRef string) ([]*entities.RoleBinding, error)
+	ListRoleBindingsForUser(ctx context.Context, userId repos.ID, resourceType *t.ResourceType) ([]*entities.RoleBinding, error)
 
-	Can(ctx context.Context, userId repos.ID, resourceRef string, action t.Action) (bool, error)
+	Can(ctx context.Context, userId repos.ID, resourceRefs []string, action t.Action) (bool, error)
 }
 
 type domain struct {
@@ -30,6 +31,22 @@ type domain struct {
 }
 
 func (d domain) AddRoleBinding(ctx context.Context, rb entities.RoleBinding) (*entities.RoleBinding, error) {
+	if err := rb.Validate(); err != nil {
+		return nil, err
+	}
+
+	exists, err := d.rbRepo.FindOne(ctx, repos.Filter{
+		"user_id":      rb.UserId,
+		"resource_ref": rb.ResourceRef,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	if exists != nil {
+		return nil, fmt.Errorf("role binding for (userId=%s, ResourceRef=%s) already exists", rb.UserId, rb.ResourceRef)
+	}
+
 	nrb, err := d.rbRepo.Create(ctx, &rb)
 	if err != nil {
 		return nil, err
@@ -56,6 +73,10 @@ func (s domain) findRoleBinding(ctx context.Context, userId repos.ID, resourceRe
 }
 
 func (d domain) RemoveRoleBinding(ctx context.Context, userId repos.ID, resourceRef string) error {
+	if userId == "" || resourceRef == "" {
+		return fmt.Errorf("userId or resourceRef is empty, rejecting")
+	}
+
 	rb, err := d.findRoleBinding(ctx, userId, resourceRef)
 	if err != nil {
 		return err
@@ -75,7 +96,7 @@ func (d domain) RemoveRoleBindingsForResource(ctx context.Context, resourceRef s
 	return nil
 }
 
-// UpdateMembership updates only the role for a user on an already specified resource_ref
+// UpdateRoleBinding updates only the role for a user on an already specified resource_ref
 func (d domain) UpdateRoleBinding(ctx context.Context, rb entities.RoleBinding) (*entities.RoleBinding, error) {
 	currRb, err := d.rbRepo.FindOne(
 		ctx, repos.Filter{
@@ -99,19 +120,61 @@ func (d domain) GetRoleBinding(ctx context.Context, userId repos.ID, resourceRef
 	return d.findRoleBinding(ctx, userId, resourceRef)
 }
 
-func (d domain) ListRoleBindingsForResource(ctx context.Context, resourceRef string) ([]*entities.RoleBinding, error) {
-	//TODO implement me
-	panic("implement me")
+func (d domain) ListRoleBindingsForResource(ctx context.Context, resourceType t.ResourceType, resourceRef string) ([]*entities.RoleBinding, error) {
+	filter := repos.Filter{
+		"resource_type": resourceType,
+		"resource_ref":  resourceRef,
+	}
+
+	return d.rbRepo.Find(ctx, repos.Query{Filter: filter})
 }
 
-func (d domain) ListRoleBindingsForUser(ctx context.Context, userId repos.ID) ([]*entities.RoleBinding, error) {
-	//TODO implement me
-	panic("implement me")
+func (d domain) ListRoleBindingsForUser(ctx context.Context, userId repos.ID, resourceType *t.ResourceType) ([]*entities.RoleBinding, error) {
+	filter := repos.Filter{
+		"user_id": userId,
+	}
+
+	if resourceType != nil {
+		filter["resource_type"] = *resourceType
+	}
+
+	return d.rbRepo.Find(ctx, repos.Query{Filter: filter})
 }
 
-func (d domain) Can(ctx context.Context, userId repos.ID, resourceRef string, action t.Action) (bool, error) {
-	//TODO implement me
-	panic("implement me")
+func (d domain) Can(ctx context.Context, userId repos.ID, resourceRefs []string, action t.Action) (bool, error) {
+	if d.roleBindingMap == nil {
+		return false, UnAuthorizedError{debugMsg: "action-role-binding map is empty"}
+	}
+
+	if strings.HasPrefix(string(userId), "sys-user") {
+		return true, nil
+	}
+
+	rbs, err := d.rbRepo.Find(
+		ctx, repos.Query{Filter: repos.Filter{
+			"resource_ref": map[string]any{"$in": resourceRefs},
+			"user_id":      userId,
+		}},
+	)
+
+	if err != nil {
+		return false, UnAuthorizedError{debugMsg: "db repository find() call error", parentErr: err}
+	}
+
+	if rbs == nil {
+		return false, UnAuthorizedError{debugMsg: fmt.Sprintf("no rolebinding found for (userId=%s, resourceRefs=%s)", userId, strings.Join(resourceRefs, ","))}
+	}
+
+	for i := range rbs {
+		// 2nd loop, but very small length (always < #roles), so it's not exactly O(n^2), much like XO(n)
+		for _, role := range d.roleBindingMap[action] {
+			if role == rbs[i].Role {
+				return true, nil
+			}
+		}
+	}
+
+	return false, UnAuthorizedError{debugMsg: fmt.Sprintf("no role bindings allow user %q to perform action %q on resource %q", userId, action, resourceRefs)}
 }
 
 func NewDomain(rbRepo repos.DbRepo[*entities.RoleBinding], roleBindingMap map[t.Action][]t.Role) Domain {

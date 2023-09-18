@@ -2,16 +2,39 @@ package entities
 
 import (
 	t "kloudlite.io/apps/iam/types"
+	"kloudlite.io/common"
 	"kloudlite.io/pkg/repos"
 )
 
 type RoleBinding struct {
 	repos.BaseEntity `json:",inline" bson:",inline"`
-	UserId           string         `json:"user_id" bson:"user_id"`
-	ResourceType     t.ResourceType `json:"resource_type" bson:"resource_type"`
-	ResourceRef      string         `json:"resource_ref" bson:"resource_ref"`
-	Role             t.Role         `json:"role" bson:"role"`
-	// Accepted         bool           `json:"accepted" bson:"accepted"`
+	UserId           string         `json:"user_id"`
+	ResourceType     t.ResourceType `json:"resource_type"`
+	ResourceRef      string         `json:"resource_ref"`
+	Role             t.Role         `json:"role"`
+}
+
+func (rb *RoleBinding) Validate() error {
+	verr := common.ValidationError{Label: "role_binding"}
+
+	if rb.UserId == "" {
+		verr.Errors = append(verr.Errors, "user_id is required")
+	}
+	if rb.ResourceType == "" {
+		verr.Errors = append(verr.Errors, "resource_type is required")
+	}
+	if rb.ResourceRef == "" {
+		verr.Errors = append(verr.Errors, "resource_ref is required")
+	}
+	if rb.Role == "" {
+		verr.Errors = append(verr.Errors, "role is required")
+	}
+
+	if len(verr.Errors) > 0 {
+		return verr
+	}
+
+	return nil
 }
 
 var RoleBindingIndices = []repos.IndexField{
