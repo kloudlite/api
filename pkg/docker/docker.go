@@ -9,6 +9,7 @@ import (
 type DockerCli interface {
 	ListRepositoryTags(repoName string, limit *int, after *string) ([]string, error)
 	DeleteRepositoryTag(repoName string, tag string) error
+	DeleteRepository(repoName string) error
 }
 
 type DockerCliImpl struct {
@@ -82,6 +83,27 @@ func (d *DockerCliImpl) DeleteRepositoryTag(repoName string, tag string) error {
 	}
 	defer resp.Body.Close()
 
+	return nil
+}
+
+func (d *DockerCliImpl) DeleteRepository(repoName string) error {
+	for true {
+		s, err := d.ListRepositoryTags(repoName, nil, nil)
+		if err != nil {
+			return err
+		}
+		if len(s) == 0 {
+			break
+		}
+		for _, tag := range s {
+			if err := d.DeleteRepositoryTag(repoName, tag); err != nil {
+				return err
+			}
+
+			break
+		}
+
+	}
 	return nil
 }
 
