@@ -4,13 +4,11 @@ import (
 	"kloudlite.io/pkg/repos"
 )
 
-type RepoAccess string
-
 type Repository struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
-	Name        string `json:"name" graphql:"noinput"`
+	Name        string `json:"name"`
 }
 
 var RepositoryIndexes = []repos.IndexField{

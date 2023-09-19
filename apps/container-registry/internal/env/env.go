@@ -15,9 +15,11 @@ type Env struct {
 	AuthRedisHosts    string `env:"AUTH_REDIS_HOSTS" required:"true"`
 	AuthRedisUserName string `env:"AUTH_REDIS_USERNAME" required:"true"`
 	AuthRedisPassword string `env:"AUTH_REDIS_PASSWORD" required:"true"`
-	DBUri             string `env:"DB_URI" required:"true"`
-	DBName            string `env:"DB_NAME" required:"true"`
-	GRPCPort          uint16 `env:"GRPC_PORT" required:"true"`
+
+	DBUri       string `env:"DB_URI" required:"true"`
+	DBName      string `env:"DB_NAME" required:"true"`
+	GRPCPort    uint16 `env:"GRPC_PORT" required:"true"`
+	IAMGrpcAddr string `env:"IAM_GRPC_ADDR" required:"true"`
 }
 
 func LoadEnv() (*Env, error) {

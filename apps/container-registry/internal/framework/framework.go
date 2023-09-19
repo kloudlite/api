@@ -35,11 +35,16 @@ var Module = fx.Module("framework",
 		return &fm{ev}
 	}),
 
+	fx.Provide(func(ev *env.Env) (app.IAMGrpcClient, error) {
+		return rpc.NewGrpcClient(ev.IAMGrpcAddr)
+	}),
+
 	mongoDb.NewMongoClientFx[*fm](),
 
 	fx.Provide(func(ev *env.Env) app.AuthCacheClient {
 		return cache.NewRedisClient(ev.AuthRedisHosts, ev.AuthRedisUserName, ev.AuthRedisPassword, ev.AuthRedisPrefix)
 	}),
+
 	cache.FxLifeCycle[app.AuthCacheClient](),
 
 	rpc.NewGrpcServerFx[*fm](),

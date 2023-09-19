@@ -9,6 +9,8 @@ import (
 	"go.uber.org/fx"
 	"kloudlite.io/apps/container-registry/internal/domain/entities"
 	"kloudlite.io/apps/container-registry/internal/env"
+	iamT "kloudlite.io/apps/iam/types"
+	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
 	"kloudlite.io/pkg/docker"
 	"kloudlite.io/pkg/repos"
 )
@@ -17,6 +19,7 @@ type Impl struct {
 	repositoryRepo repos.DbRepo[*entities.Repository]
 	credentialRepo repos.DbRepo[*entities.Credential]
 	dockerCli      docker.DockerCli
+	iamClient      iam.IAMClient
 }
 
 func getExpirationTime(expiration string) (time.Time, error) {
@@ -53,18 +56,18 @@ func getExpirationTime(expiration string) (time.Time, error) {
 }
 
 // CreateCredential implements Domain.
-func (d *Impl) CreateCredential(ctx RegistryContext, credName string, username string, access entities.RepoAccess, expiration string) error {
+func (d *Impl) CreateCredential(ctx RegistryContext, credential entities.Credential) error {
 
-	i, err := getExpirationTime(expiration)
+	i, err := getExpirationTime(fmt.Sprintf("%d%s", credential.Expiration.Value, credential.Expiration.Unit))
 	if err != nil {
 		return err
 	}
 
 	_, err = d.credentialRepo.Create(ctx, &entities.Credential{
-		Name:        credName,
-		Token:       admin.GenerateToken(username, ctx.accountName, string(access), i),
-		Access:      access,
-		AccountName: ctx.accountName,
+		Name:        credential.Name,
+		Token:       admin.GenerateToken(credential.UserName, ctx.AccountName, string(credential.Access), i),
+		Access:      credential.Access,
+		AccountName: ctx.AccountName,
 	})
 	if err != nil {
 		return err
@@ -75,44 +78,183 @@ func (d *Impl) CreateCredential(ctx RegistryContext, credName string, username s
 // ListCredentials implements Domain.
 func (d *Impl) ListCredentials(ctx RegistryContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Credential], error) {
 
-	filter := repos.Filter{"accountName": ctx.accountName}
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.GetAccount),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !co.Status {
+		return nil, fmt.Errorf("unauthorized to get credentials")
+	}
+
+	filter := repos.Filter{"accountName": ctx.AccountName}
 	return d.credentialRepo.FindPaginated(ctx, d.credentialRepo.MergeMatchFilters(filter, search), pagination)
 }
 
 // DeleteCredential implements Domain.
 func (d *Impl) DeleteCredential(ctx RegistryContext, credName string) error {
+
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.UpdateAccount),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if !co.Status {
+		return fmt.Errorf("unauthorized to delete credentials")
+	}
+
 	return d.credentialRepo.DeleteMany(ctx, repos.Filter{"name": credName})
 }
 
 // CreateRepository implements Domain.
 func (d *Impl) CreateRepository(ctx RegistryContext, repoName string) error {
-	_, err := d.repositoryRepo.Create(ctx, &entities.Repository{
+
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.UpdateAccount),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if !co.Status {
+		return fmt.Errorf("unauthorized to create repository")
+	}
+
+	_, err = d.repositoryRepo.Create(ctx, &entities.Repository{
 		Name:        repoName,
-		AccountName: ctx.accountName,
+		AccountName: ctx.AccountName,
 	})
 	return err
 }
 
 // DeleteRepository implements Domain.
 func (d *Impl) DeleteRepository(ctx RegistryContext, repoName string) error {
-	return d.repositoryRepo.DeleteMany(ctx, repos.Filter{"name": repoName})
+
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.UpdateAccount),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if !co.Status {
+		return fmt.Errorf("unauthorized to delete repository")
+	}
+
+	if _, err = d.repositoryRepo.FindOne(ctx, repos.Filter{
+		"name":        repoName,
+		"accountName": ctx.AccountName,
+	}); err != nil {
+		return err
+	}
+
+	if err := d.dockerCli.DeleteRepository(repoName); err != nil {
+		return err
+	}
+
+	return d.repositoryRepo.DeleteOne(ctx, repos.Filter{"name": repoName, "accountName": ctx.AccountName})
 }
 
 // DeleteRepositoryTag implements Domain.
 func (d *Impl) DeleteRepositoryTag(ctx RegistryContext, repoName string, tag Tag) error {
+
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.UpdateAccount),
+	})
+
+	if err != nil {
+		return err
+	}
+
+	if !co.Status {
+		return fmt.Errorf("unauthorized to delete repository tag")
+	}
+
 	return d.dockerCli.DeleteRepositoryTag(repoName, string(tag))
 }
 
 // ListRepositories implements Domain.
 func (d *Impl) ListRepositories(ctx RegistryContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Repository], error) {
 
-	filter := repos.Filter{"accountName": ctx.accountName}
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.GetAccount),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !co.Status {
+		return nil, fmt.Errorf("unauthorized to list repositories")
+	}
+
+	filter := repos.Filter{"accountName": ctx.AccountName}
 	return d.repositoryRepo.FindPaginated(ctx, d.credentialRepo.MergeMatchFilters(filter, search), pagination)
 }
 
 // ListRepositoryTags implements Domain.
 func (d *Impl) ListRepositoryTags(ctx RegistryContext, repoName string, limit *int, after *string) ([]Tag, error) {
-	s, err := d.dockerCli.ListRepositoryTags(repoName, limit, after)
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(iamT.GetAccount),
+	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if !co.Status {
+		return nil, fmt.Errorf("unauthorized to list repository tags")
+	}
+
+	if repoName == "" {
+		return nil, fmt.Errorf("invalid repository name")
+	}
+
+	if _, err = d.repositoryRepo.FindOne(ctx, repos.Filter{
+		"name":        repoName,
+		"accountName": ctx.AccountName,
+	}); err != nil {
+		return nil, err
+	}
+
+	// repoName is of the form <account-name>/<repo-name>
+	s, err := d.dockerCli.ListRepositoryTags(fmt.Sprintf("%s/%s", ctx.AccountName, repoName), limit, after)
 	if err != nil {
 		return nil, err
 	}
@@ -131,11 +273,13 @@ var Module = fx.Module(
 		func(e *env.Env,
 			repositoryRepo repos.DbRepo[*entities.Repository],
 			credentialRepo repos.DbRepo[*entities.Credential],
+			iamClient iam.IAMClient,
 		) (Domain, error) {
 			return &Impl{
 				repositoryRepo: repositoryRepo,
 				credentialRepo: credentialRepo,
 				dockerCli:      docker.NewDockerCli(e.RegistryUrl),
+				iamClient:      iamClient,
 			}, nil
 		}),
 )
