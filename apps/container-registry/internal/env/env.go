@@ -19,7 +19,6 @@ type Env struct {
 
 	DBUri       string `env:"DB_URI" required:"true"`
 	DBName      string `env:"DB_NAME" required:"true"`
-	GRPCPort    uint16 `env:"GRPC_PORT" required:"true"`
 	IAMGrpcAddr string `env:"IAM_GRPC_ADDR" required:"true"`
 }
 

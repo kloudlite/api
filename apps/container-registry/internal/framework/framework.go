@@ -29,10 +29,6 @@ func (fm *fm) GetMongoConfig() (url string, dbName string) {
 	return fm.ev.DBUri, fm.ev.DBName
 }
 
-func (fm *fm) GetGRPCPort() uint16 {
-	return fm.ev.GRPCPort
-}
-
 var Module = fx.Module("framework",
 	fx.Provide(func(ev *env.Env) *fm {
 		return &fm{ev}
@@ -49,8 +45,6 @@ var Module = fx.Module("framework",
 	}),
 
 	cache.FxLifeCycle[app.AuthCacheClient](),
-
-	rpc.NewGrpcServerFx[*fm](),
 
 	app.Module,
 	httpServer.NewHttpServerFx[*fm](),

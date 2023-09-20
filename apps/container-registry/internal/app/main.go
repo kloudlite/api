@@ -31,8 +31,6 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.Credential]("credentials", "cred", entities.CredentialIndexes),
 	repos.NewFxMongoRepo[*entities.Tag]("tags", "tag", entities.TagIndexes),
 
-	fx.Provide(fxRPCServer),
-
 	fx.Provide(
 		func(conn IAMGrpcClient) iam.IAMClient {
 			return iam.NewIAMClient(conn)
