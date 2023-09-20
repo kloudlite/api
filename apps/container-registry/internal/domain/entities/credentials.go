@@ -42,4 +42,11 @@ var CredentialIndexes = []repos.IndexField{
 		},
 		Unique: true,
 	},
+	{
+		Field: []repos.IndexKey{
+			{Key: "username", Value: repos.IndexAsc},
+			{Key: "accountName", Value: repos.IndexAsc},
+		},
+		Unique: true,
+	},
 }

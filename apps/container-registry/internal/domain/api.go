@@ -7,8 +7,6 @@ import (
 	"kloudlite.io/pkg/repos"
 )
 
-type Tag string
-
 func NewRegistryContext(parent context.Context, userId repos.ID, accountName string) RegistryContext {
 	return RegistryContext{
 		Context:     parent,
@@ -24,11 +22,13 @@ type Domain interface {
 	DeleteRepository(ctx RegistryContext, repoName string) error
 
 	// tags
-	ListRepositoryTags(ctx RegistryContext, repoName string, limit *int, after *string) ([]Tag, error)
-	DeleteRepositoryTag(ctx RegistryContext, repoName string, tag Tag) error
+	ListRepositoryTags(ctx RegistryContext, repoName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Tag], error)
+	DeleteRepositoryTag(ctx RegistryContext, repoName string, tagName string) error
 
 	// credential
 	ListCredentials(ctx RegistryContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Credential], error)
 	CreateCredential(ctx RegistryContext, credential entities.Credential) error
 	DeleteCredential(ctx RegistryContext, credName string) error
+
+	ProcessEvents(ctx context.Context, events []entities.Event) error
 }

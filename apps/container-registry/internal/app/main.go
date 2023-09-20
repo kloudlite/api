@@ -3,6 +3,7 @@ package app
 import (
 	"context"
 	"fmt"
+	"log"
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/gofiber/fiber/v2"
@@ -23,10 +24,12 @@ import (
 
 type AuthCacheClient cache.Client
 type IAMGrpcClient grpc.Client
+type EventListnerHttpServer *fiber.App
 
 var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.Repository]("repositories", "prj", entities.RepositoryIndexes),
-	repos.NewFxMongoRepo[*entities.Credential]("credentials", "rob", entities.CredentialIndexes),
+	repos.NewFxMongoRepo[*entities.Credential]("credentials", "cred", entities.CredentialIndexes),
+	repos.NewFxMongoRepo[*entities.Tag]("tags", "tag", entities.TagIndexes),
 
 	fx.Provide(fxRPCServer),
 
@@ -89,5 +92,30 @@ var Module = fx.Module("app",
 			)
 		},
 	),
+
+	fx.Invoke(func(eventListnerHttpServer EventListnerHttpServer, d domain.Domain) {
+		var a *fiber.App
+		a = eventListnerHttpServer
+
+		a.Post("/*", func(c *fiber.Ctx) error {
+
+			ctx := c.Context()
+
+			fmt.Println(string(c.Body()))
+
+			var eventMessage entities.EventMessage
+			if err := c.BodyParser(&eventMessage); err != nil {
+				return c.SendStatus(400)
+			}
+
+			if err := d.ProcessEvents(ctx, eventMessage.Events); err != nil {
+				log.Println(err)
+				return c.SendStatus(400)
+			}
+
+			return c.SendStatus(200)
+		})
+	}),
+
 	domain.Module,
 )

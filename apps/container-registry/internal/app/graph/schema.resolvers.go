@@ -9,8 +9,8 @@ import (
 
 	generated1 "kloudlite.io/apps/container-registry/internal/app/graph/generated"
 	"kloudlite.io/apps/container-registry/internal/app/graph/model"
-	"kloudlite.io/apps/container-registry/internal/domain"
 	"kloudlite.io/apps/container-registry/internal/domain/entities"
+	fn "kloudlite.io/pkg/functions"
 	"kloudlite.io/pkg/repos"
 )
 
@@ -73,7 +73,7 @@ func (r *mutationResolver) CrDeleteTag(ctx context.Context, repoName string, tag
 	if err != nil {
 		return false, err
 	}
-	if err := r.Domain.DeleteRepositoryTag(cc, repoName, domain.Tag(tagName)); err != nil {
+	if err := r.Domain.DeleteRepositoryTag(cc, repoName, tagName); err != nil {
 		return false, err
 	}
 	return true, nil
@@ -93,7 +93,7 @@ func (r *queryResolver) CrListRepos(ctx context.Context, search *model.SearchRep
 		}
 	}
 
-	rr, err := r.Domain.ListRepositories(cc, filter, *pagination)
+	rr, err := r.Domain.ListRepositories(cc, filter, fn.DefaultIfNil(pagination, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, err
 	}
@@ -115,6 +115,7 @@ func (r *queryResolver) CrListRepos(ctx context.Context, search *model.SearchRep
 			StartCursor:     &rr.PageInfo.StartCursor,
 			EndCursor:       &rr.PageInfo.EndCursor,
 		},
+		TotalCount: len(records),
 	}
 
 	return m, nil
@@ -134,7 +135,7 @@ func (r *queryResolver) CrListCreds(ctx context.Context, search *model.SearchCre
 		}
 	}
 
-	rr, err := r.Domain.ListCredentials(cc, filter, *pagination)
+	rr, err := r.Domain.ListCredentials(cc, filter, fn.DefaultIfNil(pagination, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, err
 	}
@@ -156,29 +157,51 @@ func (r *queryResolver) CrListCreds(ctx context.Context, search *model.SearchCre
 			StartCursor:     &rr.PageInfo.StartCursor,
 			EndCursor:       &rr.PageInfo.EndCursor,
 		},
+		TotalCount: len(records),
 	}
 
 	return m, nil
 }
 
 // CrListTags is the resolver for the cr_listTags field.
-func (r *queryResolver) CrListTags(ctx context.Context, repoName string, limit *int, after *string) ([]string, error) {
+func (r *queryResolver) CrListTags(ctx context.Context, repoName string, search *model.SearchRepos, pagination *repos.CursorPagination) (*model.TagPaginatedRecords, error) {
 	cc, err := toRegistryContext(ctx)
 	if err != nil {
 		return nil, err
 	}
 
-	t, err := r.Domain.ListRepositoryTags(cc, repoName, limit, after)
+	filter := map[string]repos.MatchFilter{}
+	if search != nil {
+		if search.Text != nil {
+			filter["name"] = *search.Text
+		}
+	}
+
+	rr, err := r.Domain.ListRepositoryTags(cc, repoName, filter, fn.DefaultIfNil(pagination, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, err
 	}
 
-	res := make([]string, len(t))
+	records := make([]*model.TagEdge, len(rr.Edges))
 
-	for i, v := range t {
-		res[i] = string(v)
+	for i := range rr.Edges {
+		records[i] = &model.TagEdge{
+			Node:   rr.Edges[i].Node,
+			Cursor: rr.Edges[i].Cursor,
+		}
 	}
-	return res, nil
+	m := &model.TagPaginatedRecords{
+		Edges: records,
+		PageInfo: &model.PageInfo{
+			HasNextPage:     rr.PageInfo.HasNextPage,
+			HasPreviousPage: rr.PageInfo.HasPrevPage,
+			StartCursor:     &rr.PageInfo.StartCursor,
+			EndCursor:       &rr.PageInfo.EndCursor,
+		},
+		TotalCount: len(records),
+	}
+
+	return m, nil
 }
 
 // Mutation returns generated1.MutationResolver implementation.

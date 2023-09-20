@@ -1,9 +1,11 @@
 package domain
 
 import (
+	"context"
 	"fmt"
-	"strconv"
-	"time"
+	"log"
+	"regexp"
+	"strings"
 
 	"github.com/kloudlite/container-registry-authorizer/admin"
 	"go.uber.org/fx"
@@ -11,63 +13,33 @@ import (
 	"kloudlite.io/apps/container-registry/internal/env"
 	iamT "kloudlite.io/apps/iam/types"
 	"kloudlite.io/grpc-interfaces/kloudlite.io/rpc/iam"
-	"kloudlite.io/pkg/docker"
+	"kloudlite.io/pkg/logging"
 	"kloudlite.io/pkg/repos"
 )
 
 type Impl struct {
 	repositoryRepo repos.DbRepo[*entities.Repository]
 	credentialRepo repos.DbRepo[*entities.Credential]
-	dockerCli      docker.DockerCli
+	tagRepo        repos.DbRepo[*entities.Tag]
 	iamClient      iam.IAMClient
-}
-
-func getExpirationTime(expiration string) (time.Time, error) {
-	now := time.Now()
-
-	// Split the string into the numeric and duration type parts
-	length := len(expiration)
-	if length < 2 {
-		return now, fmt.Errorf("invalid expiration format")
-	}
-
-	durationValStr := expiration[:length-1]
-	durationVal, err := strconv.Atoi(durationValStr)
-	if err != nil {
-		return now, fmt.Errorf("invalid duration value: %v", err)
-	}
-
-	durationType := expiration[length-1]
-
-	switch durationType {
-	case 'h':
-		return now.Add(time.Duration(durationVal) * time.Hour), nil
-	case 'd':
-		return now.AddDate(0, 0, durationVal), nil
-	case 'w':
-		return now.AddDate(0, 0, durationVal*7), nil
-	case 'm':
-		return now.AddDate(0, durationVal, 0), nil
-	case 'y':
-		return now.AddDate(durationVal, 0, 0), nil
-	default:
-		return now, fmt.Errorf("invalid duration type: %v", durationType)
-	}
+	envs           *env.Env
+	logger         logging.Logger
 }
 
 // CreateCredential implements Domain.
 func (d *Impl) CreateCredential(ctx RegistryContext, credential entities.Credential) error {
 
-	i, err := getExpirationTime(fmt.Sprintf("%d%s", credential.Expiration.Value, credential.Expiration.Unit))
+	i, err := admin.GetExpirationTime(fmt.Sprintf("%d%s", credential.Expiration.Value, credential.Expiration.Unit))
 	if err != nil {
 		return err
 	}
 
 	_, err = d.credentialRepo.Create(ctx, &entities.Credential{
 		Name:        credential.Name,
-		Token:       admin.GenerateToken(credential.UserName, ctx.AccountName, string(credential.Access), i),
+		Token:       admin.GenerateToken(credential.UserName, ctx.AccountName, string(credential.Access), i, d.envs.RegistrySecretKey),
 		Access:      credential.Access,
 		AccountName: ctx.AccountName,
+		UserName:    credential.UserName,
 	})
 	if err != nil {
 		return err
@@ -172,15 +144,11 @@ func (d *Impl) DeleteRepository(ctx RegistryContext, repoName string) error {
 		return err
 	}
 
-	if err := d.dockerCli.DeleteRepository(repoName); err != nil {
-		return err
-	}
-
 	return d.repositoryRepo.DeleteOne(ctx, repos.Filter{"name": repoName, "accountName": ctx.AccountName})
 }
 
 // DeleteRepositoryTag implements Domain.
-func (d *Impl) DeleteRepositoryTag(ctx RegistryContext, repoName string, tag Tag) error {
+func (d *Impl) DeleteRepositoryTag(ctx RegistryContext, repoName string, tagName string) error {
 
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(ctx.UserId),
@@ -198,7 +166,7 @@ func (d *Impl) DeleteRepositoryTag(ctx RegistryContext, repoName string, tag Tag
 		return fmt.Errorf("unauthorized to delete repository tag")
 	}
 
-	return d.dockerCli.DeleteRepositoryTag(repoName, string(tag))
+	return nil
 }
 
 // ListRepositories implements Domain.
@@ -221,11 +189,11 @@ func (d *Impl) ListRepositories(ctx RegistryContext, search map[string]repos.Mat
 	}
 
 	filter := repos.Filter{"accountName": ctx.AccountName}
-	return d.repositoryRepo.FindPaginated(ctx, d.credentialRepo.MergeMatchFilters(filter, search), pagination)
+	return d.repositoryRepo.FindPaginated(ctx, d.repositoryRepo.MergeMatchFilters(filter, search), pagination)
 }
 
 // ListRepositoryTags implements Domain.
-func (d *Impl) ListRepositoryTags(ctx RegistryContext, repoName string, limit *int, after *string) ([]Tag, error) {
+func (d *Impl) ListRepositoryTags(ctx RegistryContext, repoName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Tag], error) {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(ctx.UserId),
 		ResourceRefs: []string{
@@ -242,44 +210,95 @@ func (d *Impl) ListRepositoryTags(ctx RegistryContext, repoName string, limit *i
 		return nil, fmt.Errorf("unauthorized to list repository tags")
 	}
 
-	if repoName == "" {
-		return nil, fmt.Errorf("invalid repository name")
-	}
+	filter := repos.Filter{"accountName": ctx.AccountName, "repository": repoName}
+	return d.tagRepo.FindPaginated(ctx, d.tagRepo.MergeMatchFilters(filter, search), pagination)
+}
 
-	if _, err = d.repositoryRepo.FindOne(ctx, repos.Filter{
-		"name":        repoName,
-		"accountName": ctx.AccountName,
-	}); err != nil {
-		return nil, err
-	}
+// ListRepositoryTags implements Domain.
 
-	// repoName is of the form <account-name>/<repo-name>
-	s, err := d.dockerCli.ListRepositoryTags(fmt.Sprintf("%s/%s", ctx.AccountName, repoName), limit, after)
+func (d *Impl) ProcessEvents(ctx context.Context, events []entities.Event) error {
+
+	pattern := `.*[^\/]\/.*\/.*$`
+
+	re, err := regexp.Compile(pattern)
 	if err != nil {
-		return nil, err
+		log.Println(err)
 	}
 
-	res := make([]Tag, len(s))
-	for i, v := range s {
-		res[i] = Tag(v)
-	}
+	for _, e := range events {
 
-	return res, nil
+		r := e.Target.Repository
+
+		if !re.MatchString(r) {
+			return fmt.Errorf("invalid repository name %s", r)
+		}
+
+		rArray := strings.Split(r, "/")
+
+		accountName := rArray[0]
+		repoName := strings.Join(rArray[1:], "/")
+		tag := e.Target.Tag
+
+		switch e.Request.Method {
+		case "PUT":
+
+			if _, err := d.repositoryRepo.Upsert(ctx, repos.Filter{
+				"name":        repoName,
+				"accountName": accountName,
+			}, &entities.Repository{
+				AccountName: accountName,
+				Name:        repoName,
+			}); err != nil {
+				d.logger.Errorf(err)
+				return err
+			}
+
+			if _, err = d.tagRepo.Upsert(ctx, repos.Filter{
+				"name":        tag,
+				"repository":  repoName,
+				"accountName": accountName,
+			}, &entities.Tag{
+				Name:        tag,
+				AccountName: accountName,
+				Repository:  repoName,
+				Actor:       e.Actor.Name,
+				Digest:      e.Target.Digest,
+				Size:        e.Target.Size,
+				Length:      e.Target.Length,
+				MediaType:   e.Target.MediaType,
+				URL:         e.Target.URL,
+				References:  e.Target.References,
+			}); err != nil {
+				d.logger.Errorf(err)
+				return err
+			}
+
+		default:
+			log.Println("unhandled method", e.Request.Method)
+			return nil
+		}
+
+	}
+	return nil
 }
 
 var Module = fx.Module(
 	"domain",
 	fx.Provide(
 		func(e *env.Env,
+			logger logging.Logger,
 			repositoryRepo repos.DbRepo[*entities.Repository],
 			credentialRepo repos.DbRepo[*entities.Credential],
+			tagRepo repos.DbRepo[*entities.Tag],
 			iamClient iam.IAMClient,
 		) (Domain, error) {
 			return &Impl{
 				repositoryRepo: repositoryRepo,
 				credentialRepo: credentialRepo,
-				dockerCli:      docker.NewDockerCli(e.RegistryUrl),
 				iamClient:      iamClient,
+				envs:           e,
+				tagRepo:        tagRepo,
+				logger:         logger,
 			}, nil
 		}),
 )

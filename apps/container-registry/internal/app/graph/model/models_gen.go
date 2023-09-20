@@ -32,6 +32,12 @@ type KloudliteIoAppsContainerRegistryInternalDomainEntitiesExpirationIn struct {
 	Value int                                                                  `json:"value"`
 }
 
+type KloudliteIoAppsContainerRegistryInternalDomainEntitiesRepoReference struct {
+	Digest    string `json:"digest"`
+	MediaType string `json:"mediaType"`
+	Size      int    `json:"size"`
+}
+
 type PageInfo struct {
 	EndCursor       *string `json:"endCursor,omitempty"`
 	HasNextPage     *bool   `json:"hasNextPage,omitempty"`
@@ -56,6 +62,17 @@ type SearchCreds struct {
 
 type SearchRepos struct {
 	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type TagEdge struct {
+	Cursor string        `json:"cursor"`
+	Node   *entities.Tag `json:"node"`
+}
+
+type TagPaginatedRecords struct {
+	Edges      []*TagEdge `json:"edges"`
+	PageInfo   *PageInfo  `json:"pageInfo"`
+	TotalCount int        `json:"totalCount"`
 }
 
 type KloudliteIoAppsContainerRegistryInternalDomainEntitiesExpirationUnit string

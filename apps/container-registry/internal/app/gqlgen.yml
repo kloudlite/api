@@ -69,6 +69,10 @@ models:
       - kloudlite.io/apps/container-registry/internal/domain/entities.Repository
   RepositoryIn: *repository
 
+  Tag: &tag
+    model:
+      - kloudlite.io/apps/container-registry/internal/domain/entities.Tag
+
   MatchFilter: &match-filter-model
     model: kloudlite.io/pkg/repos.MatchFilter
   MatchFilterIn: *match-filter-model

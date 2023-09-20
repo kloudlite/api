@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"kloudlite.io/apps/container-registry/internal/app/graph/generated"
@@ -14,16 +15,28 @@ import (
 
 // CreationTime is the resolver for the creationTime field.
 func (r *repositoryResolver) CreationTime(ctx context.Context, obj *entities.Repository) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("resource is nil")
+	}
+
 	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
 // ID is the resolver for the id field.
 func (r *repositoryResolver) ID(ctx context.Context, obj *entities.Repository) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("resource is nil")
+	}
+
 	return string(obj.Id), nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *repositoryResolver) UpdateTime(ctx context.Context, obj *entities.Repository) (string, error) {
+	if obj == nil {
+		return "", fmt.Errorf("resource is nil")
+	}
+
 	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 

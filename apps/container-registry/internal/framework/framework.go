@@ -1,12 +1,15 @@
 package framework
 
 import (
+	"context"
+
 	"go.uber.org/fx"
 	app "kloudlite.io/apps/container-registry/internal/app"
 	"kloudlite.io/apps/container-registry/internal/env"
 	"kloudlite.io/pkg/cache"
 	rpc "kloudlite.io/pkg/grpc"
 	httpServer "kloudlite.io/pkg/http-server"
+	"kloudlite.io/pkg/logging"
 	mongoDb "kloudlite.io/pkg/repos"
 )
 
@@ -51,4 +54,17 @@ var Module = fx.Module("framework",
 
 	app.Module,
 	httpServer.NewHttpServerFx[*fm](),
+	fx.Provide(func() app.EventListnerHttpServer {
+		return httpServer.NewHttpServerV2[app.EventListnerHttpServer](httpServer.HttpServerV2Opts{})
+	}),
+	fx.Invoke(func(lf fx.Lifecycle, ev *env.Env, server app.EventListnerHttpServer, logger logging.Logger) {
+		lf.Append(fx.Hook{
+			OnStart: func(ctx context.Context) error {
+				return httpServer.StartHttpServerV2(ctx, server, ev.RegistryEventListnerPort, logger.WithKV("server-name", "registry-event-listner"))
+			},
+			OnStop: func(context.Context) error {
+				return httpServer.StopHttpServerV2(server)
+			},
+		})
+	}),
 )
