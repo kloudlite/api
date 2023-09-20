@@ -101,8 +101,6 @@ var Module = fx.Module("app",
 
 			ctx := c.Context()
 
-			fmt.Println(string(c.Body()))
-
 			var eventMessage entities.EventMessage
 			if err := c.BodyParser(&eventMessage); err != nil {
 				return c.SendStatus(400)
