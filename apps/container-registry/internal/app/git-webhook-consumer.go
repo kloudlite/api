@@ -203,6 +203,9 @@ func invokeProcessGitWebhooks(d domain.Domain, consumer kafka.Consumer, producer
 				ObjectMeta: metav1.ObjectMeta{
 					Name:      uniqueKey,
 					Namespace: envs.JobBuildNamespace,
+					Annotations: map[string]string{
+						"kloudlite.io/build-run.name": uniqueKey,
+					},
 				},
 				StringData: map[string]string{
 					"registry-admin": domain.KL_ADMIN,
