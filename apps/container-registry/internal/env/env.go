@@ -41,7 +41,7 @@ type Env struct {
 
 	KafkaBrokers string `env:"KAFKA_BROKERS" required:"true"`
 
-	KafkaGitWebhookTopics string `env:"KAFKA_GIT_WEBHOOK_TOPICS" required:"true"`
+	KafkaGitWebhookTopics string `env:"KAFKA_GIT_WEBHOOK_TOPIC" required:"true"`
 	KafkaConsumerGroup    string `env:"KAFKA_CONSUMER_GROUP" required:"true"`
 
 	GitlabWebhookAuthzSecret string `env:"GITLAB_WEBHOOK_AUTHZ_SECRET" required:"true"`

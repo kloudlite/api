@@ -186,7 +186,7 @@ func invokeProcessGitWebhooks(d domain.Domain, consumer kafka.Consumer, producer
 				},
 				Resource: build.Spec.Resource,
 				CredentialsRef: common_types.SecretRef{
-					Name:      uniqueKey,
+					Name:      fmt.Sprint("build-run-", uniqueKey),
 					Namespace: envs.JobBuildNamespace,
 				},
 			})
@@ -201,7 +201,7 @@ func invokeProcessGitWebhooks(d domain.Domain, consumer kafka.Consumer, producer
 					APIVersion: "v1",
 				},
 				ObjectMeta: metav1.ObjectMeta{
-					Name:      uniqueKey,
+					Name:      fmt.Sprint("build-run-", uniqueKey),
 					Namespace: envs.JobBuildNamespace,
 					Annotations: map[string]string{
 						"kloudlite.io/build-run.name": uniqueKey,
