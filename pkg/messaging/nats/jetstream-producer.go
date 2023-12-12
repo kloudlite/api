@@ -6,11 +6,13 @@ import (
 	"time"
 
 	"github.com/nats-io/nats.go/jetstream"
+	"helm.sh/helm/v3/pkg/cli"
 	"kloudlite.io/pkg/messaging/types"
+	"kloudlite.io/pkg/nats"
 )
 
 type JetstreamProducer struct {
-	js jetstream.JetStream
+	client *nats.JetstreamClient
 }
 
 // Stop implements messaging.Producer.
@@ -50,4 +52,10 @@ func (c *JetstreamProducer) ProduceAsync(ctx context.Context, msg types.ProduceM
 func (c *JetstreamProducer) Produce(ctx context.Context, msg types.ProduceMsg) error {
 	_, err := c.js.Publish(ctx, msg.Subject, msg.Payload)
 	return err
+}
+
+func NewJetstreamProducer(jc *nats.JetstreamClient) *JetstreamProducer {
+	return &JetstreamProducer{
+		client: jc,
+	}
 }
