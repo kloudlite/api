@@ -483,7 +483,7 @@ var Module = fx.Module("app",
 	),
 
 	fx.Provide(func(jc *nats.JetstreamClient, logger logging.Logger) domain.MessageDispatcher {
-		return jc.CreateProducer()
+		return msg_nats.NewJetstreamProducer(jc)
 	}),
 
 	fx.Invoke(func(lf fx.Lifecycle, producer domain.MessageDispatcher) {
@@ -511,16 +511,9 @@ var Module = fx.Module("app",
 	fx.Provide(func(jc *nats.JetstreamClient, ev *env.Env, logger logging.Logger) (ErrorOnApplyConsumer, error) {
 		topic := common.GetPlatformClusterMessagingTopic("*", "*", common.KloudliteConsole, common.EventErrorOnApply)
 		consumerName := "console:error-on-apply"
-		// ci, err := jc.GetConsumerInfo(context.TODO(), ev.NatsStream, consumerName)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		//
-		// logger.Infof("consumer [%s] has %d pending acks, %d pending messages", consumerName, ci.NumAckPending, ci.NumPending)
-
-		return jc.CreateConsumer(context.TODO(), nats.JetstreamConsumerArgs{
+		return msg_nats.NewJetstreamConsumer(context.TODO(), jc, msg_nats.JetstreamConsumerArgs{
 			Stream: ev.NatsStream,
-			ConsumerConfig: nats.ConsumerConfig{
+			ConsumerConfig: msg_nats.ConsumerConfig{
 				Name:           consumerName,
 				Durable:        consumerName,
 				Description:    "this consumer reads message from a subject dedicated to errors, that occurred when the resource was applied at the agent",
@@ -545,16 +538,9 @@ var Module = fx.Module("app",
 		topic := common.GetPlatformClusterMessagingTopic("*", "*", common.KloudliteConsole, common.EventResourceUpdate)
 
 		consumerName := "console:resource-updates"
-		// ci, err := jc.GetConsumerInfo(context.TODO(), ev.NatsStream, consumerName)
-		// if err != nil {
-		// 	return nil, err
-		// }
-		//
-		// logger.Infof("consumer [%s] has %d pending acks, %d pending messages", consumerName, ci.NumAckPending, ci.NumPending)
-
-		return jc.CreateConsumer(context.TODO(), nats.JetstreamConsumerArgs{
+		return msg_nats.NewJetstreamConsumer(context.TODO(), jc, msg_nats.JetstreamConsumerArgs{
 			Stream: ev.NatsStream,
-			ConsumerConfig: nats.ConsumerConfig{
+			ConsumerConfig: msg_nats.ConsumerConfig{
 				Name:           consumerName,
 				Durable:        consumerName,
 				Description:    "this consumer reads message from a subject dedicated to console resource updates from tenant clusters",

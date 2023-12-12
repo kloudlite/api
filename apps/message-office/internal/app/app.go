@@ -4,11 +4,11 @@ import (
 	"context"
 
 	message_office_internal "github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal"
-	"github.com/kloudlite/api/pkg/messaging/nats"
+	msg_nats "github.com/kloudlite/api/pkg/messaging/nats"
 	"github.com/kloudlite/api/pkg/repos"
 	"github.com/kloudlite/operator/grpc-interfaces/grpc/messages"
 	"go.uber.org/fx"
-
+	"github.com/kloudlite/api/pkg/nats"
 	"github.com/kloudlite/api/apps/message-office/internal/app/graph"
 	"github.com/kloudlite/api/apps/message-office/internal/app/graph/generated"
 	proto_rpc "github.com/kloudlite/api/apps/message-office/internal/app/proto-rpc"
@@ -33,7 +33,7 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*domain.AccessToken]("acc_tokens", "acct", domain.AccessTokenIndexes),
 
 	fx.Provide(func(jsc *nats.JetstreamClient, logger logging.Logger) UpdatesProducer {
-		return jsc.CreateProducer()
+		return msg_nats.NewJetstreamProducer(jsc)
 	}),
 
 	fx.Invoke(func(lf fx.Lifecycle, producer UpdatesProducer) {
