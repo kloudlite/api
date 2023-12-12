@@ -185,22 +185,6 @@ func (g *grpcServer) GetAccessToken(ctx context.Context, msg *messages.GetCluste
 	}, nil
 }
 
-// func (g *grpcServer) createConsumer2(ev *env.Env, topicName string) (messaging.Consumer, error) {
-// 	clogger := g.logger.WithKV("message-office-consumer")
-//
-// 	consumer, err := messaging.NewConsumer(g.kafkaConn, fmt.Sprintf("message-office-%s", topicName), []string{topicName}, kafka.ConsumerOpts{Logger: clogger})
-// 	if err != nil {
-// 		return nil, err
-// 	}
-//
-// 	if err := consumer.Ping(context.TODO()); err != nil {
-// 		return nil, err
-// 	}
-//
-// 	clogger.Infof("successfully connected to kafka brokers")
-// 	return consumer, nil
-// }
-
 func (g *grpcServer) SendActions(request *messages.Empty, server messages.MessageDispatchService_SendActionsServer) error {
 	accountName, clusterName, err := validateAndDecodeFromGrpcContext(server.Context(), g.ev.TokenHashingSecret)
 	if err != nil {
