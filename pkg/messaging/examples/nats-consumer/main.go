@@ -6,9 +6,9 @@ import (
 	"log"
 	"os"
 
-	"kloudlite.io/pkg/messaging"
-	"kloudlite.io/pkg/messaging/nats"
-	"kloudlite.io/pkg/messaging/types"
+	"github.com/kloudlite/api/pkg/messaging"
+	"github.com/kloudlite/api/pkg/messaging/nats"
+	"github.com/kloudlite/api/pkg/messaging/types"
 )
 
 func main() {
