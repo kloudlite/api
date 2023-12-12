@@ -5,8 +5,6 @@ import (
 	"fmt"
 	"time"
 
-	"github.com/nats-io/nats.go/jetstream"
-	"helm.sh/helm/v3/pkg/cli"
 	"kloudlite.io/pkg/messaging/types"
 	"kloudlite.io/pkg/nats"
 )
@@ -21,7 +19,7 @@ func (c *JetstreamProducer) Stop(ctx context.Context) error {
 	defer cf()
 
 	select {
-	case <-c.js.PublishAsyncComplete():
+	case <-c.client.Jetstream.PublishAsyncComplete():
 		fmt.Println("All Messages Acknowledged")
 	case <-sctx.Done():
 		fmt.Println("server is dying, cannot wait more, Message Acknowledgement Timeout")
@@ -31,7 +29,7 @@ func (c *JetstreamProducer) Stop(ctx context.Context) error {
 
 // ProduceAsync implements messaging.Producer.
 func (c *JetstreamProducer) ProduceAsync(ctx context.Context, msg types.ProduceMsg) error {
-	pa, err := c.js.PublishAsync(msg.Subject, msg.Payload)
+	pa, err := c.client.Jetstream.PublishAsync(msg.Subject, msg.Payload)
 	if err != nil {
 		return err
 	}
@@ -50,7 +48,7 @@ func (c *JetstreamProducer) ProduceAsync(ctx context.Context, msg types.ProduceM
 
 // Produce implements messaging.Producer.
 func (c *JetstreamProducer) Produce(ctx context.Context, msg types.ProduceMsg) error {
-	_, err := c.js.Publish(ctx, msg.Subject, msg.Payload)
+	_, err := c.client.Jetstream.Publish(ctx, msg.Subject, msg.Payload)
 	return err
 }
 
