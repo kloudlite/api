@@ -88,5 +88,5 @@ jobs:
       - name: Build & Push Image
         run: |
           cd .github/workflows/container-build
-          task go-container-build Image="ghcr.io/kloudlite/platform/apis/${{matrix.app}}-internal:${{env.BRANCH_TAG}}"
-          task go-container-build Image="ghcr.io/kloudlite/platform/apis/${{matrix.app}}-internal:commit-${GITHUB_SHA}"
+          task go-container-build Image="ghcr.io/kloudlite/platform/apis/${{matrix.app}}:${{env.BRANCH_TAG}}"
+          task go-container-build Image="ghcr.io/kloudlite/platform/apis/${{matrix.app}}:commit-${GITHUB_SHA}"
