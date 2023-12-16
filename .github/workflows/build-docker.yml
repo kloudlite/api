@@ -1,6 +1,9 @@
 name: build-docker-images
 
 on:
+  repository_dispatch:
+    types:
+      - webhook
   push:
     paths:
       - "apps/**/**"
