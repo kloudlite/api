@@ -91,7 +91,7 @@ jobs:
       - name: Build & Push Image
         if: startsWith(github.ref, 'refs/heads/release')
         run: |
-          original_string=${{GITHUB_REF}}
+          original_string=$GITHUB_REF
           version_string="v${original_string#release-}-nightly"
           
           cd .github/workflows/container-build
