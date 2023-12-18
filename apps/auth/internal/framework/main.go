@@ -3,6 +3,7 @@ package framework
 import (
 	"context"
 	"fmt"
+	"github.com/kloudlite/api/apps/auth/internal/domain"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/cache"
 	"github.com/kloudlite/api/pkg/nats"
@@ -74,6 +75,13 @@ var Module fx.Option = fx.Module(
 		func(ev *env.Env, jc *nats.JetstreamClient) (cache.Repo[*common.AuthSession], error) {
 			cxt := context.TODO()
 			return cache.NewNatsKVRepo[*common.AuthSession](cxt, ev.SessionKVBucket, jc)
+		},
+	),
+
+	fx.Provide(
+		func(ev *env.Env, jc *nats.JetstreamClient) (cache.Repo[*domain.VerifyToken], error) {
+			cxt := context.TODO()
+			return cache.NewNatsKVRepo[*domain.VerifyToken](cxt, ev.SessionKVBucket, jc)
 		},
 	),
 
