@@ -678,12 +678,12 @@ func (e EnvOrWorkspaceOrProjectIDType) String() string {
 func (e *EnvOrWorkspaceOrProjectIDType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = EnvOrWorkspaceOrProjectIDType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid EnvOrWorkspaceOrProjectIdType", str)
+		return errors.Newf("%s is not a valid EnvOrWorkspaceOrProjectIdType", str)
 	}
 	return nil
 }
@@ -719,12 +719,12 @@ func (e GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) String() string {
 func (e *GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret", str)
+		return errors.Newf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret", str)
 	}
 	return nil
 }
@@ -772,12 +772,12 @@ func (e K8sIoAPICoreV1SecretType) String() string {
 func (e *K8sIoAPICoreV1SecretType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoAPICoreV1SecretType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__SecretType", str)
+		return errors.Newf("%s is not a valid K8s__io___api___core___v1__SecretType", str)
 	}
 	return nil
 }
@@ -815,12 +815,12 @@ func (e K8sIoAPICoreV1TaintEffect) String() string {
 func (e *K8sIoAPICoreV1TaintEffect) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoAPICoreV1TaintEffect(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__TaintEffect", str)
+		return errors.Newf("%s is not a valid K8s__io___api___core___v1__TaintEffect", str)
 	}
 	return nil
 }
@@ -856,12 +856,12 @@ func (e K8sIoAPICoreV1TolerationOperator) String() string {
 func (e *K8sIoAPICoreV1TolerationOperator) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoAPICoreV1TolerationOperator(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__TolerationOperator", str)
+		return errors.Newf("%s is not a valid K8s__io___api___core___v1__TolerationOperator", str)
 	}
 	return nil
 }
@@ -897,12 +897,12 @@ func (e ProjectIDType) String() string {
 func (e *ProjectIDType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = ProjectIDType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid ProjectIdType", str)
+		return errors.Newf("%s is not a valid ProjectIdType", str)
 	}
 	return nil
 }
@@ -942,12 +942,12 @@ func (e WorkspaceOrEnvIDType) String() string {
 func (e *WorkspaceOrEnvIDType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = WorkspaceOrEnvIDType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid WorkspaceOrEnvIdType", str)
+		return errors.Newf("%s is not a valid WorkspaceOrEnvIdType", str)
 	}
 	return nil
 }

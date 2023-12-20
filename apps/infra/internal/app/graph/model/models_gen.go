@@ -701,12 +701,12 @@ func (e GithubComKloudliteOperatorApisClustersV1AWSPoolType) String() string {
 func (e *GithubComKloudliteOperatorApisClustersV1AWSPoolType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = GithubComKloudliteOperatorApisClustersV1AWSPoolType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___clusters___v1__AWSPoolType", str)
+		return errors.Newf("%s is not a valid Github__com___kloudlite___operator___apis___clusters___v1__AWSPoolType", str)
 	}
 	return nil
 }
@@ -742,12 +742,12 @@ func (e GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode) Str
 func (e *GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = GithubComKloudliteOperatorApisClustersV1ClusterSpecAvailabilityMode(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___clusters___v1__ClusterSpecAvailabilityMode", str)
+		return errors.Newf("%s is not a valid Github__com___kloudlite___operator___apis___clusters___v1__ClusterSpecAvailabilityMode", str)
 	}
 	return nil
 }
@@ -787,12 +787,12 @@ func (e GithubComKloudliteOperatorApisCommonTypesCloudProvider) String() string 
 func (e *GithubComKloudliteOperatorApisCommonTypesCloudProvider) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = GithubComKloudliteOperatorApisCommonTypesCloudProvider(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___common____types__CloudProvider", str)
+		return errors.Newf("%s is not a valid Github__com___kloudlite___operator___apis___common____types__CloudProvider", str)
 	}
 	return nil
 }
@@ -830,12 +830,12 @@ func (e K8sIoAPICoreV1ConditionStatus) String() string {
 func (e *K8sIoAPICoreV1ConditionStatus) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoAPICoreV1ConditionStatus(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__ConditionStatus", str)
+		return errors.Newf("%s is not a valid K8s__io___api___core___v1__ConditionStatus", str)
 	}
 	return nil
 }
@@ -871,12 +871,12 @@ func (e K8sIoAPICoreV1PersistentVolumeClaimConditionType) String() string {
 func (e *K8sIoAPICoreV1PersistentVolumeClaimConditionType) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoAPICoreV1PersistentVolumeClaimConditionType(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__PersistentVolumeClaimConditionType", str)
+		return errors.Newf("%s is not a valid K8s__io___api___core___v1__PersistentVolumeClaimConditionType", str)
 	}
 	return nil
 }
@@ -914,12 +914,12 @@ func (e K8sIoAPICoreV1PersistentVolumeClaimPhase) String() string {
 func (e *K8sIoAPICoreV1PersistentVolumeClaimPhase) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoAPICoreV1PersistentVolumeClaimPhase(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__PersistentVolumeClaimPhase", str)
+		return errors.Newf("%s is not a valid K8s__io___api___core___v1__PersistentVolumeClaimPhase", str)
 	}
 	return nil
 }
@@ -957,12 +957,12 @@ func (e K8sIoApimachineryPkgAPIResourceFormat) String() string {
 func (e *K8sIoApimachineryPkgAPIResourceFormat) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoApimachineryPkgAPIResourceFormat(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___apimachinery___pkg___api___resource__Format", str)
+		return errors.Newf("%s is not a valid K8s__io___apimachinery___pkg___api___resource__Format", str)
 	}
 	return nil
 }
@@ -1002,12 +1002,12 @@ func (e K8sIoApimachineryPkgApisMetaV1LabelSelectorOperator) String() string {
 func (e *K8sIoApimachineryPkgApisMetaV1LabelSelectorOperator) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return fmt.Errorf("enums must be strings")
+		return errors.Newf("enums must be strings")
 	}
 
 	*e = K8sIoApimachineryPkgApisMetaV1LabelSelectorOperator(str)
 	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorOperator", str)
+		return errors.Newf("%s is not a valid K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorOperator", str)
 	}
 	return nil
 }
