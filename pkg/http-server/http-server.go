@@ -6,6 +6,7 @@ import (
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/vektah/gqlparser/v2/gqlerror"
 	"github.com/ztrue/tracerr"
+
 	"net/http"
 	"strings"
 	"time"
@@ -62,7 +63,7 @@ func (s *server) Listen(addr string) error {
 }
 
 type ServerArgs struct {
-	IsDev			bool
+	IsDev            bool
 	Logger           logging.Logger
 	CorsAllowOrigins *string
 }
@@ -106,7 +107,6 @@ func NewServer(args ServerArgs) Server {
 	return &server{App: app, Logger: args.Logger, isDev: args.IsDev}
 }
 
-
 func (s *server) SetupGraphqlServer(es graphql.ExecutableSchema, middlewares ...fiber.Handler) {
 	s.All("/explorer", func(c *fiber.Ctx) error {
 		return c.Redirect(fmt.Sprintf("https://studio.apollographql.com/sandbox/explorer?endpoint=http://%s/query", c.Context().LocalAddr()))
@@ -117,7 +117,7 @@ func (s *server) SetupGraphqlServer(es graphql.ExecutableSchema, middlewares ...
 		s.Use(v)
 	}
 	gqlServer.SetErrorPresenter(func(ctx context.Context, err error) *gqlerror.Error {
-		if s.isDev{
+		if s.isDev {
 			tracerr.Print(err.(*gqlerror.Error).Unwrap())
 		}
 		return gqlerror.Errorf(err.Error())
