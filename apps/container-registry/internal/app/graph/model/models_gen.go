@@ -4,7 +4,6 @@ package model
 
 import (
 	"fmt"
-	"github.com/kloudlite/api/pkg/errors"
 	"io"
 	"strconv"
 
@@ -276,12 +275,12 @@ func (e KloudliteIoAppsContainerRegistryInternalDomainEntitiesBuildStatus) Strin
 func (e *KloudliteIoAppsContainerRegistryInternalDomainEntitiesBuildStatus) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return errors.Newf("enums must be strings")
+		return fmt.Errorf("enums must be strings")
 	}
 
 	*e = KloudliteIoAppsContainerRegistryInternalDomainEntitiesBuildStatus(str)
 	if !e.IsValid() {
-		return errors.Newf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__BuildStatus", str)
+		return fmt.Errorf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__BuildStatus", str)
 	}
 	return nil
 }
@@ -323,12 +322,12 @@ func (e KloudliteIoAppsContainerRegistryInternalDomainEntitiesExpirationUnit) St
 func (e *KloudliteIoAppsContainerRegistryInternalDomainEntitiesExpirationUnit) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return errors.Newf("enums must be strings")
+		return fmt.Errorf("enums must be strings")
 	}
 
 	*e = KloudliteIoAppsContainerRegistryInternalDomainEntitiesExpirationUnit(str)
 	if !e.IsValid() {
-		return errors.Newf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__ExpirationUnit", str)
+		return fmt.Errorf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__ExpirationUnit", str)
 	}
 	return nil
 }
@@ -364,12 +363,12 @@ func (e KloudliteIoAppsContainerRegistryInternalDomainEntitiesGitProvider) Strin
 func (e *KloudliteIoAppsContainerRegistryInternalDomainEntitiesGitProvider) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return errors.Newf("enums must be strings")
+		return fmt.Errorf("enums must be strings")
 	}
 
 	*e = KloudliteIoAppsContainerRegistryInternalDomainEntitiesGitProvider(str)
 	if !e.IsValid() {
-		return errors.Newf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__GitProvider", str)
+		return fmt.Errorf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__GitProvider", str)
 	}
 	return nil
 }
@@ -405,12 +404,12 @@ func (e KloudliteIoAppsContainerRegistryInternalDomainEntitiesRepoAccess) String
 func (e *KloudliteIoAppsContainerRegistryInternalDomainEntitiesRepoAccess) UnmarshalGQL(v interface{}) error {
 	str, ok := v.(string)
 	if !ok {
-		return errors.Newf("enums must be strings")
+		return fmt.Errorf("enums must be strings")
 	}
 
 	*e = KloudliteIoAppsContainerRegistryInternalDomainEntitiesRepoAccess(str)
 	if !e.IsValid() {
-		return errors.Newf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__RepoAccess", str)
+		return fmt.Errorf("%s is not a valid Kloudlite__io___apps___container____registry___internal___domain___entities__RepoAccess", str)
 	}
 	return nil
 }
