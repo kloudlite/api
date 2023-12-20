@@ -47,6 +47,7 @@ require (
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/onsi/gomega v1.27.10
 	github.com/stretchr/testify v1.8.4
+	github.com/ztrue/tracerr v0.4.0
 	golang.org/x/net v0.17.0
 )
 
