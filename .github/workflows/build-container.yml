@@ -32,7 +32,9 @@ jobs:
           - infra
           - worker-audit-logging
           - webhook
+          - webhook-server
           - message-office
+          - tenant-agent
     runs-on: ubuntu-latest
     name: Deploy to Docker Image
     steps:
