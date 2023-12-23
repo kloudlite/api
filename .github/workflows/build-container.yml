@@ -32,7 +32,7 @@ jobs:
           - infra
           - worker-audit-logging
           - webhook
-          - webhook-server
+          - websocket-server
           - message-office
           - tenant-agent
     runs-on: ubuntu-latest
