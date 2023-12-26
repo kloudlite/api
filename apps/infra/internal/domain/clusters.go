@@ -270,7 +270,7 @@ func (d *domain) ListClusters(ctx InfraContext, mf map[string]repos.MatchFilter,
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	
+
 	return pr, nil
 }
 
