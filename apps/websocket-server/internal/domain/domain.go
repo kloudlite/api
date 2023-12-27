@@ -113,7 +113,11 @@ func (d *domain) HandleWebSocket(ctx context.Context, c *websocket.Conn) error {
 		return fmt.Errorf("session not found")
 	}
 
-	defer c.Close()
+	defer func() {
+		if err := c.Close(); err != nil {
+			d.logger.Warnf("websocket close: %w", err)
+		}
+	}()
 	log := d.logger
 
 	type Subscription struct {
@@ -151,6 +155,14 @@ func (d *domain) HandleWebSocket(ctx context.Context, c *websocket.Conn) error {
 		closed = true
 		return nil
 	})
+
+	defer func() {
+		for _, r := range resources {
+			if err := r.sub.Unsubscribe(); err != nil {
+				log.Warnf("websocket unsubscribe: %w", err)
+			}
+		}
+	}()
 
 	// Keep the connection open
 	for {
@@ -260,8 +272,6 @@ func (d *domain) HandleWebSocket(ctx context.Context, c *websocket.Conn) error {
 					log.Warnf("websocket write: %w", err)
 				}
 			}
-
-			defer sub.Unsubscribe()
 
 			resources[rd.Topic] = &Subscription{
 				resource: *rd,
