@@ -41,6 +41,7 @@ type (
 
 		resourceUpdatesCounter int64
 		infraUpdatesCounter    int64
+		crUpdatesCounter    int64
 		errorMessagesCounter   int64
 		clusterUpdatesCounter  int64
 	}
@@ -388,17 +389,17 @@ func (g *grpcServer) processInfraUpdate(ctx context.Context, accountName string,
 }
 
 func (g *grpcServer) processCRUpdate(ctx context.Context, accountName string, clusterName string, msg *messages.ContainerRegistryUpdate) (err error) {
-	g.infraUpdatesCounter++
+	g.crUpdatesCounter++
 	logger := g.logger.WithKV("accountName", accountName).WithKV("clusterName", clusterName).WithKV("component", "container-registry-update")
 
-	logger.Infof("[%v] received cr update", g.infraUpdatesCounter)
+	logger.Infof("[%v] received cr update", g.crUpdatesCounter)
 	defer func() {
 		if err != nil {
-			err = errors.Wrap(err, fmt.Sprintf("[%v] (with ERROR) processed cr update", g.infraUpdatesCounter))
+			err = errors.Wrap(err, fmt.Sprintf("[%v] (with ERROR) processed cr update", g.crUpdatesCounter))
 			logger.Errorf(err)
 			return
 		}
-		logger.Infof("[%v] processed cr update", g.infraUpdatesCounter)
+		logger.Infof("[%v] processed cr update", g.crUpdatesCounter)
 	}()
 
 	msgTopic := common.GetPlatformClusterMessagingTopic(accountName, clusterName, common.ContainerRegistryReceiver, common.EventResourceUpdate)
@@ -409,7 +410,7 @@ func (g *grpcServer) processCRUpdate(ctx context.Context, accountName string, cl
 		return errors.Wrap(err, fmt.Sprintf("while producing resource update to topic %q", msgTopic))
 	}
 
-	logger.Infof("[%v] processed cr update", g.infraUpdatesCounter)
+	logger.Infof("[%v] processed cr update", g.crUpdatesCounter)
 	return nil
 }
 
