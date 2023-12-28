@@ -41,7 +41,7 @@ type (
 
 		resourceUpdatesCounter int64
 		infraUpdatesCounter    int64
-		crUpdatesCounter    int64
+		crUpdatesCounter       int64
 		errorMessagesCounter   int64
 		clusterUpdatesCounter  int64
 	}
@@ -261,7 +261,7 @@ func (g *grpcServer) SendActions(request *messages.Empty, server messages.Messag
 		logger.Infof("consumer is closed now")
 	}()
 
-	if err:=consumer.Consume(func(msg *types.ConsumeMsg) error {
+	if err := consumer.Consume(func(msg *types.ConsumeMsg) error {
 		logger.WithKV("subject", msg.Subject).Infof("read message from consumer")
 		defer func() {
 			logger.WithKV("subject", msg.Subject).Infof("dispatched message to agent")
@@ -414,7 +414,6 @@ func (g *grpcServer) processCRUpdate(ctx context.Context, accountName string, cl
 	return nil
 }
 
-
 // ReceiveInfraUpdates implements messages.MessageDispatchServiceServer
 func (g *grpcServer) ReceiveInfraUpdates(server messages.MessageDispatchService_ReceiveInfraUpdatesServer) (err error) {
 	accountName, clusterName, err := g.validateAndDecodeFromGrpcContext(server.Context(), g.ev.TokenHashingSecret)
@@ -430,7 +429,7 @@ func (g *grpcServer) ReceiveInfraUpdates(server messages.MessageDispatchService_
 	}
 }
 
-func (g *grpcServer) ReceiveContainerRegistryUpdates(server messages.MessageDispatchService_ReceiveContainerRegistryUpdatesServer) error{
+func (g *grpcServer) ReceiveContainerRegistryUpdates(server messages.MessageDispatchService_ReceiveContainerRegistryUpdatesServer) error {
 	accountName, clusterName, err := g.validateAndDecodeFromGrpcContext(server.Context(), g.ev.TokenHashingSecret)
 	if err != nil {
 		return klErrors.NewE(err)
@@ -443,8 +442,6 @@ func (g *grpcServer) ReceiveContainerRegistryUpdates(server messages.MessageDisp
 		_ = g.processCRUpdate(server.Context(), accountName, clusterName, statusMsg)
 	}
 }
-
-
 
 func NewMessageOfficeServer(producer UpdatesProducer, jc *nats.JetstreamClient, ev *env.Env, d domain.Domain, logger logging.Logger) (messages.MessageDispatchServiceServer, error) {
 	return &grpcServer{
