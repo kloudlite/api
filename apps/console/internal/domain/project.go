@@ -302,7 +302,7 @@ func (d *domain) OnProjectUpdateMessage(ctx ConsoleContext, project entities.Pro
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		project.LastUpdatedBy = project.CreatedBy
-		_, err := d.projectRepo.Create(ctx, &project)
+		proj, err = d.projectRepo.Create(ctx, &project)
 		if err != nil {
 			return errors.NewE(err)
 		}

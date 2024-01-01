@@ -148,7 +148,7 @@ func (d *domain) OnImagePullSecretUpdateMessage(ctx ConsoleContext, ips entities
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		ips.LastUpdatedBy = ips.CreatedBy
-		_, err := d.pullSecretsRepo.Create(ctx, &ips)
+		exIps, err = d.pullSecretsRepo.Create(ctx, &ips)
 		if err != nil {
 			return errors.NewE(err)
 		}

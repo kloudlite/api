@@ -173,7 +173,7 @@ func (d *domain) OnAppUpdateMessage(ctx ConsoleContext, app entities.App, status
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		app.LastUpdatedBy = app.CreatedBy
-		_, err := d.appRepo.Create(ctx, &app)
+		exApp, err = d.appRepo.Create(ctx, &app)
 		if err != nil {
 			return errors.NewE(err)
 		}

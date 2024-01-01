@@ -222,7 +222,7 @@ func (d *domain) OnHelmReleaseUpdateMessage(ctx InfraContext, clusterName string
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		hr.LastUpdatedBy = hr.CreatedBy
-		_, err := d.helmReleaseRepo.Create(ctx, &hr)
+		svc, err = d.helmReleaseRepo.Create(ctx, &hr)
 		if err != nil {
 			return errors.NewE(err)
 		}

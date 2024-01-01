@@ -226,7 +226,7 @@ func (d *domain) OnClusterManagedServiceUpdateMessage(ctx InfraContext, clusterN
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		service.LastUpdatedBy = service.CreatedBy
-		_, err := d.clusterManagedServiceRepo.Create(ctx, &service)
+		svc, err = d.clusterManagedServiceRepo.Create(ctx, &service)
 		if err != nil {
 			return errors.NewE(err)
 		}

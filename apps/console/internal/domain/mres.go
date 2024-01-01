@@ -184,7 +184,7 @@ func (d *domain) OnManagedResourceUpdateMessage(ctx ConsoleContext, mres entitie
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		mres.LastUpdatedBy = mres.CreatedBy
-		_, err := d.mresRepo.Create(ctx, &mres)
+		exMres, err = d.mresRepo.Create(ctx, &mres)
 		if err != nil {
 			return errors.NewE(err)
 		}

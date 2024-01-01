@@ -176,7 +176,7 @@ func (d *domain) OnRouterUpdateMessage(ctx ConsoleContext, router entities.Route
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		router.LastUpdatedBy = router.CreatedBy
-		_, err := d.routerRepo.Create(ctx, &router)
+		exRouter, err = d.routerRepo.Create(ctx, &router)
 		if err != nil {
 			return errors.NewE(err)
 		}

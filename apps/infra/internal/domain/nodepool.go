@@ -309,7 +309,7 @@ func (d *domain) OnUpdateNodePoolMessage(ctx InfraContext, clusterName string, n
 			UserEmail: common.CreatedOnTenantClusterUserEmail,
 		}
 		nodePool.LastUpdatedBy = nodePool.CreatedBy
-		_, err := d.nodePoolRepo.Create(ctx, &nodePool)
+		np, err = d.nodePoolRepo.Create(ctx, &nodePool)
 		if err != nil {
 			return errors.NewE(err)
 		}
