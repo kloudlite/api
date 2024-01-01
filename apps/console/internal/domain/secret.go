@@ -1,13 +1,12 @@
 package domain
 
 import (
-	"github.com/kloudlite/api/pkg/errors"
-	"time"
-
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	"github.com/kloudlite/api/common"
+	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
 	t "github.com/kloudlite/api/pkg/types"
+	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
 // query
@@ -166,18 +165,13 @@ func (d *domain) OnSecretDeleteMessage(ctx ConsoleContext, secret entities.Secre
 	return d.secretRepo.DeleteById(ctx, exSecret.Id)
 }
 
-func (d *domain) OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secret) error {
+func (d *domain) OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	exSecret, err := d.findSecret(ctx, secret.Namespace, secret.Name)
 	if err != nil {
 		return errors.NewE(err)
 	}
 
-	annotatedVersion, err := d.parseRecordVersionFromAnnotations(secret.Annotations)
-	if err != nil {
-		return d.resyncK8sResource(ctx, exSecret.SyncStatus.Action, &exSecret.Secret, exSecret.RecordVersion)
-	}
-
-	if annotatedVersion != exSecret.RecordVersion {
+	if err := d.MatchRecordVersion(secret.Annotations, exSecret.RecordVersion); err != nil {
 		return d.resyncK8sResource(ctx, exSecret.SyncStatus.Action, &exSecret.Secret, exSecret.RecordVersion)
 	}
 
@@ -187,9 +181,14 @@ func (d *domain) OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secre
 
 	exSecret.Status = secret.Status
 
-	exSecret.SyncStatus.State = t.SyncStateReceivedUpdateFromAgent
+	exSecret.SyncStatus.State = func() t.SyncState {
+		if status == types.ResourceStatusDeleting {
+			return t.SyncStateDeletedAtAgent
+		}
+		return t.SyncStateUpdatedAtAgent
+	}()
 	exSecret.SyncStatus.Error = nil
-	exSecret.SyncStatus.LastSyncedAt = time.Now()
+	exSecret.SyncStatus.LastSyncedAt = opts.MessageTimestamp
 
 	_, err = d.secretRepo.UpdateById(ctx, exSecret.Id, exSecret)
 	return errors.NewE(err)
@@ -202,7 +201,7 @@ func (d *domain) OnSecretApplyError(ctx ConsoleContext, errMsg, namespace, name 
 	}
 
 	exSecret.SyncStatus.State = t.SyncStateErroredAtAgent
-	exSecret.SyncStatus.LastSyncedAt = time.Now()
+	exSecret.SyncStatus.LastSyncedAt = opts.MessageTimestamp
 	exSecret.SyncStatus.Error = &errMsg
 
 	_, err := d.secretRepo.UpdateById(ctx, exSecret.Id, exSecret)

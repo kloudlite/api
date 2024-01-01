@@ -43,34 +43,36 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, d domain.Domain, logger 
 		kind := obj.GroupVersionKind().Kind
 		dctx := domain.NewConsoleContext(context.TODO(), "sys-user:apply-on-error-worker", errMsg.AccountName, errMsg.ClusterName)
 
+		opts := domain.UpdateAndDeleteOpts{MessageTimestamp: msg.Timestamp}
+
 		switch kind {
 		case "Project":
 			{
-				return d.OnProjectApplyError(dctx, errMsg.Error, obj.GetName())
+				return d.OnProjectApplyError(dctx, errMsg.Error, obj.GetName(), opts)
 			}
 		case "Env":
 			{
-				return d.OnWorkspaceApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnWorkspaceApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName(), opts)
 			}
 		case "App":
 			{
-				return d.OnAppApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnAppApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName(), opts)
 			}
 		case "Config":
 			{
-				return d.OnConfigApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnConfigApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName(), opts)
 			}
 		case "Secret":
 			{
-				return d.OnSecretApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnSecretApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName(), opts)
 			}
 		case "Router":
 			{
-				return d.OnApplyRouterError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnRouterApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName(), opts)
 			}
 		case "ManagedResource":
 			{
-				return d.OnApplyManagedResourceError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnManagedResourceApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName(), opts)
 			}
 		default:
 			{

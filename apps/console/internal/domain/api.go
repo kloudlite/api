@@ -54,9 +54,7 @@ const (
 	ResTypeConfig          ResType = "config"
 	ResTypeSecret          ResType = "secret"
 	ResTypeRouter          ResType = "router"
-	ResTypeManagedService  ResType = "managed_service"
 	ResTypeManagedResource ResType = "managed_resource"
-	ResTypeVPNDevice       ResType = "vpn_device"
 )
 
 type UpdateAndDeleteOpts struct {
@@ -136,7 +134,7 @@ type Domain interface {
 
 	OnSecretApplyError(ctx ConsoleContext, errMsg, namespace, name string, opts UpdateAndDeleteOpts) error
 	OnSecretDeleteMessage(ctx ConsoleContext, secret entities.Secret) error
-	OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secret) error
+	OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncSecret(ctx ConsoleContext, namespace, name string) error
 
@@ -147,13 +145,11 @@ type Domain interface {
 	UpdateRouter(ctx ConsoleContext, router entities.Router) (*entities.Router, error)
 	DeleteRouter(ctx ConsoleContext, namespace, name string) error
 
-	OnApplyRouterError(ctx ConsoleContext, errMsg string, namespace string, name string) error
-	OnDeleteRouterMessage(ctx ConsoleContext, router entities.Router) error
-	OnUpdateRouterMessage(ctx ConsoleContext, router entities.Router) error
+	OnRouterApplyError(ctx ConsoleContext, errMsg string, namespace string, name string, opts UpdateAndDeleteOpts) error
+	OnRouterDeleteMessage(ctx ConsoleContext, router entities.Router) error
+	OnRouterUpdateMessage(ctx ConsoleContext, router entities.Router, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncRouter(ctx ConsoleContext, namespace, name string) error
-
-	// Managed Service Templates
 
 	ListManagedResources(ctx ConsoleContext, namespace string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
 	GetManagedResource(ctx ConsoleContext, namespace, name string) (*entities.ManagedResource, error)
@@ -162,9 +158,9 @@ type Domain interface {
 	UpdateManagedResource(ctx ConsoleContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	DeleteManagedResource(ctx ConsoleContext, namespace, name string) error
 
-	OnApplyManagedResourceError(ctx ConsoleContext, errMsg string, namespace string, name string) error
-	OnDeleteManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error
-	OnUpdateManagedResourceMessage(ctx ConsoleContext, mres entities.ManagedResource) error
+	OnManagedResourceApplyError(ctx ConsoleContext, errMsg string, namespace string, name string, opts UpdateAndDeleteOpts) error
+	OnManagedResourceDeleteMessage(ctx ConsoleContext, mres entities.ManagedResource) error
+	OnManagedResourceUpdateMessage(ctx ConsoleContext, mres entities.ManagedResource, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncManagedResource(ctx ConsoleContext, namespace, name string) error
 
@@ -175,9 +171,9 @@ type Domain interface {
 	CreateImagePullSecret(ctx ConsoleContext, secret entities.ImagePullSecret) (*entities.ImagePullSecret, error)
 	DeleteImagePullSecret(ctx ConsoleContext, namespace string, name string) error
 
-	OnApplyImagePullSecretError(ctx ConsoleContext, errMsg string, namespace string, name string) error
-	OnDeleteImagePullSecretMessage(ctx ConsoleContext, mres entities.ImagePullSecret) error
-	OnUpdateImagePullSecretMessage(ctx ConsoleContext, mres entities.ImagePullSecret) error
+	OnImagePullSecretApplyError(ctx ConsoleContext, errMsg string, namespace string, name string, opts UpdateAndDeleteOpts) error
+	OnImagePullSecretDeleteMessage(ctx ConsoleContext, ips entities.ImagePullSecret) error
+	OnImagePullSecretUpdateMessage(ctx ConsoleContext, ips entities.ImagePullSecret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncImagePullSecret(ctx ConsoleContext, namespace, name string) error
 }
