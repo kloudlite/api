@@ -2,6 +2,8 @@ package domain
 
 import (
 	"context"
+	"github.com/kloudlite/operator/operators/resource-watcher/types"
+	"time"
 
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
@@ -57,6 +59,10 @@ const (
 	ResTypeVPNDevice       ResType = "vpn_device"
 )
 
+type UpdateAndDeleteOpts struct {
+	MessageTimestamp time.Time
+}
+
 type Domain interface {
 	CheckNameAvailability(ctx context.Context, resType ResType, accountName string, namespace *string, name string) (*CheckNameAvailabilityOutput, error)
 
@@ -67,9 +73,9 @@ type Domain interface {
 	UpdateProject(ctx ConsoleContext, project entities.Project) (*entities.Project, error)
 	DeleteProject(ctx ConsoleContext, name string) error
 
-	OnApplyProjectError(ctx ConsoleContext, errMsg string, name string) error
-	OnDeleteProjectMessage(ctx ConsoleContext, cluster entities.Project) error
-	OnUpdateProjectMessage(ctx ConsoleContext, cluster entities.Project) error
+	OnProjectApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
+	OnProjectDeleteMessage(ctx ConsoleContext, project entities.Project) error
+	OnProjectUpdateMessage(ctx ConsoleContext, cluster entities.Project, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncProject(ctx ConsoleContext, name string) error
 
@@ -89,9 +95,9 @@ type Domain interface {
 	UpdateWorkspace(ctx ConsoleContext, env entities.Workspace) (*entities.Workspace, error)
 	DeleteWorkspace(ctx ConsoleContext, namespace, name string) error
 
-	OnApplyWorkspaceError(ctx ConsoleContext, errMsg, namespace, name string) error
-	OnDeleteWorkspaceMessage(ctx ConsoleContext, cluster entities.Workspace) error
-	OnUpdateWorkspaceMessage(ctx ConsoleContext, cluster entities.Workspace) error
+	OnWorkspaceApplyError(ctx ConsoleContext, errMsg, namespace, name string, opts UpdateAndDeleteOpts) error
+	OnWorkspaceDeleteMessage(ctx ConsoleContext, workspace entities.Workspace) error
+	OnWorkspaceUpdateMessage(ctx ConsoleContext, workspace entities.Workspace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncWorkspace(ctx ConsoleContext, namespace, name string) error
 
@@ -102,9 +108,9 @@ type Domain interface {
 	UpdateApp(ctx ConsoleContext, app entities.App) (*entities.App, error)
 	DeleteApp(ctx ConsoleContext, namespace, name string) error
 
-	OnApplyAppError(ctx ConsoleContext, errMsg string, namespace string, name string) error
-	OnDeleteAppMessage(ctx ConsoleContext, app entities.App) error
-	OnUpdateAppMessage(ctx ConsoleContext, app entities.App) error
+	OnAppApplyError(ctx ConsoleContext, errMsg string, namespace string, name string, opts UpdateAndDeleteOpts) error
+	OnAppDeleteMessage(ctx ConsoleContext, app entities.App) error
+	OnAppUpdateMessage(ctx ConsoleContext, app entities.App, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncApp(ctx ConsoleContext, namespace, name string) error
 
@@ -115,9 +121,9 @@ type Domain interface {
 	UpdateConfig(ctx ConsoleContext, config entities.Config) (*entities.Config, error)
 	DeleteConfig(ctx ConsoleContext, namespace, name string) error
 
-	OnApplyConfigError(ctx ConsoleContext, errMsg, namespace, name string) error
-	OnDeleteConfigMessage(ctx ConsoleContext, config entities.Config) error
-	OnUpdateConfigMessage(ctx ConsoleContext, config entities.Config) error
+	OnConfigApplyError(ctx ConsoleContext, errMsg, namespace, name string, opts UpdateAndDeleteOpts) error
+	OnConfigDeleteMessage(ctx ConsoleContext, config entities.Config) error
+	OnConfigUpdateMessage(ctx ConsoleContext, config entities.Config, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncConfig(ctx ConsoleContext, namespace, name string) error
 
@@ -128,9 +134,9 @@ type Domain interface {
 	UpdateSecret(ctx ConsoleContext, secret entities.Secret) (*entities.Secret, error)
 	DeleteSecret(ctx ConsoleContext, namespace, name string) error
 
-	OnApplySecretError(ctx ConsoleContext, errMsg, namespace, name string) error
-	OnDeleteSecretMessage(ctx ConsoleContext, secret entities.Secret) error
-	OnUpdateSecretMessage(ctx ConsoleContext, secret entities.Secret) error
+	OnSecretApplyError(ctx ConsoleContext, errMsg, namespace, name string, opts UpdateAndDeleteOpts) error
+	OnSecretDeleteMessage(ctx ConsoleContext, secret entities.Secret) error
+	OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secret) error
 
 	ResyncSecret(ctx ConsoleContext, namespace, name string) error
 

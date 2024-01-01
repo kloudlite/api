@@ -153,7 +153,7 @@ func (d *domain) DeleteSecret(ctx ConsoleContext, namespace string, name string)
 	return d.deleteK8sResource(ctx, &exSecret.Secret)
 }
 
-func (d *domain) OnDeleteSecretMessage(ctx ConsoleContext, secret entities.Secret) error {
+func (d *domain) OnSecretDeleteMessage(ctx ConsoleContext, secret entities.Secret) error {
 	exSecret, err := d.findSecret(ctx, secret.Namespace, secret.Name)
 	if err != nil {
 		return errors.NewE(err)
@@ -166,7 +166,7 @@ func (d *domain) OnDeleteSecretMessage(ctx ConsoleContext, secret entities.Secre
 	return d.secretRepo.DeleteById(ctx, exSecret.Id)
 }
 
-func (d *domain) OnUpdateSecretMessage(ctx ConsoleContext, secret entities.Secret) error {
+func (d *domain) OnSecretUpdateMessage(ctx ConsoleContext, secret entities.Secret) error {
 	exSecret, err := d.findSecret(ctx, secret.Namespace, secret.Name)
 	if err != nil {
 		return errors.NewE(err)
@@ -195,7 +195,7 @@ func (d *domain) OnUpdateSecretMessage(ctx ConsoleContext, secret entities.Secre
 	return errors.NewE(err)
 }
 
-func (d *domain) OnApplySecretError(ctx ConsoleContext, errMsg, namespace, name string) error {
+func (d *domain) OnSecretApplyError(ctx ConsoleContext, errMsg, namespace, name string, opts UpdateAndDeleteOpts) error {
 	exSecret, err2 := d.findSecret(ctx, namespace, name)
 	if err2 != nil {
 		return err2

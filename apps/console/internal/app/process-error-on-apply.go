@@ -46,23 +46,23 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, d domain.Domain, logger 
 		switch kind {
 		case "Project":
 			{
-				return d.OnApplyProjectError(dctx, errMsg.Error, obj.GetName())
+				return d.OnProjectApplyError(dctx, errMsg.Error, obj.GetName())
 			}
 		case "Env":
 			{
-				return d.OnApplyWorkspaceError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnWorkspaceApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
 			}
 		case "App":
 			{
-				return d.OnApplyAppError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnAppApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
 			}
 		case "Config":
 			{
-				return d.OnApplyConfigError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnConfigApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
 			}
 		case "Secret":
 			{
-				return d.OnApplySecretError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
+				return d.OnSecretApplyError(dctx, errMsg.Error, obj.GetNamespace(), obj.GetName())
 			}
 		case "Router":
 			{
