@@ -296,7 +296,16 @@ func (d *domain) OnProjectDeleteMessage(ctx ConsoleContext, project entities.Pro
 func (d *domain) OnProjectUpdateMessage(ctx ConsoleContext, project entities.Project, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	proj, err := d.findProject(ctx, project.Name)
 	if err != nil {
-		return errors.NewE(err)
+		project.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		project.LastUpdatedBy = project.CreatedBy
+		_, err := d.projectRepo.Create(ctx, &project)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.MatchRecordVersion(project.Annotations, proj.RecordVersion); err != nil {

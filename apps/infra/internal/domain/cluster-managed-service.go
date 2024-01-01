@@ -220,7 +220,16 @@ func (d *domain) OnClusterManagedServiceDeleteMessage(ctx InfraContext, clusterN
 func (d *domain) OnClusterManagedServiceUpdateMessage(ctx InfraContext, clusterName string, service entities.ClusterManagedService, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	svc, err := d.findClusterManagedService(ctx, clusterName, service.Name)
 	if err != nil {
-		return errors.NewE(err)
+		service.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		service.LastUpdatedBy = service.CreatedBy
+		_, err := d.clusterManagedServiceRepo.Create(ctx, &service)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.matchRecordVersion(service.Annotations, svc.RecordVersion); err != nil {

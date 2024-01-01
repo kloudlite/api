@@ -216,7 +216,16 @@ func (d *domain) OnHelmReleaseDeleteMessage(ctx InfraContext, clusterName string
 func (d *domain) OnHelmReleaseUpdateMessage(ctx InfraContext, clusterName string, hr entities.HelmRelease) error {
 	svc, err := d.findHelmRelease(ctx, clusterName, hr.Name)
 	if err != nil {
-		return errors.NewE(err)
+		hr.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		hr.LastUpdatedBy = hr.CreatedBy
+		_, err := d.helmReleaseRepo.Create(ctx, &hr)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.matchRecordVersion(hr.Annotations, svc.RecordVersion); err != nil {

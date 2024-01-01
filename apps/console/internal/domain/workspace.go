@@ -278,7 +278,16 @@ func (d *domain) OnWorkspaceDeleteMessage(ctx ConsoleContext, ws entities.Worksp
 func (d *domain) OnWorkspaceUpdateMessage(ctx ConsoleContext, ws entities.Workspace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	exWs, err := d.findWorkspace(ctx, ws.Namespace, ws.Name)
 	if err != nil {
-		return errors.NewE(err)
+		ws.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		ws.LastUpdatedBy = ws.CreatedBy
+		exWs, err = d.workspaceRepo.Create(ctx, &ws)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.MatchRecordVersion(ws.Annotations, exWs.RecordVersion); err != nil {

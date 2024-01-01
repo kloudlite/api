@@ -167,7 +167,16 @@ func (d *domain) UpdateApp(ctx ConsoleContext, app entities.App) (*entities.App,
 func (d *domain) OnAppUpdateMessage(ctx ConsoleContext, app entities.App, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	exApp, err := d.findApp(ctx, app.Namespace, app.Name)
 	if err != nil {
-		return errors.NewE(err)
+		app.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		app.LastUpdatedBy = app.CreatedBy
+		_, err := d.appRepo.Create(ctx, &app)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.MatchRecordVersion(app.Annotations, exApp.RecordVersion); err != nil {

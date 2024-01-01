@@ -170,7 +170,16 @@ func (d *domain) OnRouterDeleteMessage(ctx ConsoleContext, router entities.Route
 func (d *domain) OnRouterUpdateMessage(ctx ConsoleContext, router entities.Router, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	exRouter, err := d.findRouter(ctx, router.Namespace, router.Name)
 	if err != nil {
-		return errors.NewE(err)
+		router.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		router.LastUpdatedBy = router.CreatedBy
+		_, err := d.routerRepo.Create(ctx, &router)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.MatchRecordVersion(router.Annotations, exRouter.RecordVersion); err != nil {

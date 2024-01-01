@@ -178,7 +178,16 @@ func (d *domain) OnManagedResourceDeleteMessage(ctx ConsoleContext, mres entitie
 func (d *domain) OnManagedResourceUpdateMessage(ctx ConsoleContext, mres entities.ManagedResource, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	exMres, err := d.findMRes(ctx, mres.Namespace, mres.Name)
 	if err != nil {
-		return errors.NewE(err)
+		mres.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		mres.LastUpdatedBy = mres.CreatedBy
+		_, err := d.mresRepo.Create(ctx, &mres)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.MatchRecordVersion(mres.Annotations, exMres.RecordVersion); err != nil {

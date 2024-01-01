@@ -303,7 +303,16 @@ func (d *domain) OnDeleteNodePoolMessage(ctx InfraContext, clusterName string, n
 func (d *domain) OnUpdateNodePoolMessage(ctx InfraContext, clusterName string, nodePool entities.NodePool, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	np, err := d.findNodePool(ctx, clusterName, nodePool.Name)
 	if err != nil {
-		return errors.NewE(err)
+		nodePool.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		nodePool.LastUpdatedBy = nodePool.CreatedBy
+		_, err := d.nodePoolRepo.Create(ctx, &nodePool)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.matchRecordVersion(nodePool.Annotations, np.RecordVersion); err != nil {

@@ -142,7 +142,16 @@ func (d *domain) DeleteImagePullSecret(ctx ConsoleContext, namespace, name strin
 func (d *domain) OnImagePullSecretUpdateMessage(ctx ConsoleContext, ips entities.ImagePullSecret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	exIps, err := d.findImagePullSecret(ctx, ips.Namespace, ips.Name)
 	if err != nil {
-		return errors.NewE(err)
+		ips.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedOnTenantClusterUserId),
+			UserName:  common.CreatedOnTenantClusterUserName,
+			UserEmail: common.CreatedOnTenantClusterUserEmail,
+		}
+		ips.LastUpdatedBy = ips.CreatedBy
+		_, err := d.pullSecretsRepo.Create(ctx, &ips)
+		if err != nil {
+			return errors.NewE(err)
+		}
 	}
 
 	if err := d.MatchRecordVersion(ips.Annotations, exIps.RecordVersion); err != nil {

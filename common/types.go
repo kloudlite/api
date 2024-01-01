@@ -11,6 +11,10 @@ type CreatedOrUpdatedBy struct {
 	UserEmail string   `json:"userEmail"`
 }
 
+const CreatedOnTenantClusterUserName string = "created-on-tenant-cluster-user-name"
+const CreatedOnTenantClusterUserId string = "created-on-tenant-cluster-user-id"
+const CreatedOnTenantClusterUserEmail string = "created-on-tenant-cluster-user-email"
+
 type ResourceMetadata struct {
 	DisplayName string `json:"displayName"`
 
@@ -30,5 +34,3 @@ func (v ValidationError) Error() string {
 	})
 	return string(b)
 }
-
-
