@@ -6,9 +6,9 @@ package graph
 
 import (
 	"context"
-	"fmt"
-	"github.com/kloudlite/api/pkg/errors"
 	"time"
+
+	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
@@ -17,7 +17,7 @@ import (
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/types"
 	"github.com/kloudlite/operator/pkg/operator"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // Fields is the resolver for the fields field.
@@ -73,22 +73,12 @@ func (r *github__com___kloudlite___api___common__CreatedOrUpdatedByResolver) Use
 	return string(obj.UserId), nil
 }
 
-// Action is the resolver for the action field.
-func (r *github__com___kloudlite___api___pkg___types__SyncStatusResolver) Action(ctx context.Context, obj *types.SyncStatus) (model.GithubComKloudliteAPIPkgTypesSyncAction, error) {
-	panic(fmt.Errorf("not implemented: Action - action"))
-}
-
 // LastSyncedAt is the resolver for the lastSyncedAt field.
 func (r *github__com___kloudlite___api___pkg___types__SyncStatusResolver) LastSyncedAt(ctx context.Context, obj *types.SyncStatus) (*string, error) {
 	if obj == nil {
 		return nil, errors.Newf("syncStatus is nil")
 	}
 	return fn.New(obj.LastSyncedAt.Format(time.RFC3339)), nil
-}
-
-// State is the resolver for the state field.
-func (r *github__com___kloudlite___api___pkg___types__SyncStatusResolver) State(ctx context.Context, obj *types.SyncStatus) (model.GithubComKloudliteAPIPkgTypesSyncState, error) {
-	panic(fmt.Errorf("not implemented: State - state"))
 }
 
 // SyncScheduledAt is the resolver for the syncScheduledAt field.
@@ -217,9 +207,11 @@ func (r *Resolver) Metadata() generated.MetadataResolver { return &metadataResol
 // MetadataIn returns generated.MetadataInResolver implementation.
 func (r *Resolver) MetadataIn() generated.MetadataInResolver { return &metadataInResolver{r} }
 
-type github__com___kloudlite___api___apps___infra___internal___entities__MsvcTemplateEntryResolver struct{ *Resolver }
-type github__com___kloudlite___api___common__CreatedOrUpdatedByResolver struct{ *Resolver }
-type github__com___kloudlite___api___pkg___types__SyncStatusResolver struct{ *Resolver }
-type github__com___kloudlite___operator___pkg___operator__StatusResolver struct{ *Resolver }
-type metadataResolver struct{ *Resolver }
-type metadataInResolver struct{ *Resolver }
+type (
+	github__com___kloudlite___api___apps___infra___internal___entities__MsvcTemplateEntryResolver struct{ *Resolver }
+	github__com___kloudlite___api___common__CreatedOrUpdatedByResolver                            struct{ *Resolver }
+	github__com___kloudlite___api___pkg___types__SyncStatusResolver                               struct{ *Resolver }
+	github__com___kloudlite___operator___pkg___operator__StatusResolver                           struct{ *Resolver }
+	metadataResolver                                                                              struct{ *Resolver }
+	metadataInResolver                                                                            struct{ *Resolver }
+)
