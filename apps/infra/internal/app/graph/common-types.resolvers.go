@@ -6,9 +6,8 @@ package graph
 
 import (
 	"context"
-	"time"
-
 	"github.com/kloudlite/api/pkg/errors"
+	"time"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
@@ -17,7 +16,7 @@ import (
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/types"
 	"github.com/kloudlite/operator/pkg/operator"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // Fields is the resolver for the fields field.
@@ -207,11 +206,9 @@ func (r *Resolver) Metadata() generated.MetadataResolver { return &metadataResol
 // MetadataIn returns generated.MetadataInResolver implementation.
 func (r *Resolver) MetadataIn() generated.MetadataInResolver { return &metadataInResolver{r} }
 
-type (
-	github__com___kloudlite___api___apps___infra___internal___entities__MsvcTemplateEntryResolver struct{ *Resolver }
-	github__com___kloudlite___api___common__CreatedOrUpdatedByResolver                            struct{ *Resolver }
-	github__com___kloudlite___api___pkg___types__SyncStatusResolver                               struct{ *Resolver }
-	github__com___kloudlite___operator___pkg___operator__StatusResolver                           struct{ *Resolver }
-	metadataResolver                                                                              struct{ *Resolver }
-	metadataInResolver                                                                            struct{ *Resolver }
-)
+type github__com___kloudlite___api___apps___infra___internal___entities__MsvcTemplateEntryResolver struct{ *Resolver }
+type github__com___kloudlite___api___common__CreatedOrUpdatedByResolver struct{ *Resolver }
+type github__com___kloudlite___api___pkg___types__SyncStatusResolver struct{ *Resolver }
+type github__com___kloudlite___operator___pkg___operator__StatusResolver struct{ *Resolver }
+type metadataResolver struct{ *Resolver }
+type metadataInResolver struct{ *Resolver }
