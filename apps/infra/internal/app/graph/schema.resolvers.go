@@ -7,7 +7,7 @@ package graph
 import (
 	"context"
 	"encoding/base64"
-
+	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
@@ -584,57 +584,6 @@ func (r *queryResolver) InfraGetVPNDevice(ctx context.Context, clusterName strin
 	return r.Domain.GetVPNDevice(cc, clusterName, name)
 }
 
-// InfraListPVCs is the resolver for the infra_listPVCs field.
-func (r *queryResolver) InfraListPVCs(ctx context.Context, clusterName string, search *model.SearchPersistentVolumeClaims, pq *repos.CursorPagination) (*model.PersistentVolumeClaimPaginatedRecords, error) {
-	filter := map[string]repos.MatchFilter{}
-	if search != nil {
-		if search.Text != nil {
-			filter["metadata.name"] = *search.Text
-		}
-	}
-
-	cc, err := toInfraContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	pvcs, err := r.Domain.ListPVCs(cc, clusterName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	ve := make([]*model.PersistentVolumeClaimEdge, len(pvcs.Edges))
-	for i := range pvcs.Edges {
-		ve[i] = &model.PersistentVolumeClaimEdge{
-			Node:   pvcs.Edges[i].Node,
-			Cursor: pvcs.Edges[i].Cursor,
-		}
-	}
-
-	m := model.PersistentVolumeClaimPaginatedRecords{
-		Edges: ve,
-		PageInfo: &model.PageInfo{
-			EndCursor:       &pvcs.PageInfo.EndCursor,
-			HasNextPage:     pvcs.PageInfo.HasNextPage,
-			HasPreviousPage: pvcs.PageInfo.HasPrevPage,
-			StartCursor:     &pvcs.PageInfo.StartCursor,
-		},
-		TotalCount: int(pvcs.TotalCount),
-	}
-
-	return &m, nil
-}
-
-// InfraGetPvc is the resolver for the infra_getPVC field.
-func (r *queryResolver) InfraGetPvc(ctx context.Context, clusterName string, name string) (*entities.PersistentVolumeClaim, error) {
-	cc, err := toInfraContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	return r.Domain.GetPVC(cc, clusterName, name)
-}
-
 // InfraListClusterManagedServices is the resolver for the infra_listClusterManagedServices field.
 func (r *queryResolver) InfraListClusterManagedServices(ctx context.Context, clusterName string, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) (*model.ClusterManagedServicePaginatedRecords, error) {
 	ictx, err := toInfraContext(ctx)
@@ -765,13 +714,92 @@ func (r *queryResolver) InfraGetManagedServiceTemplate(ctx context.Context, cate
 	return r.Domain.GetManagedSvcTemplate(category, name)
 }
 
+// InfraListPVCs is the resolver for the infra_listPVCs field.
+func (r *queryResolver) InfraListPVCs(ctx context.Context, clusterName string, search *model.SearchPersistentVolumeClaims, pq *repos.CursorPagination) (*model.PersistentVolumeClaimPaginatedRecords, error) {
+	filter := map[string]repos.MatchFilter{}
+	if search != nil {
+		if search.Text != nil {
+			filter["metadata.name"] = *search.Text
+		}
+	}
+
+	cc, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	pvcs, err := r.Domain.ListPVCs(cc, clusterName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	ve := make([]*model.PersistentVolumeClaimEdge, len(pvcs.Edges))
+	for i := range pvcs.Edges {
+		ve[i] = &model.PersistentVolumeClaimEdge{
+			Node:   pvcs.Edges[i].Node,
+			Cursor: pvcs.Edges[i].Cursor,
+		}
+	}
+
+	m := model.PersistentVolumeClaimPaginatedRecords{
+		Edges: ve,
+		PageInfo: &model.PageInfo{
+			EndCursor:       &pvcs.PageInfo.EndCursor,
+			HasNextPage:     pvcs.PageInfo.HasNextPage,
+			HasPreviousPage: pvcs.PageInfo.HasPrevPage,
+			StartCursor:     &pvcs.PageInfo.StartCursor,
+		},
+		TotalCount: int(pvcs.TotalCount),
+	}
+
+	return &m, nil
+}
+
+// InfraGetPvc is the resolver for the infra_getPVC field.
+func (r *queryResolver) InfraGetPvc(ctx context.Context, clusterName string, name string) (*entities.PersistentVolumeClaim, error) {
+	cc, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.GetPVC(cc, clusterName, name)
+}
+
+// InfraListNamespaces is the resolver for the infra_listNamespaces field.
+func (r *queryResolver) InfraListNamespaces(ctx context.Context, clusterName string, search *model.SearchNamespaces, pq *repos.CursorPagination) (*model.NamespacePaginatedRecords, error) {
+	panic(fmt.Errorf("not implemented: InfraListNamespaces - infra_listNamespaces"))
+}
+
+// InfraGetNamespace is the resolver for the infra_getNamespace field.
+func (r *queryResolver) InfraGetNamespace(ctx context.Context, clusterName string, name string) (*entities.Namespace, error) {
+	panic(fmt.Errorf("not implemented: InfraGetNamespace - infra_getNamespace"))
+}
+
+// InfraListPVs is the resolver for the infra_listPVs field.
+func (r *queryResolver) InfraListPVs(ctx context.Context, clusterName string, search *model.SearchPersistentVolumes, pq *repos.CursorPagination) (*model.PersistentVolumePaginatedRecords, error) {
+	panic(fmt.Errorf("not implemented: InfraListPVs - infra_listPVs"))
+}
+
+// InfraGetPv is the resolver for the infra_getPV field.
+func (r *queryResolver) InfraGetPv(ctx context.Context, clusterName string, name string) (*entities.PersistentVolume, error) {
+	panic(fmt.Errorf("not implemented: InfraGetPv - infra_getPV"))
+}
+
+// InfraListVolumeAttachments is the resolver for the infra_listVolumeAttachments field.
+func (r *queryResolver) InfraListVolumeAttachments(ctx context.Context, clusterName string, search *model.SearchVolumeAttachments, pq *repos.CursorPagination) (*model.VolumeAttachmentPaginatedRecords, error) {
+	panic(fmt.Errorf("not implemented: InfraListVolumeAttachments - infra_listVolumeAttachments"))
+}
+
+// InfraGetVolumeAttachment is the resolver for the infra_getVolumeAttachment field.
+func (r *queryResolver) InfraGetVolumeAttachment(ctx context.Context, clusterName string, name string) (*entities.VolumeAttachment, error) {
+	panic(fmt.Errorf("not implemented: InfraGetVolumeAttachment - infra_getVolumeAttachment"))
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-type (
-	mutationResolver struct{ *Resolver }
-	queryResolver    struct{ *Resolver }
-)
+type mutationResolver struct{ *Resolver }
+type queryResolver struct{ *Resolver }
