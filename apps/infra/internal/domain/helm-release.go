@@ -65,9 +65,7 @@ func (d *domain) CreateHelmRelease(ctx InfraContext, clusterName string, hr enti
 	if err := d.canPerformActionInAccount(ctx, iamT.CreateHelmRelease); err != nil {
 		return nil, errors.NewE(err)
 	}
-
 	hr.EnsureGVK()
-
 	if err := d.k8sClient.ValidateObject(ctx, &hr.HelmChart); err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -104,11 +102,14 @@ func (d *domain) CreateHelmRelease(ctx InfraContext, clusterName string, hr enti
 
 	d.resourceEventPublisher.PublishHelmReleaseEvent(&hr, PublishAdd)
 
-	d.resDispatcher.ApplyToTargetCluster(ctx, clusterName, &corev1.Namespace{
+	if err = d.resDispatcher.ApplyToTargetCluster(ctx, clusterName, &corev1.Namespace{
 		ObjectMeta: metav1.ObjectMeta{
 			Name: hr.Namespace,
 		},
 	}, hr.RecordVersion)
+		err != nil {
+		return nil, errors.NewE(err)
+	}
 
 	if err := d.resDispatcher.ApplyToTargetCluster(ctx, clusterName, &hr.HelmChart, hr.RecordVersion); err != nil {
 		return nil, errors.NewE(err)
