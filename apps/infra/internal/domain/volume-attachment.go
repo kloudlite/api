@@ -85,6 +85,6 @@ func (d *domain) OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName s
 	if err != nil {
 		return errors.NewE(err)
 	}
-	d.resourceEventPublisher.PublishVolumeAttachmentEvent(vatt, PublishDelete)
+	d.resourceEventPublisher.PublishVolumeAttachmentEvent(vatt, PublishUpdate)
 	return nil
 }

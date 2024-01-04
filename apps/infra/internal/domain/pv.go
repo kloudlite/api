@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
+	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
 	t "github.com/kloudlite/api/pkg/types"
@@ -10,7 +11,6 @@ import (
 
 // GetPV implements Domain.
 func (d *domain) GetPV(ctx InfraContext, clusterName string, pvName string) (*entities.PersistentVolume, error) {
-	//panic("unimplemented")
 	pv, err := d.pvRepo.FindOne(ctx, repos.Filter{
 		"accountName":   ctx.AccountName,
 		"clusterName":   clusterName,
@@ -28,7 +28,6 @@ func (d *domain) GetPV(ctx InfraContext, clusterName string, pvName string) (*en
 
 // ListPVs implements Domain.
 func (d *domain) ListPVs(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.PersistentVolume], error) {
-	//panic("unimplemented")
 	filter := repos.Filter{
 		"accountName": ctx.AccountName,
 		"clusterName": clusterName,
@@ -38,7 +37,6 @@ func (d *domain) ListPVs(ctx InfraContext, clusterName string, search map[string
 
 // OnPVDeleteMessage implements Domain.
 func (d *domain) OnPVDeleteMessage(ctx InfraContext, clusterName string, pv entities.PersistentVolume) error {
-	//panic("unimplemented")
 	if err := d.pvcRepo.DeleteOne(ctx, repos.Filter{
 		"metadata.name":      pv.Name,
 		"metadata.namespace": pv.Namespace,
@@ -53,20 +51,40 @@ func (d *domain) OnPVDeleteMessage(ctx InfraContext, clusterName string, pv enti
 
 // OnPVUpdateMessage implements Domain.
 func (d *domain) OnPVUpdateMessage(ctx InfraContext, clusterName string, pv entities.PersistentVolume, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
-	//panic("unimplemented")
-	pv.SyncStatus = t.SyncStatus{
-		LastSyncedAt: opts.MessageTimestamp,
-		State: func() t.SyncState {
-			if status == types.ResourceStatusDeleting {
-				return t.SyncStateDeletingAtAgent
-			}
-			return t.SyncStateUpdatedAtAgent
-		}(),
+	pvol, err := d.pvRepo.FindOne(ctx, repos.Filter{
+		"accountName":   ctx.AccountName,
+		"clusterName":   clusterName,
+		"metadata.name": pv.Name,
+	})
+	if err != nil {
+		return err
 	}
 
-	_, err := d.pvRepo.Create(ctx, &pv)
+	if pvol == nil {
+		pv.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedByResourceSyncUserId),
+			UserName:  common.CreatedByResourceSyncUsername,
+			UserEmail: common.CreatedByResourceSyncUserEmail,
+		}
+		pv.LastUpdatedBy = pv.CreatedBy
+		pvol, err = d.pvRepo.Create(ctx, &pv)
+		if err != nil {
+			return errors.NewE(err)
+		}
+	}
+
+	pvol.SyncStatus.LastSyncedAt = opts.MessageTimestamp
+	pvol.SyncStatus.State = func() t.SyncState {
+		if status == types.ResourceStatusDeleting {
+			return t.SyncStateDeletingAtAgent
+		}
+		return t.SyncStateUpdatedAtAgent
+	}()
+
+	pvol, err = d.pvRepo.UpdateById(ctx, pvol.Id, pvol)
 	if err != nil {
 		return errors.NewE(err)
 	}
+	d.resourceEventPublisher.PublishPvResEvent(pvol, PublishUpdate)
 	return nil
 }

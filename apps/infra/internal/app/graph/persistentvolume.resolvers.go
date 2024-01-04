@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 	fn "github.com/kloudlite/api/pkg/functions"
 	"time"
@@ -20,7 +19,7 @@ import (
 // CreationTime is the resolver for the creationTime field.
 func (r *persistentVolumeResolver) CreationTime(ctx context.Context, obj *entities.PersistentVolume) (string, error) {
 	if obj == nil {
-		return "", errors.Newf("persistent-volume-claim/creation-time is nil")
+		return "", errors.Newf("persistent-volume/creation-time is nil")
 	}
 	return obj.CreationTime.Format(time.RFC3339), nil
 }
@@ -77,7 +76,10 @@ func (r *persistentVolumeInResolver) Spec(ctx context.Context, obj *entities.Per
 
 // Status is the resolver for the status field.
 func (r *persistentVolumeInResolver) Status(ctx context.Context, obj *entities.PersistentVolume, data *model.K8sIoAPICoreV1PersistentVolumeStatusIn) error {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return errors.Newf("persistance volume is nil")
+	}
+	return fn.JsonConversion(data, &obj.Status)
 }
 
 // PersistentVolume returns generated.PersistentVolumeResolver implementation.

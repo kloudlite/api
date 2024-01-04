@@ -6,7 +6,6 @@ package graph
 
 import (
 	"context"
-	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 	fn "github.com/kloudlite/api/pkg/functions"
 	"time"
@@ -54,7 +53,7 @@ func (r *namespaceResolver) Status(ctx context.Context, obj *entities.Namespace)
 // UpdateTime is the resolver for the updateTime field.
 func (r *namespaceResolver) UpdateTime(ctx context.Context, obj *entities.Namespace) (string, error) {
 	if obj == nil || obj.UpdateTime.IsZero() {
-		return "", errors.Newf("persistent-volume-claim/update-time is nil")
+		return "", errors.Newf("namespace/update-time is nil")
 	}
 	return obj.UpdateTime.Format(time.RFC3339), nil
 }
@@ -77,7 +76,10 @@ func (r *namespaceInResolver) Spec(ctx context.Context, obj *entities.Namespace,
 
 // Status is the resolver for the status field.
 func (r *namespaceInResolver) Status(ctx context.Context, obj *entities.Namespace, data *model.K8sIoAPICoreV1NamespaceStatusIn) error {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return errors.Newf("namespace obj is nil")
+	}
+	return fn.JsonConversion(data, &obj.Status)
 }
 
 // Namespace returns generated.NamespaceResolver implementation.
