@@ -66,6 +66,8 @@ func (d *domain) CreateHelmRelease(ctx InfraContext, clusterName string, hr enti
 		return nil, errors.NewE(err)
 	}
 
+	hr.EnsureGVK()
+
 	if err := d.k8sClient.ValidateObject(ctx, &hr.HelmChart); err != nil {
 		return nil, errors.NewE(err)
 	}
