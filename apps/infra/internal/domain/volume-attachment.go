@@ -2,6 +2,7 @@ package domain
 
 import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
+	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
 	t "github.com/kloudlite/api/pkg/types"
@@ -10,7 +11,6 @@ import (
 
 // GetVolumeAttachment implements Domain.
 func (d *domain) GetVolumeAttachment(ctx InfraContext, clusterName string, volAttachmentName string) (*entities.VolumeAttachment, error) {
-	//panic("unimplemented")
 	volatt, err := d.volumeAttachmentRepo.FindOne(ctx, repos.Filter{
 		"accountName":   ctx.AccountName,
 		"clusterName":   clusterName,
@@ -28,7 +28,6 @@ func (d *domain) GetVolumeAttachment(ctx InfraContext, clusterName string, volAt
 
 // ListVolumeAttachments implements Domain.
 func (d *domain) ListVolumeAttachments(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VolumeAttachment], error) {
-	//panic("unimplemented")
 	filter := repos.Filter{
 		"accountName": ctx.AccountName,
 		"clusterName": clusterName,
@@ -38,7 +37,6 @@ func (d *domain) ListVolumeAttachments(ctx InfraContext, clusterName string, sea
 
 // OnVolumeAttachmentDeleteMessage implements Domain.
 func (d *domain) OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error {
-	//panic("unimplemented")
 	if err := d.pvcRepo.DeleteOne(ctx, repos.Filter{
 		"metadata.name":      volumeAttachment.Name,
 		"metadata.namespace": volumeAttachment.Namespace,
@@ -48,26 +46,45 @@ func (d *domain) OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName s
 		return errors.NewE(err)
 	}
 	d.resourceEventPublisher.PublishVolumeAttachmentEvent(&volumeAttachment, PublishDelete)
-	//d.resourceEventPublisher.PublishPvcResEvent(&pvc, PublishDelete)
 	return nil
 }
 
 // OnVolumeAttachmentUpdateMessage implements Domain.
 func (d *domain) OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
-	//panic("unimplemented")
-	volumeAttachment.SyncStatus = t.SyncStatus{
-		LastSyncedAt: opts.MessageTimestamp,
-		State: func() t.SyncState {
-			if status == types.ResourceStatusDeleting {
-				return t.SyncStateDeletingAtAgent
-			}
-			return t.SyncStateUpdatedAtAgent
-		}(),
+	vatt, err := d.volumeAttachmentRepo.FindOne(ctx, repos.Filter{
+		"accountName":   ctx.AccountName,
+		"clusterName":   clusterName,
+		"metadata.name": volumeAttachment.Name,
+	})
+	if err != nil {
+		return err
 	}
 
-	_, err := d.volumeAttachmentRepo.Create(ctx, &volumeAttachment)
+	if vatt == nil {
+		volumeAttachment.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    repos.ID(common.CreatedByResourceSyncUserId),
+			UserName:  common.CreatedByResourceSyncUsername,
+			UserEmail: common.CreatedByResourceSyncUserEmail,
+		}
+		volumeAttachment.LastUpdatedBy = volumeAttachment.CreatedBy
+		vatt, err = d.volumeAttachmentRepo.Create(ctx, &volumeAttachment)
+		if err != nil {
+			return errors.NewE(err)
+		}
+	}
+
+	vatt.SyncStatus.LastSyncedAt = opts.MessageTimestamp
+	vatt.SyncStatus.State = func() t.SyncState {
+		if status == types.ResourceStatusDeleting {
+			return t.SyncStateDeletingAtAgent
+		}
+		return t.SyncStateUpdatedAtAgent
+	}()
+
+	vatt, err = d.volumeAttachmentRepo.UpdateById(ctx, vatt.Id, vatt)
 	if err != nil {
 		return errors.NewE(err)
 	}
+	d.resourceEventPublisher.PublishVolumeAttachmentEvent(vatt, PublishDelete)
 	return nil
 }
