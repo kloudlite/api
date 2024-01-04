@@ -7,6 +7,9 @@ package graph
 import (
 	"context"
 	"fmt"
+	"github.com/kloudlite/api/pkg/errors"
+	fn "github.com/kloudlite/api/pkg/functions"
+	"time"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
@@ -16,37 +19,60 @@ import (
 
 // CreationTime is the resolver for the creationTime field.
 func (r *namespaceResolver) CreationTime(ctx context.Context, obj *entities.Namespace) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+	if obj == nil {
+		return "", errors.Newf("namespace/creation-time is nil")
+	}
+	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
 // ID is the resolver for the id field.
 func (r *namespaceResolver) ID(ctx context.Context, obj *entities.Namespace) (string, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
+	if obj == nil {
+		return "", errors.Newf("namespace is nil")
+	}
+	return string(obj.Id), nil
 }
 
 // Spec is the resolver for the spec field.
 func (r *namespaceResolver) Spec(ctx context.Context, obj *entities.Namespace) (*model.K8sIoAPICoreV1NamespaceSpec, error) {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	var m model.K8sIoAPICoreV1NamespaceSpec
+	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // Status is the resolver for the status field.
 func (r *namespaceResolver) Status(ctx context.Context, obj *entities.Namespace) (*model.K8sIoAPICoreV1NamespaceStatus, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	var m model.K8sIoAPICoreV1NamespaceStatus
+	if err := fn.JsonConversion(obj.Status, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *namespaceResolver) UpdateTime(ctx context.Context, obj *entities.Namespace) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+	if obj == nil || obj.UpdateTime.IsZero() {
+		return "", errors.Newf("persistent-volume-claim/update-time is nil")
+	}
+	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
 // Metadata is the resolver for the metadata field.
 func (r *namespaceInResolver) Metadata(ctx context.Context, obj *entities.Namespace, data *v1.ObjectMeta) error {
-	panic(fmt.Errorf("not implemented: Metadata - metadata"))
+	if obj == nil {
+		return errors.Newf("namespace is nil")
+	}
+	return fn.JsonConversion(data, &obj.ObjectMeta)
 }
 
 // Spec is the resolver for the spec field.
 func (r *namespaceInResolver) Spec(ctx context.Context, obj *entities.Namespace, data *model.K8sIoAPICoreV1NamespaceSpecIn) error {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	if obj == nil {
+		return errors.Newf("namespace is nil")
+	}
+	return fn.JsonConversion(data, &obj.Spec)
 }
 
 // Status is the resolver for the status field.
@@ -64,4 +90,3 @@ type (
 	namespaceResolver   struct{ *Resolver }
 	namespaceInResolver struct{ *Resolver }
 )
-

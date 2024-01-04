@@ -7,6 +7,9 @@ package graph
 import (
 	"context"
 	"fmt"
+	"github.com/kloudlite/api/pkg/errors"
+	fn "github.com/kloudlite/api/pkg/functions"
+	"time"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
@@ -16,37 +19,60 @@ import (
 
 // CreationTime is the resolver for the creationTime field.
 func (r *persistentVolumeResolver) CreationTime(ctx context.Context, obj *entities.PersistentVolume) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+	if obj == nil {
+		return "", errors.Newf("persistent-volume-claim/creation-time is nil")
+	}
+	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
 // ID is the resolver for the id field.
 func (r *persistentVolumeResolver) ID(ctx context.Context, obj *entities.PersistentVolume) (string, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
+	if obj == nil {
+		return "", errors.Newf("persitent volume is nil")
+	}
+	return string(obj.Id), nil
 }
 
 // Spec is the resolver for the spec field.
 func (r *persistentVolumeResolver) Spec(ctx context.Context, obj *entities.PersistentVolume) (*model.K8sIoAPICoreV1PersistentVolumeSpec, error) {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	var m model.K8sIoAPICoreV1PersistentVolumeSpec
+	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // Status is the resolver for the status field.
 func (r *persistentVolumeResolver) Status(ctx context.Context, obj *entities.PersistentVolume) (*model.K8sIoAPICoreV1PersistentVolumeStatus, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	var m model.K8sIoAPICoreV1PersistentVolumeStatus
+	if err := fn.JsonConversion(obj.Status, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *persistentVolumeResolver) UpdateTime(ctx context.Context, obj *entities.PersistentVolume) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+	if obj == nil || obj.UpdateTime.IsZero() {
+		return "", errors.Newf("persistent-volume/update-time is nil")
+	}
+	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
 // Metadata is the resolver for the metadata field.
 func (r *persistentVolumeInResolver) Metadata(ctx context.Context, obj *entities.PersistentVolume, data *v1.ObjectMeta) error {
-	panic(fmt.Errorf("not implemented: Metadata - metadata"))
+	if obj == nil {
+		return errors.Newf("persistance volume is nil")
+	}
+	return fn.JsonConversion(data, &obj.ObjectMeta)
 }
 
 // Spec is the resolver for the spec field.
 func (r *persistentVolumeInResolver) Spec(ctx context.Context, obj *entities.PersistentVolume, data *model.K8sIoAPICoreV1PersistentVolumeSpecIn) error {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	if obj == nil {
+		return errors.Newf("persistance volume is nil")
+	}
+	return fn.JsonConversion(data, &obj.Spec)
 }
 
 // Status is the resolver for the status field.

@@ -110,18 +110,18 @@ type Domain interface {
 	OnPVCUpdateMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnPVCDeleteMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim) error
 
-	ListNamespaces(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.PersistentVolumeClaim], error)
-	GetNamespace(ctx InfraContext, clusterName string, pvcName string) (*entities.PersistentVolumeClaim, error)
-	OnNamespaceUpdateMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnNamespaceDeleteMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim) error
+	ListNamespaces(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Namespace], error)
+	GetNamespace(ctx InfraContext, clusterName string, namespace string) (*entities.Namespace, error)
+	OnNamespaceUpdateMessage(ctx InfraContext, clusterName string, namespace entities.Namespace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnNamespaceDeleteMessage(ctx InfraContext, clusterName string, namespace entities.Namespace) error
 
-	ListPVs(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.PersistentVolumeClaim], error)
-	GetPV(ctx InfraContext, clusterName string, pvcName string) (*entities.PersistentVolumeClaim, error)
-	OnPVUpdateMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnPVDeleteMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim) error
+	ListPVs(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.PersistentVolume], error)
+	GetPV(ctx InfraContext, clusterName string, pvName string) (*entities.PersistentVolume, error)
+	OnPVUpdateMessage(ctx InfraContext, clusterName string, pv entities.PersistentVolume, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnPVDeleteMessage(ctx InfraContext, clusterName string, pv entities.PersistentVolume) error
 
-	ListVolumeAttachments(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.PersistentVolumeClaim], error)
-	GetVolumeAttachment(ctx InfraContext, clusterName string, pvcName string) (*entities.PersistentVolumeClaim, error)
-	OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, pvc entities.PersistentVolumeClaim) error
+	ListVolumeAttachments(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VolumeAttachment], error)
+	GetVolumeAttachment(ctx InfraContext, clusterName string, volAttachmentName string) (*entities.VolumeAttachment, error)
+	OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error
 }

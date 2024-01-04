@@ -66,19 +66,3 @@ func (r *Resolver) VolumeAttachmentIn() generated.VolumeAttachmentInResolver {
 
 type volumeAttachmentResolver struct{ *Resolver }
 type volumeAttachmentInResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *volumeAttachmentResolver) BaseEntity(ctx context.Context, obj *entities.VolumeAttachment) (*model.GithubComKloudliteAPIPkgReposBaseEntity, error) {
-	panic(fmt.Errorf("not implemented: BaseEntity - BaseEntity"))
-}
-func (r *volumeAttachmentInResolver) BaseEntity(ctx context.Context, obj *entities.VolumeAttachment, data *model.GithubComKloudliteAPIPkgReposBaseEntityIn) error {
-	panic(fmt.Errorf("not implemented: BaseEntity - BaseEntity"))
-}
-func (r *volumeAttachmentResolver) objectMeta(ctx context.Context, obj *model.VolumeAttachment) (*v1.ObjectMeta, error) {
-	panic(fmt.Errorf("not implemented: objectMeta - metadata"))
-}

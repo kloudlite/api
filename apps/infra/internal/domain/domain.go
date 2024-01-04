@@ -39,6 +39,9 @@ type domain struct {
 	secretRepo                repos.DbRepo[*entities.CloudProviderSecret]
 	vpnDeviceRepo             repos.DbRepo[*entities.VPNDevice]
 	pvcRepo                   repos.DbRepo[*entities.PersistentVolumeClaim]
+	namespaceRepo             repos.DbRepo[*entities.Namespace]
+	pvRepo                    repos.DbRepo[*entities.PersistentVolume]
+	volumeAttachmentRepo      repos.DbRepo[*entities.VolumeAttachment]
 
 	iamClient                   iam.IAMClient
 	accountsSvc                 AccountsSvc

@@ -32,4 +32,6 @@ type ResourceEventPublisher interface {
 	PublishPvcResEvent(pvc *entities.PersistentVolumeClaim, msg PublishMsg)
 	PublishCMSEvent(pvc *entities.ClusterManagedService, msg PublishMsg)
 	PublishHelmReleaseEvent(hr *entities.HelmRelease, msg PublishMsg)
+	PublishPvResEvent(pvc *entities.PersistentVolume, msg PublishMsg)
+	PublishVolumeAttachmentEvent(pvc *entities.VolumeAttachment, msg PublishMsg)
 }
