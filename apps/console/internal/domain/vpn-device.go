@@ -10,6 +10,7 @@ import (
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/infra"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+	wgv1 "github.com/kloudlite/operator/apis/wireguard/v1"
 )
 
 func (d *domain) findVPNDevice(ctx ConsoleContext, name string) (*entities.VPNDevice, error) {
@@ -41,7 +42,40 @@ func (d *domain) GetVPNDevice(ctx ConsoleContext, name string) (*entities.VPNDev
 	if err := d.canPerformActionInAccount(ctx, iamT.GetVPNDevice); err != nil {
 		return nil, errors.NewE(err)
 	}
-	return d.findVPNDevice(ctx, name)
+
+	device, err := d.findVPNDevice(ctx, name)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	if clusterName == nil {
+		return nil, errors.NewE(errors.Newf("no cluster attached to project %s, so could not get vpn configuration", *device.ProjectName))
+	}
+
+	gco, err := d.infraClient.GetVpnDevice(ctx, &infra.GetVpnDeviceIn{
+		AccountName: ctx.AccountName,
+		DeviceName:  name,
+		ClusterName: "",
+	})
+
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	if err := json.Unmarshal(gco.VpnDevice, &device.Device); err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	if err := json.Unmarshal(gco.WgConfig, &device.WireguardConfig); err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return device, nil
 }
 
 func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error) {
@@ -198,5 +232,96 @@ func (d *domain) DeleteVPNDevice(ctx ConsoleContext, name string) error {
 	if err := d.vpnDeviceRepo.DeleteById(ctx, device.Id); err != nil {
 		return errors.NewE(err)
 	}
+	return nil
+}
+
+func (d *domain) UpdateVpnDevicePorts(ctx ConsoleContext, devName string, ports []*wgv1.Port) error {
+	if err := d.canPerformActionInDevice(ctx, iamT.UpdateVPNDevice, devName); err != nil {
+		return errors.NewE(err)
+	}
+
+	currDevice, err := d.findVPNDevice(ctx, devName)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	currDevice.IncrementRecordVersion()
+	currDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
+	currDevice.Spec.Ports = func() []wgv1.Port {
+		prt := []wgv1.Port{}
+
+		for _, p := range ports {
+			if p != nil {
+				prt = append(prt, *p)
+			}
+		}
+		return prt
+	}()
+
+	nDevice, err := d.vpnDeviceRepo.UpdateById(ctx, currDevice.Id, currDevice)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	d.resourceEventPublisher.PublishVpnDeviceEvent(nDevice, PublishUpdate)
+
+	clusterName, err := d.getClusterAttachedToProject(ctx, *currDevice.ProjectName)
+
+	deviceBytes, err := json.Marshal(nDevice.Device)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	if _, err := d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
+		AccountName: ctx.AccountName,
+		ClusterName: *clusterName,
+		VpnDevice:   deviceBytes,
+	}); err != nil {
+		return errors.NewE(err)
+	}
+
+	return nil
+}
+
+func (d *domain) UpdateVpnDeviceNs(ctx ConsoleContext, devName string, namespace string) error {
+	if err := d.canPerformActionInDevice(ctx, iamT.UpdateVPNDevice, devName); err != nil {
+		return errors.NewE(err)
+	}
+
+	currDevice, err := d.findVPNDevice(ctx, devName)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	currDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
+		UserId:    ctx.UserId,
+		UserName:  ctx.UserName,
+		UserEmail: ctx.UserEmail,
+	}
+
+	currDevice.Spec.DeviceNamespace = &namespace
+
+	nDevice, err := d.vpnDeviceRepo.UpdateById(ctx, currDevice.Id, currDevice)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	d.resourceEventPublisher.PublishVpnDeviceEvent(nDevice, PublishUpdate)
+
+	clusterName, err := d.getClusterAttachedToProject(ctx, *currDevice.ProjectName)
+
+	deviceBytes, err := json.Marshal(nDevice.Device)
+
+	if _, err := d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
+		AccountName: ctx.AccountName,
+		ClusterName: *clusterName,
+		VpnDevice:   deviceBytes,
+	}); err != nil {
+		return errors.NewE(err)
+	}
+
 	return nil
 }

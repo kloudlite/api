@@ -8,6 +8,7 @@ import (
 
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
+	wgv1 "github.com/kloudlite/operator/apis/wireguard/v1"
 )
 
 type ConsoleContext struct {
@@ -213,6 +214,9 @@ type Domain interface {
 	CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
 	UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
 	DeleteVPNDevice(ctx ConsoleContext, name string) error
+
+	UpdateVpnDevicePorts(ctx ConsoleContext, devName string, ports []*wgv1.Port) error
+	UpdateVpnDeviceNs(ctx ConsoleContext, devName string, namespace string) error
 }
 
 type PublishMsg string
