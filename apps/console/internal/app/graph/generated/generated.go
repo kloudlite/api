@@ -301,8 +301,15 @@ type ComplexityRoot struct {
 		Type    func(childComplexity int) int
 	}
 
+	Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting struct {
+		Mode                func(childComplexity int) int
+		PrivateIngressClass func(childComplexity int) int
+		PublicIngressClass  func(childComplexity int) int
+	}
+
 	Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec struct {
 		ProjectName     func(childComplexity int) int
+		Routing         func(childComplexity int) int
 		TargetNamespace func(childComplexity int) int
 	}
 
@@ -321,6 +328,7 @@ type ComplexityRoot struct {
 	}
 
 	Github__com___kloudlite___operator___apis___crds___v1__Https struct {
+		ClusterIssuer func(childComplexity int) int
 		Enabled       func(childComplexity int) int
 		ForceRedirect func(childComplexity int) int
 	}
@@ -399,7 +407,6 @@ type ComplexityRoot struct {
 		IngressClass    func(childComplexity int) int
 		MaxBodySizeInMb func(childComplexity int) int
 		RateLimit       func(childComplexity int) int
-		Region          func(childComplexity int) int
 		Routes          func(childComplexity int) int
 	}
 
@@ -425,6 +432,7 @@ type ComplexityRoot struct {
 	Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec struct {
 		CnameRecords    func(childComplexity int) int
 		DeviceNamespace func(childComplexity int) int
+		Disabled        func(childComplexity int) int
 		NodeSelector    func(childComplexity int) int
 		Ports           func(childComplexity int) int
 	}
@@ -785,7 +793,6 @@ type ComplexityRoot struct {
 		RecordVersion     func(childComplexity int) int
 		Spec              func(childComplexity int) int
 		Status            func(childComplexity int) int
-		SyncStatus        func(childComplexity int) int
 		UpdateTime        func(childComplexity int) int
 		WireguardConfig   func(childComplexity int) int
 	}
@@ -990,7 +997,6 @@ type VPNDeviceResolver interface {
 
 	Spec(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpec, error)
 
-	SyncStatus(ctx context.Context, obj *entities.VPNDevice) (*types.SyncStatus, error)
 	UpdateTime(ctx context.Context, obj *entities.VPNDevice) (string, error)
 	WireguardConfig(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteAPIPkgTypesEncodedString, error)
 }
@@ -2044,12 +2050,40 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvFrom.Type(childComplexity), true
 
+	case "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.mode":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.Mode == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.Mode(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.privateIngressClass":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.PrivateIngressClass == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.PrivateIngressClass(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.publicIngressClass":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.PublicIngressClass == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting.PublicIngressClass(childComplexity), true
+
 	case "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.projectName":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.ProjectName == nil {
 			break
 		}
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.ProjectName(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.routing":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.Routing == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.Routing(childComplexity), true
 
 	case "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.targetNamespace":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec.TargetNamespace == nil {
@@ -2113,6 +2147,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__HttpGetProbe.Port(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__Https.clusterIssuer":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__Https.ClusterIssuer == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__Https.ClusterIssuer(childComplexity), true
 
 	case "Github__com___kloudlite___operator___apis___crds___v1__Https.enabled":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__Https.Enabled == nil {
@@ -2429,13 +2470,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__RouterSpec.RateLimit(childComplexity), true
 
-	case "Github__com___kloudlite___operator___apis___crds___v1__RouterSpec.region":
-		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__RouterSpec.Region == nil {
-			break
-		}
-
-		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__RouterSpec.Region(childComplexity), true
-
 	case "Github__com___kloudlite___operator___apis___crds___v1__RouterSpec.routes":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__RouterSpec.Routes == nil {
 			break
@@ -2505,6 +2539,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec.DeviceNamespace(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec.disabled":
+		if e.complexity.Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec.Disabled == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec.Disabled(childComplexity), true
 
 	case "Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec.nodeSelector":
 		if e.complexity.Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec.NodeSelector == nil {
@@ -4658,13 +4699,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.VPNDevice.Status(childComplexity), true
 
-	case "VPNDevice.syncStatus":
-		if e.complexity.VPNDevice.SyncStatus == nil {
-			break
-		}
-
-		return e.complexity.VPNDevice.SyncStatus(childComplexity), true
-
 	case "VPNDevice.updateTime":
 		if e.complexity.VPNDevice.UpdateTime == nil {
 			break
@@ -4746,6 +4780,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ContainerVolumeItemIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__CorsIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__EnvFromIn,
+		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentSpecIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__HPAIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__HttpGetProbeIn,
@@ -5167,8 +5202,15 @@ type Github__com___kloudlite___operator___apis___crds___v1__EnvFrom @shareable {
   type: Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret!
 }
 
+type Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting @shareable {
+  mode: Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode
+  privateIngressClass: String
+  publicIngressClass: String
+}
+
 type Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec @shareable {
   projectName: String!
+  routing: Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting
   targetNamespace: String
 }
 
@@ -5187,6 +5229,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__HttpGetProbe @sharea
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__Https @shareable {
+  clusterIssuer: String
   enabled: Boolean!
   forceRedirect: Boolean
 }
@@ -5265,7 +5308,6 @@ type Github__com___kloudlite___operator___apis___crds___v1__RouterSpec @shareabl
   ingressClass: String
   maxBodySizeInMB: Int
   rateLimit: Github__com___kloudlite___operator___apis___crds___v1__RateLimit
-  region: String
   routes: [Github__com___kloudlite___operator___apis___crds___v1__Route!]
 }
 
@@ -5291,6 +5333,7 @@ type Github__com___kloudlite___operator___apis___wireguard___v1__CNameRecord @sh
 type Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec @shareable {
   cnameRecords: [Github__com___kloudlite___operator___apis___wireguard___v1__CNameRecord!]
   deviceNamespace: String
+  disabled: Boolean
   nodeSelector: Map
   ports: [Github__com___kloudlite___operator___apis___wireguard___v1__Port!]
 }
@@ -5430,8 +5473,13 @@ input Github__com___kloudlite___operator___apis___crds___v1__EnvFromIn {
   type: Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret!
 }
 
+input Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn {
+  mode: Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode
+}
+
 input Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpecIn {
   projectName: String!
+  routing: Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn
   targetNamespace: String
 }
 
@@ -5450,6 +5498,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__HttpGetProbeIn {
 }
 
 input Github__com___kloudlite___operator___apis___crds___v1__HttpsIn {
+  clusterIssuer: String
   enabled: Boolean!
   forceRedirect: Boolean
 }
@@ -5524,7 +5573,6 @@ input Github__com___kloudlite___operator___apis___crds___v1__RouterSpecIn {
   ingressClass: String
   maxBodySizeInMB: Int
   rateLimit: Github__com___kloudlite___operator___apis___crds___v1__RateLimitIn
-  region: String
   routes: [Github__com___kloudlite___operator___apis___crds___v1__RouteIn!]
 }
 
@@ -5550,6 +5598,7 @@ input Github__com___kloudlite___operator___apis___wireguard___v1__CNameRecordIn 
 input Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpecIn {
   cnameRecords: [Github__com___kloudlite___operator___apis___wireguard___v1__CNameRecordIn!]
   deviceNamespace: String
+  disabled: Boolean
   nodeSelector: Map
   ports: [Github__com___kloudlite___operator___apis___wireguard___v1__PortIn!]
 }
@@ -5598,6 +5647,11 @@ enum Github__com___kloudlite___api___pkg___types__SyncState {
 enum Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret {
   config
   secret
+}
+
+enum Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode {
+  private
+  public
 }
 
 enum K8s__io___api___core___v1__SecretType {
@@ -6073,7 +6127,6 @@ input SecretKeyValueRefIn {
   recordVersion: Int!
   spec: Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec
   status: Github__com___kloudlite___operator___pkg___operator__Status
-  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
   wireguardConfig: Github__com___kloudlite___api___pkg___types__EncodedString
 }
@@ -11498,6 +11551,8 @@ func (ec *executionContext) fieldContext_Environment_spec(ctx context.Context, f
 			switch field.Name {
 			case "projectName":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_projectName(ctx, field)
+			case "routing":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_routing(ctx, field)
 			case "targetNamespace":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_targetNamespace(ctx, field)
 			}
@@ -14600,6 +14655,129 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 	return fc, nil
 }
 
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_mode(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_mode(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Mode, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_mode(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_privateIngressClass(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_privateIngressClass(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PrivateIngressClass, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_privateIngressClass(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_publicIngressClass(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_publicIngressClass(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PublicIngressClass, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_publicIngressClass(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_projectName(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_projectName(ctx, field)
 	if err != nil {
@@ -14639,6 +14817,55 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_routing(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_routing(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Routing, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRouting(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_routing(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "mode":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_mode(ctx, field)
+			case "privateIngressClass":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_privateIngressClass(ctx, field)
+			case "publicIngressClass":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_publicIngressClass(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting", field.Name)
 		},
 	}
 	return fc, nil
@@ -15014,6 +15241,47 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__Https_clusterIssuer(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1HTTPS) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__Https_clusterIssuer(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterIssuer, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__Https_clusterIssuer(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__Https",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16866,6 +17134,8 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "clusterIssuer":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__Https_clusterIssuer(ctx, field)
 			case "enabled":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__Https_enabled(ctx, field)
 			case "forceRedirect":
@@ -17005,47 +17275,6 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RateLimit_rps(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__RateLimit", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_region(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1RouterSpec) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_region(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Region, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*string)
-	fc.Result = res
-	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_region(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___operator___apis___crds___v1__RouterSpec",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -17486,6 +17715,47 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_disabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisWireguardV1DeviceSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_disabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Disabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_disabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	return fc, nil
@@ -24116,8 +24386,6 @@ func (ec *executionContext) fieldContext_Mutation_core_createVPNDevice(ctx conte
 				return ec.fieldContext_VPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_VPNDevice_status(ctx, field)
-			case "syncStatus":
-				return ec.fieldContext_VPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_VPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -24232,8 +24500,6 @@ func (ec *executionContext) fieldContext_Mutation_core_updateVPNDevice(ctx conte
 				return ec.fieldContext_VPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_VPNDevice_status(ctx, field)
-			case "syncStatus":
-				return ec.fieldContext_VPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_VPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -29781,8 +30047,6 @@ func (ec *executionContext) fieldContext_Query_core_getVPNDevice(ctx context.Con
 				return ec.fieldContext_VPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_VPNDevice_status(ctx, field)
-			case "syncStatus":
-				return ec.fieldContext_VPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_VPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -30676,8 +30940,6 @@ func (ec *executionContext) fieldContext_Router_spec(ctx context.Context, field 
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_maxBodySizeInMB(ctx, field)
 			case "rateLimit":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_rateLimit(ctx, field)
-			case "region":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_region(ctx, field)
 			case "routes":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_routes(ctx, field)
 			}
@@ -33110,6 +33372,8 @@ func (ec *executionContext) fieldContext_VPNDevice_spec(ctx context.Context, fie
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_cnameRecords(ctx, field)
 			case "deviceNamespace":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_deviceNamespace(ctx, field)
+			case "disabled":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_disabled(ctx, field)
 			case "nodeSelector":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_nodeSelector(ctx, field)
 			case "ports":
@@ -33171,64 +33435,6 @@ func (ec *executionContext) fieldContext_VPNDevice_status(ctx context.Context, f
 				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_resources(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__Status", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _VPNDevice_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.VPNDevice) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_VPNDevice_syncStatus(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.VPNDevice().SyncStatus(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*types.SyncStatus)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_VPNDevice_syncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "VPNDevice",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "action":
-				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field)
-			case "error":
-				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field)
-			case "lastSyncedAt":
-				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field)
-			case "state":
-				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field)
-			case "syncScheduledAt":
-				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___pkg___types__SyncStatus", field.Name)
 		},
 	}
 	return fc, nil
@@ -33438,8 +33644,6 @@ func (ec *executionContext) fieldContext_VPNDeviceEdge_node(ctx context.Context,
 				return ec.fieldContext_VPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_VPNDevice_status(ctx, field)
-			case "syncStatus":
-				return ec.fieldContext_VPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_VPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -36381,6 +36585,34 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn, error) {
+	var it model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"mode"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "mode":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("mode"))
+			it.Mode, err = ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentSpecIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn, error) {
 	var it model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn
 	asMap := map[string]interface{}{}
@@ -36388,7 +36620,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"projectName", "targetNamespace"}
+	fieldsInOrder := [...]string{"projectName", "routing", "targetNamespace"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -36400,6 +36632,14 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
 			it.ProjectName, err = ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "routing":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("routing"))
+			it.Routing, err = ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -36528,13 +36768,21 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"enabled", "forceRedirect"}
+	fieldsInOrder := [...]string{"clusterIssuer", "enabled", "forceRedirect"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "clusterIssuer":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterIssuer"))
+			it.ClusterIssuer, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
 		case "enabled":
 			var err error
 
@@ -37012,7 +37260,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"backendProtocol", "basicAuth", "cors", "domains", "https", "ingressClass", "maxBodySizeInMB", "rateLimit", "region", "routes"}
+	fieldsInOrder := [...]string{"backendProtocol", "basicAuth", "cors", "domains", "https", "ingressClass", "maxBodySizeInMB", "rateLimit", "routes"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37080,14 +37328,6 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("rateLimit"))
 			it.RateLimit, err = ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__RateLimitIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1RateLimitIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-		case "region":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("region"))
-			it.Region, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -37248,7 +37488,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"cnameRecords", "deviceNamespace", "nodeSelector", "ports"}
+	fieldsInOrder := [...]string{"cnameRecords", "deviceNamespace", "disabled", "nodeSelector", "ports"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -37268,6 +37508,14 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceNamespace"))
 			it.DeviceNamespace, err = ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+		case "disabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("disabled"))
+			it.Disabled, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -40044,6 +40292,39 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 	return out
 }
 
+var github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting")
+		case "mode":
+
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_mode(ctx, field, obj)
+
+		case "privateIngressClass":
+
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_privateIngressClass(ctx, field, obj)
+
+		case "publicIngressClass":
+
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting_publicIngressClass(ctx, field, obj)
+
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpecImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec"}
 
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec) graphql.Marshaler {
@@ -40061,6 +40342,10 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
+		case "routing":
+
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_routing(ctx, field, obj)
+
 		case "targetNamespace":
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec_targetNamespace(ctx, field, obj)
@@ -40166,6 +40451,10 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___crds___v1__Https")
+		case "clusterIssuer":
+
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__Https_clusterIssuer(ctx, field, obj)
+
 		case "enabled":
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__Https_enabled(ctx, field, obj)
@@ -40643,10 +40932,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_rateLimit(ctx, field, obj)
 
-		case "region":
-
-			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_region(ctx, field, obj)
-
 		case "routes":
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__RouterSpec_routes(ctx, field, obj)
@@ -40803,6 +41088,10 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___wiregua
 		case "deviceNamespace":
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_deviceNamespace(ctx, field, obj)
+
+		case "disabled":
+
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec_disabled(ctx, field, obj)
 
 		case "nodeSelector":
 
@@ -44127,26 +44416,6 @@ func (ec *executionContext) _VPNDevice(ctx context.Context, sel ast.SelectionSet
 
 			out.Values[i] = ec._VPNDevice_status(ctx, field, obj)
 
-		case "syncStatus":
-			field := field
-
-			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._VPNDevice_syncStatus(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&invalids, 1)
-				}
-				return res
-			}
-
-			out.Concurrently(i, func() graphql.Marshaler {
-				return innerFunc(ctx)
-
-			})
 		case "updateTime":
 			field := field
 
@@ -44961,16 +45230,6 @@ func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types_
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx context.Context, sel ast.SelectionSet, v types.SyncStatus) graphql.Marshaler {
 	return ec._Github__com___kloudlite___api___pkg___types__SyncStatus(ctx, sel, &v)
-}
-
-func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx context.Context, sel ast.SelectionSet, v *types.SyncStatus) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Github__com___kloudlite___api___pkg___types__SyncStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppContainer2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppContainer) graphql.Marshaler {
@@ -46931,6 +47190,37 @@ func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis_
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRouting(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRouting(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1EnvironmentSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec) graphql.Marshaler {

@@ -6,53 +6,91 @@ package graph
 
 import (
 	"context"
-	"fmt"
+	"github.com/kloudlite/api/pkg/errors"
+	"time"
 
 	"github.com/kloudlite/api/apps/console/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/console/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/console/internal/entities"
-	"github.com/kloudlite/api/pkg/types"
+	fn "github.com/kloudlite/api/pkg/functions"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CreationTime is the resolver for the creationTime field.
 func (r *vPNDeviceResolver) CreationTime(ctx context.Context, obj *entities.VPNDevice) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+	if obj == nil {
+		return "", errNilVPNDevice
+	}
+	return obj.BaseEntity.CreationTime.Format(time.RFC3339), nil
 }
 
 // ID is the resolver for the id field.
 func (r *vPNDeviceResolver) ID(ctx context.Context, obj *entities.VPNDevice) (string, error) {
-	panic(fmt.Errorf("not implemented: ID - id"))
+	if obj == nil {
+		return "", errNilVPNDevice
+	}
+	return string(obj.Id), nil
 }
 
 // Spec is the resolver for the spec field.
 func (r *vPNDeviceResolver) Spec(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpec, error) {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
-}
+	if obj == nil {
+		return nil, errNilVPNDevice
+	}
 
-// SyncStatus is the resolver for the syncStatus field.
-func (r *vPNDeviceResolver) SyncStatus(ctx context.Context, obj *entities.VPNDevice) (*types.SyncStatus, error) {
-	panic(fmt.Errorf("not implemented: SyncStatus - syncStatus"))
+	m := &model.GithubComKloudliteOperatorApisWireguardV1DeviceSpec{}
+
+	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return m, nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *vPNDeviceResolver) UpdateTime(ctx context.Context, obj *entities.VPNDevice) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+	if obj == nil {
+		return "", errNilVPNDevice
+	}
+
+	return obj.BaseEntity.UpdateTime.Format(time.RFC3339), nil
 }
 
 // WireguardConfig is the resolver for the wireguardConfig field.
 func (r *vPNDeviceResolver) WireguardConfig(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteAPIPkgTypesEncodedString, error) {
-	panic(fmt.Errorf("not implemented: WireguardConfig - wireguardConfig"))
+	if obj == nil {
+		return nil, errNilVPNDevice
+	}
+
+	m := &model.GithubComKloudliteAPIPkgTypesEncodedString{}
+
+	if err := fn.JsonConversion(obj.WireguardConfig, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return m, nil
 }
 
 // Metadata is the resolver for the metadata field.
 func (r *vPNDeviceInResolver) Metadata(ctx context.Context, obj *entities.VPNDevice, data *v1.ObjectMeta) error {
-	panic(fmt.Errorf("not implemented: Metadata - metadata"))
+	if obj == nil {
+		return errNilVPNDevice
+	}
+
+	if data != nil {
+		obj.ObjectMeta = *data
+	}
+
+	return nil
 }
 
 // Spec is the resolver for the spec field.
 func (r *vPNDeviceInResolver) Spec(ctx context.Context, obj *entities.VPNDevice, data *model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecIn) error {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	if obj == nil {
+		return errNilVPNDevice
+	}
+
+	return fn.JsonConversion(data, &obj.Spec)
 }
 
 // VPNDevice returns generated.VPNDeviceResolver implementation.

@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/json"
+
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/common"
@@ -9,7 +10,6 @@ import (
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/infra"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
-	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
 func (d *domain) findVPNDevice(ctx ConsoleContext, name string) (*entities.VPNDevice, error) {
@@ -79,33 +79,32 @@ func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 	d.resourceEventPublisher.PublishVpnDeviceEvent(&device, PublishAdd)
 
 	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
-	if err!=nil{
+	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	if clusterName !=nil{
-		return  nil, errors.NewE(errors.Newf("no cluster attached to project %s, so could not activate vpn device", *device.ProjectName))
+	if clusterName != nil {
+		return nil, errors.NewE(errors.Newf("no cluster attached to project %s, so could not activate vpn device", *device.ProjectName))
 	}
 
 	deviceBytes, err := json.Marshal(nDevice.Device)
-	if err!=nil{
+	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-
-	resp,err := d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
+	resp, err := d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
 		AccountName: ctx.AccountName,
 		ClusterName: *clusterName,
 		VpnDevice:   deviceBytes,
 	})
-	if err!=nil{
+	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	if err := json.Unmarshal(resp.VpnDevice, &nDevice.Device);err != nil{
+	if err := json.Unmarshal(resp.VpnDevice, &nDevice.Device); err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	if err := json.Unmarshal(resp.WgConfig, &nDevice.WireguardConfig);err != nil{
+	if err := json.Unmarshal(resp.WgConfig, &nDevice.WireguardConfig); err != nil {
 		return nil, errors.NewE(err)
 	}
 
@@ -131,7 +130,6 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 	currDevice.DisplayName = device.DisplayName
 	currDevice.Spec.Ports = device.Spec.Ports
 
-
 	nDevice, err := d.vpnDeviceRepo.UpdateById(ctx, device.Id, &device)
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -139,12 +137,12 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 	d.resourceEventPublisher.PublishVpnDeviceEvent(nDevice, PublishUpdate)
 
 	deviceBytes, err := json.Marshal(nDevice.Device)
-	if err!=nil{
+	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
 	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
-	if err!=nil {
+	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
@@ -152,17 +150,17 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 		return nil, errors.NewE(errors.Newf("no cluster attached to project %s, so could not activate vpn device", *device.ProjectName))
 	}
 
-	infraDevOut,err:=d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
+	infraDevOut, err := d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
 		AccountName: ctx.AccountName,
 		ClusterName: *clusterName,
 		VpnDevice:   deviceBytes,
 	})
 
-	if err := json.Unmarshal(infraDevOut.VpnDevice, &nDevice.Device);err != nil{
+	if err := json.Unmarshal(infraDevOut.VpnDevice, &nDevice.Device); err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	if err := json.Unmarshal(infraDevOut.WgConfig, &nDevice.WireguardConfig);err != nil{
+	if err := json.Unmarshal(infraDevOut.WgConfig, &nDevice.WireguardConfig); err != nil {
 		return nil, errors.NewE(err)
 	}
 
@@ -183,7 +181,7 @@ func (d *domain) DeleteVPNDevice(ctx ConsoleContext, name string) error {
 	d.resourceEventPublisher.PublishVpnDeviceEvent(device, PublishDelete)
 
 	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
-	if err!=nil{
+	if err != nil {
 		return errors.NewE(err)
 	}
 
@@ -201,21 +199,4 @@ func (d *domain) DeleteVPNDevice(ctx ConsoleContext, name string) error {
 		return errors.NewE(err)
 	}
 	return nil
-}
-
-func (d *domain) OnVPNDeviceApplyError(ctx ConsoleContext, name, errMsg string, opts UpdateAndDeleteOpts) error {
-	panic("not implemented")
-}
-
-func (d *domain) OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.VPNDevice) error {
-
-	panic("not implemented")
-}
-
-func (d *domain) OnVPNDeviceUpdateMessage(ctx ConsoleContext, device entities.VPNDevice, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
-	panic("not implemented")
-}
-
-func (d *domain) ResyncVPNDevice(ctx ConsoleContext, name string) error {
-	panic("not implemented")
 }

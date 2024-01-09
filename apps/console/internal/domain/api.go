@@ -213,11 +213,6 @@ type Domain interface {
 	CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
 	UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) (*entities.VPNDevice, error)
 	DeleteVPNDevice(ctx ConsoleContext, name string) error
-
-	OnVPNDeviceApplyError(ctx ConsoleContext, name, errMsg string, opts UpdateAndDeleteOpts) error
-	OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.VPNDevice) error
-	OnVPNDeviceUpdateMessage(ctx ConsoleContext, device entities.VPNDevice, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	ResyncVPNDevice(ctx ConsoleContext, name string) error
 }
 
 type PublishMsg string

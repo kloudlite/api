@@ -224,14 +224,26 @@ type GithubComKloudliteOperatorApisCrdsV1EnvFromIn struct {
 	Type    GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret `json:"type"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting struct {
+	Mode                *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode `json:"mode,omitempty"`
+	PrivateIngressClass *string                                                     `json:"privateIngressClass,omitempty"`
+	PublicIngressClass  *string                                                     `json:"publicIngressClass,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn struct {
+	Mode *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode `json:"mode,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec struct {
-	ProjectName     string  `json:"projectName"`
-	TargetNamespace *string `json:"targetNamespace,omitempty"`
+	ProjectName     string                                                  `json:"projectName"`
+	Routing         *GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting `json:"routing,omitempty"`
+	TargetNamespace *string                                                 `json:"targetNamespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn struct {
-	ProjectName     string  `json:"projectName"`
-	TargetNamespace *string `json:"targetNamespace,omitempty"`
+	ProjectName     string                                                    `json:"projectName"`
+	Routing         *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn `json:"routing,omitempty"`
+	TargetNamespace *string                                                   `json:"targetNamespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1Hpa struct {
@@ -263,13 +275,15 @@ type GithubComKloudliteOperatorApisCrdsV1HTTPGetProbeIn struct {
 }
 
 type GithubComKloudliteOperatorApisCrdsV1HTTPS struct {
-	Enabled       bool  `json:"enabled"`
-	ForceRedirect *bool `json:"forceRedirect,omitempty"`
+	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
+	Enabled       bool    `json:"enabled"`
+	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1HTTPSIn struct {
-	Enabled       bool  `json:"enabled"`
-	ForceRedirect *bool `json:"forceRedirect,omitempty"`
+	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
+	Enabled       bool    `json:"enabled"`
+	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1Intercept struct {
@@ -407,7 +421,6 @@ type GithubComKloudliteOperatorApisCrdsV1RouterSpec struct {
 	IngressClass    *string                                        `json:"ingressClass,omitempty"`
 	MaxBodySizeInMb *int                                           `json:"maxBodySizeInMB,omitempty"`
 	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimit `json:"rateLimit,omitempty"`
-	Region          *string                                        `json:"region,omitempty"`
 	Routes          []*GithubComKloudliteOperatorApisCrdsV1Route   `json:"routes,omitempty"`
 }
 
@@ -420,7 +433,6 @@ type GithubComKloudliteOperatorApisCrdsV1RouterSpecIn struct {
 	IngressClass    *string                                          `json:"ingressClass,omitempty"`
 	MaxBodySizeInMb *int                                             `json:"maxBodySizeInMB,omitempty"`
 	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimitIn `json:"rateLimit,omitempty"`
-	Region          *string                                          `json:"region,omitempty"`
 	Routes          []*GithubComKloudliteOperatorApisCrdsV1RouteIn   `json:"routes,omitempty"`
 }
 
@@ -465,6 +477,7 @@ type GithubComKloudliteOperatorApisWireguardV1CNameRecordIn struct {
 type GithubComKloudliteOperatorApisWireguardV1DeviceSpec struct {
 	CnameRecords    []*GithubComKloudliteOperatorApisWireguardV1CNameRecord `json:"cnameRecords,omitempty"`
 	DeviceNamespace *string                                                 `json:"deviceNamespace,omitempty"`
+	Disabled        *bool                                                   `json:"disabled,omitempty"`
 	NodeSelector    map[string]interface{}                                  `json:"nodeSelector,omitempty"`
 	Ports           []*GithubComKloudliteOperatorApisWireguardV1Port        `json:"ports,omitempty"`
 }
@@ -472,6 +485,7 @@ type GithubComKloudliteOperatorApisWireguardV1DeviceSpec struct {
 type GithubComKloudliteOperatorApisWireguardV1DeviceSpecIn struct {
 	CnameRecords    []*GithubComKloudliteOperatorApisWireguardV1CNameRecordIn `json:"cnameRecords,omitempty"`
 	DeviceNamespace *string                                                   `json:"deviceNamespace,omitempty"`
+	Disabled        *bool                                                     `json:"disabled,omitempty"`
 	NodeSelector    map[string]interface{}                                    `json:"nodeSelector,omitempty"`
 	Ports           []*GithubComKloudliteOperatorApisWireguardV1PortIn        `json:"ports,omitempty"`
 }
@@ -755,6 +769,47 @@ func (e *GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) UnmarshalGQL(v inte
 }
 
 func (e GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode string
+
+const (
+	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePrivate GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode = "private"
+	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePublic  GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode = "public"
+)
+
+var AllGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode = []GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode{
+	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePrivate,
+	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePublic,
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePrivate, GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePublic:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
