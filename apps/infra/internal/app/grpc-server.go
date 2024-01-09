@@ -50,11 +50,10 @@ func (g *grpcServer) GetVpnDevice(ctx context.Context, in *infra.GetVpnDeviceIn)
 	}, nil
 }
 
-
 func (g *grpcServer) UpsertVpnDevice(ctx context.Context, in *infra.UpsertVpnDeviceIn) (*infra.UpsertVpnDeviceOut, error) {
 	dctx := g.contextFromAccount(ctx, in.AccountName)
 	var wgDevice wireguardV1.Device
-	if err := json.Unmarshal(in.VpnDevice, &wgDevice); err != nil{
+	if err := json.Unmarshal(in.VpnDevice, &wgDevice); err != nil {
 		return nil, errors.NewE(err)
 	}
 	device, err := g.d.UpsertManagedVPNDevice(dctx, in.ClusterName, entities.VPNDevice{
@@ -62,9 +61,10 @@ func (g *grpcServer) UpsertVpnDevice(ctx context.Context, in *infra.UpsertVpnDev
 		ResourceMetadata: common.ResourceMetadata{},
 		AccountName:      in.AccountName,
 		ClusterName:      in.ClusterName,
-		ManagingByDev: fn.New(repos.ID(in.Id)),
+		ManagingByDev:    fn.New(repos.ID(in.Id)),
 		SyncStatus:       t.SyncStatus{},
-	})
+	}, repos.ID(in.Id))
+
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -77,7 +77,7 @@ func (g *grpcServer) UpsertVpnDevice(ctx context.Context, in *infra.UpsertVpnDev
 		return nil, errors.NewE(err)
 	}
 	return &infra.UpsertVpnDeviceOut{
-		WgConfig: wgData,
+		WgConfig:  wgData,
 		VpnDevice: wgd,
 	}, nil
 }
@@ -90,7 +90,6 @@ func (g *grpcServer) DeleteVpnDevice(ctx context.Context, in *infra.DeleteVpnDev
 	}
 	return &infra.DeleteVpnDeviceOut{}, nil
 }
-
 
 // GetCluster implements infra.InfraServer.
 func (g *grpcServer) GetCluster(ctx context.Context, in *infra.GetClusterIn) (*infra.GetClusterOut, error) {

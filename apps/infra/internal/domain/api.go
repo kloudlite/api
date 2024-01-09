@@ -75,7 +75,7 @@ type Domain interface {
 
 	CreateVPNDevice(ctx InfraContext, clusterName string, device entities.VPNDevice) (*entities.VPNDevice, error)
 	UpdateVPNDevice(ctx InfraContext, clusterName string, device entities.VPNDevice) (*entities.VPNDevice, error)
-	UpsertManagedVPNDevice(ctx InfraContext, clusterName string, device entities.VPNDevice) (*entities.VPNDevice, error)
+	UpsertManagedVPNDevice(ctx InfraContext, clusterName string, device entities.VPNDevice, managedDeviceId repos.ID) (*entities.VPNDevice, error)
 	UpdateVpnDevicePorts(ctx InfraContext, clusterName string, devName string, ports []*wgv1.Port) error
 	UpdateVpnDeviceNs(ctx InfraContext, clusterName string, devName string, namespace string) error
 
