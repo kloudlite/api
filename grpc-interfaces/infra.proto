@@ -5,6 +5,15 @@ option go_package = "kloudlite.io/rpc/infra";
 service Infra {
   rpc GetCluster(GetClusterIn) returns (GetClusterOut);
   rpc GetNodepool(GetNodepoolIn) returns (GetNodepoolOut);
+
+  rpc CreateVpnDevice(CreateVpnDeviceIn) returns (CreateVpnDeviceOut);
+  rpc DeleteVpnDevice(DeleteVpnDeviceIn) returns (DeleteVpnDeviceOut);
+  rpc UpdateVpnDevice(UpdateVpnDeviceIn) returns (UpdateVpnDeviceOut);
+}
+
+
+message CreateVpnDeviceIn {
+  bytes vpnDevice = 1;
 }
 
 message GetClusterIn {

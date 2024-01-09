@@ -22,6 +22,10 @@ func (d *domain) UpdateVpnDeviceNs(ctx InfraContext, clusterName string, devName
 		return errors.NewE(err)
 	}
 
+	if !currDevice.SelfManaged {
+		return errors.Newf("device is not self managed, cannot update")
+	}
+
 	currDevice.IncrementRecordVersion()
 	currDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
@@ -74,6 +78,7 @@ func (d *domain) CreateVPNDevice(ctx InfraContext, clusterName string, device en
 		return nil, errors.NewE(err)
 	}
 
+	device.SelfManaged = true
 	device.IncrementRecordVersion()
 	device.CreatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
@@ -126,6 +131,10 @@ func (d *domain) UpdateVPNDevice(ctx InfraContext, clusterName string, device en
 		return nil, errors.NewE(err)
 	}
 
+	if !currDevice.SelfManaged {
+		return nil, errors.Newf("device is not self managed, cannot update")
+	}
+
 	currDevice.IncrementRecordVersion()
 	currDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
@@ -161,6 +170,10 @@ func (d *domain) UpdateVpnDevicePorts(ctx InfraContext, clusterName string, devN
 	currDevice, err := d.findVPNDevice(ctx, clusterName, devName)
 	if err != nil {
 		return errors.NewE(err)
+	}
+
+	if !currDevice.SelfManaged {
+		return errors.Newf("device is not self managed, cannot update")
 	}
 
 	currDevice.IncrementRecordVersion()
