@@ -1026,7 +1026,6 @@ func (r *queryResolver) CoreResyncProjectManagedService(ctx context.Context, pro
 
 // CoreListVPNDevices is the resolver for the core_listVPNDevices field.
 func (r *queryResolver) CoreListVPNDevices(ctx context.Context, search *model.CoreSearchVPNDevices, pq *repos.CursorPagination) (*model.VPNDevicePaginatedRecords, error) {
-
 	filter := map[string]repos.MatchFilter{}
 	if search != nil {
 		if search.Text != nil {

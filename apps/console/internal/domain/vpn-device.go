@@ -1,13 +1,14 @@
 package domain
 
 import (
+	"encoding/json"
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/infra"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
-	t "github.com/kloudlite/api/pkg/types"
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
@@ -49,21 +50,13 @@ func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 		return nil, errors.NewE(err)
 	}
 
-	device.EnsureGVK()
-	if err := d.k8sClient.ValidateObject(ctx, &device.Device); err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	device.IncrementRecordVersion()
 	device.CreatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
 	device.LastUpdatedBy = device.CreatedBy
-
 	device.AccountName = ctx.AccountName
-	device.SyncStatus = t.GenSyncStatus(t.SyncActionApply, device.RecordVersion)
 
 	if _, err := d.iamClient.AddMembership(ctx, &iam.AddMembershipIn{
 		UserId:       string(ctx.UserId),
@@ -85,15 +78,37 @@ func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 
 	d.resourceEventPublisher.PublishVpnDeviceEvent(&device, PublishAdd)
 
-	// TODO: push device to infra using grpc
-	// considring cluster of project is same for each environment of that cluster
-	// if device.ProjectName != nil {
-	// 	device.Spec.Disabled = false
-	// 	if err := d.applyK8sResource(ctx, *device.ProjectName, &device.Device, device.RecordVersion); err != nil {
-	// 		return nil, errors.NewE(err)
-	// 	}
-	// }
-	//
+	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
+	if err!=nil{
+		return nil, errors.NewE(err)
+	}
+	if clusterName !=nil{
+		return  nil, errors.NewE(errors.Newf("no cluster attached to project %s, so could not activate vpn device", *device.ProjectName))
+	}
+
+	deviceBytes, err := json.Marshal(nDevice.Device)
+	if err!=nil{
+		return nil, errors.NewE(err)
+	}
+
+
+	resp,err := d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
+		AccountName: ctx.AccountName,
+		ClusterName: *clusterName,
+		VpnDevice:   deviceBytes,
+	})
+	if err!=nil{
+		return nil, errors.NewE(err)
+	}
+
+	if err := json.Unmarshal(resp.VpnDevice, &nDevice.Device);err != nil{
+		return nil, errors.NewE(err)
+	}
+
+	if err := json.Unmarshal(resp.WgConfig, &nDevice.WireguardConfig);err != nil{
+		return nil, errors.NewE(err)
+	}
+
 	return nDevice, nil
 }
 
@@ -102,30 +117,20 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 		return nil, errors.NewE(err)
 	}
 
-	device.EnsureGVK()
-	if err := d.k8sClient.ValidateObject(ctx, &device.Device); err != nil {
-		return nil, errors.NewE(err)
-	}
-
 	currDevice, err := d.findVPNDevice(ctx, device.Name)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	currDevice.IncrementRecordVersion()
 	currDevice.LastUpdatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
 		UserName:  ctx.UserName,
 		UserEmail: ctx.UserEmail,
 	}
+
 	currDevice.DisplayName = device.DisplayName
-
-	currDevice.Labels = device.Labels
-	currDevice.Annotations = device.Annotations
-
 	currDevice.Spec.Ports = device.Spec.Ports
 
-	currDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currDevice.RecordVersion)
 
 	nDevice, err := d.vpnDeviceRepo.UpdateById(ctx, device.Id, &device)
 	if err != nil {
@@ -133,28 +138,69 @@ func (d *domain) UpdateVPNDevice(ctx ConsoleContext, device entities.VPNDevice) 
 	}
 	d.resourceEventPublisher.PublishVpnDeviceEvent(nDevice, PublishUpdate)
 
-	// TODO: push device to infra using grpc
-	// if device.ProjectName != nil && *device.ProjectName != "" {
-	// 	if err := d.applyK8sResource(ctx, *device.ProjectName, &device.Device, device.RecordVersion); err != nil {
-	// 		return nil, errors.NewE(err)
-	// 	}
-	//
-	// 	if currDevice.ProjectName != nil && *currDevice.ProjectName != *device.ProjectName {
-	//
-	// 		currDevice.Spec.Disabled = true
-	//
-	// 		if err := d.applyK8sResource(ctx, *currDevice.ProjectName, &currDevice.Device, currDevice.RecordVersion); err != nil {
-	// 			return nil, errors.NewE(err)
-	// 		}
-	// 	}
-	//
-	// }
+	deviceBytes, err := json.Marshal(nDevice.Device)
+	if err!=nil{
+		return nil, errors.NewE(err)
+	}
+
+	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
+	if err!=nil {
+		return nil, errors.NewE(err)
+	}
+
+	if clusterName == nil {
+		return nil, errors.NewE(errors.Newf("no cluster attached to project %s, so could not activate vpn device", *device.ProjectName))
+	}
+
+	infraDevOut,err:=d.infraClient.UpsertVpnDevice(ctx, &infra.UpsertVpnDeviceIn{
+		AccountName: ctx.AccountName,
+		ClusterName: *clusterName,
+		VpnDevice:   deviceBytes,
+	})
+
+	if err := json.Unmarshal(infraDevOut.VpnDevice, &nDevice.Device);err != nil{
+		return nil, errors.NewE(err)
+	}
+
+	if err := json.Unmarshal(infraDevOut.WgConfig, &nDevice.WireguardConfig);err != nil{
+		return nil, errors.NewE(err)
+	}
 
 	return nDevice, nil
 }
 
 func (d *domain) DeleteVPNDevice(ctx ConsoleContext, name string) error {
-	panic("not implemented")
+
+	if err := d.canPerformActionInDevice(ctx, iamT.DeleteVPNDevice, name); err != nil {
+		return errors.NewE(err)
+	}
+
+	device, err := d.findVPNDevice(ctx, name)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	d.resourceEventPublisher.PublishVpnDeviceEvent(device, PublishDelete)
+
+	clusterName, err := d.getClusterAttachedToProject(ctx, *device.ProjectName)
+	if err!=nil{
+		return errors.NewE(err)
+	}
+
+	if clusterName != nil {
+		_, err := d.infraClient.DeleteVpnDevice(ctx, &infra.DeleteVpnDeviceIn{
+			AccountName: ctx.AccountName,
+			Id:          string(device.Id),
+		})
+		if err != nil {
+			return errors.NewE(err)
+		}
+	}
+
+	if err := d.vpnDeviceRepo.DeleteById(ctx, device.Id); err != nil {
+		return errors.NewE(err)
+	}
+	return nil
 }
 
 func (d *domain) OnVPNDeviceApplyError(ctx ConsoleContext, name, errMsg string, opts UpdateAndDeleteOpts) error {

@@ -11,6 +11,7 @@ import (
 	"github.com/kloudlite/api/apps/console/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/console/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/console/internal/entities"
+	"github.com/kloudlite/api/pkg/types"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -27,6 +28,11 @@ func (r *vPNDeviceResolver) ID(ctx context.Context, obj *entities.VPNDevice) (st
 // Spec is the resolver for the spec field.
 func (r *vPNDeviceResolver) Spec(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpec, error) {
 	panic(fmt.Errorf("not implemented: Spec - spec"))
+}
+
+// SyncStatus is the resolver for the syncStatus field.
+func (r *vPNDeviceResolver) SyncStatus(ctx context.Context, obj *entities.VPNDevice) (*types.SyncStatus, error) {
+	panic(fmt.Errorf("not implemented: SyncStatus - syncStatus"))
 }
 
 // UpdateTime is the resolver for the updateTime field.

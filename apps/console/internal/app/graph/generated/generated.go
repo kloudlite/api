@@ -990,6 +990,7 @@ type VPNDeviceResolver interface {
 
 	Spec(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteOperatorApisWireguardV1DeviceSpec, error)
 
+	SyncStatus(ctx context.Context, obj *entities.VPNDevice) (*types.SyncStatus, error)
 	UpdateTime(ctx context.Context, obj *entities.VPNDevice) (string, error)
 	WireguardConfig(ctx context.Context, obj *entities.VPNDevice) (*model.GithubComKloudliteAPIPkgTypesEncodedString, error)
 }
@@ -33189,7 +33190,7 @@ func (ec *executionContext) _VPNDevice_syncStatus(ctx context.Context, field gra
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.SyncStatus, nil
+		return ec.resolvers.VPNDevice().SyncStatus(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -33201,17 +33202,17 @@ func (ec *executionContext) _VPNDevice_syncStatus(ctx context.Context, field gra
 		}
 		return graphql.Null
 	}
-	res := resTmp.(types.SyncStatus)
+	res := resTmp.(*types.SyncStatus)
 	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx, field.Selections, res)
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_VPNDevice_syncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "VPNDevice",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "action":
@@ -44127,12 +44128,25 @@ func (ec *executionContext) _VPNDevice(ctx context.Context, sel ast.SelectionSet
 			out.Values[i] = ec._VPNDevice_status(ctx, field, obj)
 
 		case "syncStatus":
+			field := field
 
-			out.Values[i] = ec._VPNDevice_syncStatus(ctx, field, obj)
-
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._VPNDevice_syncStatus(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
 			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "updateTime":
 			field := field
 
@@ -44947,6 +44961,16 @@ func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types_
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx context.Context, sel ast.SelectionSet, v types.SyncStatus) graphql.Marshaler {
 	return ec._Github__com___kloudlite___api___pkg___types__SyncStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx context.Context, sel ast.SelectionSet, v *types.SyncStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___api___pkg___types__SyncStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppContainer2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppContainer) graphql.Marshaler {

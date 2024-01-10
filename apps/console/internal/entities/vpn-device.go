@@ -20,10 +20,6 @@ type VPNDevice struct {
 	AccountName     string  `json:"accountName" graphql:"noinput"`
 	ProjectName     *string `json:"projectName,omitempty"`
 	EnvironmentName *string `json:"environmentName,omitempty"`
-
-	AvailableOnClusters []string `json:"availableOnClusters,omitempty" graphql:"noinput"`
-
-	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
 var VPNDeviceIndexes = []repos.IndexField{
