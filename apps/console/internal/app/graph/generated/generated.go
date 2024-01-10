@@ -179,6 +179,7 @@ type ComplexityRoot struct {
 		RecordVersion     func(childComplexity int) int
 		Spec              func(childComplexity int) int
 		Status            func(childComplexity int) int
+		SyncStatus        func(childComplexity int) int
 		UpdateTime        func(childComplexity int) int
 		WireguardConfig   func(childComplexity int) int
 	}
@@ -1545,6 +1546,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ConsoleVPNDevice.Status(childComplexity), true
+
+	case "ConsoleVPNDevice.syncStatus":
+		if e.complexity.ConsoleVPNDevice.SyncStatus == nil {
+			break
+		}
+
+		return e.complexity.ConsoleVPNDevice.SyncStatus(childComplexity), true
 
 	case "ConsoleVPNDevice.updateTime":
 		if e.complexity.ConsoleVPNDevice.UpdateTime == nil {
@@ -5758,6 +5766,7 @@ input ConfigKeyValueRefIn {
   recordVersion: Int!
   spec: Github__com___kloudlite___operator___apis___wireguard___v1__DeviceSpec
   status: Github__com___kloudlite___operator___pkg___operator__Status
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
   wireguardConfig: Github__com___kloudlite___api___pkg___types__EncodedString
 }
@@ -11413,6 +11422,64 @@ func (ec *executionContext) fieldContext_ConsoleVPNDevice_status(ctx context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _ConsoleVPNDevice_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.ConsoleVPNDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ConsoleVPNDevice_syncStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SyncStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(types.SyncStatus)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋtypesᚐSyncStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ConsoleVPNDevice_syncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ConsoleVPNDevice",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "action":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field)
+			case "error":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field)
+			case "lastSyncedAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field)
+			case "state":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field)
+			case "syncScheduledAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___pkg___types__SyncStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ConsoleVPNDevice_updateTime(ctx context.Context, field graphql.CollectedField, obj *entities.ConsoleVPNDevice) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ConsoleVPNDevice_updateTime(ctx, field)
 	if err != nil {
@@ -11617,6 +11684,8 @@ func (ec *executionContext) fieldContext_ConsoleVPNDeviceEdge_node(ctx context.C
 				return ec.fieldContext_ConsoleVPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ConsoleVPNDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_ConsoleVPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_ConsoleVPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -25449,6 +25518,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createVPNDevice(ctx conte
 				return ec.fieldContext_ConsoleVPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ConsoleVPNDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_ConsoleVPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_ConsoleVPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -25563,6 +25634,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateVPNDevice(ctx conte
 				return ec.fieldContext_ConsoleVPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ConsoleVPNDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_ConsoleVPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_ConsoleVPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -31110,6 +31183,8 @@ func (ec *executionContext) fieldContext_Query_core_getVPNDevice(ctx context.Con
 				return ec.fieldContext_ConsoleVPNDevice_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ConsoleVPNDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_ConsoleVPNDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_ConsoleVPNDevice_updateTime(ctx, field)
 			case "wireguardConfig":
@@ -39521,6 +39596,13 @@ func (ec *executionContext) _ConsoleVPNDevice(ctx context.Context, sel ast.Selec
 
 			out.Values[i] = ec._ConsoleVPNDevice_status(ctx, field, obj)
 
+		case "syncStatus":
+
+			out.Values[i] = ec._ConsoleVPNDevice_syncStatus(ctx, field, obj)
+
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&invalids, 1)
+			}
 		case "updateTime":
 			field := field
 
@@ -46549,7 +46631,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (any, error) {
+func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -46557,7 +46639,7 @@ func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v inter
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v any) graphql.Marshaler {
+func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
