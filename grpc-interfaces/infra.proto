@@ -6,14 +6,41 @@ service Infra {
   rpc GetCluster(GetClusterIn) returns (GetClusterOut);
   rpc GetNodepool(GetNodepoolIn) returns (GetNodepoolOut);
 
-  rpc CreateVpnDevice(CreateVpnDeviceIn) returns (CreateVpnDeviceOut);
+  rpc GetVpnDevice(GetVpnDeviceIn) returns (GetVpnDeviceOut);
+  rpc UpsertVpnDevice(UpsertVpnDeviceIn) returns (UpsertVpnDeviceOut);
   rpc DeleteVpnDevice(DeleteVpnDeviceIn) returns (DeleteVpnDeviceOut);
-  rpc UpdateVpnDevice(UpdateVpnDeviceIn) returns (UpdateVpnDeviceOut);
 }
 
+message GetVpnDeviceIn{
+  string deviceName = 1;
+  string accountName = 2;
+  string clusterName = 3;
+}
 
-message CreateVpnDeviceIn {
+message GetVpnDeviceOut {
   bytes vpnDevice = 1;
+  bytes wgConfig = 2;
+}
+
+message DeleteVpnDeviceIn {
+  string accountName = 1;
+  string id = 2;
+}
+
+message DeleteVpnDeviceOut {
+  bool status = 1;
+}
+
+message UpsertVpnDeviceIn {
+  string id = 1;
+  bytes vpnDevice = 2;
+  string accountName = 3;
+  string clusterName = 4;
+}
+
+message UpsertVpnDeviceOut {
+  bytes vpnDevice = 1;
+  bytes wgConfig = 2;
 }
 
 message GetClusterIn {

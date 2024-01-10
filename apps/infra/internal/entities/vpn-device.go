@@ -18,8 +18,8 @@ type VPNDevice struct {
 	WireguardConfig t.EncodedString `json:"wireguardConfig,omitempty" graphql:"noinput"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
-	ClusterName string `json:"clusterName" graphql:"noinput"`
-	SelfManaged bool   `json:"selfManaged" graphql:"noinput"`
+	ClusterName   string  `json:"clusterName" graphql:"noinput"`
+	ManagingByDev *repos.ID `json:"managingByDev" graphql:"noinput"`
 
 	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
