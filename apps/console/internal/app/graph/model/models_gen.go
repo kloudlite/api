@@ -9,6 +9,7 @@ import (
 
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/apis/crds/v1"
 )
 
 type AppEdge struct {
@@ -236,13 +237,13 @@ type GithubComKloudliteOperatorApisCrdsV1EnvFromIn struct {
 }
 
 type GithubComKloudliteOperatorApisCrdsV1EnvironmentRouting struct {
-	Mode                *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode `json:"mode,omitempty"`
-	PrivateIngressClass *string                                                     `json:"privateIngressClass,omitempty"`
-	PublicIngressClass  *string                                                     `json:"publicIngressClass,omitempty"`
+	Mode                *v1.EnvironmentRoutingMode `json:"mode,omitempty"`
+	PrivateIngressClass *string                    `json:"privateIngressClass,omitempty"`
+	PublicIngressClass  *string                    `json:"publicIngressClass,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingIn struct {
-	Mode *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode `json:"mode,omitempty"`
+	Mode *v1.EnvironmentRoutingMode `json:"mode,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpec struct {
@@ -380,17 +381,11 @@ type GithubComKloudliteOperatorApisCrdsV1ProjectManagedServiceSpecIn struct {
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ProjectSpec struct {
-	AccountName     string  `json:"accountName"`
-	ClusterName     string  `json:"clusterName"`
-	DisplayName     *string `json:"displayName,omitempty"`
-	Logo            *string `json:"logo,omitempty"`
-	TargetNamespace string  `json:"targetNamespace"`
+	TargetNamespace string `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn struct {
-	DisplayName     *string `json:"displayName,omitempty"`
-	Logo            *string `json:"logo,omitempty"`
-	TargetNamespace string  `json:"targetNamespace"`
+	TargetNamespace string `json:"targetNamespace"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1RateLimit struct {
@@ -560,6 +555,17 @@ type ManagedResourceEdge struct {
 	Node   *entities.ManagedResource `json:"node"`
 }
 
+type ManagedResourceKeyRef struct {
+	Key      string `json:"key"`
+	MresName string `json:"mresName"`
+}
+
+type ManagedResourceKeyValueRefIn struct {
+	Key      string `json:"key"`
+	MresName string `json:"mresName"`
+	Value    string `json:"value"`
+}
+
 type ManagedResourcePaginatedRecords struct {
 	Edges      []*ManagedResourceEdge `json:"edges"`
 	PageInfo   *PageInfo              `json:"pageInfo"`
@@ -674,14 +680,14 @@ type SecretEdge struct {
 }
 
 type SecretKeyRef struct {
-	Key         string `json:"key"`
-	SeceretName string `json:"seceretName"`
+	Key        string `json:"key"`
+	SecretName string `json:"secretName"`
 }
 
 type SecretKeyValueRefIn struct {
-	Key         string `json:"key"`
-	SeceretName string `json:"seceretName"`
-	Value       string `json:"value"`
+	Key        string `json:"key"`
+	SecretName string `json:"secretName"`
+	Value      string `json:"value"`
 }
 
 type SecretPaginatedRecords struct {
@@ -769,47 +775,6 @@ func (e *GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) UnmarshalGQL(v inte
 }
 
 func (e GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode string
-
-const (
-	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePrivate GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode = "private"
-	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePublic  GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode = "public"
-)
-
-var AllGithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode = []GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode{
-	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePrivate,
-	GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePublic,
-}
-
-func (e GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) IsValid() bool {
-	switch e {
-	case GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePrivate, GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingModePublic:
-		return true
-	}
-	return false
-}
-
-func (e GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) String() string {
-	return string(e)
-}
-
-func (e *GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode", str)
-	}
-	return nil
-}
-
-func (e GithubComKloudliteOperatorApisCrdsV1EnvironmentRoutingMode) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

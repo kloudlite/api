@@ -17,7 +17,8 @@ import (
 	"github.com/kloudlite/api/pkg/messaging"
 	msgTypes "github.com/kloudlite/api/pkg/messaging/types"
 	"github.com/kloudlite/api/pkg/types"
-	"github.com/kloudlite/operator/pkg/constants"
+	// "github.com/kloudlite/operator/pkg/constants"
+	"github.com/kloudlite/api/constants"
 
 	t "github.com/kloudlite/api/apps/tenant-agent/types"
 	"go.uber.org/fx"
@@ -63,11 +64,6 @@ type domain struct {
 	pmsRepo                repos.DbRepo[*entities.ProjectManagedService]
 }
 
-// GetSecretEntries implements Domain.
-func (*domain) GetSecretEntries(ctx ResourceContext, keyrefs []SecretKeyRef) ([]*SecretKeyValueRef, error) {
-	panic("unimplemented")
-}
-
 func errAlreadyMarkedForDeletion(label, namespace, name string) error {
 	return errors.Newf(
 		"%s (namespace=%s, name=%s) already marked for deletion",
@@ -78,6 +74,15 @@ func errAlreadyMarkedForDeletion(label, namespace, name string) error {
 }
 
 var ErrNoClusterAttached = errors.New("cluster not attached")
+
+func addTrackingId(obj client.Object, id repos.ID) {
+	ann := obj.GetAnnotations()
+	if ann == nil {
+		ann = make(map[string]string, 1)
+	}
+	ann[constants.ObservabilityTrackingKey] = string(id)
+	obj.SetAnnotations(ann)
+}
 
 type K8sContext interface {
 	context.Context
@@ -104,7 +109,6 @@ func (d *domain) applyK8sResource(ctx K8sContext, projectName string, obj client
 		ann = make(map[string]string, 1)
 	}
 	ann[constants.RecordVersionKey] = fmt.Sprintf("%d", recordVersion)
-	obj.SetAnnotations(ann)
 
 	m, err := fn.K8sObjToMap(obj)
 	if err != nil {
@@ -120,8 +124,10 @@ func (d *domain) applyK8sResource(ctx K8sContext, projectName string, obj client
 		return errors.NewE(err)
 	}
 
+  subject := common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), *clusterName)
+
 	err = d.producer.Produce(ctx, msgTypes.ProduceMsg{
-		Subject: common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), *clusterName),
+		Subject: subject,
 		Payload: b,
 	})
 	return errors.NewE(err)

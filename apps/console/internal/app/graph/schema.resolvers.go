@@ -15,6 +15,7 @@ import (
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
+	v11 "github.com/kloudlite/operator/apis/crds/v1"
 	"github.com/kloudlite/operator/apis/wireguard/v1"
 )
 
@@ -79,12 +80,12 @@ func (r *mutationResolver) CoreDeleteEnvironment(ctx context.Context, projectNam
 }
 
 // CoreCloneEnvironment is the resolver for the core_cloneEnvironment field.
-func (r *mutationResolver) CoreCloneEnvironment(ctx context.Context, projectName string, sourceEnvName string, envName string) (*entities.Environment, error) {
+func (r *mutationResolver) CoreCloneEnvironment(ctx context.Context, projectName string, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode v11.EnvironmentRoutingMode) (*entities.Environment, error) {
 	cc, err := toConsoleContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	return r.Domain.CloneEnvironment(cc, projectName, sourceEnvName, envName)
+	return r.Domain.CloneEnvironment(cc, projectName, sourceEnvName, destinationEnvName, displayName, environmentRoutingMode)
 }
 
 // CoreCreateImagePullSecret is the resolver for the core_createImagePullSecret field.
@@ -366,18 +367,16 @@ func (r *mutationResolver) CoreDeleteVPNDevice(ctx context.Context, deviceName s
 }
 
 // CoreCheckNameAvailability is the resolver for the core_checkNameAvailability field.
-func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, resType entities.ResourceType, namespace *string, name string) (*domain.CheckNameAvailabilityOutput, error) {
+func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, projectName string, envName *string, resType entities.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error) {
 	cc, err := toConsoleContext(ctx)
 	if err != nil {
-		if cc.AccountName == "" {
-			return nil, errors.NewE(err)
-		}
+		return nil, err
 	}
-	return r.Domain.CheckNameAvailability(ctx, resType, cc.AccountName, namespace, name)
+	return r.Domain.CheckNameAvailability(ctx, cc.AccountName, projectName, envName, resType, name)
 }
 
 // CoreListProjects is the resolver for the core_listProjects field.
-func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *string, search *model.SearchProjects, pq *repos.CursorPagination) (*model.ProjectPaginatedRecords, error) {
+func (r *queryResolver) CoreListProjects(ctx context.Context, search *model.SearchProjects, pq *repos.CursorPagination) (*model.ProjectPaginatedRecords, error) {
 	filter := map[string]repos.MatchFilter{}
 	if search != nil {
 		if search.Text != nil {
@@ -398,7 +397,7 @@ func (r *queryResolver) CoreListProjects(ctx context.Context, clusterName *strin
 		}
 	}
 
-	p, err := r.Domain.ListProjects(ctx, cc.UserId, cc.AccountName, clusterName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+	p, err := r.Domain.ListProjects(ctx, cc.UserId, cc.AccountName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -897,6 +896,30 @@ func (r *queryResolver) CoreResyncRouter(ctx context.Context, projectName string
 		return false, errors.NewE(err)
 	}
 	return true, nil
+}
+
+// CoreGetManagedResouceOutputKeys is the resolver for the core_getManagedResouceOutputKeys field.
+func (r *queryResolver) CoreGetManagedResouceOutputKeys(ctx context.Context, projectName string, envName string, name string) ([]string, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	return r.Domain.GetManagedResourceOutputKeys(newResourceContext(cc, projectName, envName), name)
+}
+
+// CoreGetManagedResouceOutputKeyValues is the resolver for the core_getManagedResouceOutputKeyValues field.
+func (r *queryResolver) CoreGetManagedResouceOutputKeyValues(ctx context.Context, projectName string, envName string, keyrefs []*domain.ManagedResourceKeyRef) ([]*domain.ManagedResourceKeyValueRef, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	m := make([]domain.ManagedResourceKeyRef, len(keyrefs))
+	for i := range keyrefs {
+		m[i] = *keyrefs[i]
+	}
+
+	return r.Domain.GetManagedResourceOutputKVs(newResourceContext(cc, projectName, envName), m)
 }
 
 // CoreListManagedResources is the resolver for the core_listManagedResources field.

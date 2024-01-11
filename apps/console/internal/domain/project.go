@@ -3,6 +3,7 @@ package domain
 import (
 	"context"
 	"fmt"
+
 	"github.com/kloudlite/api/pkg/errors"
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/kv"
@@ -20,8 +21,8 @@ import (
 )
 
 func (d *domain) getClusterAttachedToProject(ctx K8sContext, projectName string) (*string, error) {
-	clusterName, err := d.consoleCacheStore.Get(ctx, projectName)
-
+	cacheKey := fmt.Sprintf("account_name_%s-project_name_%s", ctx.GetAccountName(), projectName)
+	clusterName, err := d.consoleCacheStore.Get(ctx, cacheKey)
 	if err != nil {
 		if !errors.Is(err, kv.ErrKeyNotFound) {
 			return nil, err
@@ -39,12 +40,12 @@ func (d *domain) getClusterAttachedToProject(ctx K8sContext, projectName string)
 		}
 
 		defer func() {
-			if err := d.consoleCacheStore.Set(ctx, projectName, []byte(fn.DefaultIfNil(proj.ClusterName))); err != nil {
+			if err := d.consoleCacheStore.Set(ctx, cacheKey, []byte(fn.DefaultIfNil(&proj.ClusterName))); err != nil {
 				d.logger.Infof("failed to set project cluster map: %v", err)
 			}
 		}()
 
-		return proj.ClusterName, nil
+		return &proj.ClusterName, nil
 	}
 
 	if clusterName == nil {
@@ -54,7 +55,7 @@ func (d *domain) getClusterAttachedToProject(ctx K8sContext, projectName string)
 	return fn.New(string(clusterName)), nil
 }
 
-func (d *domain) ListProjects(ctx context.Context, userId repos.ID, accountName string, clusterName *string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error) {
+func (d *domain) ListProjects(ctx context.Context, userId repos.ID, accountName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error) {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(userId),
 		ResourceRefs: []string{
@@ -71,9 +72,6 @@ func (d *domain) ListProjects(ctx context.Context, userId repos.ID, accountName 
 	}
 
 	filter := repos.Filter{"accountName": accountName}
-	if clusterName != nil {
-		filter["clusterName"] = clusterName
-	}
 
 	// return d.projectRepo.Find(ctx, repos.Query{Filter: filter})
 	return d.projectRepo.FindPaginated(ctx, d.projectRepo.MergeMatchFilters(filter, search), pagination)
@@ -162,7 +160,6 @@ func (d *domain) CreateProject(ctx ConsoleContext, project entities.Project) (*e
 	project.AccountName = ctx.AccountName
 	project.SyncStatus = t.GenSyncStatus(t.SyncActionApply, project.RecordVersion)
 
-	project.Spec.AccountName = ctx.AccountName
 	if project.Spec.TargetNamespace == "" {
 		project.Spec.TargetNamespace = d.getProjectNamespace(project.Name)
 	}

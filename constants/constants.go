@@ -147,8 +147,10 @@ const (
 	AccountNameKey string = "kloudlite.io/account.name"
 
 	EnvNameKey string = "kloudlite.io/env.name"
-)
 
-const (
-	MSGTO_TargetWaitQueueTopicName = "kl-send-messages-to-target-wait-queue"
+	RecordVersionKey string = "kloudlite.io/record-version"
+
+	ObservabilityTrackingKey    string = "kloudlite.io/observability.tracking.id"
+	ObservabilityAccountNameKey string = "kloudlite.io/observability.account.name"
+	ObservabilityClusterNameKey string = "kloudlite.io/observability.cluster.name"
 )

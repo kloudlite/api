@@ -2,6 +2,9 @@ package domain
 
 import (
 	"fmt"
+
+	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+
 	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
@@ -156,7 +159,7 @@ func (d *domain) CreateEnvironment(ctx ConsoleContext, projectName string, env e
 	return nenv, nil
 }
 
-func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, sourceEnvName string, envName string) (*entities.Environment, error) {
+func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode crdsv1.EnvironmentRoutingMode) (*entities.Environment, error) {
 	if err := d.canMutateResourcesInProject(ctx, projectName); err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -167,10 +170,16 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 	}
 
 	env.ProjectName = projectName
-	env.DisplayName = envName
-	env.Name = envName
+	env.DisplayName = destinationEnvName
+	env.Name = destinationEnvName
 	env.Id = d.environmentRepo.NewId()
 	env.PrimitiveId = ""
+	env.DisplayName = displayName
+
+	if env.Spec.Routing == nil {
+		env.Spec.Routing = &crdsv1.EnvironmentRouting{}
+	}
+	env.Spec.Routing.Mode = environmentRoutingMode
 
 	env.EnsureGVK()
 	if err := d.k8sClient.ValidateObject(ctx, &env.Environment); err != nil {
@@ -179,7 +188,7 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 
 	env.IncrementRecordVersion()
 
-	env.Spec.TargetNamespace = fmt.Sprintf("env-%s", envName)
+	env.Spec.TargetNamespace = fmt.Sprintf("env-%s", destinationEnvName)
 
 	env.SyncStatus = t.GenSyncStatus(t.SyncActionApply, env.RecordVersion)
 
@@ -210,25 +219,42 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 		Filter: filters,
 		Sort:   nil,
 	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
 	secrets, err := d.secretRepo.Find(ctx, repos.Query{
 		Filter: filters,
 		Sort:   nil,
 	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
 	configs, err := d.configRepo.Find(ctx, repos.Query{
 		Filter: filters,
 		Sort:   nil,
 	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
 	routers, err := d.routerRepo.Find(ctx, repos.Query{
 		Filter: filters,
 		Sort:   nil,
 	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
 	managedResources, err := d.mresRepo.Find(ctx, repos.Query{
 		Filter: filters,
 		Sort:   nil,
 	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
 	for _, app := range apps {
 		app.Namespace = env.Spec.TargetNamespace
-		app.EnvironmentName = envName
+		app.EnvironmentName = destinationEnvName
 		app.Id = d.appRepo.NewId()
 		app.PrimitiveId = ""
 		err := cloneResource(resContext, d, d.appRepo, app, &app.App)
@@ -238,7 +264,7 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 	}
 	for _, secret := range secrets {
 		secret.Namespace = env.Spec.TargetNamespace
-		secret.EnvironmentName = envName
+		secret.EnvironmentName = destinationEnvName
 		secret.Id = d.secretRepo.NewId()
 		secret.PrimitiveId = ""
 		err := cloneResource(resContext, d, d.secretRepo, secret, &secret.Secret)
@@ -248,7 +274,7 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 	}
 	for _, config := range configs {
 		config.Namespace = env.Spec.TargetNamespace
-		config.EnvironmentName = envName
+		config.EnvironmentName = destinationEnvName
 		config.Id = d.configRepo.NewId()
 		config.PrimitiveId = ""
 		err := cloneResource(resContext, d, d.configRepo, config, &config.ConfigMap)
@@ -258,7 +284,7 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 	}
 	for _, router := range routers {
 		router.Namespace = env.Spec.TargetNamespace
-		router.EnvironmentName = envName
+		router.EnvironmentName = destinationEnvName
 		router.Id = d.routerRepo.NewId()
 		router.PrimitiveId = ""
 		err := cloneResource(resContext, d, d.routerRepo, router, &router.Router)
@@ -268,7 +294,7 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, projectName string, source
 	}
 	for _, managedResource := range managedResources {
 		managedResource.Namespace = env.Spec.TargetNamespace
-		managedResource.EnvironmentName = envName
+		managedResource.EnvironmentName = destinationEnvName
 		managedResource.Id = d.mresRepo.NewId()
 		managedResource.PrimitiveId = ""
 		err := cloneResource(resContext, d, d.mresRepo, managedResource, &managedResource.ManagedResource)
@@ -364,22 +390,41 @@ func (d *domain) DeleteEnvironment(ctx ConsoleContext, projectName string, name 
 		Filter: resContext.DBFilters(),
 		Sort:   nil,
 	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
 	secrets, err := d.secretRepo.Find(ctx, repos.Query{
 		Filter: resContext.DBFilters(),
 		Sort:   nil,
 	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
 	configs, err := d.configRepo.Find(ctx, repos.Query{
 		Filter: resContext.DBFilters(),
 		Sort:   nil,
 	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
 	routers, err := d.routerRepo.Find(ctx, repos.Query{
 		Filter: resContext.DBFilters(),
 		Sort:   nil,
 	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
 	managedResources, err := d.mresRepo.Find(ctx, repos.Query{
 		Filter: resContext.DBFilters(),
 		Sort:   nil,
 	})
+	if err != nil {
+		return errors.NewE(err)
+	}
 
 	for _, app := range apps {
 		err := d.DeleteApp(resContext, app.Name)

@@ -9,6 +9,7 @@ enum ConsoleResType {
     secret
     router
     managed_service
+    project_managed_service
     managed_resource
     environment
     vpn_device
@@ -83,9 +84,9 @@ input CoreSearchVPNDevices {
 }
 
 type Query {
-    core_checkNameAvailability(resType: ConsoleResType!, namespace: String, name: String!): ConsoleCheckNameAvailabilityOutput! @isLoggedIn @hasAccount
+    core_checkNameAvailability(projectName: String!, envName: String, resType: ConsoleResType!, name: String!): ConsoleCheckNameAvailabilityOutput! @isLoggedIn @hasAccount
 
-    core_listProjects(clusterName: String, search: SearchProjects, pq: CursorPaginationIn): ProjectPaginatedRecords @isLoggedInAndVerified @hasAccount
+    core_listProjects(search: SearchProjects, pq: CursorPaginationIn): ProjectPaginatedRecords @isLoggedInAndVerified @hasAccount
     core_getProject(name: String!): Project @isLoggedInAndVerified @hasAccount
     core_resyncProject(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
@@ -116,6 +117,9 @@ type Query {
     core_getRouter(projectName: String!, envName: String!, name: String!): Router @isLoggedInAndVerified @hasAccount
     core_resyncRouter(projectName: String!, envName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
+
+    core_getManagedResouceOutputKeys(projectName: String!, envName: String!, name: String!): [String!]! @isLoggedInAndVerified @hasAccount
+    core_getManagedResouceOutputKeyValues(projectName: String!, envName: String!, keyrefs: [ManagedResourceKeyRefIn]): [ManagedResourceKeyValueRef!]! @isLoggedInAndVerified @hasAccount
     core_listManagedResources(projectName: String!, envName: String!, search: SearchManagedResources, pq: CursorPaginationIn): ManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
     core_getManagedResource(projectName: String!, envName: String!, name: String!): ManagedResource @isLoggedInAndVerified @hasAccount
     core_resyncManagedResource(projectName: String!, envName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
@@ -136,7 +140,7 @@ type Mutation {
     core_createEnvironment(projectName: String!, env: EnvironmentIn!): Environment @isLoggedInAndVerified @hasAccount
     core_updateEnvironment(projectName: String!, env: EnvironmentIn!): Environment @isLoggedInAndVerified @hasAccount
     core_deleteEnvironment(projectName: String!, envName: String!): Boolean! @isLoggedInAndVerified @hasAccount
-    core_cloneEnvironment(projectName: String!, sourceEnvName: String!, envName: String!): Environment @isLoggedInAndVerified @hasAccount
+    core_cloneEnvironment(projectName: String!, sourceEnvName: String!, destinationEnvName: String!, displayName: String!, environmentRoutingMode: Github__com___kloudlite___operator___apis___crds___v1__EnvironmentRoutingMode!): Environment @isLoggedInAndVerified @hasAccount
 
     # image pull secrets
     core_createImagePullSecret(projectName: String!, envName: String!, imagePullSecretIn: ImagePullSecretIn!): ImagePullSecret @isLoggedInAndVerified @hasAccount

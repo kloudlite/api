@@ -2,8 +2,10 @@ package domain
 
 import (
 	"context"
-	wgv1 "github.com/kloudlite/operator/apis/wireguard/v1"
 	"time"
+
+	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	wgv1 "github.com/kloudlite/operator/apis/wireguard/v1"
 
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
 
@@ -70,14 +72,25 @@ type ConfigKeyValueRef struct {
 }
 
 type SecretKeyRef struct {
-	SecretName string `json:"seceretName"`
+	SecretName string `json:"secretName"`
 	Key        string `json:"key"`
 }
 
 type SecretKeyValueRef struct {
-	SecretName string `json:"seceretName"`
+	SecretName string `json:"secretName"`
 	Key        string `json:"key"`
 	Value      string `json:"value"`
+}
+
+type ManagedResourceKeyRef struct {
+	MresName string `json:"mresName"`
+	Key      string `json:"key"`
+}
+
+type ManagedResourceKeyValueRef struct {
+	MresName string `json:"mresName"`
+	Key      string `json:"key"`
+	Value    string `json:"value"`
 }
 
 type ResType string
@@ -87,9 +100,9 @@ type UpdateAndDeleteOpts struct {
 }
 
 type Domain interface {
-	CheckNameAvailability(ctx context.Context, resType entities.ResourceType, accountName string, namespace *string, name string) (*CheckNameAvailabilityOutput, error)
+	CheckNameAvailability(ctx context.Context, accountName string, projectName string, environmentName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error)
 
-	ListProjects(ctx context.Context, userId repos.ID, accountName string, clusterName *string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error)
+	ListProjects(ctx context.Context, userId repos.ID, accountName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error)
 	GetProject(ctx ConsoleContext, name string) (*entities.Project, error)
 
 	CreateProject(ctx ConsoleContext, project entities.Project) (*entities.Project, error)
@@ -106,7 +119,7 @@ type Domain interface {
 	GetEnvironment(ctx ConsoleContext, projectName string, name string) (*entities.Environment, error)
 
 	CreateEnvironment(ctx ConsoleContext, projectName string, env entities.Environment) (*entities.Environment, error)
-	CloneEnvironment(ctx ConsoleContext, projectName string, sourceEnvName string, envName string) (*entities.Environment, error)
+	CloneEnvironment(ctx ConsoleContext, projectName string, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode crdsv1.EnvironmentRoutingMode) (*entities.Environment, error)
 	UpdateEnvironment(ctx ConsoleContext, projectName string, env entities.Environment) (*entities.Environment, error)
 	DeleteEnvironment(ctx ConsoleContext, projectName string, name string) error
 
@@ -174,6 +187,9 @@ type Domain interface {
 
 	ListManagedResources(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
 	GetManagedResource(ctx ResourceContext, name string) (*entities.ManagedResource, error)
+
+	GetManagedResourceOutputKeys(ctx ResourceContext, name string) ([]string, error)
+	GetManagedResourceOutputKVs(ctx ResourceContext, keyrefs []ManagedResourceKeyRef) ([]*ManagedResourceKeyValueRef, error)
 
 	CreateManagedResource(ctx ResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	UpdateManagedResource(ctx ResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
