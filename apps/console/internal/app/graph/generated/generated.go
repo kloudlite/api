@@ -621,7 +621,7 @@ type ComplexityRoot struct {
 		CoreUpdateRouter                func(childComplexity int, projectName string, envName string, router entities.Router) int
 		CoreUpdateSecret                func(childComplexity int, projectName string, envName string, secret entities.Secret) int
 		CoreUpdateVPNDevice             func(childComplexity int, vpnDevice entities.ConsoleVPNDevice) int
-		CoreUpdateVPNDeviceNs           func(childComplexity int, deviceName string, namespace string) int
+		CoreUpdateVPNDeviceEnv          func(childComplexity int, deviceName string, projectName string, envName string) int
 		CoreUpdateVPNDevicePorts        func(childComplexity int, deviceName string, ports []*v1.Port) int
 	}
 
@@ -923,7 +923,7 @@ type MutationResolver interface {
 	CoreCreateVPNDevice(ctx context.Context, vpnDevice entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
 	CoreUpdateVPNDevice(ctx context.Context, vpnDevice entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
 	CoreUpdateVPNDevicePorts(ctx context.Context, deviceName string, ports []*v1.Port) (bool, error)
-	CoreUpdateVPNDeviceNs(ctx context.Context, deviceName string, namespace string) (bool, error)
+	CoreUpdateVPNDeviceEnv(ctx context.Context, deviceName string, projectName string, envName string) (bool, error)
 	CoreDeleteVPNDevice(ctx context.Context, deviceName string) (bool, error)
 }
 type ProjectResolver interface {
@@ -3641,17 +3641,17 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.CoreUpdateVPNDevice(childComplexity, args["vpnDevice"].(entities.ConsoleVPNDevice)), true
 
-	case "Mutation.core_updateVPNDeviceNs":
-		if e.complexity.Mutation.CoreUpdateVPNDeviceNs == nil {
+	case "Mutation.core_updateVPNDeviceEnv":
+		if e.complexity.Mutation.CoreUpdateVPNDeviceEnv == nil {
 			break
 		}
 
-		args, err := ec.field_Mutation_core_updateVPNDeviceNs_args(context.TODO(), rawArgs)
+		args, err := ec.field_Mutation_core_updateVPNDeviceEnv_args(context.TODO(), rawArgs)
 		if err != nil {
 			return 0, false
 		}
 
-		return e.complexity.Mutation.CoreUpdateVPNDeviceNs(childComplexity, args["deviceName"].(string), args["namespace"].(string)), true
+		return e.complexity.Mutation.CoreUpdateVPNDeviceEnv(childComplexity, args["deviceName"].(string), args["projectName"].(string), args["envName"].(string)), true
 
 	case "Mutation.core_updateVPNDevicePorts":
 		if e.complexity.Mutation.CoreUpdateVPNDevicePorts == nil {
@@ -5065,7 +5065,7 @@ type Mutation {
     core_updateVPNDevice(vpnDevice: ConsoleVPNDeviceIn!): ConsoleVPNDevice @isLoggedInAndVerified @hasAccount
 
     core_updateVPNDevicePorts(deviceName: String!,ports: [PortIn!]!): Boolean! @isLoggedInAndVerified @hasAccount
-    core_updateVPNDeviceNs(deviceName: String!, namespace: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    core_updateVPNDeviceEnv(deviceName: String!,projectName: String!, envName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     core_deleteVPNDevice(deviceName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 }
@@ -7055,7 +7055,7 @@ func (ec *executionContext) field_Mutation_core_updateSecret_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_core_updateVPNDeviceNs_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Mutation_core_updateVPNDeviceEnv_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 string
@@ -7068,14 +7068,23 @@ func (ec *executionContext) field_Mutation_core_updateVPNDeviceNs_args(ctx conte
 	}
 	args["deviceName"] = arg0
 	var arg1 string
-	if tmp, ok := rawArgs["namespace"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+	if tmp, ok := rawArgs["projectName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
 		arg1, err = ec.unmarshalNString2string(ctx, tmp)
 		if err != nil {
 			return nil, err
 		}
 	}
-	args["namespace"] = arg1
+	args["projectName"] = arg1
+	var arg2 string
+	if tmp, ok := rawArgs["envName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("envName"))
+		arg2, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["envName"] = arg2
 	return args, nil
 }
 
@@ -25739,8 +25748,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateVPNDevicePorts(ctx 
 	return fc, nil
 }
 
-func (ec *executionContext) _Mutation_core_updateVPNDeviceNs(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_core_updateVPNDeviceNs(ctx, field)
+func (ec *executionContext) _Mutation_core_updateVPNDeviceEnv(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_core_updateVPNDeviceEnv(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -25754,7 +25763,7 @@ func (ec *executionContext) _Mutation_core_updateVPNDeviceNs(ctx context.Context
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().CoreUpdateVPNDeviceNs(rctx, fc.Args["deviceName"].(string), fc.Args["namespace"].(string))
+			return ec.resolvers.Mutation().CoreUpdateVPNDeviceEnv(rctx, fc.Args["deviceName"].(string), fc.Args["projectName"].(string), fc.Args["envName"].(string))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -25796,7 +25805,7 @@ func (ec *executionContext) _Mutation_core_updateVPNDeviceNs(ctx context.Context
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Mutation_core_updateVPNDeviceNs(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Mutation_core_updateVPNDeviceEnv(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Mutation",
 		Field:      field,
@@ -25813,7 +25822,7 @@ func (ec *executionContext) fieldContext_Mutation_core_updateVPNDeviceNs(ctx con
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_core_updateVPNDeviceNs_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Mutation_core_updateVPNDeviceEnv_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
 	}
@@ -42648,10 +42657,10 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				invalids++
 			}
-		case "core_updateVPNDeviceNs":
+		case "core_updateVPNDeviceEnv":
 
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_core_updateVPNDeviceNs(ctx, field)
+				return ec._Mutation_core_updateVPNDeviceEnv(ctx, field)
 			})
 
 			if out.Values[i] == graphql.Null {
