@@ -318,6 +318,7 @@ func (d *domain) UpdateCluster(ctx InfraContext, clusterIn entities.Cluster) (*e
 		"syncStatus.lastSyncedAt": time.Now(),
 		"syncStatus.action":        t.SyncActionApply,
 		"syncStatus.state":         t.SyncStateInQueue,
+
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
