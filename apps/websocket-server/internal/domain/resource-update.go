@@ -15,7 +15,7 @@ import (
 	mnats "github.com/nats-io/nats.go"
 )
 
-type RUpdteReqData struct {
+type RUpdateReqData struct {
 	AccountName string `json:"account"`
 	ProjectName string `json:"project"`
 
@@ -25,7 +25,7 @@ type RUpdteReqData struct {
 	ReqTopic string `json:"req_topic"`
 }
 
-func (d *domain) checkAccess(ctx context.Context, rdata *RUpdteReqData, userId repos.ID) error {
+func (d *domain) checkAccess(ctx context.Context, rdata *RUpdateReqData, userId repos.ID) error {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(userId),
 		ResourceRefs: func() []string {
@@ -60,11 +60,11 @@ func (d *domain) checkAccess(ctx context.Context, rdata *RUpdteReqData, userId r
 	return nil
 }
 
-func (d *domain) parseRUpdateReq(rt string) (*RUpdteReqData, error) {
+func (d *domain) parseRUpdateReq(rt string) (*RUpdateReqData, error) {
 
 	entriesStrs := strings.Split(rt, ".")
 
-	rdata := &RUpdteReqData{}
+	rdata := &RUpdateReqData{}
 
 	nTopics := "res-updates"
 
@@ -112,7 +112,7 @@ func (d *domain) HandleWebSocketForRUpdate(ctx context.Context, c *websocket.Con
 	log := d.logger
 
 	type Subscription struct {
-		resource RUpdteReqData
+		resource RUpdateReqData
 		sub      *mnats.Subscription
 		open     bool
 	}
