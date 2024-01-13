@@ -212,10 +212,6 @@ func (d *domain) OnClusterManagedServiceDeleteMessage(ctx InfraContext, clusterN
 		return nil
 	}
 
-	if err := d.matchRecordVersion(service.Annotations, svc.RecordVersion); err != nil {
-		return d.resyncToTargetCluster(ctx, svc.SyncStatus.Action, clusterName, svc, svc.RecordVersion)
-	}
-
 	if err := d.clusterManagedServiceRepo.DeleteById(ctx, svc.Id); err != nil {
 		return err
 	}

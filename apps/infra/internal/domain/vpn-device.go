@@ -22,7 +22,7 @@ func (d *domain) UpdateVpnDeviceNs(ctx InfraContext, clusterName string, devName
 		return errors.NewE(err)
 	}
 
-	if currDevice.ManagingByDev!=nil {
+	if currDevice.ManagingByDev != nil {
 		return errors.Newf("device is not self managed, cannot update")
 	}
 
@@ -130,7 +130,7 @@ func (d *domain) UpdateVPNDevice(ctx InfraContext, clusterName string, device en
 		return nil, errors.NewE(err)
 	}
 
-	if currDevice.ManagingByDev!=nil {
+	if currDevice.ManagingByDev != nil {
 		return nil, errors.Newf("device is not self managed, cannot update")
 	}
 
@@ -171,7 +171,7 @@ func (d *domain) UpdateVpnDevicePorts(ctx InfraContext, clusterName string, devN
 		return errors.NewE(err)
 	}
 
-	if currDevice.ManagingByDev!=nil {
+	if currDevice.ManagingByDev != nil {
 		return errors.Newf("device is not self managed, cannot update")
 	}
 
@@ -224,7 +224,6 @@ func (d *domain) findVPNDevice(ctx InfraContext, clusterName string, name string
 	return device, nil
 }
 
-
 func (d *domain) DeleteVPNDevice(ctx InfraContext, clusterName string, name string) error {
 	if err := d.canPerformActionInDevice(ctx, iamT.UpdateVPNDevice, name); err != nil {
 		return errors.NewE(err)
@@ -258,13 +257,13 @@ func (d *domain) OnVPNDeviceApplyError(ctx InfraContext, clusterName string, nam
 	return errors.NewE(err)
 }
 
-func(d *domain) UpsertManagedVPNDevice(ctx InfraContext, clusterName string, deviceIn entities.VPNDevice, managedDeviceId repos.ID) (*entities.VPNDevice, error){
+func (d *domain) UpsertManagedVPNDevice(ctx InfraContext, clusterName string, deviceIn entities.VPNDevice, managedDeviceId repos.ID) (*entities.VPNDevice, error) {
 	existingManagingDevice, err := d.vpnDeviceRepo.FindOne(ctx, repos.Filter{
 		"accountName":   ctx.AccountName,
 		"managingByDev": managedDeviceId,
 		"spec.disabled": false,
 	})
-	if existingManagingDevice!= nil {
+	if existingManagingDevice != nil {
 		existingManagingDevice.Spec.Disabled = true
 		_, _ = d.UpdateVPNDevice(ctx, existingManagingDevice.ClusterName, *existingManagingDevice)
 	}
@@ -287,7 +286,7 @@ func(d *domain) UpsertManagedVPNDevice(ctx InfraContext, clusterName string, dev
 	return d.UpdateVPNDevice(ctx, clusterName, *device)
 }
 
-func (d *domain)DeleteManagedVPNDevice(ctx InfraContext, managedDeviceId string) error{
+func (d *domain) DeleteManagedVPNDevice(ctx InfraContext, managedDeviceId string) error {
 	devices, err := d.vpnDeviceRepo.Find(ctx, repos.Query{
 		Filter: repos.Filter{
 			"accountName":   ctx.AccountName,
@@ -345,13 +344,10 @@ func (d *domain) OnVPNDeviceDeleteMessage(ctx InfraContext, clusterName string, 
 		return errors.NewE(err)
 	}
 
-	if err := d.matchRecordVersion(device.Annotations, currDevice.RecordVersion); err != nil {
-		return errors.NewE(err)
-	}
-
 	if err = d.vpnDeviceRepo.DeleteById(ctx, currDevice.Id); err != nil {
 		return errors.NewE(err)
 	}
+
 	d.resourceEventPublisher.PublishVpnDeviceEvent(currDevice, PublishUpdate)
 	return nil
 }
