@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"time"
+
 	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	"github.com/kloudlite/api/common"
@@ -24,22 +26,24 @@ func (d *domain) UpdateVpnDeviceNs(ctx InfraContext, clusterName string, devName
 		return errors.NewE(err)
 	}
 
-	if currDevice.ManagingByDev!=nil {
-		return errors.Newf("deviceIn is not self managed, cannot update")
+
+	if currDevice.ManagingByDev != nil {
+		return errors.Newf("device is not self managed, cannot update")
 	}
 
 	currDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currDevice.RecordVersion)
 
 	nDevice, err := d.vpnDeviceRepo.PatchById(ctx, currDevice.Id, repos.Document{
-		"spec.deviceNamespace":			 namespace,
-		"lastUpdatedBy":common.CreatedOrUpdatedBy{
+
+		"spec.deviceNamespace": namespace,
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
 		},
 		"syncStatus.lastSyncedAt": time.Now(),
-		"syncStatus.action":        t.SyncActionApply,
-		"syncStatus.state":         t.SyncStateInQueue,
+		"syncStatus.action":       t.SyncActionApply,
+		"syncStatus.state":        t.SyncStateInQueue,
 	})
 	if err != nil {
 		return errors.NewE(err)
@@ -133,8 +137,8 @@ func (d *domain) UpdateVPNDevice(ctx InfraContext, clusterName string, deviceIn 
 		return nil, errors.NewE(err)
 	}
 
-	if currDevice.ManagingByDev!=nil {
-		return nil, errors.Newf("deviceIn is not self managed, cannot update")
+	if currDevice.ManagingByDev != nil {
+		return nil, errors.Newf("device is not self managed, cannot update")
 	}
 
 	currDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currDevice.RecordVersion)
@@ -142,17 +146,17 @@ func (d *domain) UpdateVPNDevice(ctx InfraContext, clusterName string, deviceIn 
 	nDevice, err := d.vpnDeviceRepo.PatchById(ctx, currDevice.Id, repos.Document{
 		"metadata.labels":      deviceIn.Labels,
 		"metadata.annotations": deviceIn.Annotations,
-		"displayName":		  deviceIn.DisplayName,
-		"recordVersion":    currDevice.RecordVersion+1,
-		"spec.Ports":			 deviceIn.Spec.Ports,
-		"lastUpdatedBy":common.CreatedOrUpdatedBy{
+		"displayName":          deviceIn.DisplayName,
+		"recordVersion":        currDevice.RecordVersion + 1,
+		"spec.Ports":           deviceIn.Spec.Ports,
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
 		},
 		"syncStatus.lastSyncedAt": time.Now(),
-		"syncStatus.action":        t.SyncActionApply,
-		"syncStatus.state":         t.SyncStateInQueue,
+		"syncStatus.action":       t.SyncActionApply,
+		"syncStatus.state":        t.SyncStateInQueue,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -175,22 +179,24 @@ func (d *domain) UpdateVpnDevicePorts(ctx InfraContext, clusterName string, devN
 		return errors.NewE(err)
 	}
 
-	if currDevice.ManagingByDev!=nil {
-		return errors.Newf("deviceIn is not self managed, cannot update")
+
+	if currDevice.ManagingByDev != nil {
+		return errors.Newf("device is not self managed, cannot update")
 	}
 
 	currDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currDevice.RecordVersion)
 
 	nDevice, err := d.vpnDeviceRepo.PatchById(ctx, currDevice.Id, repos.Document{
-		"spec.Ports":			 ports,
-		"lastUpdatedBy":common.CreatedOrUpdatedBy{
+		"spec.Ports": ports,
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
 		},
 		"syncStatus.lastSyncedAt": time.Now(),
-		"syncStatus.action":        t.SyncActionApply,
-		"syncStatus.state":         t.SyncStateInQueue,
+
+		"syncStatus.action":       t.SyncActionApply,
+		"syncStatus.state":        t.SyncStateInQueue,
 	})
 	if err != nil {
 		return errors.NewE(err)
@@ -220,7 +226,6 @@ func (d *domain) findVPNDevice(ctx InfraContext, clusterName string, name string
 	return device, nil
 }
 
-
 func (d *domain) DeleteVPNDevice(ctx InfraContext, clusterName string, name string) error {
 	if err := d.canPerformActionInDevice(ctx, iamT.UpdateVPNDevice, name); err != nil {
 		return errors.NewE(err)
@@ -236,14 +241,14 @@ func (d *domain) DeleteVPNDevice(ctx InfraContext, clusterName string, name stri
 
 	if _, err := d.vpnDeviceRepo.PatchById(ctx, device.Id, repos.Document{
 		"markedForDeletion": fn.New(true),
-		"lastUpdatedBy":common.CreatedOrUpdatedBy{
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
 		},
 		"syncStatus.lastSyncedAt": time.Now(),
-		"syncStatus.action":        t.SyncActionDelete,
-		"syncStatus.state":         t.SyncStateInQueue,
+		"syncStatus.action":       t.SyncActionDelete,
+		"syncStatus.state":        t.SyncStateInQueue,
 	}); err != nil {
 		return errors.NewE(err)
 	}
@@ -258,21 +263,21 @@ func (d *domain) OnVPNDeviceApplyError(ctx InfraContext, clusterName string, nam
 	}
 
 	_, err = d.vpnDeviceRepo.PatchById(ctx, currentDevice.Id, repos.Document{
-		"syncStatus.state":         t.SyncStateErroredAtAgent,
+		"syncStatus.state":        t.SyncStateErroredAtAgent,
 		"syncStatus.lastSyncedAt": opts.MessageTimestamp,
-		"syncStatus.error":         &errMsg,
+		"syncStatus.error":        &errMsg,
 	})
 	d.resourceEventPublisher.PublishVpnDeviceEvent(currentDevice, PublishUpdate)
 	return errors.NewE(err)
 }
 
-func(d *domain) UpsertManagedVPNDevice(ctx InfraContext, clusterName string, deviceIn entities.VPNDevice, managedDeviceId repos.ID) (*entities.VPNDevice, error){
+func (d *domain) UpsertManagedVPNDevice(ctx InfraContext, clusterName string, deviceIn entities.VPNDevice, managedDeviceId repos.ID) (*entities.VPNDevice, error) {
 	existingManagingDevice, err := d.vpnDeviceRepo.FindOne(ctx, repos.Filter{
 		"accountName":   ctx.AccountName,
 		"managingByDev": managedDeviceId,
 		"spec.disabled": false,
 	})
-	if existingManagingDevice!= nil {
+	if existingManagingDevice != nil {
 		existingManagingDevice.Spec.Disabled = true
 		_, _ = d.UpdateVPNDevice(ctx, existingManagingDevice.ClusterName, *existingManagingDevice)
 	}
@@ -295,7 +300,7 @@ func(d *domain) UpsertManagedVPNDevice(ctx InfraContext, clusterName string, dev
 	return d.UpdateVPNDevice(ctx, clusterName, *device)
 }
 
-func (d *domain)DeleteManagedVPNDevice(ctx InfraContext, managedDeviceId string) error{
+func (d *domain) DeleteManagedVPNDevice(ctx InfraContext, managedDeviceId string) error {
 	devices, err := d.vpnDeviceRepo.Find(ctx, repos.Query{
 		Filter: repos.Filter{
 			"accountName":   ctx.AccountName,
@@ -319,23 +324,23 @@ func (d *domain) OnVPNDeviceUpdateMessage(ctx InfraContext, clusterName string, 
 		return errors.NewE(err)
 	}
 
-	if err := d.matchRecordVersion(device.Annotations, currentDevice.RecordVersion ); err != nil {
+
+	if err := d.matchRecordVersion(device.Annotations, currentDevice.RecordVersion); err != nil {
 		return d.resyncToTargetCluster(ctx, currentDevice.SyncStatus.Action, clusterName, &currentDevice.Device, currentDevice.RecordVersion)
 	}
 
-	annVersion, _ := d.parseRecordVersionFromAnnotations(device.Annotations)
-	_, err = d.vpnDeviceRepo.PatchById(ctx, currentDevice.Id, repos.Document{
-		"metadata.labels":      device.Labels,
-		"metadata.annotations": device.Annotations,
-		"metadata.generation":  device.Generation,
-		"metadata.creationTimestamp":  device.CreationTimestamp,
-		"wireguardConfig":	  device.WireguardConfig,
-		"status":      device.Status,
-		"syncStatus":  t.SyncStatus{
-			LastSyncedAt: opts.MessageTimestamp,
-			Error: 	  nil,
-			Action:       t.SyncActionApply,
-			RecordVersion: annVersion,
+	if _, err = d.vpnDeviceRepo.PatchById(ctx, currentDevice.Id, repos.Document{
+		"metadata.labels":            device.Labels,
+		"metadata.annotations":       device.Annotations,
+		"metadata.generation":        device.Generation,
+		"metadata.creationTimestamp": device.CreationTimestamp,
+		"wireguardConfig":            device.WireguardConfig,
+		"status":                     device.Status,
+		"syncStatus": t.SyncStatus{
+			LastSyncedAt:  opts.MessageTimestamp,
+			Error:         nil,
+			Action:        t.SyncActionApply,
+			RecordVersion: currentDevice.RecordVersion,
 			State: func() t.SyncState {
 				if status == types.ResourceStatusDeleting {
 					return t.SyncStateDeletingAtAgent
@@ -343,7 +348,9 @@ func (d *domain) OnVPNDeviceUpdateMessage(ctx InfraContext, clusterName string, 
 				return t.SyncStateUpdatedAtAgent
 			}(),
 		},
-	})
+	}); err != nil {
+		return err
+	}
 
 	d.resourceEventPublisher.PublishVpnDeviceEvent(currentDevice, PublishUpdate)
 	return nil
@@ -355,13 +362,10 @@ func (d *domain) OnVPNDeviceDeleteMessage(ctx InfraContext, clusterName string, 
 		return errors.NewE(err)
 	}
 
-	if err := d.matchRecordVersion(device.Annotations, currDevice.RecordVersion); err != nil {
-		return errors.NewE(err)
-	}
-
 	if err = d.vpnDeviceRepo.DeleteById(ctx, currDevice.Id); err != nil {
 		return errors.NewE(err)
 	}
+
 	d.resourceEventPublisher.PublishVpnDeviceEvent(currDevice, PublishUpdate)
 	return nil
 }
