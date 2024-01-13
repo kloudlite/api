@@ -17,7 +17,7 @@ type Env struct {
 
 	LogsStreamName string `env:"LOGS_STREAM_NAME" default:"logs"`
 
-	Origins string `env:"ORIGIN" required:"true" default:"https://console.kloudlite.io"`
+	Origins string `env:"ORIGINS" required:"true" default:"https://console.kloudlite.io"`
 
 	// HttpPort uint16 `env:"HTTP_PORT" required:"true"`
 	// HttpCors string `env:"CORS_ORIGINS" required:"false"`
