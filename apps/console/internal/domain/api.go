@@ -213,7 +213,7 @@ type Domain interface {
 
 	ResyncImagePullSecret(ctx ResourceContext, name string) error
 
-	GetResourceMapping(ctx ConsoleContext, resType entities.ResourceType, namespace string, name string) (*entities.ResourceMapping, error)
+	GetResourceMapping(ctx ConsoleContext, resType entities.ResourceType, clusterName string, namespace string, name string) (*entities.ResourceMapping, error)
 
 	ListProjectManagedServices(ctx ConsoleContext, projectName string, mf map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ProjectManagedService], error)
 	GetProjectManagedService(ctx ConsoleContext, projectName string, serviceName string) (*entities.ProjectManagedService, error)
@@ -226,13 +226,13 @@ type Domain interface {
 	ResyncProjectManagedService(ctx ConsoleContext, projectName, name string) error
 
 	ListVPNDevices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ConsoleVPNDevice], error)
-	ListVPNDevicesOfUser(ctx ConsoleContext, userId string) ([]*entities.ConsoleVPNDevice, error)
+	ListVPNDevicesForUser(ctx ConsoleContext) ([]*entities.ConsoleVPNDevice, error)
 	GetVPNDevice(ctx ConsoleContext, name string) (*entities.ConsoleVPNDevice, error)
 	CreateVPNDevice(ctx ConsoleContext, device entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
 	UpdateVPNDevice(ctx ConsoleContext, device entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
 	DeleteVPNDevice(ctx ConsoleContext, name string) error
 	UpdateVpnDevicePorts(ctx ConsoleContext, devName string, ports []*wgv1.Port) error
-	UpdateVpnDeviceContext(ctx ConsoleContext, devName string, projectName string, envName string) error
+	UpdateVpnDeviceEnvironment(ctx ConsoleContext, devName string, projectName string, envName string) error
 }
 
 type PublishMsg string

@@ -76,3 +76,20 @@ func JsonConversion(from any, to any) error {
 	}
 	return nil
 }
+
+func JsonConvert[T any](from any) (*T, error) {
+	var to T
+	if from == nil {
+		return nil, nil
+	}
+
+	b, err := json.Marshal(from)
+	if err != nil {
+		return nil, err
+	}
+
+	if err := json.Unmarshal(b, &to); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &to, nil
+}

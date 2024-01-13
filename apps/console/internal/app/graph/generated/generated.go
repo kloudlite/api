@@ -729,6 +729,7 @@ type ComplexityRoot struct {
 		CoreListRouters                      func(childComplexity int, projectName string, envName string, search *model.SearchRouters, pq *repos.CursorPagination) int
 		CoreListSecrets                      func(childComplexity int, projectName string, envName string, search *model.SearchSecrets, pq *repos.CursorPagination) int
 		CoreListVPNDevices                   func(childComplexity int, search *model.CoreSearchVPNDevices, pq *repos.CursorPagination) int
+		CoreListVPNDevicesForUser            func(childComplexity int) int
 		CoreResyncApp                        func(childComplexity int, projectName string, envName string, name string) int
 		CoreResyncConfig                     func(childComplexity int, projectName string, envName string, name string) int
 		CoreResyncEnvironment                func(childComplexity int, projectName string, name string) int
@@ -986,6 +987,7 @@ type QueryResolver interface {
 	CoreGetProjectManagedService(ctx context.Context, projectName string, name string) (*entities.ProjectManagedService, error)
 	CoreResyncProjectManagedService(ctx context.Context, projectName string, name string) (bool, error)
 	CoreListVPNDevices(ctx context.Context, search *model.CoreSearchVPNDevices, pq *repos.CursorPagination) (*model.ConsoleVPNDevicePaginatedRecords, error)
+	CoreListVPNDevicesForUser(ctx context.Context) ([]*entities.ConsoleVPNDevice, error)
 	CoreGetVPNDevice(ctx context.Context, name string) (*entities.ConsoleVPNDevice, error)
 }
 type RouterResolver interface {
@@ -4312,6 +4314,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.CoreListVPNDevices(childComplexity, args["search"].(*model.CoreSearchVPNDevices), args["pq"].(*repos.CursorPagination)), true
 
+	case "Query.core_listVPNDevicesForUser":
+		if e.complexity.Query.CoreListVPNDevicesForUser == nil {
+			break
+		}
+
+		return e.complexity.Query.CoreListVPNDevicesForUser(childComplexity), true
+
 	case "Query.core_resyncApp":
 		if e.complexity.Query.CoreResyncApp == nil {
 			break
@@ -5060,6 +5069,7 @@ type Query {
     core_resyncProjectManagedService(projectName: String!,  name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     core_listVPNDevices(search: CoreSearchVPNDevices, pq: CursorPaginationIn): ConsoleVPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccount
+    core_listVPNDevicesForUser: [ConsoleVPNDevice!] @isLoggedInAndVerified @hasAccount
     core_getVPNDevice(name: String!): ConsoleVPNDevice @isLoggedInAndVerified @hasAccount
 }
 
@@ -6036,7 +6046,7 @@ input PortIn {
 	{Name: "../struct-to-graphql/project.graphqls", Input: `type Project @shareable {
   accountName: String!
   apiVersion: String!
-  clusterName: String!
+  clusterName: String
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
@@ -6064,7 +6074,7 @@ type ProjectPaginatedRecords @shareable {
 }
 
 input ProjectIn {
-  clusterName: String!
+  clusterName: String
   displayName: String!
   metadata: MetadataIn
   spec: Github__com___kloudlite___operator___apis___crds___v1__ProjectSpecIn!
@@ -26459,14 +26469,11 @@ func (ec *executionContext) _Project_clusterName(ctx context.Context, field grap
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Project_clusterName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -31455,6 +31462,111 @@ func (ec *executionContext) fieldContext_Query_core_listVPNDevices(ctx context.C
 	if fc.Args, err = ec.field_Query_core_listVPNDevices_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_core_listVPNDevicesForUser(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_core_listVPNDevicesForUser(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().CoreListVPNDevicesForUser(rctx)
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*entities.ConsoleVPNDevice); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/kloudlite/api/apps/console/internal/entities.ConsoleVPNDevice`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*entities.ConsoleVPNDevice)
+	fc.Result = res
+	return ec.marshalOConsoleVPNDevice2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐConsoleVPNDeviceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_core_listVPNDevicesForUser(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_ConsoleVPNDevice_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_ConsoleVPNDevice_apiVersion(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_ConsoleVPNDevice_createdBy(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_ConsoleVPNDevice_creationTime(ctx, field)
+			case "displayName":
+				return ec.fieldContext_ConsoleVPNDevice_displayName(ctx, field)
+			case "environmentName":
+				return ec.fieldContext_ConsoleVPNDevice_environmentName(ctx, field)
+			case "id":
+				return ec.fieldContext_ConsoleVPNDevice_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_ConsoleVPNDevice_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_ConsoleVPNDevice_lastUpdatedBy(ctx, field)
+			case "markedForDeletion":
+				return ec.fieldContext_ConsoleVPNDevice_markedForDeletion(ctx, field)
+			case "metadata":
+				return ec.fieldContext_ConsoleVPNDevice_metadata(ctx, field)
+			case "projectName":
+				return ec.fieldContext_ConsoleVPNDevice_projectName(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_ConsoleVPNDevice_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_ConsoleVPNDevice_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_ConsoleVPNDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_ConsoleVPNDevice_syncStatus(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_ConsoleVPNDevice_updateTime(ctx, field)
+			case "wireguardConfig":
+				return ec.fieldContext_ConsoleVPNDevice_wireguardConfig(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ConsoleVPNDevice", field.Name)
+		},
 	}
 	return fc, nil
 }
@@ -38514,7 +38626,7 @@ func (ec *executionContext) unmarshalInputProjectIn(ctx context.Context, obj int
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-			it.ClusterName, err = ec.unmarshalNString2string(ctx, v)
+			it.ClusterName, err = ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -43263,9 +43375,6 @@ func (ec *executionContext) _Project(ctx context.Context, sel ast.SelectionSet, 
 
 			out.Values[i] = ec._Project_clusterName(ctx, field, obj)
 
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&invalids, 1)
-			}
 		case "createdBy":
 
 			out.Values[i] = ec._Project_createdBy(ctx, field, obj)
@@ -44443,6 +44552,26 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_core_listVPNDevices(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx, innerFunc)
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return rrm(innerCtx)
+			})
+		case "core_listVPNDevicesForUser":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_core_listVPNDevicesForUser(ctx, field)
 				return res
 			}
 
@@ -47410,6 +47539,53 @@ func (ec *executionContext) marshalOConfigPaginatedRecords2ᚖgithubᚗcomᚋklo
 		return graphql.Null
 	}
 	return ec._ConfigPaginatedRecords(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOConsoleVPNDevice2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐConsoleVPNDeviceᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.ConsoleVPNDevice) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNConsoleVPNDevice2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐConsoleVPNDevice(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalOConsoleVPNDevice2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐConsoleVPNDevice(ctx context.Context, sel ast.SelectionSet, v *entities.ConsoleVPNDevice) graphql.Marshaler {

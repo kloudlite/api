@@ -2,7 +2,6 @@ package domain
 
 import (
 	"context"
-	"encoding/json"
 	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 	"strings"
@@ -17,12 +16,12 @@ import (
 	corev1 "k8s.io/api/core/v1"
 	apiErrors "k8s.io/apimachinery/pkg/api/errors"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
-	"sigs.k8s.io/yaml"
 )
 
 func (d *domain) findAccount(ctx context.Context, name string) (*entities.Account, error) {
 	result, err := d.accountRepo.FindOne(ctx, repos.Filter{
 		"metadata.name": name,
+		"markedForDeletion": repos.Filter{"$ne": true},
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -33,23 +32,6 @@ func (d *domain) findAccount(ctx context.Context, name string) (*entities.Accoun
 	}
 
 	return result, nil
-}
-
-func (d *domain) applyAccountOnCluster(ctx context.Context, account *entities.Account) error {
-	b, err := json.Marshal(account.Account)
-	if err != nil {
-		return errors.NewE(err)
-	}
-	y, err := yaml.JSONToYAML(b)
-	if err != nil {
-		return errors.NewE(err)
-	}
-
-	if err := d.k8sClient.ApplyYAML(ctx, y); err != nil {
-		return errors.NewE(err)
-	}
-
-	return nil
 }
 
 func (d *domain) ListAccounts(ctx UserContext) ([]*entities.Account, error) {
@@ -67,7 +49,8 @@ func (d *domain) ListAccounts(ctx UserContext) ([]*entities.Account, error) {
 	}
 
 	return d.accountRepo.Find(ctx, repos.Query{Filter: repos.Filter{
-		"metadata.name": map[string]any{"$in": accountNames},
+		"metadata.name": repos.Filter{"$in": accountNames},
+		"markedForDeletion": repos.Filter{"$ne": true},
 	}})
 }
 
@@ -103,17 +86,12 @@ func (d *domain) ensureNamespaceForAccount(ctx context.Context, accountName stri
 	return nil
 }
 
+func (d *domain) deleteNamespaceForAccount(ctx context.Context, targetNamespace string) error {
+	panic("not implemented. Yet to decide if we want to delete namespace when account is deleted")
+}
+
 func (d *domain) CreateAccount(ctx UserContext, account entities.Account) (*entities.Account, error) {
-	account.EnsureGVK()
-
-	if account.Spec.TargetNamespace == nil {
-		account.Spec.TargetNamespace = fn.New(fmt.Sprintf("kl-account-%s", account.Name))
-	}
-
-	if err := d.k8sClient.ValidateObject(ctx, &account.Account); err != nil {
-		return nil, errors.NewE(err)
-	}
-
+	account.TargetNamespace = fmt.Sprintf("kl-account-%s", account.Name)
 	account.IsActive = fn.New(true)
 	account.CreatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
@@ -131,58 +109,43 @@ func (d *domain) CreateAccount(ctx UserContext, account entities.Account) (*enti
 		return nil, errors.NewE(err)
 	}
 
-	if err := d.ensureNamespaceForAccount(ctx, account.Name, *account.Spec.TargetNamespace); err != nil {
+	if err := d.ensureNamespaceForAccount(ctx, account.Name, account.TargetNamespace); err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	if err := d.applyAccountOnCluster(ctx, acc); err != nil {
-		return nil, errors.NewE(err)
-	}
 	return acc, nil
 }
 
-func (d *domain) UpdateAccount(ctx UserContext, account entities.Account) (*entities.Account, error) {
-	if err := d.checkAccountAccess(ctx, account.Name, ctx.UserId, iamT.UpdateAccount); err != nil {
+func (d *domain) UpdateAccount(ctx UserContext, accountIn entities.Account) (*entities.Account, error) {
+	if err := d.checkAccountAccess(ctx, accountIn.Name, ctx.UserId, iamT.UpdateAccount); err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	account.EnsureGVK()
-	if err := d.k8sClient.ValidateObject(ctx, &account.Account); err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	acc, err := d.findAccount(ctx, account.Name)
+	account, err := d.findAccount(ctx, accountIn.Name)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	if acc.IsActive != nil && !*acc.IsActive {
-		return nil, errors.Newf("account %q is not active, could not update", account.Name)
+	if account.IsActive != nil && !*account.IsActive {
+		return nil, errors.Newf("accountIn %q is not active, could not update", accountIn.Name)
 	}
 
-	if acc.IsMarkedForDeletion() {
-		return nil, errors.Newf("account %q is marked for deletion, could not update", account.Name)
+	if account.IsMarkedForDeletion() {
+		return nil, errors.Newf("accountIn %q is marked for deletion, could not update", accountIn.Name)
 	}
 
-	acc.Labels = account.Labels
-	acc.IsActive = account.IsActive
-	acc.DisplayName = account.DisplayName
-
-	acc.Logo = account.Logo
-	acc.Description = account.Description
-
-	acc.LastUpdatedBy = common.CreatedOrUpdatedBy{
-		UserId:    ctx.UserId,
-		UserName:  ctx.UserName,
-		UserEmail: ctx.UserEmail,
-	}
-
-	uAcc, err := d.accountRepo.UpdateById(ctx, acc.Id, acc)
+	uAcc, err := d.accountRepo.PatchById(ctx, account.Id, repos.Document{
+		"labels":      accountIn.Labels,
+		"displayName": accountIn.DisplayName,
+		"logo":        accountIn.Logo,
+		"contactEmail": accountIn.ContactEmail,
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
+			UserId:    ctx.UserId,
+			UserName:  ctx.UserName,
+			UserEmail: ctx.UserEmail,
+		},
+	})
 	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	if err := d.applyAccountOnCluster(ctx, uAcc); err != nil {
 		return nil, errors.NewE(err)
 	}
 	return uAcc, nil
@@ -198,8 +161,14 @@ func (d *domain) DeleteAccount(ctx UserContext, name string) (bool, error) {
 		return false, errors.NewE(err)
 	}
 
-	account.MarkedForDeletion = fn.New(true)
-	if _, err := d.accountRepo.UpdateById(ctx, account.Id, account); err != nil {
+	if _, err := d.accountRepo.PatchById(ctx, account.Id, repos.Document{
+		"markedForDeletion": fn.New(true),
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
+			UserId:    ctx.UserId,
+			UserName:  ctx.UserName,
+			UserEmail: ctx.UserEmail,
+		},
+	}); err != nil {
 		return false, errors.NewE(err)
 	}
 
@@ -211,15 +180,9 @@ func (d *domain) ResyncAccount(ctx UserContext, name string) error {
 	if err != nil {
 		return errors.NewE(err)
 	}
-
-	if err := d.ensureNamespaceForAccount(ctx, acc.Name, *acc.Spec.TargetNamespace); err != nil {
+	if err := d.ensureNamespaceForAccount(ctx, acc.Name, acc.TargetNamespace); err != nil {
 		return errors.NewE(err)
 	}
-
-	if err := d.applyAccountOnCluster(ctx, acc); err != nil {
-		return errors.NewE(err)
-	}
-
 	return nil
 }
 
@@ -237,9 +200,14 @@ func (d *domain) ActivateAccount(ctx UserContext, name string) (bool, error) {
 		return false, errors.Newf("account %q is already active", name)
 	}
 
-	account.IsActive = fn.New(true)
-
-	if _, err := d.accountRepo.UpdateById(ctx, account.Id, account); err != nil {
+	if _, err := d.accountRepo.PatchById(ctx, account.Id, repos.Document{
+		"isActive": fn.New(true),
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
+			UserId:    ctx.UserId,
+			UserName:  ctx.UserName,
+			UserEmail: ctx.UserEmail,
+		},
+	}); err != nil {
 		return false, errors.NewE(err)
 	}
 
@@ -260,9 +228,14 @@ func (d *domain) DeactivateAccount(ctx UserContext, name string) (bool, error) {
 		return false, errors.Newf("account %q is already deactive", name)
 	}
 
-	account.IsActive = fn.New(false)
-
-	if _, err := d.accountRepo.UpdateById(ctx, account.Id, account); err != nil {
+	if _, err := d.accountRepo.PatchById(ctx, account.Id, repos.Document{
+		"isActive": fn.New(false),
+		"lastUpdatedBy": common.CreatedOrUpdatedBy{
+			UserId:    ctx.UserId,
+			UserName:  ctx.UserName,
+			UserEmail: ctx.UserEmail,
+		},
+	}); err != nil {
 		return false, errors.NewE(err)
 	}
 

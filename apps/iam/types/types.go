@@ -124,9 +124,11 @@ const (
 	MutateResourcesInEnvironment Action = "mutate-resources-in-environment"
 	ReadResourcesInEnvironment   Action = "read-resources-in-environment"
 
-	ListVPNDevices  Action = "list-vpn-devices"
-	GetVPNDevice    Action = "get-vpn-device"
-	ReadVPNDevice Action = "read-vpn-device"
+	ListVPNDevices Action = "list-vpn-devices"
+	GetVPNDevice   Action = "get-vpn-device"
+
+	GetVPNDeviceConnectConfig Action = "get-vpn-device-connect-config"
+
 	CreateVPNDevice Action = "create-vpn-device"
 	UpdateVPNDevice Action = "update-vpn-device"
 	DeleteVPNDevice Action = "delete-vpn-device"
@@ -137,6 +139,9 @@ const (
 
 	ListDomainEntries Action = "list-domain-entries"
 	GetDomainEntry    Action = "get-domain-entry"
+
+	ReadLogs    Action = "read-logs"
+	ReadMetrics Action = "read-metrics"
 )
 
 func NewResourceRef(accountName string, resourceType ResourceType, resourceName string) string {
