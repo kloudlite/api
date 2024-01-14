@@ -194,9 +194,13 @@ func (d *Impl) CreateBuildRun(ctx RegistryContext, build *entities.Build, hook *
 		return errors.NewE(err)
 	}
 
+	if cbr.Annotations == nil {
+		cbr.Annotations = make(map[string]string)
+	}
+
 	cbr.Annotations[constants.ObservabilityTrackingKey] = string(cbr.Id)
 
-	if err = d.dispatcher.ApplyToTargetCluster(ctx, build.BuildClusterName, cbr, 0); err != nil {
+	if err = d.dispatcher.ApplyToTargetCluster(ctx, build.BuildClusterName, &cbr.BuildRun, 0); err != nil {
 		d.logger.Errorf(err, "could not apply build run")
 		return errors.NewE(err)
 	}
