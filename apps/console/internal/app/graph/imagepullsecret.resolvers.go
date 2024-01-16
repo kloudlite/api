@@ -27,7 +27,7 @@ func (r *imagePullSecretResolver) Format(ctx context.Context, obj *entities.Imag
 	if obj == nil {
 		return "", errNilImagePullSecret
 	}
-	return model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat(obj.Format), nil
+	return model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat(obj.Format), nil
 }
 
 // ID is the resolver for the id field.
