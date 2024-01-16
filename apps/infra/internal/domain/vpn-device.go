@@ -71,7 +71,7 @@ func (d *domain) ListVPNDevices(ctx InfraContext, accountName string, clusterNam
 		return nil, errors.NewE(err)
 	}
 
-	filter := repos.Filter{"accountName": accountName, "managingByDev": nil}
+	filter := repos.Filter{"accountName": accountName}
 	if clusterName != nil {
 		filter["clusterName"] = *clusterName
 	}
