@@ -98,6 +98,8 @@ func (d *domain) CreateVPNDevice(ctx ConsoleContext, device entities.ConsoleVPND
 
 	device.SyncStatus = t.GenSyncStatus(t.SyncActionApply, device.RecordVersion)
 
+	device.Namespace = d.envVars.DeviceNamespace
+
 	if device.ProjectName != nil && device.EnvironmentName != nil {
 		s, err := d.envTargetNamespace(ctx, *device.ProjectName, *device.EnvironmentName)
 		if err != nil {
@@ -270,7 +272,7 @@ func (d *domain) UpdateVpnDeviceEnvironment(ctx ConsoleContext, devName string, 
 	patch := repos.Document{
 		"projectName":          projectName,
 		"environmentName":      envName,
-		"spec.deviceNamespace": envNamesapce,
+		"spec.activeNamespace": envNamesapce,
 		"lastUpdatedBy": common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,

@@ -45,7 +45,7 @@ func (d *domain) UpdateVpnDeviceNs(ctx InfraContext, clusterName string, devName
 	currDevice.SyncStatus = t.GenSyncStatus(t.SyncActionApply, currDevice.RecordVersion)
 
 	nDevice, err := d.vpnDeviceRepo.PatchById(ctx, currDevice.Id, repos.Document{
-		"spec.deviceNamespace": namespace,
+		"spec.activeNamespace": namespace,
 		"lastUpdatedBy": common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
@@ -230,6 +230,7 @@ func (d *domain) CreateVPNDevice(ctx InfraContext, clusterName string, device en
 
 	device.AccountName = ctx.AccountName
 	device.ClusterName = clusterName
+	device.Namespace = d.env.DeviceNamespace
 	device.SyncStatus = t.GenSyncStatus(t.SyncActionApply, device.RecordVersion)
 	device.Spec.NoExternalService = true
 
