@@ -881,7 +881,7 @@ type Github__com___kloudlite___operator___pkg___operator__StatusResolver interfa
 type ImagePullSecretResolver interface {
 	CreationTime(ctx context.Context, obj *entities.ImagePullSecret) (string, error)
 
-	Format(ctx context.Context, obj *entities.ImagePullSecret) (model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat, error)
+	Format(ctx context.Context, obj *entities.ImagePullSecret) (model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat, error)
 	ID(ctx context.Context, obj *entities.ImagePullSecret) (string, error)
 
 	UpdateTime(ctx context.Context, obj *entities.ImagePullSecret) (string, error)
@@ -1033,7 +1033,7 @@ type EnvironmentInResolver interface {
 	Spec(ctx context.Context, obj *entities.Environment, data *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn) error
 }
 type ImagePullSecretInResolver interface {
-	Format(ctx context.Context, obj *entities.ImagePullSecret, data model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat) error
+	Format(ctx context.Context, obj *entities.ImagePullSecret, data model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat) error
 	Metadata(ctx context.Context, obj *entities.ImagePullSecret, data *v12.ObjectMeta) error
 }
 type ManagedResourceInResolver interface {
@@ -5697,7 +5697,7 @@ input MetadataIn {
   namespace: String
 }
 
-enum Github__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat {
+enum Github__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat {
   dockerConfigJson
   params
 }
@@ -5937,7 +5937,7 @@ input EnvironmentIn {
   displayName: String!
   dockerConfigJson: String
   environmentName: String!
-  format: Github__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat!
+  format: Github__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat!
   id: String!
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   markedForDeletion: Boolean
@@ -5965,7 +5965,7 @@ type ImagePullSecretPaginatedRecords @shareable {
 input ImagePullSecretIn {
   displayName: String!
   dockerConfigJson: String
-  format: Github__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat!
+  format: Github__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat!
   metadata: MetadataIn!
   registryPassword: String
   registryURL: String
@@ -20053,9 +20053,9 @@ func (ec *executionContext) _ImagePullSecret_format(ctx context.Context, field g
 		}
 		return graphql.Null
 	}
-	res := resTmp.(model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat)
+	res := resTmp.(model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat)
 	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat(ctx, field.Selections, res)
+	return ec.marshalNGithub__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_ImagePullSecret_format(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -20065,7 +20065,7 @@ func (ec *executionContext) fieldContext_ImagePullSecret_format(ctx context.Cont
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Github__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat does not have child fields")
+			return nil, errors.New("field of type Github__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat does not have child fields")
 		},
 	}
 	return fc, nil
@@ -38356,7 +38356,7 @@ func (ec *executionContext) unmarshalInputImagePullSecretIn(ctx context.Context,
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("format"))
-			data, err := ec.unmarshalNGithub__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat(ctx, v)
+			data, err := ec.unmarshalNGithub__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -46164,13 +46164,13 @@ func (ec *executionContext) unmarshalNEnvironmentIn2githubᚗcomᚋkloudliteᚋa
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat, error) {
-	var res model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat, error) {
+	var res model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat
 	err := res.UnmarshalGQL(v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsConsoleInternalEntitiesImagePullSecretFormat) graphql.Marshaler {
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat) graphql.Marshaler {
 	return v
 }
 

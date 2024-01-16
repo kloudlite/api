@@ -515,7 +515,7 @@ input MetadataIn {
   namespace: String
 }
 
-enum Github__com___kloudlite___api___apps___console___internal___entities__ImagePullSecretFormat {
+enum Github__com___kloudlite___api___apps___console___internal___entities__PullSecretFormat {
   dockerConfigJson
   params
 }
