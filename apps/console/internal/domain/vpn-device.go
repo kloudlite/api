@@ -53,7 +53,6 @@ func (d *domain) getClusterFromDevice(ctx ConsoleContext, device *entities.Conso
 }
 
 func (d *domain) updateVpnOnCluster(ctx ConsoleContext, ndev, xdev *entities.ConsoleVPNDevice) error {
-
 	ndev.Namespace = d.envVars.DeviceNamespace
 	ndev.EnsureGVK()
 	if err := d.k8sClient.ValidateObject(ctx, &ndev.Device); err != nil {
@@ -512,6 +511,45 @@ func (d *domain) OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.Co
 	}
 
 	if _, err := d.iamClient.RemoveMembership(ctx, &iam.RemoveMembershipIn{
+func (d *domain) OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.ConsoleVPNDevice) error {
+	err := d.vpnDeviceRepo.DeleteOne(
+		ctx,
+		repos.Filter{
+			fields.AccountName:  ctx.AccountName,
+			fields.MetadataName: device.Name,
+		},
+	)
+
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeVPNDevice, device.Name, PublishDelete)
+
+	return nil
+}
+
+func (d *domain) OnVPNDeviceApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error {
+	device, err := d.findVPNDevice(ctx, name)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	patch := repos.Document{
+		"syncStatus.state":        t.SyncStateErroredAtAgent,
+		"syncStatus.lastSyncedAt": opts.MessageTimestamp,
+		"syncStatus.error":        errMsg,
+	}
+
+	udevice, err := d.vpnDeviceRepo.PatchById(ctx, device.Id, patch)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeVPNDevice, udevice.Name, PublishUpdate)
+
+	return errors.NewE(err)
+}
 		UserId:      string(ctx.UserId),
 		ResourceRef: iamT.NewResourceRef(ctx.AccountName, iamT.ResourceConsoleVPNDevice, device.Name),
 	}); err != nil {
