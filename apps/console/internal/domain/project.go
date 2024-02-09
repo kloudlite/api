@@ -243,7 +243,6 @@ func (d *domain) DeleteProject(ctx ConsoleContext, name string) error {
 	if !co.Status {
 		return errors.Newf("unauthorized to delete project")
 	}
-
 	cluster, err := d.clusterStatus(ctx, name)
 	if err != nil {
 		return errors.NewE(err)
