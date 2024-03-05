@@ -56,7 +56,7 @@ func (d *domain) DeletePV(ctx InfraContext, clusterName string, pvName string) e
 		return errors.NewE(err)
 	}
 
-	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeNodePool, upv.Name, PublishUpdate)
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypePV, upv.Name, PublishUpdate)
 	return d.resDispatcher.DeleteFromTargetCluster(ctx, clusterName, &upv.PersistentVolume)
 }
 
