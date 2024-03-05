@@ -25,7 +25,8 @@ import (
 	"github.com/kloudlite/operator/pkg/operator"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
-	v12 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	v12 "k8s.io/api/core/v1"
+	v13 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -54,6 +55,7 @@ type ResolverRoot interface {
 	Github__com___kloudlite___api___pkg___types__SyncStatus() Github__com___kloudlite___api___pkg___types__SyncStatusResolver
 	Github__com___kloudlite___operator___pkg___operator__Status() Github__com___kloudlite___operator___pkg___operator__StatusResolver
 	ImagePullSecret() ImagePullSecretResolver
+	K8s__io___api___core___v1__Secret() K8s__io___api___core___v1__SecretResolver
 	ManagedResource() ManagedResourceResolver
 	Metadata() MetadataResolver
 	Mutation() MutationResolver
@@ -533,6 +535,16 @@ type ComplexityRoot struct {
 		TotalCount func(childComplexity int) int
 	}
 
+	K8s__io___api___core___v1__Secret struct {
+		APIVersion func(childComplexity int) int
+		Data       func(childComplexity int) int
+		Immutable  func(childComplexity int) int
+		Kind       func(childComplexity int) int
+		ObjectMeta func(childComplexity int) int
+		StringData func(childComplexity int) int
+		Type       func(childComplexity int) int
+	}
+
 	K8s__io___api___core___v1__Toleration struct {
 		Effect            func(childComplexity int) int
 		Key               func(childComplexity int) int
@@ -542,24 +554,25 @@ type ComplexityRoot struct {
 	}
 
 	ManagedResource struct {
-		APIVersion        func(childComplexity int) int
-		AccountName       func(childComplexity int) int
-		CreatedBy         func(childComplexity int) int
-		CreationTime      func(childComplexity int) int
-		DisplayName       func(childComplexity int) int
-		Enabled           func(childComplexity int) int
-		EnvironmentName   func(childComplexity int) int
-		ID                func(childComplexity int) int
-		Kind              func(childComplexity int) int
-		LastUpdatedBy     func(childComplexity int) int
-		MarkedForDeletion func(childComplexity int) int
-		ObjectMeta        func(childComplexity int) int
-		ProjectName       func(childComplexity int) int
-		RecordVersion     func(childComplexity int) int
-		Spec              func(childComplexity int) int
-		Status            func(childComplexity int) int
-		SyncStatus        func(childComplexity int) int
-		UpdateTime        func(childComplexity int) int
+		APIVersion            func(childComplexity int) int
+		AccountName           func(childComplexity int) int
+		CreatedBy             func(childComplexity int) int
+		CreationTime          func(childComplexity int) int
+		DisplayName           func(childComplexity int) int
+		Enabled               func(childComplexity int) int
+		EnvironmentName       func(childComplexity int) int
+		ID                    func(childComplexity int) int
+		Kind                  func(childComplexity int) int
+		LastUpdatedBy         func(childComplexity int) int
+		MarkedForDeletion     func(childComplexity int) int
+		ObjectMeta            func(childComplexity int) int
+		ProjectName           func(childComplexity int) int
+		RecordVersion         func(childComplexity int) int
+		Spec                  func(childComplexity int) int
+		Status                func(childComplexity int) int
+		SyncStatus            func(childComplexity int) int
+		SyncedOutputSecretRef func(childComplexity int) int
+		UpdateTime            func(childComplexity int) int
 	}
 
 	ManagedResourceEdge struct {
@@ -794,6 +807,7 @@ type ComplexityRoot struct {
 		EnvironmentName   func(childComplexity int) int
 		ID                func(childComplexity int) int
 		Immutable         func(childComplexity int) int
+		IsReadyOnly       func(childComplexity int) int
 		Kind              func(childComplexity int) int
 		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
@@ -894,6 +908,12 @@ type ImagePullSecretResolver interface {
 
 	UpdateTime(ctx context.Context, obj *entities.ImagePullSecret) (string, error)
 }
+type K8s__io___api___core___v1__SecretResolver interface {
+	Data(ctx context.Context, obj *v12.Secret) (map[string]interface{}, error)
+
+	StringData(ctx context.Context, obj *v12.Secret) (map[string]interface{}, error)
+	Type(ctx context.Context, obj *v12.Secret) (*model.K8sIoAPICoreV1SecretType, error)
+}
 type ManagedResourceResolver interface {
 	CreationTime(ctx context.Context, obj *entities.ManagedResource) (string, error)
 
@@ -904,11 +924,11 @@ type ManagedResourceResolver interface {
 	UpdateTime(ctx context.Context, obj *entities.ManagedResource) (string, error)
 }
 type MetadataResolver interface {
-	Annotations(ctx context.Context, obj *v12.ObjectMeta) (map[string]interface{}, error)
-	CreationTimestamp(ctx context.Context, obj *v12.ObjectMeta) (string, error)
-	DeletionTimestamp(ctx context.Context, obj *v12.ObjectMeta) (*string, error)
+	Annotations(ctx context.Context, obj *v13.ObjectMeta) (map[string]interface{}, error)
+	CreationTimestamp(ctx context.Context, obj *v13.ObjectMeta) (string, error)
+	DeletionTimestamp(ctx context.Context, obj *v13.ObjectMeta) (*string, error)
 
-	Labels(ctx context.Context, obj *v12.ObjectMeta) (map[string]interface{}, error)
+	Labels(ctx context.Context, obj *v13.ObjectMeta) (map[string]interface{}, error)
 }
 type MutationResolver interface {
 	CoreCreateProject(ctx context.Context, project entities.Project) (*entities.Project, error)
@@ -1019,6 +1039,8 @@ type SecretResolver interface {
 
 	ID(ctx context.Context, obj *entities.Secret) (string, error)
 
+	IsReadyOnly(ctx context.Context, obj *entities.Secret) (bool, error)
+
 	StringData(ctx context.Context, obj *entities.Secret) (map[string]interface{}, error)
 
 	Type(ctx context.Context, obj *entities.Secret) (*model.K8sIoAPICoreV1SecretType, error)
@@ -1026,52 +1048,52 @@ type SecretResolver interface {
 }
 
 type AppInResolver interface {
-	Metadata(ctx context.Context, obj *entities.App, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.App, data *v13.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.App, data *model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn) error
 }
 type ConfigInResolver interface {
 	BinaryData(ctx context.Context, obj *entities.Config, data map[string]interface{}) error
 	Data(ctx context.Context, obj *entities.Config, data map[string]interface{}) error
 
-	Metadata(ctx context.Context, obj *entities.Config, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.Config, data *v13.ObjectMeta) error
 }
 type ConsoleVPNDeviceInResolver interface {
-	Metadata(ctx context.Context, obj *entities.ConsoleVPNDevice, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.ConsoleVPNDevice, data *v13.ObjectMeta) error
 
 	Spec(ctx context.Context, obj *entities.ConsoleVPNDevice, data *model.GithubComKloudliteOperatorApisWireguardV1DeviceSpecIn) error
 }
 type EnvironmentInResolver interface {
-	Metadata(ctx context.Context, obj *entities.Environment, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.Environment, data *v13.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.Environment, data *model.GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn) error
 }
 type ImagePullSecretInResolver interface {
 	Format(ctx context.Context, obj *entities.ImagePullSecret, data model.GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat) error
-	Metadata(ctx context.Context, obj *entities.ImagePullSecret, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.ImagePullSecret, data *v13.ObjectMeta) error
 }
 type ManagedResourceInResolver interface {
-	Metadata(ctx context.Context, obj *entities.ManagedResource, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.ManagedResource, data *v13.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.ManagedResource, data *model.GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpecIn) error
 }
 type MetadataInResolver interface {
-	Annotations(ctx context.Context, obj *v12.ObjectMeta, data map[string]interface{}) error
-	Labels(ctx context.Context, obj *v12.ObjectMeta, data map[string]interface{}) error
+	Annotations(ctx context.Context, obj *v13.ObjectMeta, data map[string]interface{}) error
+	Labels(ctx context.Context, obj *v13.ObjectMeta, data map[string]interface{}) error
 }
 type ProjectInResolver interface {
-	Metadata(ctx context.Context, obj *entities.Project, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.Project, data *v13.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.Project, data *model.GithubComKloudliteOperatorApisCrdsV1ProjectSpecIn) error
 }
 type ProjectManagedServiceInResolver interface {
-	Metadata(ctx context.Context, obj *entities.ProjectManagedService, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.ProjectManagedService, data *v13.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.ProjectManagedService, data *model.GithubComKloudliteOperatorApisCrdsV1ProjectManagedServiceSpecIn) error
 }
 type RouterInResolver interface {
-	Metadata(ctx context.Context, obj *entities.Router, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.Router, data *v13.ObjectMeta) error
 	Spec(ctx context.Context, obj *entities.Router, data *model.GithubComKloudliteOperatorApisCrdsV1RouterSpecIn) error
 }
 type SecretInResolver interface {
 	Data(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error
 
-	Metadata(ctx context.Context, obj *entities.Secret, data *v12.ObjectMeta) error
+	Metadata(ctx context.Context, obj *entities.Secret, data *v13.ObjectMeta) error
 	StringData(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error
 	Type(ctx context.Context, obj *entities.Secret, data *model.K8sIoAPICoreV1SecretType) error
 }
@@ -3030,6 +3052,55 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.ImagePullSecretPaginatedRecords.TotalCount(childComplexity), true
 
+	case "K8s__io___api___core___v1__Secret.apiVersion":
+		if e.complexity.K8s__io___api___core___v1__Secret.APIVersion == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.APIVersion(childComplexity), true
+
+	case "K8s__io___api___core___v1__Secret.data":
+		if e.complexity.K8s__io___api___core___v1__Secret.Data == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.Data(childComplexity), true
+
+	case "K8s__io___api___core___v1__Secret.immutable":
+		if e.complexity.K8s__io___api___core___v1__Secret.Immutable == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.Immutable(childComplexity), true
+
+	case "K8s__io___api___core___v1__Secret.kind":
+		if e.complexity.K8s__io___api___core___v1__Secret.Kind == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.Kind(childComplexity), true
+
+	case "K8s__io___api___core___v1__Secret.metadata":
+		if e.complexity.K8s__io___api___core___v1__Secret.ObjectMeta == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.ObjectMeta(childComplexity), true
+
+	case "K8s__io___api___core___v1__Secret.stringData":
+		if e.complexity.K8s__io___api___core___v1__Secret.StringData == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.StringData(childComplexity), true
+
+	case "K8s__io___api___core___v1__Secret.type":
+		if e.complexity.K8s__io___api___core___v1__Secret.Type == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__Secret.Type(childComplexity), true
+
 	case "K8s__io___api___core___v1__Toleration.effect":
 		if e.complexity.K8s__io___api___core___v1__Toleration.Effect == nil {
 			break
@@ -3183,6 +3254,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.ManagedResource.SyncStatus(childComplexity), true
+
+	case "ManagedResource.syncedOutputSecretRef":
+		if e.complexity.ManagedResource.SyncedOutputSecretRef == nil {
+			break
+		}
+
+		return e.complexity.ManagedResource.SyncedOutputSecretRef(childComplexity), true
 
 	case "ManagedResource.updateTime":
 		if e.complexity.ManagedResource.UpdateTime == nil {
@@ -4764,6 +4842,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Secret.Immutable(childComplexity), true
 
+	case "Secret.isReadyOnly":
+		if e.complexity.Secret.IsReadyOnly == nil {
+			break
+		}
+
+		return e.complexity.Secret.IsReadyOnly(childComplexity), true
+
 	case "Secret.kind":
 		if e.complexity.Secret.Kind == nil {
 			break
@@ -5383,7 +5468,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpec @sha
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__HPA @shareable {
-  enabled: Boolean
+  enabled: Boolean!
   maxReplicas: Int
   minReplicas: Int
   thresholdCpu: Int
@@ -5537,6 +5622,16 @@ type Github__com___kloudlite___operator___pkg___raw____json__RawJson @shareable 
   RawMessage: Any
 }
 
+type K8s__io___api___core___v1__Secret @shareable {
+  apiVersion: String
+  data: Map
+  immutable: Boolean
+  kind: String
+  metadata: Metadata @goField(name: "objectMeta")
+  stringData: Map
+  type: K8s__io___api___core___v1__SecretType
+}
+
 type K8s__io___api___core___v1__Toleration @shareable {
   effect: K8s__io___api___core___v1__TaintEffect
   key: String
@@ -5652,7 +5747,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpecIn {
 }
 
 input Github__com___kloudlite___operator___apis___crds___v1__HPAIn {
-  enabled: Boolean
+  enabled: Boolean!
   maxReplicas: Int
   minReplicas: Int
   thresholdCpu: Int
@@ -6088,6 +6183,7 @@ input ImagePullSecretIn {
   recordVersion: Int!
   spec: Github__com___kloudlite___operator___apis___crds___v1__ManagedResourceSpec!
   status: Github__com___kloudlite___operator___pkg___operator__Status
+  syncedOutputSecretRef: K8s__io___api___core___v1__Secret
   syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
 }
@@ -6305,6 +6401,7 @@ scalar Date
   environmentName: String!
   id: String!
   immutable: Boolean
+  isReadyOnly: Boolean!
   kind: String
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   markedForDeletion: Boolean
@@ -9095,7 +9192,7 @@ func (ec *executionContext) _App_metadata(ctx context.Context, field graphql.Col
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -10309,7 +10406,7 @@ func (ec *executionContext) _Config_metadata(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -11661,7 +11758,7 @@ func (ec *executionContext) _ConsoleVPNDevice_metadata(ctx context.Context, fiel
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -12989,7 +13086,7 @@ func (ec *executionContext) _Environment_metadata(ctx context.Context, field gra
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -16531,11 +16628,14 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 		return graphql.Null
 	}
 	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
 		return graphql.Null
 	}
-	res := resTmp.(*bool)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__HPA_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -20621,7 +20721,7 @@ func (ec *executionContext) _ImagePullSecret_metadata(ctx context.Context, field
 		}
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalNMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -21237,6 +21337,309 @@ func (ec *executionContext) fieldContext_ImagePullSecretPaginatedRecords_totalCo
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_apiVersion(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_data(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_data(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.K8s__io___api___core___v1__Secret().Data(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_data(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_immutable(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_immutable(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Immutable, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_immutable(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_kind(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_metadata(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectMeta, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(v13.ObjectMeta)
+	fc.Result = res
+	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "annotations":
+				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+			case "generation":
+				return ec.fieldContext_Metadata_generation(ctx, field)
+			case "labels":
+				return ec.fieldContext_Metadata_labels(ctx, field)
+			case "name":
+				return ec.fieldContext_Metadata_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Metadata_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_stringData(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_stringData(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.K8s__io___api___core___v1__Secret().StringData(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_stringData(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret_type(ctx context.Context, field graphql.CollectedField, obj *v12.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__Secret_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.K8s__io___api___core___v1__Secret().Type(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.K8sIoAPICoreV1SecretType)
+	fc.Result = res
+	return ec.marshalOK8s__io___api___core___v1__SecretType2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1SecretType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__Secret",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type K8s__io___api___core___v1__SecretType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -21958,7 +22361,7 @@ func (ec *executionContext) _ManagedResource_metadata(ctx context.Context, field
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -22185,6 +22588,63 @@ func (ec *executionContext) fieldContext_ManagedResource_status(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _ManagedResource_syncedOutputSecretRef(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ManagedResource_syncedOutputSecretRef(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SyncedOutputSecretRef, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*v12.Secret)
+	fc.Result = res
+	return ec.marshalOK8s__io___api___core___v1__Secret2ᚖk8sᚗioᚋapiᚋcoreᚋv1ᚐSecret(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ManagedResource_syncedOutputSecretRef(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ManagedResource",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apiVersion":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_apiVersion(ctx, field)
+			case "data":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_data(ctx, field)
+			case "immutable":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_immutable(ctx, field)
+			case "kind":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_kind(ctx, field)
+			case "metadata":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_metadata(ctx, field)
+			case "stringData":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_stringData(ctx, field)
+			case "type":
+				return ec.fieldContext_K8s__io___api___core___v1__Secret_type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type K8s__io___api___core___v1__Secret", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _ManagedResource_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.ManagedResource) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_ManagedResource_syncStatus(ctx, field)
 	if err != nil {
@@ -22402,6 +22862,8 @@ func (ec *executionContext) fieldContext_ManagedResourceEdge_node(ctx context.Co
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ManagedResource_status(ctx, field)
+			case "syncedOutputSecretRef":
+				return ec.fieldContext_ManagedResource_syncedOutputSecretRef(ctx, field)
 			case "syncStatus":
 				return ec.fieldContext_ManagedResource_syncStatus(ctx, field)
 			case "updateTime":
@@ -22948,7 +23410,7 @@ func (ec *executionContext) fieldContext_MatchFilter_regex(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_annotations(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_annotations(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_annotations(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -22989,7 +23451,7 @@ func (ec *executionContext) fieldContext_Metadata_annotations(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_creationTimestamp(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -23033,7 +23495,7 @@ func (ec *executionContext) fieldContext_Metadata_creationTimestamp(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -23074,7 +23536,7 @@ func (ec *executionContext) fieldContext_Metadata_deletionTimestamp(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_generation(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_generation(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_generation(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -23118,7 +23580,7 @@ func (ec *executionContext) fieldContext_Metadata_generation(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_labels(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_labels(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_labels(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -23159,7 +23621,7 @@ func (ec *executionContext) fieldContext_Metadata_labels(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_name(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_name(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -23203,7 +23665,7 @@ func (ec *executionContext) fieldContext_Metadata_name(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_namespace(ctx context.Context, field graphql.CollectedField, obj *v12.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_namespace(ctx context.Context, field graphql.CollectedField, obj *v13.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_namespace(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -24950,6 +25412,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createSecret(ctx context.
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "immutable":
 				return ec.fieldContext_Secret_immutable(ctx, field)
+			case "isReadyOnly":
+				return ec.fieldContext_Secret_isReadyOnly(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "lastUpdatedBy":
@@ -25068,6 +25532,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateSecret(ctx context.
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "immutable":
 				return ec.fieldContext_Secret_immutable(ctx, field)
+			case "isReadyOnly":
+				return ec.fieldContext_Secret_isReadyOnly(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "lastUpdatedBy":
@@ -25594,6 +26060,8 @@ func (ec *executionContext) fieldContext_Mutation_core_createManagedResource(ctx
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ManagedResource_status(ctx, field)
+			case "syncedOutputSecretRef":
+				return ec.fieldContext_ManagedResource_syncedOutputSecretRef(ctx, field)
 			case "syncStatus":
 				return ec.fieldContext_ManagedResource_syncStatus(ctx, field)
 			case "updateTime":
@@ -25710,6 +26178,8 @@ func (ec *executionContext) fieldContext_Mutation_core_updateManagedResource(ctx
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ManagedResource_status(ctx, field)
+			case "syncedOutputSecretRef":
+				return ec.fieldContext_ManagedResource_syncedOutputSecretRef(ctx, field)
 			case "syncStatus":
 				return ec.fieldContext_ManagedResource_syncStatus(ctx, field)
 			case "updateTime":
@@ -27476,7 +27946,7 @@ func (ec *executionContext) _Project_metadata(ctx context.Context, field graphql
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -28307,7 +28777,7 @@ func (ec *executionContext) _ProjectManagedService_metadata(ctx context.Context,
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -30964,6 +31434,8 @@ func (ec *executionContext) fieldContext_Query_core_getSecret(ctx context.Contex
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "immutable":
 				return ec.fieldContext_Secret_immutable(ctx, field)
+			case "isReadyOnly":
+				return ec.fieldContext_Secret_isReadyOnly(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "lastUpdatedBy":
@@ -31716,6 +32188,8 @@ func (ec *executionContext) fieldContext_Query_core_getManagedResource(ctx conte
 				return ec.fieldContext_ManagedResource_spec(ctx, field)
 			case "status":
 				return ec.fieldContext_ManagedResource_status(ctx, field)
+			case "syncedOutputSecretRef":
+				return ec.fieldContext_ManagedResource_syncedOutputSecretRef(ctx, field)
 			case "syncStatus":
 				return ec.fieldContext_ManagedResource_syncStatus(ctx, field)
 			case "updateTime":
@@ -33182,7 +33656,7 @@ func (ec *executionContext) _Router_metadata(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -34194,6 +34668,50 @@ func (ec *executionContext) fieldContext_Secret_immutable(ctx context.Context, f
 	return fc, nil
 }
 
+func (ec *executionContext) _Secret_isReadyOnly(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Secret_isReadyOnly(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Secret().IsReadyOnly(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Secret_isReadyOnly(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Secret",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Secret_kind(ctx context.Context, field graphql.CollectedField, obj *entities.Secret) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Secret_kind(ctx, field)
 	if err != nil {
@@ -34351,7 +34869,7 @@ func (ec *executionContext) _Secret_metadata(ctx context.Context, field graphql.
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(v12.ObjectMeta)
+	res := resTmp.(v13.ObjectMeta)
 	fc.Result = res
 	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
@@ -34758,6 +35276,8 @@ func (ec *executionContext) fieldContext_SecretEdge_node(ctx context.Context, fi
 				return ec.fieldContext_Secret_id(ctx, field)
 			case "immutable":
 				return ec.fieldContext_Secret_immutable(ctx, field)
+			case "isReadyOnly":
+				return ec.fieldContext_Secret_isReadyOnly(ctx, field)
 			case "kind":
 				return ec.fieldContext_Secret_kind(ctx, field)
 			case "lastUpdatedBy":
@@ -38163,7 +38683,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 			var err error
 
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
-			it.Enabled, err = ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			it.Enabled, err = ec.unmarshalNBoolean2bool(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -39421,8 +39941,8 @@ func (ec *executionContext) unmarshalInputMatchFilterIn(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj interface{}) (v12.ObjectMeta, error) {
-	var it v12.ObjectMeta
+func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj interface{}) (v13.ObjectMeta, error) {
+	var it v13.ObjectMeta
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -42222,6 +42742,9 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__HPA_enabled(ctx, field, obj)
 
+			if out.Values[i] == graphql.Null {
+				invalids++
+			}
 		case "maxReplicas":
 
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__HPA_maxReplicas(ctx, field, obj)
@@ -43453,6 +43976,94 @@ func (ec *executionContext) _ImagePullSecretPaginatedRecords(ctx context.Context
 	return out
 }
 
+var k8s__io___api___core___v1__SecretImplementors = []string{"K8s__io___api___core___v1__Secret"}
+
+func (ec *executionContext) _K8s__io___api___core___v1__Secret(ctx context.Context, sel ast.SelectionSet, obj *v12.Secret) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, k8s__io___api___core___v1__SecretImplementors)
+	out := graphql.NewFieldSet(fields)
+	var invalids uint32
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("K8s__io___api___core___v1__Secret")
+		case "apiVersion":
+
+			out.Values[i] = ec._K8s__io___api___core___v1__Secret_apiVersion(ctx, field, obj)
+
+		case "data":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._K8s__io___api___core___v1__Secret_data(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "immutable":
+
+			out.Values[i] = ec._K8s__io___api___core___v1__Secret_immutable(ctx, field, obj)
+
+		case "kind":
+
+			out.Values[i] = ec._K8s__io___api___core___v1__Secret_kind(ctx, field, obj)
+
+		case "metadata":
+
+			out.Values[i] = ec._K8s__io___api___core___v1__Secret_metadata(ctx, field, obj)
+
+		case "stringData":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._K8s__io___api___core___v1__Secret_stringData(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		case "type":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._K8s__io___api___core___v1__Secret_type(ctx, field, obj)
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch()
+	if invalids > 0 {
+		return graphql.Null
+	}
+	return out
+}
+
 var k8s__io___api___core___v1__TolerationImplementors = []string{"K8s__io___api___core___v1__Toleration"}
 
 func (ec *executionContext) _K8s__io___api___core___v1__Toleration(ctx context.Context, sel ast.SelectionSet, obj *model.K8sIoAPICoreV1Toleration) graphql.Marshaler {
@@ -43636,6 +44247,10 @@ func (ec *executionContext) _ManagedResource(ctx context.Context, sel ast.Select
 		case "status":
 
 			out.Values[i] = ec._ManagedResource_status(ctx, field, obj)
+
+		case "syncedOutputSecretRef":
+
+			out.Values[i] = ec._ManagedResource_syncedOutputSecretRef(ctx, field, obj)
 
 		case "syncStatus":
 
@@ -43871,7 +44486,7 @@ func (ec *executionContext) _MatchFilter(ctx context.Context, sel ast.SelectionS
 
 var metadataImplementors = []string{"Metadata"}
 
-func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet, obj *v12.ObjectMeta) graphql.Marshaler {
+func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet, obj *v13.ObjectMeta) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, metadataImplementors)
 	out := graphql.NewFieldSet(fields)
 	var invalids uint32
@@ -46026,6 +46641,26 @@ func (ec *executionContext) _Secret(ctx context.Context, sel ast.SelectionSet, o
 
 			out.Values[i] = ec._Secret_immutable(ctx, field, obj)
 
+		case "isReadyOnly":
+			field := field
+
+			innerFunc := func(ctx context.Context) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Secret_isReadyOnly(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&invalids, 1)
+				}
+				return res
+			}
+
+			out.Concurrently(i, func() graphql.Marshaler {
+				return innerFunc(ctx)
+
+			})
 		case "kind":
 
 			out.Values[i] = ec._Secret_kind(ctx, field, obj)
@@ -47707,16 +48342,16 @@ func (ec *executionContext) marshalNMatchFilterMatchType2githubᚗcomᚋkloudlit
 	return res
 }
 
-func (ec *executionContext) marshalNMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, sel ast.SelectionSet, v v12.ObjectMeta) graphql.Marshaler {
+func (ec *executionContext) marshalNMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, sel ast.SelectionSet, v v13.ObjectMeta) graphql.Marshaler {
 	return ec._Metadata(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalNMetadataIn2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (v12.ObjectMeta, error) {
+func (ec *executionContext) unmarshalNMetadataIn2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (v13.ObjectMeta, error) {
 	res, err := ec.unmarshalInputMetadataIn(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) unmarshalNMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (*v12.ObjectMeta, error) {
+func (ec *executionContext) unmarshalNMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (*v13.ObjectMeta, error) {
 	res, err := ec.unmarshalInputMetadataIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
@@ -48363,7 +48998,7 @@ func (ec *executionContext) marshalN__TypeKind2string(ctx context.Context, sel a
 	return res
 }
 
-func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (any, error) {
+func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -48371,7 +49006,7 @@ func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v inter
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v any) graphql.Marshaler {
+func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
@@ -49589,6 +50224,13 @@ func (ec *executionContext) marshalOInt2ᚖint64(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) marshalOK8s__io___api___core___v1__Secret2ᚖk8sᚗioᚋapiᚋcoreᚋv1ᚐSecret(ctx context.Context, sel ast.SelectionSet, v *v12.Secret) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._K8s__io___api___core___v1__Secret(ctx, sel, v)
+}
+
 func (ec *executionContext) unmarshalOK8s__io___api___core___v1__SecretType2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1SecretType(ctx context.Context, v interface{}) (*model.K8sIoAPICoreV1SecretType, error) {
 	if v == nil {
 		return nil, nil
@@ -49770,11 +50412,11 @@ func (ec *executionContext) unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudlite�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, sel ast.SelectionSet, v v12.ObjectMeta) graphql.Marshaler {
+func (ec *executionContext) marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, sel ast.SelectionSet, v v13.ObjectMeta) graphql.Marshaler {
 	return ec._Metadata(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (*v12.ObjectMeta, error) {
+func (ec *executionContext) unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (*v13.ObjectMeta, error) {
 	if v == nil {
 		return nil, nil
 	}
