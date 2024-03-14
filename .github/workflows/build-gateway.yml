@@ -1,4 +1,4 @@
-name: build-docker-images
+name: build-gateway-images
 
 on:
   workflow_dispatch:
@@ -9,12 +9,10 @@ on:
 
   push:
     paths:
-      - "apps/**/**"
-      - "pkg/**"
-      - "grpc-interfaces/**"
-      - "common/**"
-      - "go.*"
-      - ".github/workflows/**"
+      - "apps/**/graph/*.graphqls"
+      - "apps/**/graph/struct-to-graphql/*.graphqls"
+      - "apps/gateway/**"
+      - ".github/workflows/build-gateway.yml"
 
 permissions:
   contents: read
@@ -22,21 +20,6 @@ permissions:
 
 jobs:
   docker-builds:
-    strategy:
-      matrix:
-        app:
-          - accounts
-          - auth
-          - comms
-          - console
-          - container-registry
-          - iam
-          - infra
-          - worker-audit-logging
-          - webhook
-          - websocket-server
-          - message-office
-          - tenant-agent
     runs-on: ubuntu-latest
     name: Deploy to Docker Image
     steps:
@@ -46,39 +29,20 @@ jobs:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
 
-      - name: Setup Golang caches
-        uses: actions/cache@v3
-        with:
-          path: |
-            ~/.cache/go-build
-            ~/go/pkg/mod
-          key: ${{ runner.os }}-golang-${{ hashFiles('**/go.sum') }}
-          restore-keys: |
-            ${{ runner.os }}-golang-
-
-      - name: Install Go
-        uses: actions/setup-go@v5
-        with:
-          go-version: 1.21.5
-
       - name: Install Task
         uses: arduino/setup-task@v1
         with:
           version: 3.x
           repo-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Install UPX
+      - name: Install Rover
         run: |
-          curl -L0 https://github.com/upx/upx/releases/download/v4.2.1/upx-4.2.1-amd64_linux.tar.xz > upx.tar.xz
-          tar -xf upx.tar.xz
-          sudo mv upx-4.2.1-amd64_linux/upx /usr/local/bin
-
-      - name: Build Binary
-        run: |
-          pushd apps/${{matrix.app}}
-          task build
-          popd
+          curl -sSL https://rover.apollo.dev/nix/v0.23.0-rc.3 | sh
           
+          # Add Rover to the $GITHUB_PATH so it can be used in another step
+          # https://docs.github.com/en/actions/reference/workflow-commands-for-github-actions#adding-a-system-path
+          echo "$HOME/.rover/bin" >> $GITHUB_PATH
+
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v2
 
@@ -115,7 +79,7 @@ jobs:
         if: startsWith(github.ref, 'refs/heads/release') || startsWith(github.ref, 'refs/tags/')
         run: |
           set +e
-          image_name="ghcr.io/${{ github.repository }}/${{matrix.app}}"
+          image_name="ghcr.io/${{ github.repository }}/gateway"
 
           docker manifest inspect $image_name:$IMAGE_TAG
           exit_status=$?
@@ -125,7 +89,6 @@ jobs:
           fi
 
           set -e
-
-          pushd apps/${{ matrix.app }}
-            task container:build-and-push Image=$image_name:$IMAGE_TAG
-          popd
+          
+          cd apps/gateway
+          task container:build-and-push Image=$image_name:$IMAGE_TAG

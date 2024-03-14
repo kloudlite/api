@@ -4,6 +4,9 @@ vars:
   app: gateway
 
 tasks:
+  generate-schema:
+    cmds:
+      - bash ./generate-schema.sh {{.Output}}
   dev:
     dotenv:
       - "./.secrets/env"
@@ -11,11 +14,24 @@ tasks:
     cmds:
       - npm start
 
-  container:build-and-push:
+  local:build:
     preconditions:
       - sh: '[[ -n "{{.Image}}" ]]'
         msg: "var Image must have a value, of format 'image_repository:image_tag'"
     cmds:
-      - docker buildx build -f ./Containerfile -t {{.Image}} . --push
+      - task generate-schema
+      - docker buildx build -f ./Containerfile -t {{.Image}} .
 
+
+  container:build-and-push:
+    preconditions:
+      - sh: '[[ -n "{{.Image}}" ]]'
+        msg: "var Image must have a value, of format 'image_repository:image_tag'"
+    vars:
+      SupergraphSchemaFile: "./supergraph.graphqls"
+    cmds:
+      - task: generate-schema
+        vars:
+          Output: "{{.SupergraphSchemaFile}}"
+      - docker buildx build -f ./Containerfile --build-arg SUPERGRAPH_FILE="{{.SupergraphSchemaFile}}" -t {{.Image}} . --push
 

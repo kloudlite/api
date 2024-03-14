@@ -259,19 +259,19 @@ type GithubComKloudliteOperatorApisCrdsV1EnvironmentSpecIn struct {
 }
 
 type GithubComKloudliteOperatorApisCrdsV1Hpa struct {
-	Enabled         *bool `json:"enabled,omitempty"`
-	MaxReplicas     *int  `json:"maxReplicas,omitempty"`
-	MinReplicas     *int  `json:"minReplicas,omitempty"`
-	ThresholdCPU    *int  `json:"thresholdCpu,omitempty"`
-	ThresholdMemory *int  `json:"thresholdMemory,omitempty"`
+	Enabled         bool `json:"enabled"`
+	MaxReplicas     *int `json:"maxReplicas,omitempty"`
+	MinReplicas     *int `json:"minReplicas,omitempty"`
+	ThresholdCPU    *int `json:"thresholdCpu,omitempty"`
+	ThresholdMemory *int `json:"thresholdMemory,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1HPAIn struct {
-	Enabled         *bool `json:"enabled,omitempty"`
-	MaxReplicas     *int  `json:"maxReplicas,omitempty"`
-	MinReplicas     *int  `json:"minReplicas,omitempty"`
-	ThresholdCPU    *int  `json:"thresholdCpu,omitempty"`
-	ThresholdMemory *int  `json:"thresholdMemory,omitempty"`
+	Enabled         bool `json:"enabled"`
+	MaxReplicas     *int `json:"maxReplicas,omitempty"`
+	MinReplicas     *int `json:"minReplicas,omitempty"`
+	ThresholdCPU    *int `json:"thresholdCpu,omitempty"`
+	ThresholdMemory *int `json:"thresholdMemory,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1HTTPGetProbe struct {
@@ -319,11 +319,15 @@ type GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpecIn struct {
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpec struct {
+	NodeSelector    map[string]interface{}                               `json:"nodeSelector,omitempty"`
 	ServiceTemplate *GithubComKloudliteOperatorApisCrdsV1ServiceTemplate `json:"serviceTemplate"`
+	Tolerations     []*K8sIoAPICoreV1Toleration                          `json:"tolerations,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecIn struct {
+	NodeSelector    map[string]interface{}                                 `json:"nodeSelector,omitempty"`
 	ServiceTemplate *GithubComKloudliteOperatorApisCrdsV1ServiceTemplateIn `json:"serviceTemplate"`
+	Tolerations     []*K8sIoAPICoreV1TolerationIn                          `json:"tolerations,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1MresResourceTemplate struct {
@@ -510,9 +514,20 @@ type GithubComKloudliteOperatorApisWireguardV1PortIn struct {
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheck struct {
-	Generation *int    `json:"generation,omitempty"`
-	Message    *string `json:"message,omitempty"`
-	Status     bool    `json:"status"`
+	Debug      *string                                     `json:"debug,omitempty"`
+	Error      *string                                     `json:"error,omitempty"`
+	Generation *int                                        `json:"generation,omitempty"`
+	Info       *string                                     `json:"info,omitempty"`
+	Message    *string                                     `json:"message,omitempty"`
+	StartedAt  *string                                     `json:"startedAt,omitempty"`
+	State      *GithubComKloudliteOperatorPkgOperatorState `json:"state,omitempty"`
+	Status     bool                                        `json:"status"`
+}
+
+type GithubComKloudliteOperatorPkgOperatorCheckMeta struct {
+	Description *string `json:"description,omitempty"`
+	Name        string  `json:"name"`
+	Title       string  `json:"title"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorResourceRef struct {
@@ -778,6 +793,51 @@ func (e *GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) UnmarshalGQL(v inte
 }
 
 func (e GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorPkgOperatorState string
+
+const (
+	GithubComKloudliteOperatorPkgOperatorStateErroredDuringReconcilation GithubComKloudliteOperatorPkgOperatorState = "errored____during____reconcilation"
+	GithubComKloudliteOperatorPkgOperatorStateFinishedReconcilation      GithubComKloudliteOperatorPkgOperatorState = "finished____reconcilation"
+	GithubComKloudliteOperatorPkgOperatorStateUnderReconcilation         GithubComKloudliteOperatorPkgOperatorState = "under____reconcilation"
+	GithubComKloudliteOperatorPkgOperatorStateYetToBeReconciled          GithubComKloudliteOperatorPkgOperatorState = "yet____to____be____reconciled"
+)
+
+var AllGithubComKloudliteOperatorPkgOperatorState = []GithubComKloudliteOperatorPkgOperatorState{
+	GithubComKloudliteOperatorPkgOperatorStateErroredDuringReconcilation,
+	GithubComKloudliteOperatorPkgOperatorStateFinishedReconcilation,
+	GithubComKloudliteOperatorPkgOperatorStateUnderReconcilation,
+	GithubComKloudliteOperatorPkgOperatorStateYetToBeReconciled,
+}
+
+func (e GithubComKloudliteOperatorPkgOperatorState) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorPkgOperatorStateErroredDuringReconcilation, GithubComKloudliteOperatorPkgOperatorStateFinishedReconcilation, GithubComKloudliteOperatorPkgOperatorStateUnderReconcilation, GithubComKloudliteOperatorPkgOperatorStateYetToBeReconciled:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorPkgOperatorState) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorPkgOperatorState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorPkgOperatorState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___pkg___operator__State", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorPkgOperatorState) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -45,6 +45,15 @@ func (r *secretResolver) ID(ctx context.Context, obj *entities.Secret) (string, 
 	return string(obj.Id), nil
 }
 
+// IsReadyOnly is the resolver for the isReadyOnly field.
+func (r *secretResolver) IsReadyOnly(ctx context.Context, obj *entities.Secret) (bool, error) {
+	if obj == nil {
+		return false, errNilSecret
+	}
+
+	return obj.IsReadOnly, nil
+}
+
 // StringData is the resolver for the stringData field.
 func (r *secretResolver) StringData(ctx context.Context, obj *entities.Secret) (map[string]interface{}, error) {
 	var m map[string]any
