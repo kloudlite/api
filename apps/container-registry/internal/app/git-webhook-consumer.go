@@ -69,7 +69,7 @@ func processGitWebhooks(ctx context.Context, d domain.Domain, consumer GitWebhoo
 		case constants.ProviderGithub:
 			pullToken, err = d.GithubInstallationToken(ctx, hook.RepoUrl)
 			if err != nil {
-				fmt.Println(err)
+				logger.Warnf("could not get pull token for build, Error: %s", err.Error())
 				return errors.NewE(err)
 			}
 
@@ -127,7 +127,7 @@ func processGitWebhooks(ctx context.Context, d domain.Domain, consumer GitWebhoo
 				AccountName: build.Spec.AccountName,
 			}
 
-			err := d.CreateBuildRun(dctx, build, hook, pullToken)
+			err := d.CreateBuildRun(dctx, build, hook, pullToken, "")
 			if err != nil {
 				logger.Errorf(err, "could not create build run")
 			}

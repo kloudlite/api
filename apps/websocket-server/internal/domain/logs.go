@@ -91,7 +91,10 @@ func (d *domain) handleLogsMsg(ctx types.Context, logsSubs *logs.LogsSubsMap, ms
 				}
 			}
 
-			jc, err := d.newJetstreamConsumerForLog(ctx.Context, logs.LogSubsId(msg.Spec, d.env.LogsStreamName), hash, msg.Spec.Since)
+			tpk := logs.LogSubsId(msg.Spec, d.env.LogsStreamName)
+			d.logger.Debugf("tpk: %s", tpk)
+
+			jc, err := d.newJetstreamConsumerForLog(ctx.Context, tpk, hash, msg.Spec.Since)
 			if err != nil {
 				return err
 			}
@@ -167,7 +170,7 @@ func (d *domain) handleLogsMsg(ctx types.Context, logsSubs *logs.LogsSubsMap, ms
 				utils.WriteInfo(ctx, "[logs] subscription cancelled for ", msg.Id, types.ForLogs)
 			} else {
 				ctx.Mutex.Unlock()
-				utils.WriteError(ctx, fmt.Errorf("[logs] no subscription found for account: %s, cluster: %s, trackingId: %s",
+				utils.WriteWarn(ctx, fmt.Errorf("[logs] no subscription found for account: %s, cluster: %s, trackingId: %s",
 					msg.Spec.Account, msg.Spec.Cluster, msg.Spec.TrackingId), msg.Id, types.ForLogs)
 			}
 
