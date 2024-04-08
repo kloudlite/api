@@ -43,6 +43,7 @@ const (
 	ResourceTypeDomainEntries         ResourceType = "domain_entries"
 	ResourceTypeHelmRelease           ResourceType = "helm_release"
 	ResourceTypeNodePool              ResourceType = "nodepool"
+	ResourceTypeClusterConnection     ResourceType = "cluster_connection"
 	ResourceTypePVC                   ResourceType = "persistance_volume_claim"
 	ResourceTypePV                    ResourceType = "persistance_volume"
 	ResourceTypeVolumeAttachment      ResourceType = "volume_attachment"
