@@ -28,13 +28,10 @@ func GetCidrRanges(index int) (*string, error) {
 	return functions.New(fmt.Sprintf("10.%d.0.0/16", index)), nil
 }
 
-type Peers struct {
-	Name      string `json:"name" graphql:"noinput"`
-	Namespace string `json:"namespace" graphql:"noinput"`
-
-	Id         int    `json:"id" graphql:"noinput"`
-	PubKey     string `json:"pubKey" graphql:"noinput"`
-	AllowedIps string `json:"allowedIps" graphql:"noinput"`
+type Peer struct {
+	Id         int      `json:"id" graphql:"noinput"`
+	PubKey     string   `json:"pubKey" graphql:"noinput"`
+	AllowedIps []string `json:"allowedIps" graphql:"noinput"`
 }
 
 type ClusterGroup struct {
@@ -42,7 +39,7 @@ type ClusterGroup struct {
 
 	common.ResourceMetadata `json:",inline"`
 
-	Peers []Peers `json:"peers" graphql:"noinput"`
+	// Peers []Peer `json:"peers" graphql:"noinput"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
 	ClusterName string `json:"clusterName" graphql:"noinput"`

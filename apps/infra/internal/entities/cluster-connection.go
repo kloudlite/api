@@ -15,8 +15,12 @@ type ClusterConnection struct {
 
 	common.ResourceMetadata `json:",inline"`
 
-	AccountName string `json:"accountName" graphql:"noinput"`
-	ClusterName string `json:"clusterName" graphql:"noinput"`
+	AccountName      string `json:"accountName" graphql:"noinput"`
+	ClusterName      string `json:"clusterName" graphql:"noinput"`
+	ClusterGroupName string `json:"clusterGroupName" graphql:"noinput"`
+
+	CIDR     string `json:"cidr" graphql:"noinput"`
+	Endpoint string `json:"endpoint" graphql:"noinput"`
 
 	SyncStatus t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
