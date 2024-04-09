@@ -810,17 +810,19 @@ type GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret string
 
 const (
 	GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretConfig GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret = "config"
+	GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretPvc    GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret = "pvc"
 	GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretSecret GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret = "secret"
 )
 
 var AllGithubComKloudliteOperatorApisCrdsV1ConfigOrSecret = []GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret{
 	GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretConfig,
+	GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretPvc,
 	GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretSecret,
 }
 
 func (e GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret) IsValid() bool {
 	switch e {
-	case GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretConfig, GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretSecret:
+	case GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretConfig, GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretPvc, GithubComKloudliteOperatorApisCrdsV1ConfigOrSecretSecret:
 		return true
 	}
 	return false
