@@ -34,7 +34,7 @@ func (d *domain) GetDevice(ctx IotResourceContext, name string, deploymentName s
 	return d.findDevice(ctx, name, deploymentName)
 }
 
-func (d *domain) GetPublicKeyDevice(ctx context.Context, publicKey string) (*entities.IOTDevice, error) {
+func (d *domain) GetPublicKeyDevice(ctx context.Context, publicKey string) (*entities.DeviceWithServices, error) {
 	filter := repos.Filter{
 		fc.IOTDevicePublicKey: publicKey,
 	}
@@ -45,7 +45,21 @@ func (d *domain) GetPublicKeyDevice(ctx context.Context, publicKey string) (*ent
 	if dev == nil {
 		return nil, errors.Newf("no device with publickey=%q found", publicKey)
 	}
-	return dev, nil
+
+	dep, err := d.iotDeploymentRepo.FindOne(ctx, repos.Filter{
+		fc.IOTDeploymentName: dev.DeploymentName,
+	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	deviceWithServices := &entities.DeviceWithServices{
+		IOTDevice:       dev,
+		ExposedServices: dep.ExposedServices,
+	}
+
+	return deviceWithServices, nil
+	//return dev, nil
 }
 
 func (d *domain) CreateDevice(ctx IotResourceContext, deploymentName string, device entities.IOTDevice) (*entities.IOTDevice, error) {

@@ -104,7 +104,7 @@ var Module = fx.Module("app",
 
 			dev, err := d.GetPublicKeyDevice(ctx, data.PublicKey)
 			if err != nil {
-				return c.JSON(struct {
+				return c.Status(fiber.StatusBadRequest).JSON(struct {
 					ErrorMessage string `json:"errorMessage"`
 				}{
 					ErrorMessage: err.Error(),

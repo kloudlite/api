@@ -58,7 +58,7 @@ type Domain interface {
 	ListDevices(ctx IotResourceContext, deploymentName string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.IOTDevice], error)
 	GetDevice(ctx IotResourceContext, name string, deploymentName string) (*entities.IOTDevice, error)
 
-	GetPublicKeyDevice(ctx context.Context, publicKey string) (*entities.IOTDevice, error)
+	GetPublicKeyDevice(ctx context.Context, publicKey string) (*entities.DeviceWithServices, error)
 
 	CreateDevice(ctx IotResourceContext, deploymentName string, device entities.IOTDevice) (*entities.IOTDevice, error)
 	UpdateDevice(ctx IotResourceContext, deploymentName string, device entities.IOTDevice) (*entities.IOTDevice, error)

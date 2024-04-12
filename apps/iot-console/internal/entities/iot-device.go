@@ -21,6 +21,11 @@ type IOTDevice struct {
 	Version        string `json:"version"`
 }
 
+type DeviceWithServices struct {
+	*IOTDevice
+	ExposedServices []ExposedService
+}
+
 var IOTDeviceIndexes = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
