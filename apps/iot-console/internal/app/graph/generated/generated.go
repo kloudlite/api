@@ -266,6 +266,8 @@ type ComplexityRoot struct {
 		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
+		ExposedDomains    func(childComplexity int) int
+		ExposedIps        func(childComplexity int) int
 		ExposedServices   func(childComplexity int) int
 		Id                func(childComplexity int) int
 		LastUpdatedBy     func(childComplexity int) int
@@ -1464,6 +1466,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTDeployment.DisplayName(childComplexity), true
+
+	case "IOTDeployment.exposedDomains":
+		if e.complexity.IOTDeployment.ExposedDomains == nil {
+			break
+		}
+
+		return e.complexity.IOTDeployment.ExposedDomains(childComplexity), true
+
+	case "IOTDeployment.exposedIps":
+		if e.complexity.IOTDeployment.ExposedIps == nil {
+			break
+		}
+
+		return e.complexity.IOTDeployment.ExposedIps(childComplexity), true
 
 	case "IOTDeployment.exposedServices":
 		if e.complexity.IOTDeployment.ExposedServices == nil {
@@ -3278,6 +3294,8 @@ input IOTAppIn {
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
+  exposedDomains: [String!]!
+  exposedIps: [String!]!
   exposedServices: [Github__com___kloudlite___api___apps___iot____console___internal___entities__ExposedService!]!
   id: ID!
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
@@ -3302,6 +3320,8 @@ type IOTDeploymentPaginatedRecords @shareable {
 input IOTDeploymentIn {
   CIDR: String!
   displayName: String!
+  exposedDomains: [String!]!
+  exposedIps: [String!]!
   exposedServices: [Github__com___kloudlite___api___apps___iot____console___internal___entities__ExposedServiceIn!]!
   name: String!
 }
@@ -9893,6 +9913,94 @@ func (ec *executionContext) fieldContext_IOTDeployment_displayName(ctx context.C
 	return fc, nil
 }
 
+func (ec *executionContext) _IOTDeployment_exposedDomains(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeployment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeployment_exposedDomains(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExposedDomains, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeployment_exposedDomains(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeployment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDeployment_exposedIps(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeployment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeployment_exposedIps(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExposedIps, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeployment_exposedIps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeployment",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _IOTDeployment_exposedServices(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeployment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDeployment_exposedServices(ctx, field)
 	if err != nil {
@@ -10349,6 +10457,10 @@ func (ec *executionContext) fieldContext_IOTDeploymentEdge_node(ctx context.Cont
 				return ec.fieldContext_IOTDeployment_creationTime(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeployment_displayName(ctx, field)
+			case "exposedDomains":
+				return ec.fieldContext_IOTDeployment_exposedDomains(ctx, field)
+			case "exposedIps":
+				return ec.fieldContext_IOTDeployment_exposedIps(ctx, field)
 			case "exposedServices":
 				return ec.fieldContext_IOTDeployment_exposedServices(ctx, field)
 			case "id":
@@ -16055,6 +16167,10 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDeployment(ctx conte
 				return ec.fieldContext_IOTDeployment_creationTime(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeployment_displayName(ctx, field)
+			case "exposedDomains":
+				return ec.fieldContext_IOTDeployment_exposedDomains(ctx, field)
+			case "exposedIps":
+				return ec.fieldContext_IOTDeployment_exposedIps(ctx, field)
 			case "exposedServices":
 				return ec.fieldContext_IOTDeployment_exposedServices(ctx, field)
 			case "id":
@@ -16161,6 +16277,10 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDeployment(ctx conte
 				return ec.fieldContext_IOTDeployment_creationTime(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeployment_displayName(ctx, field)
+			case "exposedDomains":
+				return ec.fieldContext_IOTDeployment_exposedDomains(ctx, field)
+			case "exposedIps":
+				return ec.fieldContext_IOTDeployment_exposedIps(ctx, field)
 			case "exposedServices":
 				return ec.fieldContext_IOTDeployment_exposedServices(ctx, field)
 			case "id":
@@ -17485,6 +17605,10 @@ func (ec *executionContext) fieldContext_Query_iot_getDeployment(ctx context.Con
 				return ec.fieldContext_IOTDeployment_creationTime(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeployment_displayName(ctx, field)
+			case "exposedDomains":
+				return ec.fieldContext_IOTDeployment_exposedDomains(ctx, field)
+			case "exposedIps":
+				return ec.fieldContext_IOTDeployment_exposedIps(ctx, field)
 			case "exposedServices":
 				return ec.fieldContext_IOTDeployment_exposedServices(ctx, field)
 			case "id":
@@ -20761,7 +20885,7 @@ func (ec *executionContext) unmarshalInputIOTDeploymentIn(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"CIDR", "displayName", "exposedServices", "name"}
+	fieldsInOrder := [...]string{"CIDR", "displayName", "exposedDomains", "exposedIps", "exposedServices", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -20786,6 +20910,24 @@ func (ec *executionContext) unmarshalInputIOTDeploymentIn(ctx context.Context, o
 				return it, err
 			}
 			it.DisplayName = data
+		case "exposedDomains":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exposedDomains"))
+			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ExposedDomains = data
+		case "exposedIps":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("exposedIps"))
+			data, err := ec.unmarshalNString2ᚕstringᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ExposedIps = data
 		case "exposedServices":
 			var err error
 
@@ -23080,6 +23222,16 @@ func (ec *executionContext) _IOTDeployment(ctx context.Context, sel ast.Selectio
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "displayName":
 			out.Values[i] = ec._IOTDeployment_displayName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "exposedDomains":
+			out.Values[i] = ec._IOTDeployment_exposedDomains(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "exposedIps":
+			out.Values[i] = ec._IOTDeployment_exposedIps(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -26392,6 +26544,38 @@ func (ec *executionContext) marshalNString2string(ctx context.Context, sel ast.S
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNString2ᚕstringᚄ(ctx context.Context, v interface{}) ([]string, error) {
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]string, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNString2string(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalNString2ᚕstringᚄ(ctx context.Context, sel ast.SelectionSet, v []string) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	for i := range v {
+		ret[i] = ec.marshalNString2string(ctx, sel, v[i])
+	}
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
 }
 
 func (ec *executionContext) marshalN_Service2githubᚗcomᚋ99designsᚋgqlgenᚋpluginᚋfederationᚋfedruntimeᚐService(ctx context.Context, sel ast.SelectionSet, v fedruntime.Service) graphql.Marshaler {

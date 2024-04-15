@@ -9,6 +9,8 @@ tasks:
         sh: date | sed 's/\s/_/g'
       Dir: "."
       upx: '{{.upx | default "true" }}'
+      UPX_FLAGS:
+        sh: 'if [ "$(uname)" = "Darwin" ]; then echo "--force-macos"; else echo ""; fi'
     preconditions:
       - sh: '[ -n "{{.Out}}" ]'
         msg: var Out must have a value
@@ -17,5 +19,5 @@ tasks:
       # - upx --best --lzma {{.Out}}
       - |+
         if [ "{{.upx}}" == "true" ]; then
-          upx {{.Out}}
+          upx {{.UPX_FLAGS}} {{.Out}}
         fi

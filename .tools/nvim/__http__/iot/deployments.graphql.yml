@@ -15,6 +15,8 @@ variables:
       "CIDR": "10.0.0.0/16",
       "displayName": "sample deployment",
       "name": "sample-deployment",
+      "exposedDomains": ["abc.com", "def.com"],
+      "exposedIps": ["ip1.com", "ip2.com"],
       "exposedServices": [
         {
           "ip": "sample-ip",
@@ -42,6 +44,8 @@ variables:
       "displayName": "sample depl one",
       "CIDR": "10.0.0.1",
       "name": "sample-deployment",
+      "exposedDomains": [ "abc.com", "def.com" ],
+      "exposedIps": [ "ip1.com", "ip2.com" ],
       "exposedServices": [
         {
           "ip": "sample-ip-one",
@@ -73,6 +77,8 @@ query: |+
       CIDR
       id
       displayName
+      exposedDomains
+      exposedIps
     }
   }
 variables:
@@ -93,6 +99,8 @@ query: |+
           displayName
           CIDR
           name
+          exposedIps
+          exposedDomains
         }
       }
     }

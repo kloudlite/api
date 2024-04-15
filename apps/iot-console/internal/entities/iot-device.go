@@ -23,7 +23,8 @@ type IOTDevice struct {
 
 type DeviceWithServices struct {
 	*IOTDevice
-	ExposedServices []ExposedService
+	ExposedDomains []string `json:"exposedDomains"`
+	ExposedIps     []string `json:"exposedIps"`
 }
 
 var IOTDeviceIndexes = []repos.IndexField{

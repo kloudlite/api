@@ -92,6 +92,12 @@ var Module = fx.Module("app",
 		})
 
 		a.Post("/device", func(c *fiber.Ctx) error {
+
+			if len(c.Body()) == 0 {
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"errorMessage": "Request body cannot be empty",
+				})
+			}
 			data := struct {
 				PublicKey string `json:"publicKey"`
 			}{}
@@ -100,6 +106,13 @@ var Module = fx.Module("app",
 			if err != nil {
 				return err
 			}
+
+			if data.PublicKey == "" {
+				return c.Status(fiber.StatusBadRequest).JSON(fiber.Map{
+					"errorMessage": "Public key is required",
+				})
+			}
+
 			ctx := c.Context()
 
 			dev, err := d.GetPublicKeyDevice(ctx, data.PublicKey)

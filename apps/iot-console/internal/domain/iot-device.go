@@ -54,12 +54,12 @@ func (d *domain) GetPublicKeyDevice(ctx context.Context, publicKey string) (*ent
 	}
 
 	deviceWithServices := &entities.DeviceWithServices{
-		IOTDevice:       dev,
-		ExposedServices: dep.ExposedServices,
+		IOTDevice:      dev,
+		ExposedDomains: dep.ExposedDomains,
+		ExposedIps:     dep.ExposedIps,
 	}
 
 	return deviceWithServices, nil
-	//return dev, nil
 }
 
 func (d *domain) CreateDevice(ctx IotResourceContext, deploymentName string, device entities.IOTDevice) (*entities.IOTDevice, error) {

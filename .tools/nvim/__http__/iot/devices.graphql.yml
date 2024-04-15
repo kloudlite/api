@@ -17,11 +17,11 @@ variables:
     "projectName": "sample-project",
     "deploymentName": "sample-deployment",
     "device": {
-      "displayName": "sample device",
+      "displayName": "sample device one",
       "ip": "10.10.11.4",
-      "name": "sample-device",
+      "name": "sample-device-one",
       "podCIDR": "10.1.1.1",
-      "publicKey": "10.2.2.3",
+      "publicKey": "10.2.2.2",
       "serviceCIDR": "10.3.3.3",
       "version": "1"
     }

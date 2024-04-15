@@ -4,6 +4,8 @@ type IOTDeployment @shareable {
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
+  exposedDomains: [String!]!
+  exposedIps: [String!]!
   exposedServices: [Github__com___kloudlite___api___apps___iot____console___internal___entities__ExposedService!]!
   id: ID!
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
@@ -28,6 +30,8 @@ type IOTDeploymentPaginatedRecords @shareable {
 input IOTDeploymentIn {
   CIDR: String!
   displayName: String!
+  exposedDomains: [String!]!
+  exposedIps: [String!]!
   exposedServices: [Github__com___kloudlite___api___apps___iot____console___internal___entities__ExposedServiceIn!]!
   name: String!
 }
