@@ -2,6 +2,38 @@
 
 package field_constants
 
+// constant vars generated for struct DeviceWithServices
+const (
+	DeviceWithServicesIOTDevice                       = "IOTDevice"
+	DeviceWithServicesIOTDeviceAccountName            = "IOTDevice.accountName"
+	DeviceWithServicesIOTDeviceClusterToken           = "IOTDevice.clusterToken"
+	DeviceWithServicesIOTDeviceCreatedBy              = "IOTDevice.createdBy"
+	DeviceWithServicesIOTDeviceCreatedByUserEmail     = "IOTDevice.createdBy.userEmail"
+	DeviceWithServicesIOTDeviceCreatedByUserId        = "IOTDevice.createdBy.userId"
+	DeviceWithServicesIOTDeviceCreatedByUserName      = "IOTDevice.createdBy.userName"
+	DeviceWithServicesIOTDeviceCreationTime           = "IOTDevice.creationTime"
+	DeviceWithServicesIOTDeviceDeploymentName         = "IOTDevice.deploymentName"
+	DeviceWithServicesIOTDeviceDisplayName            = "IOTDevice.displayName"
+	DeviceWithServicesIOTDeviceId                     = "IOTDevice.id"
+	DeviceWithServicesIOTDeviceIndex                  = "IOTDevice.index"
+	DeviceWithServicesIOTDeviceIp                     = "IOTDevice.ip"
+	DeviceWithServicesIOTDeviceLastUpdatedBy          = "IOTDevice.lastUpdatedBy"
+	DeviceWithServicesIOTDeviceLastUpdatedByUserEmail = "IOTDevice.lastUpdatedBy.userEmail"
+	DeviceWithServicesIOTDeviceLastUpdatedByUserId    = "IOTDevice.lastUpdatedBy.userId"
+	DeviceWithServicesIOTDeviceLastUpdatedByUserName  = "IOTDevice.lastUpdatedBy.userName"
+	DeviceWithServicesIOTDeviceMarkedForDeletion      = "IOTDevice.markedForDeletion"
+	DeviceWithServicesIOTDeviceName                   = "IOTDevice.name"
+	DeviceWithServicesIOTDevicePodCIDR                = "IOTDevice.podCIDR"
+	DeviceWithServicesIOTDeviceProjectName            = "IOTDevice.projectName"
+	DeviceWithServicesIOTDevicePublicKey              = "IOTDevice.publicKey"
+	DeviceWithServicesIOTDeviceRecordVersion          = "IOTDevice.recordVersion"
+	DeviceWithServicesIOTDeviceServiceCIDR            = "IOTDevice.serviceCIDR"
+	DeviceWithServicesIOTDeviceUpdateTime             = "IOTDevice.updateTime"
+	DeviceWithServicesIOTDeviceVersion                = "IOTDevice.version"
+	DeviceWithServicesExposedDomains                  = "exposedDomains"
+	DeviceWithServicesExposedIps                      = "exposedIps"
+)
+
 // constant vars generated for struct ExposedService
 const (
 	ExposedServiceIp   = "ip"
@@ -38,6 +70,8 @@ const (
 // constant vars generated for struct IOTDeployment
 const (
 	IOTDeploymentCIDR              = "CIDR"
+	IOTDeploymentExposedDomains    = "exposedDomains"
+	IOTDeploymentExposedIps        = "exposedIps"
 	IOTDeploymentExposedServices   = "exposedServices"
 	IOTDeploymentMarkedForDeletion = "markedForDeletion"
 	IOTDeploymentName              = "name"
@@ -45,7 +79,9 @@ const (
 
 // constant vars generated for struct IOTDevice
 const (
+	IOTDeviceClusterToken      = "clusterToken"
 	IOTDeviceDeploymentName    = "deploymentName"
+	IOTDeviceIndex             = "index"
 	IOTDeviceIp                = "ip"
 	IOTDeviceMarkedForDeletion = "markedForDeletion"
 	IOTDeviceName              = "name"
@@ -67,4 +103,50 @@ const (
 const (
 	IOTProjectMarkedForDeletion = "markedForDeletion"
 	IOTProjectName              = "name"
+)
+
+// constant vars generated for struct
+const (
+	AccountName                        = "accountName"
+	ApiVersion                         = "apiVersion"
+	CreatedBy                          = "createdBy"
+	CreatedByUserEmail                 = "createdBy.userEmail"
+	CreatedByUserId                    = "createdBy.userId"
+	CreatedByUserName                  = "createdBy.userName"
+	CreationTime                       = "creationTime"
+	DisplayName                        = "displayName"
+	Id                                 = "id"
+	Kind                               = "kind"
+	LastUpdatedBy                      = "lastUpdatedBy"
+	LastUpdatedByUserEmail             = "lastUpdatedBy.userEmail"
+	LastUpdatedByUserId                = "lastUpdatedBy.userId"
+	LastUpdatedByUserName              = "lastUpdatedBy.userName"
+	Metadata                           = "metadata"
+	MetadataAnnotations                = "metadata.annotations"
+	MetadataCreationTimestamp          = "metadata.creationTimestamp"
+	MetadataDeletionGracePeriodSeconds = "metadata.deletionGracePeriodSeconds"
+	MetadataDeletionTimestamp          = "metadata.deletionTimestamp"
+	MetadataFinalizers                 = "metadata.finalizers"
+	MetadataGenerateName               = "metadata.generateName"
+	MetadataGeneration                 = "metadata.generation"
+	MetadataLabels                     = "metadata.labels"
+	MetadataManagedFields              = "metadata.managedFields"
+	MetadataName                       = "metadata.name"
+	MetadataNamespace                  = "metadata.namespace"
+	MetadataOwnerReferences            = "metadata.ownerReferences"
+	MetadataResourceVersion            = "metadata.resourceVersion"
+	MetadataSelfLink                   = "metadata.selfLink"
+	MetadataUid                        = "metadata.uid"
+	ProjectName                        = "projectName"
+	RecordVersion                      = "recordVersion"
+	Status                             = "status"
+	StatusCheckList                    = "status.checkList"
+	StatusChecks                       = "status.checks"
+	StatusIsReady                      = "status.isReady"
+	StatusLastReadyGeneration          = "status.lastReadyGeneration"
+	StatusLastReconcileTime            = "status.lastReconcileTime"
+	StatusMessage                      = "status.message"
+	StatusMessageItems                 = "status.message.items"
+	StatusResources                    = "status.resources"
+	UpdateTime                         = "updateTime"
 )

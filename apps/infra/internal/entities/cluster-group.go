@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	wgIpIndex       = 16
+	wgIpIndex       = 14
 	clusterPodIndex = 13
 )
 

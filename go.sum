@@ -161,8 +161,6 @@ github.com/klauspost/compress v1.17.7 h1:ehO88t2UGzQK66LMdE8tibEd1ErmzZjNEqWkjLA
 github.com/klauspost/compress v1.17.7/go.mod h1:Di0epgTjJY877eYKx5yC51cX2A2Vl2ibi7bDH9ttBbw=
 github.com/kloudlite/container-registry-authorizer v0.0.0-20231021122509-161dc30fde55 h1:YnZh3TL6AG4EfoInx1/L5zcPHd2QxgLKseJB1KtHjdQ=
 github.com/kloudlite/container-registry-authorizer v0.0.0-20231021122509-161dc30fde55/go.mod h1:GZj3wZmIw/qCciclRhgQTgmGiqe8wxoVzMXQjbOfnbc=
-github.com/kloudlite/operator v1.0.4-0.20240409082541-b8ead24a9fad h1:uJWUGbOPS72pxoFpxRpqr3bT9cBptRcNseytCWY/2KE=
-github.com/kloudlite/operator v1.0.4-0.20240409082541-b8ead24a9fad/go.mod h1:ozyCDuQNCcMRu2XYZz4OtWr38IwRZ50ZCOcBsobj60c=
 github.com/kloudlite/operator v1.0.4-0.20240410110352-9d89459d8651 h1:O4iQybfIdEs0Dl0wSUrju6Dtw9X5HrOBDjrpyqnkGhA=
 github.com/kloudlite/operator v1.0.4-0.20240410110352-9d89459d8651/go.mod h1:ozyCDuQNCcMRu2XYZz4OtWr38IwRZ50ZCOcBsobj60c=
 github.com/kr/pretty v0.2.1/go.mod h1:ipq/a2n7PKx3OHsz4KJII5eveXtPO4qwEXGdVfWzfnI=
@@ -248,6 +246,10 @@ github.com/sanity-io/litter v1.5.5 h1:iE+sBxPBzoK6uaEP5Lt3fHNgpKcHXc/A2HGETy0uJQ
 github.com/sanity-io/litter v1.5.5/go.mod h1:9gzJgR2i4ZpjZHsKvUXIRQVk7P+yM3e+jAF7bU2UI5U=
 github.com/savsgio/gotils v0.0.0-20211223103454-d0aaa54c5899 h1:Orn7s+r1raRTBKLSc9DmbktTT04sL+vkzsbRD2Q8rOI=
 github.com/savsgio/gotils v0.0.0-20211223103454-d0aaa54c5899/go.mod h1:oejLrk1Y/5zOF+c/aHtXqn3TFlzzbAgPWg8zBiAHDas=
+github.com/seancfoley/bintree v1.2.1 h1:Z/iNjRKkXnn0CTW7jDQYtjW5fz2GH1yWvOTJ4MrMvdo=
+github.com/seancfoley/bintree v1.2.1/go.mod h1:hIUabL8OFYyFVTQ6azeajbopogQc2l5C/hiXMcemWNU=
+github.com/seancfoley/ipaddress-go v1.5.4 h1:ZdjewWC1J2y5ruQjWHwK6rA1tInWB6mz1ftz6uTm+Uw=
+github.com/seancfoley/ipaddress-go v1.5.4/go.mod h1:fpvVPC+Jso+YEhNcNiww8HQmBgKP8T4T6BTp1SLxxIo=
 github.com/sendgrid/rest v2.6.9+incompatible h1:1EyIcsNdn9KIisLW50MKwmSRSK+ekueiEMJ7NEoxJo0=
 github.com/sendgrid/rest v2.6.9+incompatible/go.mod h1:kXX7q3jZtJXK5c5qK83bSGMdV6tsOE70KbHoqJls4lE=
 github.com/sendgrid/sendgrid-go v3.11.1+incompatible h1:ai0+woZ3r/+tKLQExznak5XerOFoD6S7ePO0lMV8WXo=

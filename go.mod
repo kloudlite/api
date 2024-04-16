@@ -46,6 +46,7 @@ require (
 	github.com/nats-io/nats.go v1.31.0
 	github.com/onsi/ginkgo/v2 v2.12.0
 	github.com/onsi/gomega v1.27.10
+	github.com/seancfoley/ipaddress-go v1.5.4
 	github.com/stretchr/testify v1.9.0
 	github.com/ztrue/tracerr v0.4.0
 	golang.org/x/exp v0.0.0-20230905200255-921286631fa9
@@ -66,6 +67,7 @@ require (
 	github.com/nats-io/nuid v1.0.1 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
 	github.com/rivo/uniseg v0.4.7 // indirect
+	github.com/seancfoley/bintree v1.2.1 // indirect
 	github.com/sosodev/duration v1.2.0 // indirect
 	github.com/stretchr/objx v0.5.2 // indirect
 	google.golang.org/genproto/googleapis/rpc v0.0.0-20231009173412-8bfb1ae86b6c // indirect

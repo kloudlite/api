@@ -44,6 +44,9 @@ tasks:
       - task: go:build
         vars:
           Out: ./bin/{{.app}}
+  gen:constants:
+    cmds:
+      - go generate ./internal/entities/field-constants/gen.go
 
   container:build-and-push:
     preconditions:
@@ -52,3 +55,4 @@ tasks:
     cmds:
       - task: build
       - docker buildx build --platform linux/amd64 -f ./Containerfile -t {{.Image}} . --build-arg BINARY={{.app}} --push
+

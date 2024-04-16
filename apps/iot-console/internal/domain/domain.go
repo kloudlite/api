@@ -3,6 +3,7 @@ package domain
 import (
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/apps/iot-console/internal/env"
+	message_office_internal "github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal"
 	"github.com/kloudlite/api/pkg/k8s"
 	"github.com/kloudlite/api/pkg/kv"
 	"github.com/kloudlite/api/pkg/logging"
@@ -14,11 +15,12 @@ type domain struct {
 	k8sClient k8s.Client
 	logger    logging.Logger
 
-	iotProjectRepo         repos.DbRepo[*entities.IOTProject]
-	iotDeploymentRepo      repos.DbRepo[*entities.IOTDeployment]
-	iotDeviceRepo          repos.DbRepo[*entities.IOTDevice]
-	iotDeviceBlueprintRepo repos.DbRepo[*entities.IOTDeviceBlueprint]
-	iotAppRepo             repos.DbRepo[*entities.IOTApp]
+	messageOfficeInternalClient message_office_internal.MessageOfficeInternalClient
+	iotProjectRepo              repos.DbRepo[*entities.IOTProject]
+	iotDeploymentRepo           repos.DbRepo[*entities.IOTDeployment]
+	iotDeviceRepo               repos.DbRepo[*entities.IOTDevice]
+	iotDeviceBlueprintRepo      repos.DbRepo[*entities.IOTDeviceBlueprint]
+	iotAppRepo                  repos.DbRepo[*entities.IOTApp]
 
 	envVars *env.Env
 }
@@ -30,6 +32,7 @@ var Module = fx.Module("domain",
 		k8sClient k8s.Client,
 		logger logging.Logger,
 
+		messageOfficeInternalClient message_office_internal.MessageOfficeInternalClient,
 		iotProjectRepo repos.DbRepo[*entities.IOTProject],
 		iotDeploymentRepo repos.DbRepo[*entities.IOTDeployment],
 		iotDeviceRepo repos.DbRepo[*entities.IOTDevice],
@@ -39,14 +42,15 @@ var Module = fx.Module("domain",
 		ev *env.Env,
 	) Domain {
 		return &domain{
-			k8sClient:              k8sClient,
-			logger:                 logger,
-			iotProjectRepo:         iotProjectRepo,
-			iotDeploymentRepo:      iotDeploymentRepo,
-			iotDeviceRepo:          iotDeviceRepo,
-			iotDeviceBlueprintRepo: iotDeviceBlueprintRepo,
-			iotAppRepo:             iotAppRepo,
-			envVars:                ev,
+			k8sClient:                   k8sClient,
+			logger:                      logger,
+			iotProjectRepo:              iotProjectRepo,
+			iotDeploymentRepo:           iotDeploymentRepo,
+			iotDeviceRepo:               iotDeviceRepo,
+			iotDeviceBlueprintRepo:      iotDeviceBlueprintRepo,
+			iotAppRepo:                  iotAppRepo,
+			envVars:                     ev,
+			messageOfficeInternalClient: messageOfficeInternalClient,
 		}
 	}),
 )
