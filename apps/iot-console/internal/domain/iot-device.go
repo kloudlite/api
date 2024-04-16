@@ -158,7 +158,7 @@ func (d *domain) CreateDevice(ctx IotResourceContext, deploymentName string, dev
 		return nil, errors.NewE(err)
 	}
 
-	index := 1
+	index := 2
 
 	for _, dev := range devs {
 		if dev.Index != index {
@@ -201,7 +201,7 @@ func (d *domain) CreateDevice(ctx IotResourceContext, deploymentName string, dev
 	// TODO: Generate Device SVC CIDR
 	// TODO: Generate Device Ip for cluster-group
 
-	device.PodCIDR = "10.14.0.0/16"
+	device.PodCIDR = "10.1.0.0/16"
 
 	ctoken, err := d.generateClusterMoToken(ctx, device)
 	if err != nil {

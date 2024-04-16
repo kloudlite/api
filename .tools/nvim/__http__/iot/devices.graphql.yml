@@ -15,14 +15,11 @@ query: |+
 variables:
   {
     "projectName": "sample-project",
-    "deploymentName": "sample-deployment",
+    "deploymentName": "pub-key-deployment",
     "device": {
-      "displayName": "sample device one",
-      "ip": "10.10.11.4",
-      "name": "sample-device-one",
-      "podCIDR": "10.1.1.1",
-      "publicKey": "10.2.2.2",
-      "serviceCIDR": "10.3.3.3",
+      "displayName": "second pub key device",
+      "name": "second-pub-key-device",
+      "publicKey": "cccLkS7YzRWKwMbkJAVIMexBt08Qs2LiOeRAjXn32Fs=",
       "version": "1"
     }
   }

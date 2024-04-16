@@ -297,12 +297,14 @@ type ComplexityRoot struct {
 
 	IOTDevice struct {
 		AccountName       func(childComplexity int) int
+		ClusterToken      func(childComplexity int) int
 		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DeploymentName    func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		IP                func(childComplexity int) int
 		Id                func(childComplexity int) int
+		Index             func(childComplexity int) int
 		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		Name              func(childComplexity int) int
@@ -1601,6 +1603,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDevice.AccountName(childComplexity), true
 
+	case "IOTDevice.clusterToken":
+		if e.complexity.IOTDevice.ClusterToken == nil {
+			break
+		}
+
+		return e.complexity.IOTDevice.ClusterToken(childComplexity), true
+
 	case "IOTDevice.createdBy":
 		if e.complexity.IOTDevice.CreatedBy == nil {
 			break
@@ -1642,6 +1651,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTDevice.Id(childComplexity), true
+
+	case "IOTDevice.index":
+		if e.complexity.IOTDevice.Index == nil {
+			break
+		}
+
+		return e.complexity.IOTDevice.Index(childComplexity), true
 
 	case "IOTDevice.lastUpdatedBy":
 		if e.complexity.IOTDevice.LastUpdatedBy == nil {
@@ -3378,11 +3394,13 @@ input IOTDeploymentIn {
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/iotdevice.graphqls", Input: `type IOTDevice @shareable {
   accountName: String!
+  clusterToken: String!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
   deploymentName: String!
   displayName: String!
   id: ID!
+  index: Int!
   ip: String!
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   markedForDeletion: Boolean
@@ -3409,11 +3427,8 @@ type IOTDevicePaginatedRecords @shareable {
 
 input IOTDeviceIn {
   displayName: String!
-  ip: String!
   name: String!
-  podCIDR: String!
   publicKey: String!
-  serviceCIDR: String!
   version: String!
 }
 
@@ -10864,6 +10879,50 @@ func (ec *executionContext) fieldContext_IOTDevice_accountName(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _IOTDevice_clusterToken(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDevice_clusterToken(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterToken, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDevice_clusterToken(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDevice",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _IOTDevice_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDevice_createdBy(ctx, field)
 	if err != nil {
@@ -11087,6 +11146,50 @@ func (ec *executionContext) fieldContext_IOTDevice_id(ctx context.Context, field
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDevice_index(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDevice_index(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Index, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDevice_index(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDevice",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12515,6 +12618,8 @@ func (ec *executionContext) fieldContext_IOTDeviceEdge_node(ctx context.Context,
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDevice_accountName(ctx, field)
+			case "clusterToken":
+				return ec.fieldContext_IOTDevice_clusterToken(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
@@ -12525,6 +12630,8 @@ func (ec *executionContext) fieldContext_IOTDeviceEdge_node(ctx context.Context,
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
+			case "index":
+				return ec.fieldContext_IOTDevice_index(ctx, field)
 			case "ip":
 				return ec.fieldContext_IOTDevice_ip(ctx, field)
 			case "lastUpdatedBy":
@@ -15745,6 +15852,8 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDevice(ctx context.C
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDevice_accountName(ctx, field)
+			case "clusterToken":
+				return ec.fieldContext_IOTDevice_clusterToken(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
@@ -15755,6 +15864,8 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDevice(ctx context.C
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
+			case "index":
+				return ec.fieldContext_IOTDevice_index(ctx, field)
 			case "ip":
 				return ec.fieldContext_IOTDevice_ip(ctx, field)
 			case "lastUpdatedBy":
@@ -15859,6 +15970,8 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDevice(ctx context.C
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDevice_accountName(ctx, field)
+			case "clusterToken":
+				return ec.fieldContext_IOTDevice_clusterToken(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
@@ -15869,6 +15982,8 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDevice(ctx context.C
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
+			case "index":
+				return ec.fieldContext_IOTDevice_index(ctx, field)
 			case "ip":
 				return ec.fieldContext_IOTDevice_ip(ctx, field)
 			case "lastUpdatedBy":
@@ -17480,6 +17595,8 @@ func (ec *executionContext) fieldContext_Query_iot_getDevice(ctx context.Context
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDevice_accountName(ctx, field)
+			case "clusterToken":
+				return ec.fieldContext_IOTDevice_clusterToken(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
@@ -17490,6 +17607,8 @@ func (ec *executionContext) fieldContext_Query_iot_getDevice(ctx context.Context
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
+			case "index":
+				return ec.fieldContext_IOTDevice_index(ctx, field)
 			case "ip":
 				return ec.fieldContext_IOTDevice_ip(ctx, field)
 			case "lastUpdatedBy":
@@ -21294,7 +21413,7 @@ func (ec *executionContext) unmarshalInputIOTDeviceIn(ctx context.Context, obj i
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"displayName", "ip", "name", "podCIDR", "publicKey", "serviceCIDR", "version"}
+	fieldsInOrder := [...]string{"displayName", "name", "publicKey", "version"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -21310,15 +21429,6 @@ func (ec *executionContext) unmarshalInputIOTDeviceIn(ctx context.Context, obj i
 				return it, err
 			}
 			it.DisplayName = data
-		case "ip":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ip"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IP = data
 		case "name":
 			var err error
 
@@ -21328,15 +21438,6 @@ func (ec *executionContext) unmarshalInputIOTDeviceIn(ctx context.Context, obj i
 				return it, err
 			}
 			it.Name = data
-		case "podCIDR":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("podCIDR"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.PodCIDR = data
 		case "publicKey":
 			var err error
 
@@ -21346,15 +21447,6 @@ func (ec *executionContext) unmarshalInputIOTDeviceIn(ctx context.Context, obj i
 				return it, err
 			}
 			it.PublicKey = data
-		case "serviceCIDR":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceCIDR"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.ServiceCIDR = data
 		case "version":
 			var err error
 
@@ -23785,6 +23877,11 @@ func (ec *executionContext) _IOTDevice(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "clusterToken":
+			out.Values[i] = ec._IOTDevice_clusterToken(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "createdBy":
 			out.Values[i] = ec._IOTDevice_createdBy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -23838,6 +23935,11 @@ func (ec *executionContext) _IOTDevice(ctx context.Context, sel ast.SelectionSet
 			}
 		case "id":
 			out.Values[i] = ec._IOTDevice_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "index":
+			out.Values[i] = ec._IOTDevice_index(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}

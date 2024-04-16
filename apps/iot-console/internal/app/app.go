@@ -13,12 +13,20 @@ import (
 	"github.com/kloudlite/api/apps/iot-console/internal/env"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/constants"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
+	message_office_internal "github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal"
 	"github.com/kloudlite/api/pkg/errors"
+	"github.com/kloudlite/api/pkg/grpc"
 	httpServer "github.com/kloudlite/api/pkg/http-server"
 	"github.com/kloudlite/api/pkg/kv"
 	"github.com/kloudlite/api/pkg/logging"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
+)
+
+type (
+	MessageOfficeInternalGrpcClient grpc.Client
+	IAMGrpcClient                   grpc.Client
 )
 
 var Module = fx.Module("app",
@@ -27,6 +35,18 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.IOTDevice]("devices", "dev", entities.IOTDeviceIndexes),
 	repos.NewFxMongoRepo[*entities.IOTDeviceBlueprint]("device_blueprints", "devblueprint", entities.IOTDeviceBlueprintIndexes),
 	repos.NewFxMongoRepo[*entities.IOTApp]("apps", "app", entities.IOTAppIndexes),
+
+	fx.Provide(
+		func(conn IAMGrpcClient) iam.IAMClient {
+			return iam.NewIAMClient(conn)
+		},
+	),
+
+	fx.Provide(
+		func(conn MessageOfficeInternalGrpcClient) message_office_internal.MessageOfficeInternalClient {
+			return message_office_internal.NewMessageOfficeInternalClient(conn)
+		},
+	),
 
 	fx.Invoke(
 		func(server httpServer.Server, d domain.Domain, sessionRepo kv.Repo[*common.AuthSession], ev *env.Env) {

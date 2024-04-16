@@ -14,6 +14,9 @@ type Env struct {
 	AccountCookieName string `env:"ACCOUNT_COOKIE_NAME" required:"true"`
 	ClusterCookieName string `env:"CLUSTER_COOKIE_NAME" required:"true"`
 
+	MessageOfficeInternalGrpcAddr string `env:"MESSAGE_OFFICE_INTERNAL_GRPC_ADDR" required:"true"`
+	IAMGrpcAddr                   string `env:"IAM_GRPC_ADDR" required:"true"`
+
 	// NATS:start
 	NatsURL string `env:"NATS_URL" required:"true"`
 	// NATS:end

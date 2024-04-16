@@ -1,9 +1,12 @@
 package domain
 
 import (
+	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/apps/iot-console/internal/env"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 	message_office_internal "github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal"
+	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/k8s"
 	"github.com/kloudlite/api/pkg/kv"
 	"github.com/kloudlite/api/pkg/logging"
@@ -16,13 +19,32 @@ type domain struct {
 	logger    logging.Logger
 
 	messageOfficeInternalClient message_office_internal.MessageOfficeInternalClient
-	iotProjectRepo              repos.DbRepo[*entities.IOTProject]
-	iotDeploymentRepo           repos.DbRepo[*entities.IOTDeployment]
-	iotDeviceRepo               repos.DbRepo[*entities.IOTDevice]
-	iotDeviceBlueprintRepo      repos.DbRepo[*entities.IOTDeviceBlueprint]
-	iotAppRepo                  repos.DbRepo[*entities.IOTApp]
+	iamClient                   iam.IAMClient
+
+	iotProjectRepo         repos.DbRepo[*entities.IOTProject]
+	iotDeploymentRepo      repos.DbRepo[*entities.IOTDeployment]
+	iotDeviceRepo          repos.DbRepo[*entities.IOTDevice]
+	iotDeviceBlueprintRepo repos.DbRepo[*entities.IOTDeviceBlueprint]
+	iotAppRepo             repos.DbRepo[*entities.IOTApp]
 
 	envVars *env.Env
+}
+
+func (d *domain) canPerformActionInAccount(ctx IotConsoleContext, action iamT.Action) error {
+	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+		UserId: string(ctx.UserId),
+		ResourceRefs: []string{
+			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
+		},
+		Action: string(action),
+	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+	if !co.Status {
+		return errors.Newf("unauthorized to perform action %q in account %q", action, ctx.AccountName)
+	}
+	return nil
 }
 
 type IOTConsoleCacheStore kv.BinaryDataRepo
@@ -33,6 +55,8 @@ var Module = fx.Module("domain",
 		logger logging.Logger,
 
 		messageOfficeInternalClient message_office_internal.MessageOfficeInternalClient,
+		iamClient iam.IAMClient,
+
 		iotProjectRepo repos.DbRepo[*entities.IOTProject],
 		iotDeploymentRepo repos.DbRepo[*entities.IOTDeployment],
 		iotDeviceRepo repos.DbRepo[*entities.IOTDevice],
@@ -51,6 +75,7 @@ var Module = fx.Module("domain",
 			iotAppRepo:                  iotAppRepo,
 			envVars:                     ev,
 			messageOfficeInternalClient: messageOfficeInternalClient,
+			iamClient:                   iamClient,
 		}
 	}),
 )

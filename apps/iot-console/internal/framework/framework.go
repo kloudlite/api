@@ -7,6 +7,8 @@ import (
 	"github.com/kloudlite/api/apps/iot-console/internal/domain"
 	"github.com/kloudlite/api/apps/iot-console/internal/env"
 	"github.com/kloudlite/api/common"
+	"github.com/kloudlite/api/pkg/errors"
+	"github.com/kloudlite/api/pkg/grpc"
 	httpServer "github.com/kloudlite/api/pkg/http-server"
 	"github.com/kloudlite/api/pkg/k8s"
 	"github.com/kloudlite/api/pkg/kv"
@@ -58,6 +60,28 @@ var Module = fx.Module("framework",
 
 	fx.Provide(func(restCfg *rest.Config) (k8s.Client, error) {
 		return k8s.NewClient(restCfg, nil)
+	}),
+
+	fx.Provide(func(ev *env.Env) (app.IAMGrpcClient, error) {
+		return grpc.NewGrpcClient(ev.IAMGrpcAddr)
+	}),
+
+	fx.Provide(func(ev *env.Env) (app.MessageOfficeInternalGrpcClient, error) {
+		return grpc.NewGrpcClient(ev.MessageOfficeInternalGrpcAddr)
+	}),
+
+	fx.Invoke(func(lf fx.Lifecycle, c1 app.IAMGrpcClient, c2 app.MessageOfficeInternalGrpcClient) {
+		lf.Append(fx.Hook{
+			OnStop: func(context.Context) error {
+				if err := c1.Close(); err != nil {
+					return errors.NewE(err)
+				}
+				if err := c2.Close(); err != nil {
+					return errors.NewE(err)
+				}
+				return nil
+			},
+		})
 	}),
 
 	app.Module,
