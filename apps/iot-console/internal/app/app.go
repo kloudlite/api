@@ -125,6 +125,9 @@ var Module = fx.Module("app",
 			}
 			return c.JSON(dev)
 		})
+		a.All("/*", func(c *fiber.Ctx) error {
+			return c.SendStatus(fiber.StatusNotFound)
+		})
 	}),
 	domain.Module,
 )

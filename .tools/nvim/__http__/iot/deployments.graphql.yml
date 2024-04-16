@@ -12,15 +12,15 @@ variables:
   {
     "projectName": "sample-project",
     "deployment": {
-      "CIDR": "10.0.0.0/16",
-      "displayName": "sample deployment",
-      "name": "sample-deployment",
-      "exposedDomains": ["abc.com", "def.com"],
-      "exposedIps": ["ip1.com", "ip2.com"],
+      "CIDR": "10.1.0.0/16",
+      "displayName": "pub key deployment",
+      "name": "pub-key-deployment",
+      "exposedDomains": ["get.k3s.io","ghcr.io","registry.hub.docker.com"],
+      "exposedIps": ["74.125.68.101"],
       "exposedServices": [
         {
-          "ip": "sample-ip",
-          "name": "10.21.32.4"
+          "ip": "10.1.1.1",
+          "name": "sample ip"
         }
       ]
     }

@@ -15,6 +15,7 @@ import (
 	"github.com/99designs/gqlgen/graphql/introspection"
 	"github.com/99designs/gqlgen/plugin/federation/fedruntime"
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/model"
+	"github.com/kloudlite/api/apps/iot-console/internal/domain"
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/repos"
@@ -260,6 +261,11 @@ type ComplexityRoot struct {
 		TotalCount func(childComplexity int) int
 	}
 
+	IOTConsoleCheckNameAvailabilityOutput struct {
+		Result         func(childComplexity int) int
+		SuggestedNames func(childComplexity int) int
+	}
+
 	IOTDeployment struct {
 		AccountName       func(childComplexity int) int
 		CIDR              func(childComplexity int) int
@@ -469,17 +475,18 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		IotGetApp               func(childComplexity int, projectName string, deviceBlueprintName string, name string) int
-		IotGetDeployment        func(childComplexity int, projectName string, name string) int
-		IotGetDevice            func(childComplexity int, projectName string, deploymentName string, name string) int
-		IotGetDeviceBlueprint   func(childComplexity int, projectName string, name string) int
-		IotGetProject           func(childComplexity int, name string) int
-		IotListApps             func(childComplexity int, projectName string, deviceBlueprintName string, search *model.SearchIOTApps, pq *repos.CursorPagination) int
-		IotListDeployments      func(childComplexity int, projectName string, search *model.SearchIOTDeployments, pq *repos.CursorPagination) int
-		IotListDeviceBlueprints func(childComplexity int, projectName string, search *model.SearchIOTDeviceBlueprints, pq *repos.CursorPagination) int
-		IotListDevices          func(childComplexity int, projectName string, deploymentName string, search *model.SearchIOTDevices, pq *repos.CursorPagination) int
-		IotListProjects         func(childComplexity int, search *model.SearchIOTProjects, pq *repos.CursorPagination) int
-		__resolve__service      func(childComplexity int) int
+		IotCheckNameAvailability func(childComplexity int, projectName string, deviceBlueprintName *string, deploymentName *string, resType domain.ResourceType, name string) int
+		IotGetApp                func(childComplexity int, projectName string, deviceBlueprintName string, name string) int
+		IotGetDeployment         func(childComplexity int, projectName string, name string) int
+		IotGetDevice             func(childComplexity int, projectName string, deploymentName string, name string) int
+		IotGetDeviceBlueprint    func(childComplexity int, projectName string, name string) int
+		IotGetProject            func(childComplexity int, name string) int
+		IotListApps              func(childComplexity int, projectName string, deviceBlueprintName string, search *model.SearchIOTApps, pq *repos.CursorPagination) int
+		IotListDeployments       func(childComplexity int, projectName string, search *model.SearchIOTDeployments, pq *repos.CursorPagination) int
+		IotListDeviceBlueprints  func(childComplexity int, projectName string, search *model.SearchIOTDeviceBlueprints, pq *repos.CursorPagination) int
+		IotListDevices           func(childComplexity int, projectName string, deploymentName string, search *model.SearchIOTDevices, pq *repos.CursorPagination) int
+		IotListProjects          func(childComplexity int, search *model.SearchIOTProjects, pq *repos.CursorPagination) int
+		__resolve__service       func(childComplexity int) int
 	}
 
 	_Service struct {
@@ -546,6 +553,7 @@ type MutationResolver interface {
 	IotDeleteApp(ctx context.Context, projectName string, deviceBlueprintName string, name string) (bool, error)
 }
 type QueryResolver interface {
+	IotCheckNameAvailability(ctx context.Context, projectName string, deviceBlueprintName *string, deploymentName *string, resType domain.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error)
 	IotListProjects(ctx context.Context, search *model.SearchIOTProjects, pq *repos.CursorPagination) (*model.IOTProjectPaginatedRecords, error)
 	IotGetProject(ctx context.Context, name string) (*entities.IOTProject, error)
 	IotListDevices(ctx context.Context, projectName string, deploymentName string, search *model.SearchIOTDevices, pq *repos.CursorPagination) (*model.IOTDevicePaginatedRecords, error)
@@ -1431,6 +1439,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTAppPaginatedRecords.TotalCount(childComplexity), true
+
+	case "IOTConsoleCheckNameAvailabilityOutput.result":
+		if e.complexity.IOTConsoleCheckNameAvailabilityOutput.Result == nil {
+			break
+		}
+
+		return e.complexity.IOTConsoleCheckNameAvailabilityOutput.Result(childComplexity), true
+
+	case "IOTConsoleCheckNameAvailabilityOutput.suggestedNames":
+		if e.complexity.IOTConsoleCheckNameAvailabilityOutput.SuggestedNames == nil {
+			break
+		}
+
+		return e.complexity.IOTConsoleCheckNameAvailabilityOutput.SuggestedNames(childComplexity), true
 
 	case "IOTDeployment.accountName":
 		if e.complexity.IOTDeployment.AccountName == nil {
@@ -2480,6 +2502,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.PageInfo.StartCursor(childComplexity), true
 
+	case "Query.iot_checkNameAvailability":
+		if e.complexity.Query.IotCheckNameAvailability == nil {
+			break
+		}
+
+		args, err := ec.field_Query_iot_checkNameAvailability_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.IotCheckNameAvailability(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(*string), args["deploymentName"].(*string), args["resType"].(domain.ResourceType), args["name"].(string)), true
+
 	case "Query.iot_getApp":
 		if e.complexity.Query.IotGetApp == nil {
 			break
@@ -2756,6 +2790,19 @@ var sources = []*ast.Source{
 directive @isLoggedInAndVerified on FIELD_DEFINITION
 directive @hasAccount on FIELD_DEFINITION
 
+enum ResourceType {
+    iot_project
+    iot_device_blueprint
+    iot_deployment
+    iot_app
+    iot_device
+}
+
+type IOTConsoleCheckNameAvailabilityOutput {
+    result: Boolean!
+    suggestedNames: [String!]!
+}
+
 input SearchIOTProjects {
     text: MatchFilterIn
     isReady: MatchFilterIn
@@ -2787,6 +2834,8 @@ input SearchIOTApps {
 }
 
 type Query {
+    iot_checkNameAvailability(projectName: String!, deviceBlueprintName: String, deploymentName: String, resType: ResourceType!, name: String!): IOTConsoleCheckNameAvailabilityOutput! @isLoggedInAndVerified @hasAccount
+
     iot_listProjects(search: SearchIOTProjects, pq: CursorPaginationIn): IOTProjectPaginatedRecords @isLoggedInAndVerified @hasAccount
     iot_getProject(name: String!): IOTProject @isLoggedInAndVerified @hasAccount
 
@@ -3950,6 +3999,57 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 		}
 	}
 	args["name"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_iot_checkNameAvailability_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["projectName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["projectName"] = arg0
+	var arg1 *string
+	if tmp, ok := rawArgs["deviceBlueprintName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceBlueprintName"))
+		arg1, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["deviceBlueprintName"] = arg1
+	var arg2 *string
+	if tmp, ok := rawArgs["deploymentName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deploymentName"))
+		arg2, err = ec.unmarshalOString2ᚖstring(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["deploymentName"] = arg2
+	var arg3 domain.ResourceType
+	if tmp, ok := rawArgs["resType"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("resType"))
+		arg3, err = ec.unmarshalNResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐResourceType(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["resType"] = arg3
+	var arg4 string
+	if tmp, ok := rawArgs["name"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+		arg4, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["name"] = arg4
 	return args, nil
 }
 
@@ -9680,6 +9780,94 @@ func (ec *executionContext) fieldContext_IOTAppPaginatedRecords_totalCount(ctx c
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTConsoleCheckNameAvailabilityOutput_result(ctx context.Context, field graphql.CollectedField, obj *domain.CheckNameAvailabilityOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTConsoleCheckNameAvailabilityOutput_result(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Result, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTConsoleCheckNameAvailabilityOutput_result(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTConsoleCheckNameAvailabilityOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTConsoleCheckNameAvailabilityOutput_suggestedNames(ctx context.Context, field graphql.CollectedField, obj *domain.CheckNameAvailabilityOutput) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTConsoleCheckNameAvailabilityOutput_suggestedNames(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SuggestedNames, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]string)
+	fc.Result = res
+	return ec.marshalNString2ᚕstringᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTConsoleCheckNameAvailabilityOutput_suggestedNames(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTConsoleCheckNameAvailabilityOutput",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -16869,6 +17057,93 @@ func (ec *executionContext) fieldContext_PageInfo_startCursor(ctx context.Contex
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_iot_checkNameAvailability(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_iot_checkNameAvailability(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().IotCheckNameAvailability(rctx, fc.Args["projectName"].(string), fc.Args["deviceBlueprintName"].(*string), fc.Args["deploymentName"].(*string), fc.Args["resType"].(domain.ResourceType), fc.Args["name"].(string))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*domain.CheckNameAvailabilityOutput); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/iot-console/internal/domain.CheckNameAvailabilityOutput`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*domain.CheckNameAvailabilityOutput)
+	fc.Result = res
+	return ec.marshalNIOTConsoleCheckNameAvailabilityOutput2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐCheckNameAvailabilityOutput(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_iot_checkNameAvailability(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "result":
+				return ec.fieldContext_IOTConsoleCheckNameAvailabilityOutput_result(ctx, field)
+			case "suggestedNames":
+				return ec.fieldContext_IOTConsoleCheckNameAvailabilityOutput_suggestedNames(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type IOTConsoleCheckNameAvailabilityOutput", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_iot_checkNameAvailability_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_iot_listProjects(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_iot_listProjects(ctx, field)
 	if err != nil {
@@ -23158,6 +23433,50 @@ func (ec *executionContext) _IOTAppPaginatedRecords(ctx context.Context, sel ast
 	return out
 }
 
+var iOTConsoleCheckNameAvailabilityOutputImplementors = []string{"IOTConsoleCheckNameAvailabilityOutput"}
+
+func (ec *executionContext) _IOTConsoleCheckNameAvailabilityOutput(ctx context.Context, sel ast.SelectionSet, obj *domain.CheckNameAvailabilityOutput) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, iOTConsoleCheckNameAvailabilityOutputImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("IOTConsoleCheckNameAvailabilityOutput")
+		case "result":
+			out.Values[i] = ec._IOTConsoleCheckNameAvailabilityOutput_result(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "suggestedNames":
+			out.Values[i] = ec._IOTConsoleCheckNameAvailabilityOutput_suggestedNames(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var iOTDeploymentImplementors = []string{"IOTDeployment"}
 
 func (ec *executionContext) _IOTDeployment(ctx context.Context, sel ast.SelectionSet, obj *entities.IOTDeployment) graphql.Marshaler {
@@ -25009,6 +25328,28 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 		switch field.Name {
 		case "__typename":
 			out.Values[i] = graphql.MarshalString("Query")
+		case "iot_checkNameAvailability":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_iot_checkNameAvailability(ctx, field)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "iot_listProjects":
 			field := field
 
@@ -26070,6 +26411,20 @@ func (ec *executionContext) unmarshalNIOTAppIn2githubᚗcomᚋkloudliteᚋapiᚋ
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalNIOTConsoleCheckNameAvailabilityOutput2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐCheckNameAvailabilityOutput(ctx context.Context, sel ast.SelectionSet, v domain.CheckNameAvailabilityOutput) graphql.Marshaler {
+	return ec._IOTConsoleCheckNameAvailabilityOutput(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNIOTConsoleCheckNameAvailabilityOutput2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐCheckNameAvailabilityOutput(ctx context.Context, sel ast.SelectionSet, v *domain.CheckNameAvailabilityOutput) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._IOTConsoleCheckNameAvailabilityOutput(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNIOTDeployment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTDeployment(ctx context.Context, sel ast.SelectionSet, v *entities.IOTDeployment) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -26531,6 +26886,22 @@ func (ec *executionContext) marshalNPageInfo2ᚖgithubᚗcomᚋkloudliteᚋapi�
 	return ec._PageInfo(ctx, sel, v)
 }
 
+func (ec *executionContext) unmarshalNResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐResourceType(ctx context.Context, v interface{}) (domain.ResourceType, error) {
+	tmp, err := graphql.UnmarshalString(v)
+	res := domain.ResourceType(tmp)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐResourceType(ctx context.Context, sel ast.SelectionSet, v domain.ResourceType) graphql.Marshaler {
+	res := graphql.MarshalString(string(v))
+	if res == graphql.Null {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+	}
+	return res
+}
+
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
 	res, err := graphql.UnmarshalString(v)
 	return res, graphql.ErrorOnPath(ctx, err)
@@ -26914,7 +27285,7 @@ func (ec *executionContext) marshalNfederation__Scope2ᚕᚕstringᚄ(ctx contex
 	return ret
 }
 
-func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (interface{}, error) {
+func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v interface{}) (any, error) {
 	if v == nil {
 		return nil, nil
 	}
@@ -26922,7 +27293,7 @@ func (ec *executionContext) unmarshalOAny2interface(ctx context.Context, v inter
 	return res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v interface{}) graphql.Marshaler {
+func (ec *executionContext) marshalOAny2interface(ctx context.Context, sel ast.SelectionSet, v any) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}

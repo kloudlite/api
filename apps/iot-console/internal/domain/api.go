@@ -19,7 +19,6 @@ type IotConsoleContext struct {
 type IotResourceContext struct {
 	IotConsoleContext
 	ProjectName string
-	//EnvironmentName string
 }
 
 func (r IotResourceContext) IOTConsoleDBFilters() repos.Filter {
@@ -41,6 +40,7 @@ func (i IotConsoleContext) GetUserName() string {
 func (i IotConsoleContext) GetAccountName() string { return i.AccountName }
 
 type Domain interface {
+	CheckNameAvailability(ctx IotResourceContext, deviceBlueprintName *string, deploymentName *string, resourceType ResourceType, name string) (*CheckNameAvailabilityOutput, error)
 	ListProjects(ctx IotConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.IOTProject], error)
 	GetProject(ctx IotConsoleContext, name string) (*entities.IOTProject, error)
 

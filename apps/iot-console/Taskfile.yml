@@ -51,10 +51,4 @@ tasks:
         msg: "var Image must have a value, of format 'image_repository:image_tag'"
     cmds:
       - task: build
-      - |+
-        PLATFORM_FLAG=""
-        if [[ "$(uname -m)" == "Darwin" ]] && [[ "$(uname -s)" == "Darwin" ]]; then
-          PLATFORM_FLAG="--platform linux/amd64"
-        fi
-        docker buildx build $PLATFORM_FLAG -f ./Containerfile -t {{.Image}} . --build-arg BINARY={{.app}} --push
-      #- docker buildx build -f ./Containerfile -t {{.Image}} . --build-arg BINARY={{.app}} --push
+      - docker buildx build --platform linux/amd64 -f ./Containerfile -t {{.Image}} . --build-arg BINARY={{.app}} --push

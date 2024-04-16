@@ -8,6 +8,7 @@ import (
 	"context"
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/model"
+	"github.com/kloudlite/api/apps/iot-console/internal/domain"
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/pkg/errors"
 	fn "github.com/kloudlite/api/pkg/functions"
@@ -162,6 +163,15 @@ func (r *mutationResolver) IotDeleteApp(ctx context.Context, projectName string,
 		return false, errors.NewE(err)
 	}
 	return true, nil
+}
+
+// IotCheckNameAvailability is the resolver for the iot_checkNameAvailability field.
+func (r *queryResolver) IotCheckNameAvailability(ctx context.Context, projectName string, deviceBlueprintName *string, deploymentName *string, resType domain.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error) {
+	ic, err := toIOTConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	return r.Domain.CheckNameAvailability(newIOTResourceContext(ic, projectName), deviceBlueprintName, deploymentName, resType, name)
 }
 
 // IotListProjects is the resolver for the iot_listProjects field.
