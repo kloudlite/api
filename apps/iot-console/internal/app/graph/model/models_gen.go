@@ -8,8 +8,8 @@ import (
 	"strconv"
 
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
-	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/apis/crds/v1"
 )
 
 type GithubComKloudliteAPIAppsIotConsoleInternalEntitiesExposedService struct {
@@ -20,6 +20,15 @@ type GithubComKloudliteAPIAppsIotConsoleInternalEntitiesExposedService struct {
 type GithubComKloudliteAPIAppsIotConsoleInternalEntitiesExposedServiceIn struct {
 	IP   string `json:"ip"`
 	Name string `json:"name"`
+}
+
+type GithubComKloudliteAPIPkgTypesSyncStatus struct {
+	Action          GithubComKloudliteAPIPkgTypesSyncAction `json:"action"`
+	Error           *string                                 `json:"error,omitempty"`
+	LastSyncedAt    *string                                 `json:"lastSyncedAt,omitempty"`
+	RecordVersion   int                                     `json:"recordVersion"`
+	State           GithubComKloudliteAPIPkgTypesSyncState  `json:"state"`
+	SyncScheduledAt *string                                 `json:"syncScheduledAt,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppContainer struct {
@@ -82,6 +91,17 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecIn struct {
 	TopologySpreadConstraints []*K8sIoAPICoreV1TopologySpreadConstraintIn           `json:"topologySpreadConstraints,omitempty"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1AppStatus struct {
+	CheckList           []*GithubComKloudliteOperatorPkgOperatorCheckMeta   `json:"checkList,omitempty"`
+	Checks              map[string]interface{}                              `json:"checks,omitempty"`
+	IsReady             bool                                                `json:"isReady"`
+	LastReadyGeneration *int                                                `json:"lastReadyGeneration,omitempty"`
+	LastReconcileTime   *string                                             `json:"lastReconcileTime,omitempty"`
+	Message             *GithubComKloudliteOperatorPkgRawJSONRawJSON        `json:"message,omitempty"`
+	Name                string                                              `json:"name"`
+	Resources           []*GithubComKloudliteOperatorPkgOperatorResourceRef `json:"resources,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1AppSvc struct {
 	Name       *string `json:"name,omitempty"`
 	Port       int     `json:"port"`
@@ -94,6 +114,27 @@ type GithubComKloudliteOperatorApisCrdsV1AppSvcIn struct {
 	Port       int     `json:"port"`
 	TargetPort *int    `json:"targetPort,omitempty"`
 	Type       *string `json:"type,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BlueprintSpec struct {
+	Apps    []*v1.App `json:"apps,omitempty"`
+	Version string    `json:"version"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn struct {
+	Apps    []*v1.App `json:"apps,omitempty"`
+	Version string    `json:"version"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BlueprintStatus struct {
+	Apps                []*GithubComKloudliteOperatorApisCrdsV1AppStatus    `json:"apps,omitempty"`
+	CheckList           []*GithubComKloudliteOperatorPkgOperatorCheckMeta   `json:"checkList,omitempty"`
+	Checks              map[string]interface{}                              `json:"checks,omitempty"`
+	IsReady             bool                                                `json:"isReady"`
+	LastReadyGeneration *int                                                `json:"lastReadyGeneration,omitempty"`
+	LastReconcileTime   *string                                             `json:"lastReconcileTime,omitempty"`
+	Message             *GithubComKloudliteOperatorPkgRawJSONRawJSON        `json:"message,omitempty"`
+	Resources           []*GithubComKloudliteOperatorPkgOperatorResourceRef `json:"resources,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ContainerEnv struct {
@@ -271,17 +312,6 @@ type GithubComKloudliteOperatorPkgRawJSONRawJSON struct {
 	RawMessage interface{} `json:"RawMessage,omitempty"`
 }
 
-type IOTAppEdge struct {
-	Cursor string           `json:"cursor"`
-	Node   *entities.IOTApp `json:"node"`
-}
-
-type IOTAppPaginatedRecords struct {
-	Edges      []*IOTAppEdge `json:"edges"`
-	PageInfo   *PageInfo     `json:"pageInfo"`
-	TotalCount int           `json:"totalCount"`
-}
-
 type IOTDeploymentEdge struct {
 	Cursor string                  `json:"cursor"`
 	Node   *entities.IOTDeployment `json:"node"`
@@ -313,36 +343,6 @@ type IOTDevicePaginatedRecords struct {
 	Edges      []*IOTDeviceEdge `json:"edges"`
 	PageInfo   *PageInfo        `json:"pageInfo"`
 	TotalCount int              `json:"totalCount"`
-}
-
-type IOTEnvironment struct {
-	AccountName       string                     `json:"accountName"`
-	CreatedBy         *common.CreatedOrUpdatedBy `json:"createdBy"`
-	CreationTime      string                     `json:"creationTime"`
-	DisplayName       string                     `json:"displayName"`
-	ID                repos.ID                   `json:"id"`
-	LastUpdatedBy     *common.CreatedOrUpdatedBy `json:"lastUpdatedBy"`
-	MarkedForDeletion *bool                      `json:"markedForDeletion,omitempty"`
-	Name              string                     `json:"name"`
-	ProjectName       string                     `json:"projectName"`
-	RecordVersion     int                        `json:"recordVersion"`
-	UpdateTime        string                     `json:"updateTime"`
-}
-
-type IOTEnvironmentEdge struct {
-	Cursor string          `json:"cursor"`
-	Node   *IOTEnvironment `json:"node"`
-}
-
-type IOTEnvironmentIn struct {
-	DisplayName string `json:"displayName"`
-	Name        string `json:"name"`
-}
-
-type IOTEnvironmentPaginatedRecords struct {
-	Edges      []*IOTEnvironmentEdge `json:"edges"`
-	PageInfo   *PageInfo             `json:"pageInfo"`
-	TotalCount int                   `json:"totalCount"`
 }
 
 type IOTProjectEdge struct {
@@ -423,12 +423,6 @@ type PageInfo struct {
 	StartCursor     *string `json:"startCursor,omitempty"`
 }
 
-type SearchIOTApps struct {
-	Text              *repos.MatchFilter `json:"text,omitempty"`
-	IsReady           *repos.MatchFilter `json:"isReady,omitempty"`
-	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
-}
-
 type SearchIOTDeployments struct {
 	Text              *repos.MatchFilter `json:"text,omitempty"`
 	IsReady           *repos.MatchFilter `json:"isReady,omitempty"`
@@ -491,6 +485,98 @@ func (e *GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType) Unmar
 }
 
 func (e GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteAPIPkgTypesSyncAction string
+
+const (
+	GithubComKloudliteAPIPkgTypesSyncActionApply  GithubComKloudliteAPIPkgTypesSyncAction = "APPLY"
+	GithubComKloudliteAPIPkgTypesSyncActionDelete GithubComKloudliteAPIPkgTypesSyncAction = "DELETE"
+)
+
+var AllGithubComKloudliteAPIPkgTypesSyncAction = []GithubComKloudliteAPIPkgTypesSyncAction{
+	GithubComKloudliteAPIPkgTypesSyncActionApply,
+	GithubComKloudliteAPIPkgTypesSyncActionDelete,
+}
+
+func (e GithubComKloudliteAPIPkgTypesSyncAction) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIPkgTypesSyncActionApply, GithubComKloudliteAPIPkgTypesSyncActionDelete:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIPkgTypesSyncAction) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIPkgTypesSyncAction) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIPkgTypesSyncAction(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___pkg___types__SyncAction", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIPkgTypesSyncAction) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteAPIPkgTypesSyncState string
+
+const (
+	GithubComKloudliteAPIPkgTypesSyncStateAppliedAtAgent  GithubComKloudliteAPIPkgTypesSyncState = "APPLIED_AT_AGENT"
+	GithubComKloudliteAPIPkgTypesSyncStateDeletedAtAgent  GithubComKloudliteAPIPkgTypesSyncState = "DELETED_AT_AGENT"
+	GithubComKloudliteAPIPkgTypesSyncStateDeletingAtAgent GithubComKloudliteAPIPkgTypesSyncState = "DELETING_AT_AGENT"
+	GithubComKloudliteAPIPkgTypesSyncStateErroredAtAgent  GithubComKloudliteAPIPkgTypesSyncState = "ERRORED_AT_AGENT"
+	GithubComKloudliteAPIPkgTypesSyncStateIdle            GithubComKloudliteAPIPkgTypesSyncState = "IDLE"
+	GithubComKloudliteAPIPkgTypesSyncStateInQueue         GithubComKloudliteAPIPkgTypesSyncState = "IN_QUEUE"
+	GithubComKloudliteAPIPkgTypesSyncStateUpdatedAtAgent  GithubComKloudliteAPIPkgTypesSyncState = "UPDATED_AT_AGENT"
+)
+
+var AllGithubComKloudliteAPIPkgTypesSyncState = []GithubComKloudliteAPIPkgTypesSyncState{
+	GithubComKloudliteAPIPkgTypesSyncStateAppliedAtAgent,
+	GithubComKloudliteAPIPkgTypesSyncStateDeletedAtAgent,
+	GithubComKloudliteAPIPkgTypesSyncStateDeletingAtAgent,
+	GithubComKloudliteAPIPkgTypesSyncStateErroredAtAgent,
+	GithubComKloudliteAPIPkgTypesSyncStateIdle,
+	GithubComKloudliteAPIPkgTypesSyncStateInQueue,
+	GithubComKloudliteAPIPkgTypesSyncStateUpdatedAtAgent,
+}
+
+func (e GithubComKloudliteAPIPkgTypesSyncState) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIPkgTypesSyncStateAppliedAtAgent, GithubComKloudliteAPIPkgTypesSyncStateDeletedAtAgent, GithubComKloudliteAPIPkgTypesSyncStateDeletingAtAgent, GithubComKloudliteAPIPkgTypesSyncStateErroredAtAgent, GithubComKloudliteAPIPkgTypesSyncStateIdle, GithubComKloudliteAPIPkgTypesSyncStateInQueue, GithubComKloudliteAPIPkgTypesSyncStateUpdatedAtAgent:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIPkgTypesSyncState) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIPkgTypesSyncState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIPkgTypesSyncState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___pkg___types__SyncState", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIPkgTypesSyncState) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

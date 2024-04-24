@@ -135,36 +135,6 @@ func (r *mutationResolver) IotDeleteDeployment(ctx context.Context, projectName 
 	return true, nil
 }
 
-// IotCreateApp is the resolver for the iot_createApp field.
-func (r *mutationResolver) IotCreateApp(ctx context.Context, projectName string, deviceBlueprintName string, app entities.IOTApp) (*entities.IOTApp, error) {
-	ic, err := toIOTConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-	return r.Domain.CreateApp(newIOTResourceContext(ic, projectName), deviceBlueprintName, app)
-}
-
-// IotUpdateApp is the resolver for the iot_updateApp field.
-func (r *mutationResolver) IotUpdateApp(ctx context.Context, projectName string, deviceBlueprintName string, app entities.IOTApp) (*entities.IOTApp, error) {
-	ic, err := toIOTConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-	return r.Domain.UpdateApp(newIOTResourceContext(ic, projectName), deviceBlueprintName, app)
-}
-
-// IotDeleteApp is the resolver for the iot_deleteApp field.
-func (r *mutationResolver) IotDeleteApp(ctx context.Context, projectName string, deviceBlueprintName string, name string) (bool, error) {
-	ic, err := toIOTConsoleContext(ctx)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-	if err := r.Domain.DeleteApp(newIOTResourceContext(ic, projectName), deviceBlueprintName, name); err != nil {
-		return false, errors.NewE(err)
-	}
-	return true, nil
-}
-
 // IotCheckNameAvailability is the resolver for the iot_checkNameAvailability field.
 func (r *queryResolver) IotCheckNameAvailability(ctx context.Context, projectName string, deviceBlueprintName *string, deploymentName *string, resType domain.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error) {
 	ic, err := toIOTConsoleContext(ctx)
@@ -292,36 +262,6 @@ func (r *queryResolver) IotGetDeployment(ctx context.Context, projectName string
 		return nil, errors.NewE(err)
 	}
 	return r.Domain.GetDeployment(newIOTResourceContext(ic, projectName), name)
-}
-
-// IotListApps is the resolver for the iot_listApps field.
-func (r *queryResolver) IotListApps(ctx context.Context, projectName string, deviceBlueprintName string, search *model.SearchIOTApps, pq *repos.CursorPagination) (*model.IOTAppPaginatedRecords, error) {
-	filter := map[string]repos.MatchFilter{}
-	if search != nil {
-		if search.Text != nil {
-			filter["name"] = *search.Text
-		}
-	}
-	ic, err := toIOTConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	d, err := r.Domain.ListApps(newIOTResourceContext(ic, projectName), deviceBlueprintName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	return fn.JsonConvertP[model.IOTAppPaginatedRecords](d)
-}
-
-// IotGetApp is the resolver for the iot_getApp field.
-func (r *queryResolver) IotGetApp(ctx context.Context, projectName string, deviceBlueprintName string, name string) (*entities.IOTApp, error) {
-	ic, err := toIOTConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-	return r.Domain.GetApp(newIOTResourceContext(ic, projectName), deviceBlueprintName, name)
 }
 
 // Mutation returns generated.MutationResolver implementation.

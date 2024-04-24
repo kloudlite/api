@@ -159,6 +159,10 @@ const (
 	ManagedByKloudlite string = "kloudlite.io/managed-by.kloudlite"
 )
 
+const (
+	DeviceClusterPrefix = "iot-device"
+)
+
 func GetAccountTargetNamespace(accountName string) string {
 	return fmt.Sprintf("kl-account-%s", accountName)
 }

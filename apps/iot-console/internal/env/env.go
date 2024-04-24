@@ -21,6 +21,8 @@ type Env struct {
 	NatsURL string `env:"NATS_URL" required:"true"`
 	// NATS:end
 
+	NatsStream string `env:"NATS_STREAM" required:"true"`
+
 	IsDev              bool
 	KubernetesApiProxy string `env:"KUBERNETES_API_PROXY"`
 

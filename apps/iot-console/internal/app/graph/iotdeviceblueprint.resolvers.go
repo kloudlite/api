@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 	"time"
 
@@ -13,6 +14,7 @@ import (
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	fn "github.com/kloudlite/api/pkg/functions"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // BluePrintType is the resolver for the bluePrintType field.
@@ -35,6 +37,21 @@ func (r *iOTDeviceBlueprintResolver) CreationTime(ctx context.Context, obj *enti
 	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
+// Spec is the resolver for the spec field.
+func (r *iOTDeviceBlueprintResolver) Spec(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec, error) {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
+}
+
+// Status is the resolver for the status field.
+func (r *iOTDeviceBlueprintResolver) Status(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus, error) {
+	panic(fmt.Errorf("not implemented: Status - status"))
+}
+
+// SyncStatus is the resolver for the syncStatus field.
+func (r *iOTDeviceBlueprintResolver) SyncStatus(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteAPIPkgTypesSyncStatus, error) {
+	panic(fmt.Errorf("not implemented: SyncStatus - syncStatus"))
+}
+
 // UpdateTime is the resolver for the updateTime field.
 func (r *iOTDeviceBlueprintResolver) UpdateTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error) {
 	if obj == nil {
@@ -49,6 +66,16 @@ func (r *iOTDeviceBlueprintInResolver) BluePrintType(ctx context.Context, obj *e
 		return errNilDeviceBlueprint
 	}
 	return fn.JsonConversion(data, &obj.BluePrintType)
+}
+
+// Metadata is the resolver for the metadata field.
+func (r *iOTDeviceBlueprintInResolver) Metadata(ctx context.Context, obj *entities.IOTDeviceBlueprint, data *v1.ObjectMeta) error {
+	panic(fmt.Errorf("not implemented: Metadata - metadata"))
+}
+
+// Spec is the resolver for the spec field.
+func (r *iOTDeviceBlueprintInResolver) Spec(ctx context.Context, obj *entities.IOTDeviceBlueprint, data *model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn) error {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
 }
 
 // IOTDeviceBlueprint returns generated.IOTDeviceBlueprintResolver implementation.

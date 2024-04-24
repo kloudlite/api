@@ -39,12 +39,6 @@ input SearchIOTDeviceBlueprints {
     markedForDeletion: MatchFilterIn
 }
 
-input SearchIOTApps {
-    text: MatchFilterIn
-    isReady: MatchFilterIn
-    markedForDeletion: MatchFilterIn
-}
-
 type Query {
     iot_checkNameAvailability(projectName: String!, deviceBlueprintName: String, deploymentName: String, resType: ResourceType!, name: String!): IOTConsoleCheckNameAvailabilityOutput! @isLoggedInAndVerified @hasAccount
 
@@ -60,8 +54,6 @@ type Query {
     iot_listDeployments(projectName: String!,search: SearchIOTDeployments, pq: CursorPaginationIn): IOTDeploymentPaginatedRecords @isLoggedInAndVerified @hasAccount
     iot_getDeployment(projectName: String!, name: String!): IOTDeployment @isLoggedInAndVerified @hasAccount
 
-    iot_listApps(projectName: String!, deviceBlueprintName: String!,search: SearchIOTApps, pq: CursorPaginationIn): IOTAppPaginatedRecords @isLoggedInAndVerified @hasAccount
-    iot_getApp(projectName: String!, deviceBlueprintName: String!, name: String!): IOTApp @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -80,8 +72,4 @@ type Mutation {
     iot_createDeployment(projectName: String!, deployment: IOTDeploymentIn!): IOTDeployment @isLoggedInAndVerified @hasAccount
     iot_updateDeployment(projectName: String!, deployment: IOTDeploymentIn!): IOTDeployment @isLoggedInAndVerified @hasAccount
     iot_deleteDeployment(projectName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
-
-    iot_createApp(projectName: String!, deviceBlueprintName: String!, app: IOTAppIn!): IOTApp @isLoggedInAndVerified @hasAccount
-    iot_updateApp(projectName: String!, deviceBlueprintName: String!, app: IOTAppIn!): IOTApp @isLoggedInAndVerified @hasAccount
-    iot_deleteApp(projectName: String!, deviceBlueprintName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 }

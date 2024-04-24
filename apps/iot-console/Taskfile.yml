@@ -21,13 +21,12 @@ tasks:
         --struct github.com/kloudlite/api/apps/iot-console/internal/entities.IOTDevice
         --struct github.com/kloudlite/api/apps/iot-console/internal/entities.IOTDeviceBlueprint
         --struct github.com/kloudlite/api/apps/iot-console/internal/entities.IOTDeployment
-        --struct github.com/kloudlite/api/apps/iot-console/internal/entities.IOTApp
         --struct github.com/kloudlite/api/pkg/repos.MatchFilter
         --struct github.com/kloudlite/api/pkg/repos.CursorPagination
         > ./internal/app/_struct-to-graphql/main.go
       - |+
         pushd ./internal/app/_struct-to-graphql
-        go run main.go --dev --out-dir ../graph/struct-to-graphql --with-pagination IOTProject,IOTDevice,IOTDeviceBlueprint,IOTDeployment,IOTApp
+        go run main.go --dev --out-dir ../graph/struct-to-graphql --with-pagination IOTProject,IOTDevice,IOTDeviceBlueprint,IOTDeployment
         popd
       - rm -rf ./internal/app/_struct-to-graphql
 

@@ -19,9 +19,10 @@ import (
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/apis/crds/v1"
 	gqlparser "github.com/vektah/gqlparser/v2"
 	"github.com/vektah/gqlparser/v2/ast"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v11 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // region    ************************** generated!.gotpl **************************
@@ -44,8 +45,9 @@ type Config struct {
 }
 
 type ResolverRoot interface {
+	Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint() Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver
 	Github__com___kloudlite___api___common__CreatedOrUpdatedBy() Github__com___kloudlite___api___common__CreatedOrUpdatedByResolver
-	IOTApp() IOTAppResolver
+	Github__com___kloudlite___operator___apis___crds___v1__App() Github__com___kloudlite___operator___apis___crds___v1__AppResolver
 	IOTDeployment() IOTDeploymentResolver
 	IOTDevice() IOTDeviceResolver
 	IOTDeviceBlueprint() IOTDeviceBlueprintResolver
@@ -53,7 +55,7 @@ type ResolverRoot interface {
 	Metadata() MetadataResolver
 	Mutation() MutationResolver
 	Query() QueryResolver
-	IOTAppIn() IOTAppInResolver
+	Github__com___kloudlite___operator___apis___crds___v1__AppIn() Github__com___kloudlite___operator___apis___crds___v1__AppInResolver
 	IOTDeploymentIn() IOTDeploymentInResolver
 	IOTDeviceBlueprintIn() IOTDeviceBlueprintInResolver
 	MetadataIn() MetadataInResolver
@@ -80,10 +82,49 @@ type ComplexityRoot struct {
 		Name func(childComplexity int) int
 	}
 
+	Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint struct {
+		APIVersion        func(childComplexity int) int
+		AccountName       func(childComplexity int) int
+		BluePrintType     func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
+		CreationTime      func(childComplexity int) int
+		DeploymentName    func(childComplexity int) int
+		DisplayName       func(childComplexity int) int
+		Id                func(childComplexity int) int
+		Kind              func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
+		MarkedForDeletion func(childComplexity int) int
+		ObjectMeta        func(childComplexity int) int
+		ProjectName       func(childComplexity int) int
+		RecordVersion     func(childComplexity int) int
+		Spec              func(childComplexity int) int
+		Status            func(childComplexity int) int
+		SyncStatus        func(childComplexity int) int
+		UpdateTime        func(childComplexity int) int
+	}
+
 	Github__com___kloudlite___api___common__CreatedOrUpdatedBy struct {
 		UserEmail func(childComplexity int) int
 		UserID    func(childComplexity int) int
 		UserName  func(childComplexity int) int
+	}
+
+	Github__com___kloudlite___api___pkg___types__SyncStatus struct {
+		Action          func(childComplexity int) int
+		Error           func(childComplexity int) int
+		LastSyncedAt    func(childComplexity int) int
+		RecordVersion   func(childComplexity int) int
+		State           func(childComplexity int) int
+		SyncScheduledAt func(childComplexity int) int
+	}
+
+	Github__com___kloudlite___operator___apis___crds___v1__App struct {
+		APIVersion func(childComplexity int) int
+		Enabled    func(childComplexity int) int
+		Kind       func(childComplexity int) int
+		ObjectMeta func(childComplexity int) int
+		Spec       func(childComplexity int) int
+		Status     func(childComplexity int) int
 	}
 
 	Github__com___kloudlite___operator___apis___crds___v1__AppContainer struct {
@@ -116,11 +157,38 @@ type ComplexityRoot struct {
 		TopologySpreadConstraints func(childComplexity int) int
 	}
 
+	Github__com___kloudlite___operator___apis___crds___v1__AppStatus struct {
+		CheckList           func(childComplexity int) int
+		Checks              func(childComplexity int) int
+		IsReady             func(childComplexity int) int
+		LastReadyGeneration func(childComplexity int) int
+		LastReconcileTime   func(childComplexity int) int
+		Message             func(childComplexity int) int
+		Name                func(childComplexity int) int
+		Resources           func(childComplexity int) int
+	}
+
 	Github__com___kloudlite___operator___apis___crds___v1__AppSvc struct {
 		Name       func(childComplexity int) int
 		Port       func(childComplexity int) int
 		TargetPort func(childComplexity int) int
 		Type       func(childComplexity int) int
+	}
+
+	Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec struct {
+		Apps    func(childComplexity int) int
+		Version func(childComplexity int) int
+	}
+
+	Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus struct {
+		Apps                func(childComplexity int) int
+		CheckList           func(childComplexity int) int
+		Checks              func(childComplexity int) int
+		IsReady             func(childComplexity int) int
+		LastReadyGeneration func(childComplexity int) int
+		LastReconcileTime   func(childComplexity int) int
+		Message             func(childComplexity int) int
+		Resources           func(childComplexity int) int
 	}
 
 	Github__com___kloudlite___operator___apis___crds___v1__ContainerEnv struct {
@@ -230,37 +298,6 @@ type ComplexityRoot struct {
 		RawMessage func(childComplexity int) int
 	}
 
-	IOTApp struct {
-		APIVersion          func(childComplexity int) int
-		AccountName         func(childComplexity int) int
-		CreatedBy           func(childComplexity int) int
-		CreationTime        func(childComplexity int) int
-		DeviceBlueprintName func(childComplexity int) int
-		DisplayName         func(childComplexity int) int
-		Enabled             func(childComplexity int) int
-		Id                  func(childComplexity int) int
-		Kind                func(childComplexity int) int
-		LastUpdatedBy       func(childComplexity int) int
-		MarkedForDeletion   func(childComplexity int) int
-		ObjectMeta          func(childComplexity int) int
-		ProjectName         func(childComplexity int) int
-		RecordVersion       func(childComplexity int) int
-		Spec                func(childComplexity int) int
-		Status              func(childComplexity int) int
-		UpdateTime          func(childComplexity int) int
-	}
-
-	IOTAppEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
-	}
-
-	IOTAppPaginatedRecords struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
 	IOTConsoleCheckNameAvailabilityOutput struct {
 		Result         func(childComplexity int) int
 		SuggestedNames func(childComplexity int) int
@@ -268,7 +305,6 @@ type ComplexityRoot struct {
 
 	IOTDeployment struct {
 		AccountName       func(childComplexity int) int
-		CIDR              func(childComplexity int) int
 		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
@@ -300,8 +336,10 @@ type ComplexityRoot struct {
 		ClusterToken      func(childComplexity int) int
 		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
+		CurrentBlueprint  func(childComplexity int) int
 		DeploymentName    func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
+		ExpectedBlueprint func(childComplexity int) int
 		IP                func(childComplexity int) int
 		Id                func(childComplexity int) int
 		Index             func(childComplexity int) int
@@ -313,24 +351,30 @@ type ComplexityRoot struct {
 		PublicKey         func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
 		ServiceCIDR       func(childComplexity int) int
+		Status            func(childComplexity int) int
+		SyncStatus        func(childComplexity int) int
 		UpdateTime        func(childComplexity int) int
-		Version           func(childComplexity int) int
 	}
 
 	IOTDeviceBlueprint struct {
+		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
 		BluePrintType     func(childComplexity int) int
 		CreatedBy         func(childComplexity int) int
 		CreationTime      func(childComplexity int) int
+		DeploymentName    func(childComplexity int) int
 		DisplayName       func(childComplexity int) int
 		Id                func(childComplexity int) int
+		Kind              func(childComplexity int) int
 		LastUpdatedBy     func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
-		Name              func(childComplexity int) int
+		ObjectMeta        func(childComplexity int) int
 		ProjectName       func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
+		Spec              func(childComplexity int) int
+		Status            func(childComplexity int) int
+		SyncStatus        func(childComplexity int) int
 		UpdateTime        func(childComplexity int) int
-		Version           func(childComplexity int) int
 	}
 
 	IOTDeviceBlueprintEdge struct {
@@ -350,31 +394,6 @@ type ComplexityRoot struct {
 	}
 
 	IOTDevicePaginatedRecords struct {
-		Edges      func(childComplexity int) int
-		PageInfo   func(childComplexity int) int
-		TotalCount func(childComplexity int) int
-	}
-
-	IOTEnvironment struct {
-		AccountName       func(childComplexity int) int
-		CreatedBy         func(childComplexity int) int
-		CreationTime      func(childComplexity int) int
-		DisplayName       func(childComplexity int) int
-		ID                func(childComplexity int) int
-		LastUpdatedBy     func(childComplexity int) int
-		MarkedForDeletion func(childComplexity int) int
-		Name              func(childComplexity int) int
-		ProjectName       func(childComplexity int) int
-		RecordVersion     func(childComplexity int) int
-		UpdateTime        func(childComplexity int) int
-	}
-
-	IOTEnvironmentEdge struct {
-		Cursor func(childComplexity int) int
-		Node   func(childComplexity int) int
-	}
-
-	IOTEnvironmentPaginatedRecords struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
@@ -452,17 +471,14 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		IotCreateApp             func(childComplexity int, projectName string, deviceBlueprintName string, app entities.IOTApp) int
 		IotCreateDeployment      func(childComplexity int, projectName string, deployment entities.IOTDeployment) int
 		IotCreateDevice          func(childComplexity int, projectName string, deploymentName string, device entities.IOTDevice) int
 		IotCreateDeviceBlueprint func(childComplexity int, projectName string, deviceBlueprint entities.IOTDeviceBlueprint) int
 		IotCreateProject         func(childComplexity int, project entities.IOTProject) int
-		IotDeleteApp             func(childComplexity int, projectName string, deviceBlueprintName string, name string) int
 		IotDeleteDeployment      func(childComplexity int, projectName string, name string) int
 		IotDeleteDevice          func(childComplexity int, projectName string, deploymentName string, name string) int
 		IotDeleteDeviceBlueprint func(childComplexity int, projectName string, name string) int
 		IotDeleteProject         func(childComplexity int, name string) int
-		IotUpdateApp             func(childComplexity int, projectName string, deviceBlueprintName string, app entities.IOTApp) int
 		IotUpdateDeployment      func(childComplexity int, projectName string, deployment entities.IOTDeployment) int
 		IotUpdateDevice          func(childComplexity int, projectName string, deploymentName string, device entities.IOTDevice) int
 		IotUpdateDeviceBlueprint func(childComplexity int, projectName string, deviceBlueprint entities.IOTDeviceBlueprint) int
@@ -478,12 +494,10 @@ type ComplexityRoot struct {
 
 	Query struct {
 		IotCheckNameAvailability func(childComplexity int, projectName string, deviceBlueprintName *string, deploymentName *string, resType domain.ResourceType, name string) int
-		IotGetApp                func(childComplexity int, projectName string, deviceBlueprintName string, name string) int
 		IotGetDeployment         func(childComplexity int, projectName string, name string) int
 		IotGetDevice             func(childComplexity int, projectName string, deploymentName string, name string) int
 		IotGetDeviceBlueprint    func(childComplexity int, projectName string, name string) int
 		IotGetProject            func(childComplexity int, name string) int
-		IotListApps              func(childComplexity int, projectName string, deviceBlueprintName string, search *model.SearchIOTApps, pq *repos.CursorPagination) int
 		IotListDeployments       func(childComplexity int, projectName string, search *model.SearchIOTDeployments, pq *repos.CursorPagination) int
 		IotListDeviceBlueprints  func(childComplexity int, projectName string, search *model.SearchIOTDeviceBlueprints, pq *repos.CursorPagination) int
 		IotListDevices           func(childComplexity int, projectName string, deploymentName string, search *model.SearchIOTDevices, pq *repos.CursorPagination) int
@@ -496,15 +510,22 @@ type ComplexityRoot struct {
 	}
 }
 
+type Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver interface {
+	BluePrintType(ctx context.Context, obj *entities.IOTDeviceBlueprint) (model.GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType, error)
+
+	CreationTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error)
+
+	Spec(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec, error)
+	Status(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus, error)
+	SyncStatus(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteAPIPkgTypesSyncStatus, error)
+	UpdateTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error)
+}
 type Github__com___kloudlite___api___common__CreatedOrUpdatedByResolver interface {
 	UserID(ctx context.Context, obj *common.CreatedOrUpdatedBy) (string, error)
 }
-type IOTAppResolver interface {
-	CreationTime(ctx context.Context, obj *entities.IOTApp) (string, error)
-
-	Spec(ctx context.Context, obj *entities.IOTApp) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpec, error)
-	Status(ctx context.Context, obj *entities.IOTApp) (*model.GithubComKloudliteOperatorPkgOperatorStatus, error)
-	UpdateTime(ctx context.Context, obj *entities.IOTApp) (string, error)
+type Github__com___kloudlite___operator___apis___crds___v1__AppResolver interface {
+	Spec(ctx context.Context, obj *v1.App) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpec, error)
+	Status(ctx context.Context, obj *v1.App) (*model.GithubComKloudliteOperatorPkgOperatorStatus, error)
 }
 type IOTDeploymentResolver interface {
 	CreationTime(ctx context.Context, obj *entities.IOTDeployment) (string, error)
@@ -516,6 +537,8 @@ type IOTDeploymentResolver interface {
 type IOTDeviceResolver interface {
 	CreationTime(ctx context.Context, obj *entities.IOTDevice) (string, error)
 
+	Status(ctx context.Context, obj *entities.IOTDevice) (*model.GithubComKloudliteOperatorPkgOperatorStatus, error)
+	SyncStatus(ctx context.Context, obj *entities.IOTDevice) (*model.GithubComKloudliteAPIPkgTypesSyncStatus, error)
 	UpdateTime(ctx context.Context, obj *entities.IOTDevice) (string, error)
 }
 type IOTDeviceBlueprintResolver interface {
@@ -523,6 +546,9 @@ type IOTDeviceBlueprintResolver interface {
 
 	CreationTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error)
 
+	Spec(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec, error)
+	Status(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus, error)
+	SyncStatus(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteAPIPkgTypesSyncStatus, error)
 	UpdateTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error)
 }
 type IOTProjectResolver interface {
@@ -531,11 +557,11 @@ type IOTProjectResolver interface {
 	UpdateTime(ctx context.Context, obj *entities.IOTProject) (string, error)
 }
 type MetadataResolver interface {
-	Annotations(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
-	CreationTimestamp(ctx context.Context, obj *v1.ObjectMeta) (string, error)
-	DeletionTimestamp(ctx context.Context, obj *v1.ObjectMeta) (*string, error)
+	Annotations(ctx context.Context, obj *v11.ObjectMeta) (map[string]interface{}, error)
+	CreationTimestamp(ctx context.Context, obj *v11.ObjectMeta) (string, error)
+	DeletionTimestamp(ctx context.Context, obj *v11.ObjectMeta) (*string, error)
 
-	Labels(ctx context.Context, obj *v1.ObjectMeta) (map[string]interface{}, error)
+	Labels(ctx context.Context, obj *v11.ObjectMeta) (map[string]interface{}, error)
 }
 type MutationResolver interface {
 	IotCreateProject(ctx context.Context, project entities.IOTProject) (*entities.IOTProject, error)
@@ -550,9 +576,6 @@ type MutationResolver interface {
 	IotCreateDeployment(ctx context.Context, projectName string, deployment entities.IOTDeployment) (*entities.IOTDeployment, error)
 	IotUpdateDeployment(ctx context.Context, projectName string, deployment entities.IOTDeployment) (*entities.IOTDeployment, error)
 	IotDeleteDeployment(ctx context.Context, projectName string, name string) (bool, error)
-	IotCreateApp(ctx context.Context, projectName string, deviceBlueprintName string, app entities.IOTApp) (*entities.IOTApp, error)
-	IotUpdateApp(ctx context.Context, projectName string, deviceBlueprintName string, app entities.IOTApp) (*entities.IOTApp, error)
-	IotDeleteApp(ctx context.Context, projectName string, deviceBlueprintName string, name string) (bool, error)
 }
 type QueryResolver interface {
 	IotCheckNameAvailability(ctx context.Context, projectName string, deviceBlueprintName *string, deploymentName *string, resType domain.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error)
@@ -564,23 +587,24 @@ type QueryResolver interface {
 	IotGetDeviceBlueprint(ctx context.Context, projectName string, name string) (*entities.IOTDeviceBlueprint, error)
 	IotListDeployments(ctx context.Context, projectName string, search *model.SearchIOTDeployments, pq *repos.CursorPagination) (*model.IOTDeploymentPaginatedRecords, error)
 	IotGetDeployment(ctx context.Context, projectName string, name string) (*entities.IOTDeployment, error)
-	IotListApps(ctx context.Context, projectName string, deviceBlueprintName string, search *model.SearchIOTApps, pq *repos.CursorPagination) (*model.IOTAppPaginatedRecords, error)
-	IotGetApp(ctx context.Context, projectName string, deviceBlueprintName string, name string) (*entities.IOTApp, error)
 }
 
-type IOTAppInResolver interface {
-	Metadata(ctx context.Context, obj *entities.IOTApp, data *v1.ObjectMeta) error
-	Spec(ctx context.Context, obj *entities.IOTApp, data *model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn) error
+type Github__com___kloudlite___operator___apis___crds___v1__AppInResolver interface {
+	Metadata(ctx context.Context, obj *v1.App, data *v11.ObjectMeta) error
+	Spec(ctx context.Context, obj *v1.App, data *model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn) error
 }
 type IOTDeploymentInResolver interface {
 	ExposedServices(ctx context.Context, obj *entities.IOTDeployment, data []*model.GithubComKloudliteAPIAppsIotConsoleInternalEntitiesExposedServiceIn) error
 }
 type IOTDeviceBlueprintInResolver interface {
 	BluePrintType(ctx context.Context, obj *entities.IOTDeviceBlueprint, data model.GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType) error
+
+	Metadata(ctx context.Context, obj *entities.IOTDeviceBlueprint, data *v11.ObjectMeta) error
+	Spec(ctx context.Context, obj *entities.IOTDeviceBlueprint, data *model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn) error
 }
 type MetadataInResolver interface {
-	Annotations(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
-	Labels(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
+	Annotations(ctx context.Context, obj *v11.ObjectMeta, data map[string]interface{}) error
+	Labels(ctx context.Context, obj *v11.ObjectMeta, data map[string]interface{}) error
 }
 
 type executableSchema struct {
@@ -658,6 +682,132 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__ExposedService.Name(childComplexity), true
 
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.apiVersion":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.APIVersion == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.APIVersion(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.accountName":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.AccountName == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.AccountName(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.bluePrintType":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.BluePrintType == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.BluePrintType(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.createdBy":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.CreatedBy == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.CreatedBy(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.creationTime":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.CreationTime == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.CreationTime(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.deploymentName":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.DeploymentName == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.DeploymentName(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.displayName":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.DisplayName == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.DisplayName(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.id":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Id == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Id(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.kind":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Kind == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Kind(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.lastUpdatedBy":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.LastUpdatedBy == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.LastUpdatedBy(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.markedForDeletion":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.MarkedForDeletion == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.MarkedForDeletion(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.metadata":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.ObjectMeta == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.ObjectMeta(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.projectName":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.ProjectName == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.ProjectName(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.recordVersion":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.RecordVersion(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.spec":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Spec == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Spec(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.status":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Status == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.Status(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.syncStatus":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.SyncStatus == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.SyncStatus(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.updateTime":
+		if e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint.UpdateTime(childComplexity), true
+
 	case "Github__com___kloudlite___api___common__CreatedOrUpdatedBy.userEmail":
 		if e.complexity.Github__com___kloudlite___api___common__CreatedOrUpdatedBy.UserEmail == nil {
 			break
@@ -678,6 +828,90 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github__com___kloudlite___api___common__CreatedOrUpdatedBy.UserName(childComplexity), true
+
+	case "Github__com___kloudlite___api___pkg___types__SyncStatus.action":
+		if e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.Action == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.Action(childComplexity), true
+
+	case "Github__com___kloudlite___api___pkg___types__SyncStatus.error":
+		if e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.Error == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.Error(childComplexity), true
+
+	case "Github__com___kloudlite___api___pkg___types__SyncStatus.lastSyncedAt":
+		if e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.LastSyncedAt == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.LastSyncedAt(childComplexity), true
+
+	case "Github__com___kloudlite___api___pkg___types__SyncStatus.recordVersion":
+		if e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.RecordVersion(childComplexity), true
+
+	case "Github__com___kloudlite___api___pkg___types__SyncStatus.state":
+		if e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.State == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.State(childComplexity), true
+
+	case "Github__com___kloudlite___api___pkg___types__SyncStatus.syncScheduledAt":
+		if e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.SyncScheduledAt == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___pkg___types__SyncStatus.SyncScheduledAt(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__App.apiVersion":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.APIVersion == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.APIVersion(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__App.enabled":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Enabled == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Enabled(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__App.kind":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Kind == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Kind(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__App.metadata":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.ObjectMeta == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.ObjectMeta(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__App.spec":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Spec == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Spec(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__App.status":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Status == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__App.Status(childComplexity), true
 
 	case "Github__com___kloudlite___operator___apis___crds___v1__AppContainer.args":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppContainer.Args == nil {
@@ -847,6 +1081,62 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppSpec.TopologySpreadConstraints(childComplexity), true
 
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.checkList":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.CheckList == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.CheckList(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.checks":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Checks == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Checks(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.isReady":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.IsReady == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.IsReady(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.lastReadyGeneration":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.LastReadyGeneration == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.LastReadyGeneration(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.lastReconcileTime":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.LastReconcileTime == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.LastReconcileTime(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.message":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Message == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Message(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.name":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Name == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Name(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__AppStatus.resources":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Resources == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppStatus.Resources(childComplexity), true
+
 	case "Github__com___kloudlite___operator___apis___crds___v1__AppSvc.name":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppSvc.Name == nil {
 			break
@@ -874,6 +1164,76 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AppSvc.Type(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec.apps":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec.Apps == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec.Apps(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec.version":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec.Version == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec.Version(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.apps":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Apps == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Apps(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.checkList":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.CheckList == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.CheckList(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.checks":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Checks == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Checks(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.isReady":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.IsReady == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.IsReady(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.lastReadyGeneration":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.LastReadyGeneration == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.LastReadyGeneration(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.lastReconcileTime":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.LastReconcileTime == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.LastReconcileTime(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.message":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Message == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Message(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.resources":
+		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Resources == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus.Resources(childComplexity), true
 
 	case "Github__com___kloudlite___operator___apis___crds___v1__ContainerEnv.key":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__ContainerEnv.Key == nil {
@@ -1288,160 +1648,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___pkg___raw____json__RawJson.RawMessage(childComplexity), true
 
-	case "IOTApp.apiVersion":
-		if e.complexity.IOTApp.APIVersion == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.APIVersion(childComplexity), true
-
-	case "IOTApp.accountName":
-		if e.complexity.IOTApp.AccountName == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.AccountName(childComplexity), true
-
-	case "IOTApp.createdBy":
-		if e.complexity.IOTApp.CreatedBy == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.CreatedBy(childComplexity), true
-
-	case "IOTApp.creationTime":
-		if e.complexity.IOTApp.CreationTime == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.CreationTime(childComplexity), true
-
-	case "IOTApp.deviceBlueprintName":
-		if e.complexity.IOTApp.DeviceBlueprintName == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.DeviceBlueprintName(childComplexity), true
-
-	case "IOTApp.displayName":
-		if e.complexity.IOTApp.DisplayName == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.DisplayName(childComplexity), true
-
-	case "IOTApp.enabled":
-		if e.complexity.IOTApp.Enabled == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.Enabled(childComplexity), true
-
-	case "IOTApp.id":
-		if e.complexity.IOTApp.Id == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.Id(childComplexity), true
-
-	case "IOTApp.kind":
-		if e.complexity.IOTApp.Kind == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.Kind(childComplexity), true
-
-	case "IOTApp.lastUpdatedBy":
-		if e.complexity.IOTApp.LastUpdatedBy == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.LastUpdatedBy(childComplexity), true
-
-	case "IOTApp.markedForDeletion":
-		if e.complexity.IOTApp.MarkedForDeletion == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.MarkedForDeletion(childComplexity), true
-
-	case "IOTApp.metadata":
-		if e.complexity.IOTApp.ObjectMeta == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.ObjectMeta(childComplexity), true
-
-	case "IOTApp.projectName":
-		if e.complexity.IOTApp.ProjectName == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.ProjectName(childComplexity), true
-
-	case "IOTApp.recordVersion":
-		if e.complexity.IOTApp.RecordVersion == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.RecordVersion(childComplexity), true
-
-	case "IOTApp.spec":
-		if e.complexity.IOTApp.Spec == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.Spec(childComplexity), true
-
-	case "IOTApp.status":
-		if e.complexity.IOTApp.Status == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.Status(childComplexity), true
-
-	case "IOTApp.updateTime":
-		if e.complexity.IOTApp.UpdateTime == nil {
-			break
-		}
-
-		return e.complexity.IOTApp.UpdateTime(childComplexity), true
-
-	case "IOTAppEdge.cursor":
-		if e.complexity.IOTAppEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.IOTAppEdge.Cursor(childComplexity), true
-
-	case "IOTAppEdge.node":
-		if e.complexity.IOTAppEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.IOTAppEdge.Node(childComplexity), true
-
-	case "IOTAppPaginatedRecords.edges":
-		if e.complexity.IOTAppPaginatedRecords.Edges == nil {
-			break
-		}
-
-		return e.complexity.IOTAppPaginatedRecords.Edges(childComplexity), true
-
-	case "IOTAppPaginatedRecords.pageInfo":
-		if e.complexity.IOTAppPaginatedRecords.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.IOTAppPaginatedRecords.PageInfo(childComplexity), true
-
-	case "IOTAppPaginatedRecords.totalCount":
-		if e.complexity.IOTAppPaginatedRecords.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.IOTAppPaginatedRecords.TotalCount(childComplexity), true
-
 	case "IOTConsoleCheckNameAvailabilityOutput.result":
 		if e.complexity.IOTConsoleCheckNameAvailabilityOutput.Result == nil {
 			break
@@ -1462,13 +1668,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTDeployment.AccountName(childComplexity), true
-
-	case "IOTDeployment.CIDR":
-		if e.complexity.IOTDeployment.CIDR == nil {
-			break
-		}
-
-		return e.complexity.IOTDeployment.CIDR(childComplexity), true
 
 	case "IOTDeployment.createdBy":
 		if e.complexity.IOTDeployment.CreatedBy == nil {
@@ -1624,6 +1823,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDevice.CreationTime(childComplexity), true
 
+	case "IOTDevice.currentBlueprint":
+		if e.complexity.IOTDevice.CurrentBlueprint == nil {
+			break
+		}
+
+		return e.complexity.IOTDevice.CurrentBlueprint(childComplexity), true
+
 	case "IOTDevice.deploymentName":
 		if e.complexity.IOTDevice.DeploymentName == nil {
 			break
@@ -1637,6 +1843,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTDevice.DisplayName(childComplexity), true
+
+	case "IOTDevice.expectedBlueprint":
+		if e.complexity.IOTDevice.ExpectedBlueprint == nil {
+			break
+		}
+
+		return e.complexity.IOTDevice.ExpectedBlueprint(childComplexity), true
 
 	case "IOTDevice.ip":
 		if e.complexity.IOTDevice.IP == nil {
@@ -1715,6 +1928,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDevice.ServiceCIDR(childComplexity), true
 
+	case "IOTDevice.status":
+		if e.complexity.IOTDevice.Status == nil {
+			break
+		}
+
+		return e.complexity.IOTDevice.Status(childComplexity), true
+
+	case "IOTDevice.syncStatus":
+		if e.complexity.IOTDevice.SyncStatus == nil {
+			break
+		}
+
+		return e.complexity.IOTDevice.SyncStatus(childComplexity), true
+
 	case "IOTDevice.updateTime":
 		if e.complexity.IOTDevice.UpdateTime == nil {
 			break
@@ -1722,12 +1949,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDevice.UpdateTime(childComplexity), true
 
-	case "IOTDevice.version":
-		if e.complexity.IOTDevice.Version == nil {
+	case "IOTDeviceBlueprint.apiVersion":
+		if e.complexity.IOTDeviceBlueprint.APIVersion == nil {
 			break
 		}
 
-		return e.complexity.IOTDevice.Version(childComplexity), true
+		return e.complexity.IOTDeviceBlueprint.APIVersion(childComplexity), true
 
 	case "IOTDeviceBlueprint.accountName":
 		if e.complexity.IOTDeviceBlueprint.AccountName == nil {
@@ -1757,6 +1984,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDeviceBlueprint.CreationTime(childComplexity), true
 
+	case "IOTDeviceBlueprint.deploymentName":
+		if e.complexity.IOTDeviceBlueprint.DeploymentName == nil {
+			break
+		}
+
+		return e.complexity.IOTDeviceBlueprint.DeploymentName(childComplexity), true
+
 	case "IOTDeviceBlueprint.displayName":
 		if e.complexity.IOTDeviceBlueprint.DisplayName == nil {
 			break
@@ -1770,6 +2004,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTDeviceBlueprint.Id(childComplexity), true
+
+	case "IOTDeviceBlueprint.kind":
+		if e.complexity.IOTDeviceBlueprint.Kind == nil {
+			break
+		}
+
+		return e.complexity.IOTDeviceBlueprint.Kind(childComplexity), true
 
 	case "IOTDeviceBlueprint.lastUpdatedBy":
 		if e.complexity.IOTDeviceBlueprint.LastUpdatedBy == nil {
@@ -1785,12 +2026,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDeviceBlueprint.MarkedForDeletion(childComplexity), true
 
-	case "IOTDeviceBlueprint.name":
-		if e.complexity.IOTDeviceBlueprint.Name == nil {
+	case "IOTDeviceBlueprint.metadata":
+		if e.complexity.IOTDeviceBlueprint.ObjectMeta == nil {
 			break
 		}
 
-		return e.complexity.IOTDeviceBlueprint.Name(childComplexity), true
+		return e.complexity.IOTDeviceBlueprint.ObjectMeta(childComplexity), true
 
 	case "IOTDeviceBlueprint.projectName":
 		if e.complexity.IOTDeviceBlueprint.ProjectName == nil {
@@ -1806,19 +2047,33 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.IOTDeviceBlueprint.RecordVersion(childComplexity), true
 
+	case "IOTDeviceBlueprint.spec":
+		if e.complexity.IOTDeviceBlueprint.Spec == nil {
+			break
+		}
+
+		return e.complexity.IOTDeviceBlueprint.Spec(childComplexity), true
+
+	case "IOTDeviceBlueprint.status":
+		if e.complexity.IOTDeviceBlueprint.Status == nil {
+			break
+		}
+
+		return e.complexity.IOTDeviceBlueprint.Status(childComplexity), true
+
+	case "IOTDeviceBlueprint.syncStatus":
+		if e.complexity.IOTDeviceBlueprint.SyncStatus == nil {
+			break
+		}
+
+		return e.complexity.IOTDeviceBlueprint.SyncStatus(childComplexity), true
+
 	case "IOTDeviceBlueprint.updateTime":
 		if e.complexity.IOTDeviceBlueprint.UpdateTime == nil {
 			break
 		}
 
 		return e.complexity.IOTDeviceBlueprint.UpdateTime(childComplexity), true
-
-	case "IOTDeviceBlueprint.version":
-		if e.complexity.IOTDeviceBlueprint.Version == nil {
-			break
-		}
-
-		return e.complexity.IOTDeviceBlueprint.Version(childComplexity), true
 
 	case "IOTDeviceBlueprintEdge.cursor":
 		if e.complexity.IOTDeviceBlueprintEdge.Cursor == nil {
@@ -1889,118 +2144,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.IOTDevicePaginatedRecords.TotalCount(childComplexity), true
-
-	case "IOTEnvironment.accountName":
-		if e.complexity.IOTEnvironment.AccountName == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.AccountName(childComplexity), true
-
-	case "IOTEnvironment.createdBy":
-		if e.complexity.IOTEnvironment.CreatedBy == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.CreatedBy(childComplexity), true
-
-	case "IOTEnvironment.creationTime":
-		if e.complexity.IOTEnvironment.CreationTime == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.CreationTime(childComplexity), true
-
-	case "IOTEnvironment.displayName":
-		if e.complexity.IOTEnvironment.DisplayName == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.DisplayName(childComplexity), true
-
-	case "IOTEnvironment.id":
-		if e.complexity.IOTEnvironment.ID == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.ID(childComplexity), true
-
-	case "IOTEnvironment.lastUpdatedBy":
-		if e.complexity.IOTEnvironment.LastUpdatedBy == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.LastUpdatedBy(childComplexity), true
-
-	case "IOTEnvironment.markedForDeletion":
-		if e.complexity.IOTEnvironment.MarkedForDeletion == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.MarkedForDeletion(childComplexity), true
-
-	case "IOTEnvironment.name":
-		if e.complexity.IOTEnvironment.Name == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.Name(childComplexity), true
-
-	case "IOTEnvironment.projectName":
-		if e.complexity.IOTEnvironment.ProjectName == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.ProjectName(childComplexity), true
-
-	case "IOTEnvironment.recordVersion":
-		if e.complexity.IOTEnvironment.RecordVersion == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.RecordVersion(childComplexity), true
-
-	case "IOTEnvironment.updateTime":
-		if e.complexity.IOTEnvironment.UpdateTime == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironment.UpdateTime(childComplexity), true
-
-	case "IOTEnvironmentEdge.cursor":
-		if e.complexity.IOTEnvironmentEdge.Cursor == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironmentEdge.Cursor(childComplexity), true
-
-	case "IOTEnvironmentEdge.node":
-		if e.complexity.IOTEnvironmentEdge.Node == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironmentEdge.Node(childComplexity), true
-
-	case "IOTEnvironmentPaginatedRecords.edges":
-		if e.complexity.IOTEnvironmentPaginatedRecords.Edges == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironmentPaginatedRecords.Edges(childComplexity), true
-
-	case "IOTEnvironmentPaginatedRecords.pageInfo":
-		if e.complexity.IOTEnvironmentPaginatedRecords.PageInfo == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironmentPaginatedRecords.PageInfo(childComplexity), true
-
-	case "IOTEnvironmentPaginatedRecords.totalCount":
-		if e.complexity.IOTEnvironmentPaginatedRecords.TotalCount == nil {
-			break
-		}
-
-		return e.complexity.IOTEnvironmentPaginatedRecords.TotalCount(childComplexity), true
 
 	case "IOTProject.accountName":
 		if e.complexity.IOTProject.AccountName == nil {
@@ -2310,18 +2453,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Metadata.Namespace(childComplexity), true
 
-	case "Mutation.iot_createApp":
-		if e.complexity.Mutation.IotCreateApp == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_iot_createApp_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.IotCreateApp(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(string), args["app"].(entities.IOTApp)), true
-
 	case "Mutation.iot_createDeployment":
 		if e.complexity.Mutation.IotCreateDeployment == nil {
 			break
@@ -2370,18 +2501,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.IotCreateProject(childComplexity, args["project"].(entities.IOTProject)), true
 
-	case "Mutation.iot_deleteApp":
-		if e.complexity.Mutation.IotDeleteApp == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_iot_deleteApp_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.IotDeleteApp(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(string), args["name"].(string)), true
-
 	case "Mutation.iot_deleteDeployment":
 		if e.complexity.Mutation.IotDeleteDeployment == nil {
 			break
@@ -2429,18 +2548,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.IotDeleteProject(childComplexity, args["name"].(string)), true
-
-	case "Mutation.iot_updateApp":
-		if e.complexity.Mutation.IotUpdateApp == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_iot_updateApp_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.IotUpdateApp(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(string), args["app"].(entities.IOTApp)), true
 
 	case "Mutation.iot_updateDeployment":
 		if e.complexity.Mutation.IotUpdateDeployment == nil {
@@ -2530,18 +2637,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.IotCheckNameAvailability(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(*string), args["deploymentName"].(*string), args["resType"].(domain.ResourceType), args["name"].(string)), true
 
-	case "Query.iot_getApp":
-		if e.complexity.Query.IotGetApp == nil {
-			break
-		}
-
-		args, err := ec.field_Query_iot_getApp_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.IotGetApp(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(string), args["name"].(string)), true
-
 	case "Query.iot_getDeployment":
 		if e.complexity.Query.IotGetDeployment == nil {
 			break
@@ -2589,18 +2684,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.IotGetProject(childComplexity, args["name"].(string)), true
-
-	case "Query.iot_listApps":
-		if e.complexity.Query.IotListApps == nil {
-			break
-		}
-
-		args, err := ec.field_Query_iot_listApps_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.IotListApps(childComplexity, args["projectName"].(string), args["deviceBlueprintName"].(string), args["search"].(*model.SearchIOTApps), args["pq"].(*repos.CursorPagination)), true
 
 	case "Query.iot_listDeployments":
 		if e.complexity.Query.IotListDeployments == nil {
@@ -2675,8 +2758,10 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputCursorPaginationIn,
 		ec.unmarshalInputGithub__com___kloudlite___api___apps___iot____console___internal___entities__ExposedServiceIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppContainerIn,
+		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppSpecIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppSvcIn,
+		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ContainerEnvIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ContainerResourceIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ContainerVolumeIn,
@@ -2688,11 +2773,9 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ProbeIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ShellProbeIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__TcpProbeIn,
-		ec.unmarshalInputIOTAppIn,
 		ec.unmarshalInputIOTDeploymentIn,
 		ec.unmarshalInputIOTDeviceBlueprintIn,
 		ec.unmarshalInputIOTDeviceIn,
-		ec.unmarshalInputIOTEnvironmentIn,
 		ec.unmarshalInputIOTProjectIn,
 		ec.unmarshalInputK8s__io___api___core___v1__TolerationIn,
 		ec.unmarshalInputK8s__io___api___core___v1__TopologySpreadConstraintIn,
@@ -2700,7 +2783,6 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputK8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirementIn,
 		ec.unmarshalInputMatchFilterIn,
 		ec.unmarshalInputMetadataIn,
-		ec.unmarshalInputSearchIOTApps,
 		ec.unmarshalInputSearchIOTDeployments,
 		ec.unmarshalInputSearchIOTDeviceBlueprints,
 		ec.unmarshalInputSearchIOTDevices,
@@ -2843,12 +2925,6 @@ input SearchIOTDeviceBlueprints {
     markedForDeletion: MatchFilterIn
 }
 
-input SearchIOTApps {
-    text: MatchFilterIn
-    isReady: MatchFilterIn
-    markedForDeletion: MatchFilterIn
-}
-
 type Query {
     iot_checkNameAvailability(projectName: String!, deviceBlueprintName: String, deploymentName: String, resType: ResourceType!, name: String!): IOTConsoleCheckNameAvailabilityOutput! @isLoggedInAndVerified @hasAccount
 
@@ -2864,8 +2940,6 @@ type Query {
     iot_listDeployments(projectName: String!,search: SearchIOTDeployments, pq: CursorPaginationIn): IOTDeploymentPaginatedRecords @isLoggedInAndVerified @hasAccount
     iot_getDeployment(projectName: String!, name: String!): IOTDeployment @isLoggedInAndVerified @hasAccount
 
-    iot_listApps(projectName: String!, deviceBlueprintName: String!,search: SearchIOTApps, pq: CursorPaginationIn): IOTAppPaginatedRecords @isLoggedInAndVerified @hasAccount
-    iot_getApp(projectName: String!, deviceBlueprintName: String!, name: String!): IOTApp @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -2884,10 +2958,6 @@ type Mutation {
     iot_createDeployment(projectName: String!, deployment: IOTDeploymentIn!): IOTDeployment @isLoggedInAndVerified @hasAccount
     iot_updateDeployment(projectName: String!, deployment: IOTDeploymentIn!): IOTDeployment @isLoggedInAndVerified @hasAccount
     iot_deleteDeployment(projectName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
-
-    iot_createApp(projectName: String!, deviceBlueprintName: String!, app: IOTAppIn!): IOTApp @isLoggedInAndVerified @hasAccount
-    iot_updateApp(projectName: String!, deviceBlueprintName: String!, app: IOTAppIn!): IOTApp @isLoggedInAndVerified @hasAccount
-    iot_deleteApp(projectName: String!, deviceBlueprintName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 }
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github__com___kloudlite___api___apps___iot____console___internal___entities__ExposedService @shareable {
@@ -2895,10 +2965,49 @@ type Mutation {
   name: String!
 }
 
+type Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint @shareable {
+  accountName: String!
+  apiVersion: String
+  bluePrintType: Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType!
+  createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  creationTime: Date!
+  deploymentName: String!
+  displayName: String!
+  id: ID!
+  kind: String
+  lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  markedForDeletion: Boolean
+  metadata: Metadata @goField(name: "objectMeta")
+  projectName: String!
+  recordVersion: Int!
+  spec: Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec
+  status: Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
+  updateTime: Date!
+}
+
 type Github__com___kloudlite___api___common__CreatedOrUpdatedBy @shareable {
   userEmail: String!
   userId: String!
   userName: String!
+}
+
+type Github__com___kloudlite___api___pkg___types__SyncStatus @shareable {
+  action: Github__com___kloudlite___api___pkg___types__SyncAction!
+  error: String
+  lastSyncedAt: Date
+  recordVersion: Int!
+  state: Github__com___kloudlite___api___pkg___types__SyncState!
+  syncScheduledAt: Date
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__App @shareable {
+  apiVersion: String
+  enabled: Boolean
+  kind: String
+  metadata: Metadata @goField(name: "objectMeta")
+  spec: Github__com___kloudlite___operator___apis___crds___v1__AppSpec!
+  status: Github__com___kloudlite___operator___pkg___operator__Status
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__AppContainer @shareable {
@@ -2931,11 +3040,38 @@ type Github__com___kloudlite___operator___apis___crds___v1__AppSpec @shareable {
   topologySpreadConstraints: [K8s__io___api___core___v1__TopologySpreadConstraint!]
 }
 
+type Github__com___kloudlite___operator___apis___crds___v1__AppStatus @shareable {
+  checkList: [Github__com___kloudlite___operator___pkg___operator__CheckMeta!]
+  checks: Map
+  isReady: Boolean!
+  lastReadyGeneration: Int
+  lastReconcileTime: Date
+  message: Github__com___kloudlite___operator___pkg___raw____json__RawJson
+  name: String!
+  resources: [Github__com___kloudlite___operator___pkg___operator__ResourceRef!]
+}
+
 type Github__com___kloudlite___operator___apis___crds___v1__AppSvc @shareable {
   name: String
   port: Int!
   targetPort: Int
   type: String
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec @shareable {
+  apps: [Github__com___kloudlite___operator___apis___crds___v1__App!]
+  version: String!
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus @shareable {
+  apps: [Github__com___kloudlite___operator___apis___crds___v1__AppStatus!]
+  checkList: [Github__com___kloudlite___operator___pkg___operator__CheckMeta!]
+  checks: Map
+  isReady: Boolean!
+  lastReadyGeneration: Int
+  lastReconcileTime: Date
+  message: Github__com___kloudlite___operator___pkg___raw____json__RawJson
+  resources: [Github__com___kloudlite___operator___pkg___operator__ResourceRef!]
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__ContainerEnv @shareable {
@@ -3112,6 +3248,14 @@ input Github__com___kloudlite___operator___apis___crds___v1__AppContainerIn {
   volumes: [Github__com___kloudlite___operator___apis___crds___v1__ContainerVolumeIn!]
 }
 
+input Github__com___kloudlite___operator___apis___crds___v1__AppIn {
+  apiVersion: String
+  enabled: Boolean
+  kind: String
+  metadata: MetadataIn
+  spec: Github__com___kloudlite___operator___apis___crds___v1__AppSpecIn!
+}
+
 input Github__com___kloudlite___operator___apis___crds___v1__AppSpecIn {
   containers: [Github__com___kloudlite___operator___apis___crds___v1__AppContainerIn!]!
   displayName: String
@@ -3132,6 +3276,11 @@ input Github__com___kloudlite___operator___apis___crds___v1__AppSvcIn {
   port: Int!
   targetPort: Int
   type: String
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn {
+  apps: [Github__com___kloudlite___operator___apis___crds___v1__AppIn!]
+  version: String!
 }
 
 input Github__com___kloudlite___operator___apis___crds___v1__ContainerEnvIn {
@@ -3244,6 +3393,21 @@ enum Github__com___kloudlite___api___apps___iot____console___internal___entities
   singleton_blueprint
 }
 
+enum Github__com___kloudlite___api___pkg___types__SyncAction {
+  APPLY
+  DELETE
+}
+
+enum Github__com___kloudlite___api___pkg___types__SyncState {
+  APPLIED_AT_AGENT
+  DELETED_AT_AGENT
+  DELETING_AT_AGENT
+  ERRORED_AT_AGENT
+  IDLE
+  IN_QUEUE
+  UPDATED_AT_AGENT
+}
+
 enum Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret {
   config
   pvc
@@ -3312,50 +3476,8 @@ directive @goField(
 	name: String
 ) on INPUT_FIELD_DEFINITION | FIELD_DEFINITION
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/iotapp.graphqls", Input: `type IOTApp @shareable {
-  accountName: String!
-  apiVersion: String
-  createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
-  creationTime: Date!
-  deviceBlueprintName: String!
-  displayName: String!
-  enabled: Boolean
-  id: ID!
-  kind: String
-  lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
-  markedForDeletion: Boolean
-  metadata: Metadata @goField(name: "objectMeta")
-  projectName: String!
-  recordVersion: Int!
-  spec: Github__com___kloudlite___operator___apis___crds___v1__AppSpec!
-  status: Github__com___kloudlite___operator___pkg___operator__Status
-  updateTime: Date!
-}
-
-type IOTAppEdge @shareable {
-  cursor: String!
-  node: IOTApp!
-}
-
-type IOTAppPaginatedRecords @shareable {
-  edges: [IOTAppEdge!]!
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-input IOTAppIn {
-  apiVersion: String
-  displayName: String!
-  enabled: Boolean
-  kind: String
-  metadata: MetadataIn
-  spec: Github__com___kloudlite___operator___apis___crds___v1__AppSpecIn!
-}
-
-`, BuiltIn: false},
 	{Name: "../struct-to-graphql/iotdeployment.graphqls", Input: `type IOTDeployment @shareable {
   accountName: String!
-  CIDR: String!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
   displayName: String!
@@ -3383,7 +3505,6 @@ type IOTDeploymentPaginatedRecords @shareable {
 }
 
 input IOTDeploymentIn {
-  CIDR: String!
   displayName: String!
   exposedDomains: [String!]!
   exposedIps: [String!]!
@@ -3397,8 +3518,10 @@ input IOTDeploymentIn {
   clusterToken: String!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
+  currentBlueprint: Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint
   deploymentName: String!
   displayName: String!
+  expectedBlueprint: Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint
   id: ID!
   index: Int!
   ip: String!
@@ -3410,8 +3533,9 @@ input IOTDeploymentIn {
   publicKey: String!
   recordVersion: Int!
   serviceCIDR: String!
+  status: Github__com___kloudlite___operator___pkg___operator__Status
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
-  version: String!
 }
 
 type IOTDeviceEdge @shareable {
@@ -3429,24 +3553,28 @@ input IOTDeviceIn {
   displayName: String!
   name: String!
   publicKey: String!
-  version: String!
 }
 
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/iotdeviceblueprint.graphqls", Input: `type IOTDeviceBlueprint @shareable {
   accountName: String!
+  apiVersion: String
   bluePrintType: Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
+  deploymentName: String!
   displayName: String!
   id: ID!
+  kind: String
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   markedForDeletion: Boolean
-  name: String!
+  metadata: Metadata @goField(name: "objectMeta")
   projectName: String!
   recordVersion: Int!
+  spec: Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec
+  status: Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
-  version: String!
 }
 
 type IOTDeviceBlueprintEdge @shareable {
@@ -3461,41 +3589,13 @@ type IOTDeviceBlueprintPaginatedRecords @shareable {
 }
 
 input IOTDeviceBlueprintIn {
+  apiVersion: String
   bluePrintType: Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType!
+  deploymentName: String!
   displayName: String!
-  name: String!
-  version: String!
-}
-
-`, BuiltIn: false},
-	{Name: "../struct-to-graphql/iotenvironment.graphqls", Input: `type IOTEnvironment @shareable {
-  accountName: String!
-  createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
-  creationTime: Date!
-  displayName: String!
-  id: ID!
-  lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
-  markedForDeletion: Boolean
-  name: String!
-  projectName: String!
-  recordVersion: Int!
-  updateTime: Date!
-}
-
-type IOTEnvironmentEdge @shareable {
-  cursor: String!
-  node: IOTEnvironment!
-}
-
-type IOTEnvironmentPaginatedRecords @shareable {
-  edges: [IOTEnvironmentEdge!]!
-  pageInfo: PageInfo!
-  totalCount: Int!
-}
-
-input IOTEnvironmentIn {
-  displayName: String!
-  name: String!
+  kind: String
+  metadata: MetadataIn
+  spec: Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn
 }
 
 `, BuiltIn: false},
@@ -3615,39 +3715,6 @@ var parsedSchema = gqlparser.MustLoadSchema(sources...)
 
 // region    ***************************** args.gotpl *****************************
 
-func (ec *executionContext) field_Mutation_iot_createApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectName"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["deviceBlueprintName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceBlueprintName"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["deviceBlueprintName"] = arg1
-	var arg2 entities.IOTApp
-	if tmp, ok := rawArgs["app"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("app"))
-		arg2, err = ec.unmarshalNIOTAppIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["app"] = arg2
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_iot_createDeployment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3744,39 +3811,6 @@ func (ec *executionContext) field_Mutation_iot_createProject_args(ctx context.Co
 	return args, nil
 }
 
-func (ec *executionContext) field_Mutation_iot_deleteApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectName"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["deviceBlueprintName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceBlueprintName"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["deviceBlueprintName"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg2
-	return args, nil
-}
-
 func (ec *executionContext) field_Mutation_iot_deleteDeployment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -3870,39 +3904,6 @@ func (ec *executionContext) field_Mutation_iot_deleteProject_args(ctx context.Co
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Mutation_iot_updateApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectName"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["deviceBlueprintName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceBlueprintName"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["deviceBlueprintName"] = arg1
-	var arg2 entities.IOTApp
-	if tmp, ok := rawArgs["app"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("app"))
-		arg2, err = ec.unmarshalNIOTAppIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["app"] = arg2
 	return args, nil
 }
 
@@ -4068,39 +4069,6 @@ func (ec *executionContext) field_Query_iot_checkNameAvailability_args(ctx conte
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_iot_getApp_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectName"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["deviceBlueprintName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceBlueprintName"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["deviceBlueprintName"] = arg1
-	var arg2 string
-	if tmp, ok := rawArgs["name"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-		arg2, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["name"] = arg2
-	return args, nil
-}
-
 func (ec *executionContext) field_Query_iot_getDeployment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
@@ -4194,48 +4162,6 @@ func (ec *executionContext) field_Query_iot_getProject_args(ctx context.Context,
 		}
 	}
 	args["name"] = arg0
-	return args, nil
-}
-
-func (ec *executionContext) field_Query_iot_listApps_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	var arg0 string
-	if tmp, ok := rawArgs["projectName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("projectName"))
-		arg0, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["projectName"] = arg0
-	var arg1 string
-	if tmp, ok := rawArgs["deviceBlueprintName"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deviceBlueprintName"))
-		arg1, err = ec.unmarshalNString2string(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["deviceBlueprintName"] = arg1
-	var arg2 *model.SearchIOTApps
-	if tmp, ok := rawArgs["search"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
-		arg2, err = ec.unmarshalOSearchIOTApps2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchIOTApps(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["search"] = arg2
-	var arg3 *repos.CursorPagination
-	if tmp, ok := rawArgs["pq"]; ok {
-		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("pq"))
-		arg3, err = ec.unmarshalOCursorPaginationIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐCursorPagination(ctx, tmp)
-		if err != nil {
-			return nil, err
-		}
-	}
-	args["pq"] = arg3
 	return args, nil
 }
 
@@ -4743,6 +4669,850 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_accountName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_accountName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_accountName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_bluePrintType(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_bluePrintType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint().BluePrintType(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_bluePrintType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_createdBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CreatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2githubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___common__CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_creationTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint().CreationTime(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_creationTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_deploymentName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_deploymentName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeploymentName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_deploymentName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_displayName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_displayName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DisplayName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_id(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Id, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(repos.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_kind(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastUpdatedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(common.CreatedOrUpdatedBy)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2githubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "userEmail":
+				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
+			case "userId":
+				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userId(ctx, field)
+			case "userName":
+				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userName(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___common__CreatedOrUpdatedBy", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_markedForDeletion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_markedForDeletion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MarkedForDeletion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_markedForDeletion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectMeta, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(v11.ObjectMeta)
+	fc.Result = res
+	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "annotations":
+				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+			case "generation":
+				return ec.fieldContext_Metadata_generation(ctx, field)
+			case "labels":
+				return ec.fieldContext_Metadata_labels(ctx, field)
+			case "name":
+				return ec.fieldContext_Metadata_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Metadata_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_projectName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_projectName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ProjectName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_projectName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_spec(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_spec(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint().Spec(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintSpec(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apps":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_apps(ctx, field)
+			case "version":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_version(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_status(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint().Status(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apps":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_apps(ctx, field)
+			case "checkList":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checkList(ctx, field)
+			case "checks":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checks(ctx, field)
+			case "isReady":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_isReady(ctx, field)
+			case "lastReadyGeneration":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReadyGeneration(ctx, field)
+			case "lastReconcileTime":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReconcileTime(ctx, field)
+			case "message":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_message(ctx, field)
+			case "resources":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_resources(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_syncStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint().SyncStatus(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteAPIPkgTypesSyncStatus)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_syncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "action":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field)
+			case "error":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field)
+			case "lastSyncedAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field)
+			case "state":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field)
+			case "syncScheduledAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___pkg___types__SyncStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_updateTime(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint().UpdateTime(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_updateTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx context.Context, field graphql.CollectedField, obj *common.CreatedOrUpdatedBy) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
 	if err != nil {
@@ -4870,6 +5640,568 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___common_
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Action, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.GithubComKloudliteAPIPkgTypesSyncAction)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncAction2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncAction(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___pkg___types__SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___api___pkg___types__SyncAction does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Error, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___pkg___types__SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastSyncedAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalODate2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___pkg___types__SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___pkg___types__SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.State, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.GithubComKloudliteAPIPkgTypesSyncState)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncState2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncState(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___pkg___types__SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___api___pkg___types__SyncState does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SyncScheduledAt, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalODate2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___pkg___types__SyncStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App_apiVersion(ctx context.Context, field graphql.CollectedField, obj *v1.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App_enabled(ctx context.Context, field graphql.CollectedField, obj *v1.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_enabled(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App_kind(ctx context.Context, field graphql.CollectedField, obj *v1.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App_metadata(ctx context.Context, field graphql.CollectedField, obj *v1.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectMeta, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(v11.ObjectMeta)
+	fc.Result = res
+	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__App",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "annotations":
+				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+			case "generation":
+				return ec.fieldContext_Metadata_generation(ctx, field)
+			case "labels":
+				return ec.fieldContext_Metadata_labels(ctx, field)
+			case "name":
+				return ec.fieldContext_Metadata_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Metadata_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App_spec(ctx context.Context, field graphql.CollectedField, obj *v1.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_spec(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___operator___apis___crds___v1__App().Spec(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1AppSpec)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpec(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__App",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "containers":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_containers(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_displayName(ctx, field)
+			case "freeze":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_freeze(ctx, field)
+			case "hpa":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_hpa(ctx, field)
+			case "intercept":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_intercept(ctx, field)
+			case "nodeSelector":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_nodeSelector(ctx, field)
+			case "region":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_region(ctx, field)
+			case "replicas":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_replicas(ctx, field)
+			case "serviceAccount":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_serviceAccount(ctx, field)
+			case "services":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_services(ctx, field)
+			case "tolerations":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_tolerations(ctx, field)
+			case "topologySpreadConstraints":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_topologySpreadConstraints(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__AppSpec", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App_status(ctx context.Context, field graphql.CollectedField, obj *v1.App) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Github__com___kloudlite___operator___apis___crds___v1__App().Status(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorPkgOperatorStatus)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__Status2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__App",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "checkList":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checkList(ctx, field)
+			case "checks":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checks(ctx, field)
+			case "isReady":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_isReady(ctx, field)
+			case "lastReadyGeneration":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReadyGeneration(ctx, field)
+			case "lastReconcileTime":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReconcileTime(ctx, field)
+			case "message":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_message(ctx, field)
+			case "resources":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_resources(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__Status", field.Name)
 		},
 	}
 	return fc, nil
@@ -6026,6 +7358,364 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 	return fc, nil
 }
 
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checkList(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checkList(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheckList, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GithubComKloudliteOperatorPkgOperatorCheckMeta)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__CheckMeta2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorCheckMetaᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checkList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "debug":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_debug(ctx, field)
+			case "description":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_description(ctx, field)
+			case "name":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_title(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__CheckMeta", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checks(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Checks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_isReady(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_isReady(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsReady, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_isReady(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReadyGeneration(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReadyGeneration(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastReadyGeneration, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReadyGeneration(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReconcileTime(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReconcileTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastReconcileTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalODate2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReconcileTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_message(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorPkgRawJSONRawJSON)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___raw____json__RawJson2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgRawJSONRawJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_message(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "RawMessage":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___raw____json__RawJson_RawMessage(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___raw____json__RawJson", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_name(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus_resources(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_resources(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Resources, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GithubComKloudliteOperatorPkgOperatorResourceRef)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__ResourceRef2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorResourceRefᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_resources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AppStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apiVersion":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_apiVersion(ctx, field)
+			case "kind":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_kind(ctx, field)
+			case "name":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__ResourceRef", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppSvc_name(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AppSvc) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSvc_name(ctx, field)
 	if err != nil {
@@ -6188,6 +7878,478 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_apps(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_apps(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Apps, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*v1.App)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__App2ᚕᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐAppᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_apps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apiVersion":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_apiVersion(ctx, field)
+			case "enabled":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_enabled(ctx, field)
+			case "kind":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_kind(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_metadata(ctx, field)
+			case "spec":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__App_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__App", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_version(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_version(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Version, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_apps(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_apps(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Apps, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GithubComKloudliteOperatorApisCrdsV1AppStatus)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__AppStatus2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppStatusᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_apps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "checkList":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checkList(ctx, field)
+			case "checks":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checks(ctx, field)
+			case "isReady":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_isReady(ctx, field)
+			case "lastReadyGeneration":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReadyGeneration(ctx, field)
+			case "lastReconcileTime":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReconcileTime(ctx, field)
+			case "message":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_message(ctx, field)
+			case "name":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_name(ctx, field)
+			case "resources":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppStatus_resources(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__AppStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checkList(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checkList(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CheckList, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GithubComKloudliteOperatorPkgOperatorCheckMeta)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__CheckMeta2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorCheckMetaᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checkList(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "debug":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_debug(ctx, field)
+			case "description":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_description(ctx, field)
+			case "name":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_name(ctx, field)
+			case "title":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__CheckMeta_title(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__CheckMeta", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checks(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checks(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Checks, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(map[string]interface{})
+	fc.Result = res
+	return ec.marshalOMap2map(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checks(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Map does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_isReady(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_isReady(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IsReady, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_isReady(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReadyGeneration(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReadyGeneration(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastReadyGeneration, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReadyGeneration(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReconcileTime(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReconcileTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.LastReconcileTime, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalODate2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReconcileTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_message(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_message(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Message, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorPkgRawJSONRawJSON)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___raw____json__RawJson2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgRawJSONRawJSON(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_message(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "RawMessage":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___raw____json__RawJson_RawMessage(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___raw____json__RawJson", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_resources(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_resources(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Resources, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.GithubComKloudliteOperatorPkgOperatorResourceRef)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__ResourceRef2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorResourceRefᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_resources(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apiVersion":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_apiVersion(ctx, field)
+			case "kind":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_kind(ctx, field)
+			case "name":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__ResourceRef_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__ResourceRef", field.Name)
 		},
 	}
 	return fc, nil
@@ -8724,1082 +10886,6 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___pk
 	return fc, nil
 }
 
-func (ec *executionContext) _IOTApp_accountName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_accountName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccountName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_accountName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_apiVersion(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.APIVersion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_createdBy(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_createdBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(common.CreatedOrUpdatedBy)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2githubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "userEmail":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
-			case "userId":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userId(ctx, field)
-			case "userName":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userName(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___common__CreatedOrUpdatedBy", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_creationTime(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.IOTApp().CreationTime(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNDate2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_creationTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Date does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_deviceBlueprintName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_deviceBlueprintName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DeviceBlueprintName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_deviceBlueprintName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_displayName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_displayName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DisplayName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_enabled(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_enabled(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Enabled, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_id(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Id, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(repos.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_kind(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_kind(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Kind, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalOString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_lastUpdatedBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastUpdatedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(common.CreatedOrUpdatedBy)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2githubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "userEmail":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
-			case "userId":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userId(ctx, field)
-			case "userName":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userName(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___common__CreatedOrUpdatedBy", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_markedForDeletion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_markedForDeletion(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.MarkedForDeletion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_markedForDeletion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_metadata(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ObjectMeta, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(v1.ObjectMeta)
-	fc.Result = res
-	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "annotations":
-				return ec.fieldContext_Metadata_annotations(ctx, field)
-			case "creationTimestamp":
-				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
-			case "deletionTimestamp":
-				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
-			case "generation":
-				return ec.fieldContext_Metadata_generation(ctx, field)
-			case "labels":
-				return ec.fieldContext_Metadata_labels(ctx, field)
-			case "name":
-				return ec.fieldContext_Metadata_name(ctx, field)
-			case "namespace":
-				return ec.fieldContext_Metadata_namespace(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_projectName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_projectName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_projectName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_recordVersion(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RecordVersion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_spec(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_spec(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.IOTApp().Spec(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1AppSpec)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpec(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "containers":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_containers(ctx, field)
-			case "displayName":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_displayName(ctx, field)
-			case "freeze":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_freeze(ctx, field)
-			case "hpa":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_hpa(ctx, field)
-			case "intercept":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_intercept(ctx, field)
-			case "nodeSelector":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_nodeSelector(ctx, field)
-			case "region":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_region(ctx, field)
-			case "replicas":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_replicas(ctx, field)
-			case "serviceAccount":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_serviceAccount(ctx, field)
-			case "services":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_services(ctx, field)
-			case "tolerations":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_tolerations(ctx, field)
-			case "topologySpreadConstraints":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AppSpec_topologySpreadConstraints(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__AppSpec", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_status(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.IOTApp().Status(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteOperatorPkgOperatorStatus)
-	fc.Result = res
-	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__Status2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "checkList":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checkList(ctx, field)
-			case "checks":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checks(ctx, field)
-			case "isReady":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_isReady(ctx, field)
-			case "lastReadyGeneration":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReadyGeneration(ctx, field)
-			case "lastReconcileTime":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReconcileTime(ctx, field)
-			case "message":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_message(ctx, field)
-			case "resources":
-				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_resources(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__Status", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTApp_updateTime(ctx context.Context, field graphql.CollectedField, obj *entities.IOTApp) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTApp_updateTime(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.IOTApp().UpdateTime(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNDate2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTApp_updateTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTApp",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Date does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTAppEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.IOTAppEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTAppEdge_cursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTAppEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTAppEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTAppEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.IOTAppEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTAppEdge_node(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*entities.IOTApp)
-	fc.Result = res
-	return ec.marshalNIOTApp2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTAppEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTAppEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_IOTApp_accountName(ctx, field)
-			case "apiVersion":
-				return ec.fieldContext_IOTApp_apiVersion(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_IOTApp_createdBy(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_IOTApp_creationTime(ctx, field)
-			case "deviceBlueprintName":
-				return ec.fieldContext_IOTApp_deviceBlueprintName(ctx, field)
-			case "displayName":
-				return ec.fieldContext_IOTApp_displayName(ctx, field)
-			case "enabled":
-				return ec.fieldContext_IOTApp_enabled(ctx, field)
-			case "id":
-				return ec.fieldContext_IOTApp_id(ctx, field)
-			case "kind":
-				return ec.fieldContext_IOTApp_kind(ctx, field)
-			case "lastUpdatedBy":
-				return ec.fieldContext_IOTApp_lastUpdatedBy(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_IOTApp_markedForDeletion(ctx, field)
-			case "metadata":
-				return ec.fieldContext_IOTApp_metadata(ctx, field)
-			case "projectName":
-				return ec.fieldContext_IOTApp_projectName(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_IOTApp_recordVersion(ctx, field)
-			case "spec":
-				return ec.fieldContext_IOTApp_spec(ctx, field)
-			case "status":
-				return ec.fieldContext_IOTApp_status(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_IOTApp_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTApp", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTAppPaginatedRecords_edges(ctx context.Context, field graphql.CollectedField, obj *model.IOTAppPaginatedRecords) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTAppPaginatedRecords_edges(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.IOTAppEdge)
-	fc.Result = res
-	return ec.marshalNIOTAppEdge2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTAppEdgeᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTAppPaginatedRecords_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTAppPaginatedRecords",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "cursor":
-				return ec.fieldContext_IOTAppEdge_cursor(ctx, field)
-			case "node":
-				return ec.fieldContext_IOTAppEdge_node(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTAppEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTAppPaginatedRecords_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.IOTAppPaginatedRecords) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTAppPaginatedRecords_pageInfo(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTAppPaginatedRecords_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTAppPaginatedRecords",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTAppPaginatedRecords_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.IOTAppPaginatedRecords) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTAppPaginatedRecords_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTAppPaginatedRecords_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTAppPaginatedRecords",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _IOTConsoleCheckNameAvailabilityOutput_result(ctx context.Context, field graphql.CollectedField, obj *domain.CheckNameAvailabilityOutput) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTConsoleCheckNameAvailabilityOutput_result(ctx, field)
 	if err != nil {
@@ -9920,50 +11006,6 @@ func (ec *executionContext) _IOTDeployment_accountName(ctx context.Context, fiel
 }
 
 func (ec *executionContext) fieldContext_IOTDeployment_accountName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTDeployment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTDeployment_CIDR(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeployment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTDeployment_CIDR(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CIDR, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTDeployment_CIDR(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IOTDeployment",
 		Field:      field,
@@ -10652,8 +11694,6 @@ func (ec *executionContext) fieldContext_IOTDeploymentEdge_node(ctx context.Cont
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeployment_accountName(ctx, field)
-			case "CIDR":
-				return ec.fieldContext_IOTDeployment_CIDR(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeployment_createdBy(ctx, field)
 			case "creationTime":
@@ -11019,6 +12059,85 @@ func (ec *executionContext) fieldContext_IOTDevice_creationTime(ctx context.Cont
 	return fc, nil
 }
 
+func (ec *executionContext) _IOTDevice_currentBlueprint(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDevice_currentBlueprint(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.CurrentBlueprint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*entities.IOTDeviceBlueprint)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTDeviceBlueprint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDevice_currentBlueprint(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDevice",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_apiVersion(ctx, field)
+			case "bluePrintType":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_bluePrintType(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_createdBy(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_creationTime(ctx, field)
+			case "deploymentName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_deploymentName(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_displayName(ctx, field)
+			case "id":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
+			case "markedForDeletion":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_markedForDeletion(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_metadata(ctx, field)
+			case "projectName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_projectName(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_syncStatus(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_updateTime(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _IOTDevice_deploymentName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDevice_deploymentName(ctx, field)
 	if err != nil {
@@ -11102,6 +12221,85 @@ func (ec *executionContext) fieldContext_IOTDevice_displayName(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDevice_expectedBlueprint(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDevice_expectedBlueprint(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ExpectedBlueprint, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*entities.IOTDeviceBlueprint)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTDeviceBlueprint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDevice_expectedBlueprint(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDevice",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_apiVersion(ctx, field)
+			case "bluePrintType":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_bluePrintType(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_createdBy(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_creationTime(ctx, field)
+			case "deploymentName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_deploymentName(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_displayName(ctx, field)
+			case "id":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_kind(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
+			case "markedForDeletion":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_markedForDeletion(ctx, field)
+			case "metadata":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_metadata(ctx, field)
+			case "projectName":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_projectName(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_syncStatus(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_updateTime(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint", field.Name)
 		},
 	}
 	return fc, nil
@@ -11596,6 +12794,121 @@ func (ec *executionContext) fieldContext_IOTDevice_serviceCIDR(ctx context.Conte
 	return fc, nil
 }
 
+func (ec *executionContext) _IOTDevice_status(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDevice_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.IOTDevice().Status(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorPkgOperatorStatus)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__Status2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDevice_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDevice",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "checkList":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checkList(ctx, field)
+			case "checks":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checks(ctx, field)
+			case "isReady":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_isReady(ctx, field)
+			case "lastReadyGeneration":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReadyGeneration(ctx, field)
+			case "lastReconcileTime":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReconcileTime(ctx, field)
+			case "message":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_message(ctx, field)
+			case "resources":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_resources(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__Status", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDevice_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDevice_syncStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.IOTDevice().SyncStatus(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteAPIPkgTypesSyncStatus)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDevice_syncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDevice",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "action":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field)
+			case "error":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field)
+			case "lastSyncedAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field)
+			case "state":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field)
+			case "syncScheduledAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___pkg___types__SyncStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _IOTDevice_updateTime(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDevice_updateTime(ctx, field)
 	if err != nil {
@@ -11640,50 +12953,6 @@ func (ec *executionContext) fieldContext_IOTDevice_updateTime(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _IOTDevice_version(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDevice) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTDevice_version(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Version, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTDevice_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTDevice",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _IOTDeviceBlueprint_accountName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDeviceBlueprint_accountName(ctx, field)
 	if err != nil {
@@ -11716,6 +12985,47 @@ func (ec *executionContext) _IOTDeviceBlueprint_accountName(ctx context.Context,
 }
 
 func (ec *executionContext) fieldContext_IOTDeviceBlueprint_accountName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDeviceBlueprint_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_apiVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IOTDeviceBlueprint",
 		Field:      field,
@@ -11868,6 +13178,50 @@ func (ec *executionContext) fieldContext_IOTDeviceBlueprint_creationTime(ctx con
 	return fc, nil
 }
 
+func (ec *executionContext) _IOTDeviceBlueprint_deploymentName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_deploymentName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.DeploymentName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_deploymentName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _IOTDeviceBlueprint_displayName(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDeviceBlueprint_displayName(ctx, field)
 	if err != nil {
@@ -11951,6 +13305,47 @@ func (ec *executionContext) fieldContext_IOTDeviceBlueprint_id(ctx context.Conte
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDeviceBlueprint_kind(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_kind(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12049,8 +13444,8 @@ func (ec *executionContext) fieldContext_IOTDeviceBlueprint_markedForDeletion(ct
 	return fc, nil
 }
 
-func (ec *executionContext) _IOTDeviceBlueprint_name(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTDeviceBlueprint_name(ctx, field)
+func (ec *executionContext) _IOTDeviceBlueprint_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_metadata(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -12063,31 +13458,44 @@ func (ec *executionContext) _IOTDeviceBlueprint_name(ctx context.Context, field 
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
+		return obj.ObjectMeta, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(v11.ObjectMeta)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_IOTDeviceBlueprint_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_metadata(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IOTDeviceBlueprint",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			switch field.Name {
+			case "annotations":
+				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+			case "generation":
+				return ec.fieldContext_Metadata_generation(ctx, field)
+			case "labels":
+				return ec.fieldContext_Metadata_labels(ctx, field)
+			case "name":
+				return ec.fieldContext_Metadata_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Metadata_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
 		},
 	}
 	return fc, nil
@@ -12181,6 +13589,170 @@ func (ec *executionContext) fieldContext_IOTDeviceBlueprint_recordVersion(ctx co
 	return fc, nil
 }
 
+func (ec *executionContext) _IOTDeviceBlueprint_spec(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_spec(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.IOTDeviceBlueprint().Spec(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintSpec(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_spec(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apps":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_apps(ctx, field)
+			case "version":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_version(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDeviceBlueprint_status(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.IOTDeviceBlueprint().Status(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_status(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "apps":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_apps(ctx, field)
+			case "checkList":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checkList(ctx, field)
+			case "checks":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checks(ctx, field)
+			case "isReady":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_isReady(ctx, field)
+			case "lastReadyGeneration":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReadyGeneration(ctx, field)
+			case "lastReconcileTime":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReconcileTime(ctx, field)
+			case "message":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_message(ctx, field)
+			case "resources":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_resources(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _IOTDeviceBlueprint_syncStatus(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_IOTDeviceBlueprint_syncStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.IOTDeviceBlueprint().SyncStatus(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteAPIPkgTypesSyncStatus)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_IOTDeviceBlueprint_syncStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "IOTDeviceBlueprint",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "action":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field)
+			case "error":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field)
+			case "lastSyncedAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field)
+			case "state":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field)
+			case "syncScheduledAt":
+				return ec.fieldContext_Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___pkg___types__SyncStatus", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _IOTDeviceBlueprint_updateTime(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_IOTDeviceBlueprint_updateTime(ctx, field)
 	if err != nil {
@@ -12220,50 +13792,6 @@ func (ec *executionContext) fieldContext_IOTDeviceBlueprint_updateTime(ctx conte
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Date does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTDeviceBlueprint_version(ctx context.Context, field graphql.CollectedField, obj *entities.IOTDeviceBlueprint) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTDeviceBlueprint_version(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Version, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTDeviceBlueprint_version(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTDeviceBlueprint",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -12354,30 +13882,40 @@ func (ec *executionContext) fieldContext_IOTDeviceBlueprintEdge_node(ctx context
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeviceBlueprint_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_IOTDeviceBlueprint_apiVersion(ctx, field)
 			case "bluePrintType":
 				return ec.fieldContext_IOTDeviceBlueprint_bluePrintType(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeviceBlueprint_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDeviceBlueprint_creationTime(ctx, field)
+			case "deploymentName":
+				return ec.fieldContext_IOTDeviceBlueprint_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeviceBlueprint_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDeviceBlueprint_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_IOTDeviceBlueprint_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_IOTDeviceBlueprint_markedForDeletion(ctx, field)
-			case "name":
-				return ec.fieldContext_IOTDeviceBlueprint_name(ctx, field)
+			case "metadata":
+				return ec.fieldContext_IOTDeviceBlueprint_metadata(ctx, field)
 			case "projectName":
 				return ec.fieldContext_IOTDeviceBlueprint_projectName(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_IOTDeviceBlueprint_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_IOTDeviceBlueprint_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDeviceBlueprint_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDeviceBlueprint_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDeviceBlueprint_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDeviceBlueprint_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDeviceBlueprint", field.Name)
 		},
@@ -12624,10 +14162,14 @@ func (ec *executionContext) fieldContext_IOTDeviceEdge_node(ctx context.Context,
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDevice_creationTime(ctx, field)
+			case "currentBlueprint":
+				return ec.fieldContext_IOTDevice_currentBlueprint(ctx, field)
 			case "deploymentName":
 				return ec.fieldContext_IOTDevice_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
+			case "expectedBlueprint":
+				return ec.fieldContext_IOTDevice_expectedBlueprint(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
 			case "index":
@@ -12650,10 +14192,12 @@ func (ec *executionContext) fieldContext_IOTDeviceEdge_node(ctx context.Context,
 				return ec.fieldContext_IOTDevice_recordVersion(ctx, field)
 			case "serviceCIDR":
 				return ec.fieldContext_IOTDevice_serviceCIDR(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDevice_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDevice_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDevice", field.Name)
 		},
@@ -12799,763 +14343,6 @@ func (ec *executionContext) _IOTDevicePaginatedRecords_totalCount(ctx context.Co
 func (ec *executionContext) fieldContext_IOTDevicePaginatedRecords_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "IOTDevicePaginatedRecords",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_accountName(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_accountName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AccountName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_accountName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_createdBy(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_createdBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*common.CreatedOrUpdatedBy)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2ᚖgithubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_createdBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "userEmail":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
-			case "userId":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userId(ctx, field)
-			case "userName":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userName(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___common__CreatedOrUpdatedBy", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_creationTime(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_creationTime(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.CreationTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNDate2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_creationTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Date does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_displayName(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_displayName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.DisplayName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_displayName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_id(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_id(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ID, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(repos.ID)
-	fc.Result = res
-	return ec.marshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_id(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type ID does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_lastUpdatedBy(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_lastUpdatedBy(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.LastUpdatedBy, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*common.CreatedOrUpdatedBy)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2ᚖgithubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_lastUpdatedBy(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "userEmail":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userEmail(ctx, field)
-			case "userId":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userId(ctx, field)
-			case "userName":
-				return ec.fieldContext_Github__com___kloudlite___api___common__CreatedOrUpdatedBy_userName(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___common__CreatedOrUpdatedBy", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_markedForDeletion(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_markedForDeletion(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.MarkedForDeletion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*bool)
-	fc.Result = res
-	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_markedForDeletion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_name(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_name(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Name, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_name(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_projectName(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_projectName(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.ProjectName, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_projectName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_recordVersion(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_recordVersion(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.RecordVersion, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_recordVersion(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironment_updateTime(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironment_updateTime(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.UpdateTime, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNDate2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironment_updateTime(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironment",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Date does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironmentEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironmentEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironmentEdge_cursor(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Cursor, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironmentEdge_cursor(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironmentEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironmentEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironmentEdge) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironmentEdge_node(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Node, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.IOTEnvironment)
-	fc.Result = res
-	return ec.marshalNIOTEnvironment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTEnvironment(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironmentEdge_node(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironmentEdge",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_IOTEnvironment_accountName(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_IOTEnvironment_createdBy(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_IOTEnvironment_creationTime(ctx, field)
-			case "displayName":
-				return ec.fieldContext_IOTEnvironment_displayName(ctx, field)
-			case "id":
-				return ec.fieldContext_IOTEnvironment_id(ctx, field)
-			case "lastUpdatedBy":
-				return ec.fieldContext_IOTEnvironment_lastUpdatedBy(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_IOTEnvironment_markedForDeletion(ctx, field)
-			case "name":
-				return ec.fieldContext_IOTEnvironment_name(ctx, field)
-			case "projectName":
-				return ec.fieldContext_IOTEnvironment_projectName(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_IOTEnvironment_recordVersion(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_IOTEnvironment_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTEnvironment", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironmentPaginatedRecords_edges(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironmentPaginatedRecords) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironmentPaginatedRecords_edges(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Edges, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.([]*model.IOTEnvironmentEdge)
-	fc.Result = res
-	return ec.marshalNIOTEnvironmentEdge2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTEnvironmentEdgeᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironmentPaginatedRecords_edges(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironmentPaginatedRecords",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "cursor":
-				return ec.fieldContext_IOTEnvironmentEdge_cursor(ctx, field)
-			case "node":
-				return ec.fieldContext_IOTEnvironmentEdge_node(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTEnvironmentEdge", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironmentPaginatedRecords_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironmentPaginatedRecords) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironmentPaginatedRecords_pageInfo(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.PageInfo, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(*model.PageInfo)
-	fc.Result = res
-	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐPageInfo(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironmentPaginatedRecords_pageInfo(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironmentPaginatedRecords",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "endCursor":
-				return ec.fieldContext_PageInfo_endCursor(ctx, field)
-			case "hasNextPage":
-				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
-			case "hasPreviousPage":
-				return ec.fieldContext_PageInfo_hasPreviousPage(ctx, field)
-			case "startCursor":
-				return ec.fieldContext_PageInfo_startCursor(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _IOTEnvironmentPaginatedRecords_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.IOTEnvironmentPaginatedRecords) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_IOTEnvironmentPaginatedRecords_totalCount(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.TotalCount, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(int)
-	fc.Result = res
-	return ec.marshalNInt2int(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_IOTEnvironmentPaginatedRecords_totalCount(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "IOTEnvironmentPaginatedRecords",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -15211,7 +15998,7 @@ func (ec *executionContext) fieldContext_MatchFilter_regex(ctx context.Context, 
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_annotations(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_annotations(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_annotations(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15252,7 +16039,7 @@ func (ec *executionContext) fieldContext_Metadata_annotations(ctx context.Contex
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_creationTimestamp(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_creationTimestamp(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15296,7 +16083,7 @@ func (ec *executionContext) fieldContext_Metadata_creationTimestamp(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_deletionTimestamp(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15337,7 +16124,7 @@ func (ec *executionContext) fieldContext_Metadata_deletionTimestamp(ctx context.
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_generation(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_generation(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_generation(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15381,7 +16168,7 @@ func (ec *executionContext) fieldContext_Metadata_generation(ctx context.Context
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_labels(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_labels(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_labels(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15422,7 +16209,7 @@ func (ec *executionContext) fieldContext_Metadata_labels(ctx context.Context, fi
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_name(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_name(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_name(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15466,7 +16253,7 @@ func (ec *executionContext) fieldContext_Metadata_name(ctx context.Context, fiel
 	return fc, nil
 }
 
-func (ec *executionContext) _Metadata_namespace(ctx context.Context, field graphql.CollectedField, obj *v1.ObjectMeta) (ret graphql.Marshaler) {
+func (ec *executionContext) _Metadata_namespace(ctx context.Context, field graphql.CollectedField, obj *v11.ObjectMeta) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Metadata_namespace(ctx, field)
 	if err != nil {
 		return graphql.Null
@@ -15858,10 +16645,14 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDevice(ctx context.C
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDevice_creationTime(ctx, field)
+			case "currentBlueprint":
+				return ec.fieldContext_IOTDevice_currentBlueprint(ctx, field)
 			case "deploymentName":
 				return ec.fieldContext_IOTDevice_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
+			case "expectedBlueprint":
+				return ec.fieldContext_IOTDevice_expectedBlueprint(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
 			case "index":
@@ -15884,10 +16675,12 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDevice(ctx context.C
 				return ec.fieldContext_IOTDevice_recordVersion(ctx, field)
 			case "serviceCIDR":
 				return ec.fieldContext_IOTDevice_serviceCIDR(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDevice_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDevice_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDevice", field.Name)
 		},
@@ -15976,10 +16769,14 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDevice(ctx context.C
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDevice_creationTime(ctx, field)
+			case "currentBlueprint":
+				return ec.fieldContext_IOTDevice_currentBlueprint(ctx, field)
 			case "deploymentName":
 				return ec.fieldContext_IOTDevice_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
+			case "expectedBlueprint":
+				return ec.fieldContext_IOTDevice_expectedBlueprint(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
 			case "index":
@@ -16002,10 +16799,12 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDevice(ctx context.C
 				return ec.fieldContext_IOTDevice_recordVersion(ctx, field)
 			case "serviceCIDR":
 				return ec.fieldContext_IOTDevice_serviceCIDR(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDevice_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDevice_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDevice", field.Name)
 		},
@@ -16169,30 +16968,40 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDeviceBlueprint(ctx 
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeviceBlueprint_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_IOTDeviceBlueprint_apiVersion(ctx, field)
 			case "bluePrintType":
 				return ec.fieldContext_IOTDeviceBlueprint_bluePrintType(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeviceBlueprint_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDeviceBlueprint_creationTime(ctx, field)
+			case "deploymentName":
+				return ec.fieldContext_IOTDeviceBlueprint_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeviceBlueprint_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDeviceBlueprint_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_IOTDeviceBlueprint_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_IOTDeviceBlueprint_markedForDeletion(ctx, field)
-			case "name":
-				return ec.fieldContext_IOTDeviceBlueprint_name(ctx, field)
+			case "metadata":
+				return ec.fieldContext_IOTDeviceBlueprint_metadata(ctx, field)
 			case "projectName":
 				return ec.fieldContext_IOTDeviceBlueprint_projectName(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_IOTDeviceBlueprint_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_IOTDeviceBlueprint_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDeviceBlueprint_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDeviceBlueprint_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDeviceBlueprint_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDeviceBlueprint_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDeviceBlueprint", field.Name)
 		},
@@ -16275,30 +17084,40 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDeviceBlueprint(ctx 
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeviceBlueprint_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_IOTDeviceBlueprint_apiVersion(ctx, field)
 			case "bluePrintType":
 				return ec.fieldContext_IOTDeviceBlueprint_bluePrintType(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeviceBlueprint_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDeviceBlueprint_creationTime(ctx, field)
+			case "deploymentName":
+				return ec.fieldContext_IOTDeviceBlueprint_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeviceBlueprint_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDeviceBlueprint_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_IOTDeviceBlueprint_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_IOTDeviceBlueprint_markedForDeletion(ctx, field)
-			case "name":
-				return ec.fieldContext_IOTDeviceBlueprint_name(ctx, field)
+			case "metadata":
+				return ec.fieldContext_IOTDeviceBlueprint_metadata(ctx, field)
 			case "projectName":
 				return ec.fieldContext_IOTDeviceBlueprint_projectName(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_IOTDeviceBlueprint_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_IOTDeviceBlueprint_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDeviceBlueprint_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDeviceBlueprint_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDeviceBlueprint_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDeviceBlueprint_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDeviceBlueprint", field.Name)
 		},
@@ -16462,8 +17281,6 @@ func (ec *executionContext) fieldContext_Mutation_iot_createDeployment(ctx conte
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeployment_accountName(ctx, field)
-			case "CIDR":
-				return ec.fieldContext_IOTDeployment_CIDR(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeployment_createdBy(ctx, field)
 			case "creationTime":
@@ -16572,8 +17389,6 @@ func (ec *executionContext) fieldContext_Mutation_iot_updateDeployment(ctx conte
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeployment_accountName(ctx, field)
-			case "CIDR":
-				return ec.fieldContext_IOTDeployment_CIDR(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeployment_createdBy(ctx, field)
 			case "creationTime":
@@ -16693,315 +17508,6 @@ func (ec *executionContext) fieldContext_Mutation_iot_deleteDeployment(ctx conte
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_iot_deleteDeployment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_iot_createApp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_iot_createApp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().IotCreateApp(rctx, fc.Args["projectName"].(string), fc.Args["deviceBlueprintName"].(string), fc.Args["app"].(entities.IOTApp))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				return nil, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*entities.IOTApp); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/iot-console/internal/entities.IOTApp`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*entities.IOTApp)
-	fc.Result = res
-	return ec.marshalOIOTApp2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_iot_createApp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_IOTApp_accountName(ctx, field)
-			case "apiVersion":
-				return ec.fieldContext_IOTApp_apiVersion(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_IOTApp_createdBy(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_IOTApp_creationTime(ctx, field)
-			case "deviceBlueprintName":
-				return ec.fieldContext_IOTApp_deviceBlueprintName(ctx, field)
-			case "displayName":
-				return ec.fieldContext_IOTApp_displayName(ctx, field)
-			case "enabled":
-				return ec.fieldContext_IOTApp_enabled(ctx, field)
-			case "id":
-				return ec.fieldContext_IOTApp_id(ctx, field)
-			case "kind":
-				return ec.fieldContext_IOTApp_kind(ctx, field)
-			case "lastUpdatedBy":
-				return ec.fieldContext_IOTApp_lastUpdatedBy(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_IOTApp_markedForDeletion(ctx, field)
-			case "metadata":
-				return ec.fieldContext_IOTApp_metadata(ctx, field)
-			case "projectName":
-				return ec.fieldContext_IOTApp_projectName(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_IOTApp_recordVersion(ctx, field)
-			case "spec":
-				return ec.fieldContext_IOTApp_spec(ctx, field)
-			case "status":
-				return ec.fieldContext_IOTApp_status(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_IOTApp_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTApp", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_iot_createApp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_iot_updateApp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_iot_updateApp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().IotUpdateApp(rctx, fc.Args["projectName"].(string), fc.Args["deviceBlueprintName"].(string), fc.Args["app"].(entities.IOTApp))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				return nil, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*entities.IOTApp); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/iot-console/internal/entities.IOTApp`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*entities.IOTApp)
-	fc.Result = res
-	return ec.marshalOIOTApp2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_iot_updateApp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_IOTApp_accountName(ctx, field)
-			case "apiVersion":
-				return ec.fieldContext_IOTApp_apiVersion(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_IOTApp_createdBy(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_IOTApp_creationTime(ctx, field)
-			case "deviceBlueprintName":
-				return ec.fieldContext_IOTApp_deviceBlueprintName(ctx, field)
-			case "displayName":
-				return ec.fieldContext_IOTApp_displayName(ctx, field)
-			case "enabled":
-				return ec.fieldContext_IOTApp_enabled(ctx, field)
-			case "id":
-				return ec.fieldContext_IOTApp_id(ctx, field)
-			case "kind":
-				return ec.fieldContext_IOTApp_kind(ctx, field)
-			case "lastUpdatedBy":
-				return ec.fieldContext_IOTApp_lastUpdatedBy(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_IOTApp_markedForDeletion(ctx, field)
-			case "metadata":
-				return ec.fieldContext_IOTApp_metadata(ctx, field)
-			case "projectName":
-				return ec.fieldContext_IOTApp_projectName(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_IOTApp_recordVersion(ctx, field)
-			case "spec":
-				return ec.fieldContext_IOTApp_spec(ctx, field)
-			case "status":
-				return ec.fieldContext_IOTApp_status(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_IOTApp_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTApp", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_iot_updateApp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_iot_deleteApp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_iot_deleteApp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().IotDeleteApp(rctx, fc.Args["projectName"].(string), fc.Args["deviceBlueprintName"].(string), fc.Args["name"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				return nil, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_iot_deleteApp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_iot_deleteApp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -17601,10 +18107,14 @@ func (ec *executionContext) fieldContext_Query_iot_getDevice(ctx context.Context
 				return ec.fieldContext_IOTDevice_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDevice_creationTime(ctx, field)
+			case "currentBlueprint":
+				return ec.fieldContext_IOTDevice_currentBlueprint(ctx, field)
 			case "deploymentName":
 				return ec.fieldContext_IOTDevice_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDevice_displayName(ctx, field)
+			case "expectedBlueprint":
+				return ec.fieldContext_IOTDevice_expectedBlueprint(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDevice_id(ctx, field)
 			case "index":
@@ -17627,10 +18137,12 @@ func (ec *executionContext) fieldContext_Query_iot_getDevice(ctx context.Context
 				return ec.fieldContext_IOTDevice_recordVersion(ctx, field)
 			case "serviceCIDR":
 				return ec.fieldContext_IOTDevice_serviceCIDR(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDevice_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDevice_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDevice_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDevice_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDevice", field.Name)
 		},
@@ -17799,30 +18311,40 @@ func (ec *executionContext) fieldContext_Query_iot_getDeviceBlueprint(ctx contex
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeviceBlueprint_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_IOTDeviceBlueprint_apiVersion(ctx, field)
 			case "bluePrintType":
 				return ec.fieldContext_IOTDeviceBlueprint_bluePrintType(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeviceBlueprint_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_IOTDeviceBlueprint_creationTime(ctx, field)
+			case "deploymentName":
+				return ec.fieldContext_IOTDeviceBlueprint_deploymentName(ctx, field)
 			case "displayName":
 				return ec.fieldContext_IOTDeviceBlueprint_displayName(ctx, field)
 			case "id":
 				return ec.fieldContext_IOTDeviceBlueprint_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_IOTDeviceBlueprint_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_IOTDeviceBlueprint_lastUpdatedBy(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_IOTDeviceBlueprint_markedForDeletion(ctx, field)
-			case "name":
-				return ec.fieldContext_IOTDeviceBlueprint_name(ctx, field)
+			case "metadata":
+				return ec.fieldContext_IOTDeviceBlueprint_metadata(ctx, field)
 			case "projectName":
 				return ec.fieldContext_IOTDeviceBlueprint_projectName(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_IOTDeviceBlueprint_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_IOTDeviceBlueprint_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_IOTDeviceBlueprint_status(ctx, field)
+			case "syncStatus":
+				return ec.fieldContext_IOTDeviceBlueprint_syncStatus(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_IOTDeviceBlueprint_updateTime(ctx, field)
-			case "version":
-				return ec.fieldContext_IOTDeviceBlueprint_version(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type IOTDeviceBlueprint", field.Name)
 		},
@@ -17991,8 +18513,6 @@ func (ec *executionContext) fieldContext_Query_iot_getDeployment(ctx context.Con
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_IOTDeployment_accountName(ctx, field)
-			case "CIDR":
-				return ec.fieldContext_IOTDeployment_CIDR(ctx, field)
 			case "createdBy":
 				return ec.fieldContext_IOTDeployment_createdBy(ctx, field)
 			case "creationTime":
@@ -18031,206 +18551,6 @@ func (ec *executionContext) fieldContext_Query_iot_getDeployment(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_iot_getDeployment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_iot_listApps(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_iot_listApps(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().IotListApps(rctx, fc.Args["projectName"].(string), fc.Args["deviceBlueprintName"].(string), fc.Args["search"].(*model.SearchIOTApps), fc.Args["pq"].(*repos.CursorPagination))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				return nil, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*model.IOTAppPaginatedRecords); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/iot-console/internal/app/graph/model.IOTAppPaginatedRecords`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.IOTAppPaginatedRecords)
-	fc.Result = res
-	return ec.marshalOIOTAppPaginatedRecords2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTAppPaginatedRecords(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_iot_listApps(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "edges":
-				return ec.fieldContext_IOTAppPaginatedRecords_edges(ctx, field)
-			case "pageInfo":
-				return ec.fieldContext_IOTAppPaginatedRecords_pageInfo(ctx, field)
-			case "totalCount":
-				return ec.fieldContext_IOTAppPaginatedRecords_totalCount(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTAppPaginatedRecords", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_iot_listApps_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_iot_getApp(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_iot_getApp(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().IotGetApp(rctx, fc.Args["projectName"].(string), fc.Args["deviceBlueprintName"].(string), fc.Args["name"].(string))
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				return nil, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*entities.IOTApp); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/iot-console/internal/entities.IOTApp`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*entities.IOTApp)
-	fc.Result = res
-	return ec.marshalOIOTApp2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_iot_getApp(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_IOTApp_accountName(ctx, field)
-			case "apiVersion":
-				return ec.fieldContext_IOTApp_apiVersion(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_IOTApp_createdBy(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_IOTApp_creationTime(ctx, field)
-			case "deviceBlueprintName":
-				return ec.fieldContext_IOTApp_deviceBlueprintName(ctx, field)
-			case "displayName":
-				return ec.fieldContext_IOTApp_displayName(ctx, field)
-			case "enabled":
-				return ec.fieldContext_IOTApp_enabled(ctx, field)
-			case "id":
-				return ec.fieldContext_IOTApp_id(ctx, field)
-			case "kind":
-				return ec.fieldContext_IOTApp_kind(ctx, field)
-			case "lastUpdatedBy":
-				return ec.fieldContext_IOTApp_lastUpdatedBy(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_IOTApp_markedForDeletion(ctx, field)
-			case "metadata":
-				return ec.fieldContext_IOTApp_metadata(ctx, field)
-			case "projectName":
-				return ec.fieldContext_IOTApp_projectName(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_IOTApp_recordVersion(ctx, field)
-			case "spec":
-				return ec.fieldContext_IOTApp_spec(ctx, field)
-			case "status":
-				return ec.fieldContext_IOTApp_status(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_IOTApp_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type IOTApp", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_iot_getApp_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -20475,6 +20795,75 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppIn(ctx context.Context, obj interface{}) (v1.App, error) {
+	var it v1.App
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"apiVersion", "enabled", "kind", "metadata", "spec"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "apiVersion":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiVersion"))
+			data, err := ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.APIVersion = data
+		case "enabled":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Enabled = data
+		case "kind":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
+			data, err := ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Kind = data
+		case "metadata":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+			data, err := ec.unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.Github__com___kloudlite___operator___apis___crds___v1__AppIn().Metadata(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "spec":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spec"))
+			data, err := ec.unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.Github__com___kloudlite___operator___apis___crds___v1__AppIn().Spec(ctx, &it, data); err != nil {
+				return it, err
+			}
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppSpecIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn, error) {
 	var it model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn
 	asMap := map[string]interface{}{}
@@ -20653,6 +21042,44 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 				return it, err
 			}
 			it.Type = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn, error) {
+	var it model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"apps", "version"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "apps":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apps"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__AppIn2ᚕᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐAppᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Apps = data
+		case "version":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("version"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Version = data
 		}
 	}
 
@@ -21194,84 +21621,6 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputIOTAppIn(ctx context.Context, obj interface{}) (entities.IOTApp, error) {
-	var it entities.IOTApp
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"apiVersion", "displayName", "enabled", "kind", "metadata", "spec"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "apiVersion":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiVersion"))
-			data, err := ec.unmarshalOString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.APIVersion = data
-		case "displayName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DisplayName = data
-		case "enabled":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
-			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Enabled = data
-		case "kind":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
-			data, err := ec.unmarshalOString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Kind = data
-		case "metadata":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
-			data, err := ec.unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.IOTAppIn().Metadata(ctx, &it, data); err != nil {
-				return it, err
-			}
-		case "spec":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spec"))
-			data, err := ec.unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecIn(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.IOTAppIn().Spec(ctx, &it, data); err != nil {
-				return it, err
-			}
-		}
-	}
-
-	return it, nil
-}
-
 func (ec *executionContext) unmarshalInputIOTDeploymentIn(ctx context.Context, obj interface{}) (entities.IOTDeployment, error) {
 	var it entities.IOTDeployment
 	asMap := map[string]interface{}{}
@@ -21279,22 +21628,13 @@ func (ec *executionContext) unmarshalInputIOTDeploymentIn(ctx context.Context, o
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"CIDR", "displayName", "exposedDomains", "exposedIps", "exposedServices", "name"}
+	fieldsInOrder := [...]string{"displayName", "exposedDomains", "exposedIps", "exposedServices", "name"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "CIDR":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("CIDR"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.CIDR = data
 		case "displayName":
 			var err error
 
@@ -21355,13 +21695,22 @@ func (ec *executionContext) unmarshalInputIOTDeviceBlueprintIn(ctx context.Conte
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"bluePrintType", "displayName", "name", "version"}
+	fieldsInOrder := [...]string{"apiVersion", "bluePrintType", "deploymentName", "displayName", "kind", "metadata", "spec"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "apiVersion":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiVersion"))
+			data, err := ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.APIVersion = data
 		case "bluePrintType":
 			var err error
 
@@ -21373,6 +21722,15 @@ func (ec *executionContext) unmarshalInputIOTDeviceBlueprintIn(ctx context.Conte
 			if err = ec.resolvers.IOTDeviceBlueprintIn().BluePrintType(ctx, &it, data); err != nil {
 				return it, err
 			}
+		case "deploymentName":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("deploymentName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.DeploymentName = data
 		case "displayName":
 			var err error
 
@@ -21382,24 +21740,37 @@ func (ec *executionContext) unmarshalInputIOTDeviceBlueprintIn(ctx context.Conte
 				return it, err
 			}
 			it.DisplayName = data
-		case "name":
+		case "kind":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
+			data, err := ec.unmarshalOString2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Name = data
-		case "version":
+			it.Kind = data
+		case "metadata":
 			var err error
 
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("version"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+			data, err := ec.unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Version = data
+			if err = ec.resolvers.IOTDeviceBlueprintIn().Metadata(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "spec":
+			var err error
+
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spec"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.IOTDeviceBlueprintIn().Spec(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -21413,7 +21784,7 @@ func (ec *executionContext) unmarshalInputIOTDeviceIn(ctx context.Context, obj i
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"displayName", "name", "publicKey", "version"}
+	fieldsInOrder := [...]string{"displayName", "name", "publicKey"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -21447,53 +21818,6 @@ func (ec *executionContext) unmarshalInputIOTDeviceIn(ctx context.Context, obj i
 				return it, err
 			}
 			it.PublicKey = data
-		case "version":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("version"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Version = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputIOTEnvironmentIn(ctx context.Context, obj interface{}) (model.IOTEnvironmentIn, error) {
-	var it model.IOTEnvironmentIn
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"displayName", "name"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "displayName":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("displayName"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.DisplayName = data
-		case "name":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Name = data
 		}
 	}
 
@@ -21836,8 +22160,8 @@ func (ec *executionContext) unmarshalInputMatchFilterIn(ctx context.Context, obj
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj interface{}) (v1.ObjectMeta, error) {
-	var it v1.ObjectMeta
+func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj interface{}) (v11.ObjectMeta, error) {
+	var it v11.ObjectMeta
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -21890,53 +22214,6 @@ func (ec *executionContext) unmarshalInputMetadataIn(ctx context.Context, obj in
 				return it, err
 			}
 			it.Namespace = data
-		}
-	}
-
-	return it, nil
-}
-
-func (ec *executionContext) unmarshalInputSearchIOTApps(ctx context.Context, obj interface{}) (model.SearchIOTApps, error) {
-	var it model.SearchIOTApps
-	asMap := map[string]interface{}{}
-	for k, v := range obj.(map[string]interface{}) {
-		asMap[k] = v
-	}
-
-	fieldsInOrder := [...]string{"text", "isReady", "markedForDeletion"}
-	for _, k := range fieldsInOrder {
-		v, ok := asMap[k]
-		if !ok {
-			continue
-		}
-		switch k {
-		case "text":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
-			data, err := ec.unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchFilter(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.Text = data
-		case "isReady":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isReady"))
-			data, err := ec.unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchFilter(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.IsReady = data
-		case "markedForDeletion":
-			var err error
-
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("markedForDeletion"))
-			data, err := ec.unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchFilter(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.MarkedForDeletion = data
 		}
 	}
 
@@ -22229,6 +22506,298 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____conso
 	return out
 }
 
+var github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintImplementors = []string{"Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint"}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint(ctx context.Context, sel ast.SelectionSet, obj *entities.IOTDeviceBlueprint) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint")
+		case "accountName":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_accountName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "apiVersion":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_apiVersion(ctx, field, obj)
+		case "bluePrintType":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_bluePrintType(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "createdBy":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_createdBy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "creationTime":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_creationTime(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "deploymentName":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_deploymentName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "displayName":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_displayName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "id":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "kind":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_kind(ctx, field, obj)
+		case "lastUpdatedBy":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_lastUpdatedBy(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "markedForDeletion":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_markedForDeletion(ctx, field, obj)
+		case "metadata":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_metadata(ctx, field, obj)
+		case "projectName":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_projectName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "recordVersion":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_recordVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "spec":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_spec(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "status":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_status(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "syncStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_syncStatus(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "updateTime":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint_updateTime(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var github__com___kloudlite___api___common__CreatedOrUpdatedByImplementors = []string{"Github__com___kloudlite___api___common__CreatedOrUpdatedBy"}
 
 func (ec *executionContext) _Github__com___kloudlite___api___common__CreatedOrUpdatedBy(ctx context.Context, sel ast.SelectionSet, obj *common.CreatedOrUpdatedBy) graphql.Marshaler {
@@ -22286,6 +22855,172 @@ func (ec *executionContext) _Github__com___kloudlite___api___common__CreatedOrUp
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var github__com___kloudlite___api___pkg___types__SyncStatusImplementors = []string{"Github__com___kloudlite___api___pkg___types__SyncStatus"}
+
+func (ec *executionContext) _Github__com___kloudlite___api___pkg___types__SyncStatus(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIPkgTypesSyncStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___pkg___types__SyncStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___pkg___types__SyncStatus")
+		case "action":
+			out.Values[i] = ec._Github__com___kloudlite___api___pkg___types__SyncStatus_action(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "error":
+			out.Values[i] = ec._Github__com___kloudlite___api___pkg___types__SyncStatus_error(ctx, field, obj)
+		case "lastSyncedAt":
+			out.Values[i] = ec._Github__com___kloudlite___api___pkg___types__SyncStatus_lastSyncedAt(ctx, field, obj)
+		case "recordVersion":
+			out.Values[i] = ec._Github__com___kloudlite___api___pkg___types__SyncStatus_recordVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "state":
+			out.Values[i] = ec._Github__com___kloudlite___api___pkg___types__SyncStatus_state(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "syncScheduledAt":
+			out.Values[i] = ec._Github__com___kloudlite___api___pkg___types__SyncStatus_syncScheduledAt(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var github__com___kloudlite___operator___apis___crds___v1__AppImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__App"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__App(ctx context.Context, sel ast.SelectionSet, obj *v1.App) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___crds___v1__AppImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___crds___v1__App")
+		case "apiVersion":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__App_apiVersion(ctx, field, obj)
+		case "enabled":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__App_enabled(ctx, field, obj)
+		case "kind":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__App_kind(ctx, field, obj)
+		case "metadata":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__App_metadata(ctx, field, obj)
+		case "spec":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___operator___apis___crds___v1__App_spec(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "status":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Github__com___kloudlite___operator___apis___crds___v1__App_status(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -22434,6 +23169,62 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 	return out
 }
 
+var github__com___kloudlite___operator___apis___crds___v1__AppStatusImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__AppStatus"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppStatus(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___crds___v1__AppStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___crds___v1__AppStatus")
+		case "checkList":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checkList(ctx, field, obj)
+		case "checks":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_checks(ctx, field, obj)
+		case "isReady":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_isReady(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastReadyGeneration":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReadyGeneration(ctx, field, obj)
+		case "lastReconcileTime":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_lastReconcileTime(ctx, field, obj)
+		case "message":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_message(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "resources":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus_resources(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var github__com___kloudlite___operator___apis___crds___v1__AppSvcImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__AppSvc"}
 
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AppSvc(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1AppSvc) graphql.Marshaler {
@@ -22456,6 +23247,100 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppSvc_targetPort(ctx, field, obj)
 		case "type":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AppSvc_type(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var github__com___kloudlite___operator___apis___crds___v1__BlueprintSpecImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___crds___v1__BlueprintSpecImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec")
+		case "apps":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_apps(ctx, field, obj)
+		case "version":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec_version(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var github__com___kloudlite___operator___apis___crds___v1__BlueprintStatusImplementors = []string{"Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___crds___v1__BlueprintStatusImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus")
+		case "apps":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_apps(ctx, field, obj)
+		case "checkList":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checkList(ctx, field, obj)
+		case "checks":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_checks(ctx, field, obj)
+		case "isReady":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_isReady(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "lastReadyGeneration":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReadyGeneration(ctx, field, obj)
+		case "lastReconcileTime":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_lastReconcileTime(ctx, field, obj)
+		case "message":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_message(ctx, field, obj)
+		case "resources":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus_resources(ctx, field, obj)
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -23207,324 +24092,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___pkg___raw____j
 	return out
 }
 
-var iOTAppImplementors = []string{"IOTApp"}
-
-func (ec *executionContext) _IOTApp(ctx context.Context, sel ast.SelectionSet, obj *entities.IOTApp) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, iOTAppImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("IOTApp")
-		case "accountName":
-			out.Values[i] = ec._IOTApp_accountName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "apiVersion":
-			out.Values[i] = ec._IOTApp_apiVersion(ctx, field, obj)
-		case "createdBy":
-			out.Values[i] = ec._IOTApp_createdBy(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "creationTime":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._IOTApp_creationTime(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "deviceBlueprintName":
-			out.Values[i] = ec._IOTApp_deviceBlueprintName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "displayName":
-			out.Values[i] = ec._IOTApp_displayName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "enabled":
-			out.Values[i] = ec._IOTApp_enabled(ctx, field, obj)
-		case "id":
-			out.Values[i] = ec._IOTApp_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "kind":
-			out.Values[i] = ec._IOTApp_kind(ctx, field, obj)
-		case "lastUpdatedBy":
-			out.Values[i] = ec._IOTApp_lastUpdatedBy(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "markedForDeletion":
-			out.Values[i] = ec._IOTApp_markedForDeletion(ctx, field, obj)
-		case "metadata":
-			out.Values[i] = ec._IOTApp_metadata(ctx, field, obj)
-		case "projectName":
-			out.Values[i] = ec._IOTApp_projectName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "recordVersion":
-			out.Values[i] = ec._IOTApp_recordVersion(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "spec":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._IOTApp_spec(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "status":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._IOTApp_status(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "updateTime":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._IOTApp_updateTime(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var iOTAppEdgeImplementors = []string{"IOTAppEdge"}
-
-func (ec *executionContext) _IOTAppEdge(ctx context.Context, sel ast.SelectionSet, obj *model.IOTAppEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, iOTAppEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("IOTAppEdge")
-		case "cursor":
-			out.Values[i] = ec._IOTAppEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "node":
-			out.Values[i] = ec._IOTAppEdge_node(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var iOTAppPaginatedRecordsImplementors = []string{"IOTAppPaginatedRecords"}
-
-func (ec *executionContext) _IOTAppPaginatedRecords(ctx context.Context, sel ast.SelectionSet, obj *model.IOTAppPaginatedRecords) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, iOTAppPaginatedRecordsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("IOTAppPaginatedRecords")
-		case "edges":
-			out.Values[i] = ec._IOTAppPaginatedRecords_edges(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "pageInfo":
-			out.Values[i] = ec._IOTAppPaginatedRecords_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "totalCount":
-			out.Values[i] = ec._IOTAppPaginatedRecords_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
 var iOTConsoleCheckNameAvailabilityOutputImplementors = []string{"IOTConsoleCheckNameAvailabilityOutput"}
 
 func (ec *executionContext) _IOTConsoleCheckNameAvailabilityOutput(ctx context.Context, sel ast.SelectionSet, obj *domain.CheckNameAvailabilityOutput) graphql.Marshaler {
@@ -23582,11 +24149,6 @@ func (ec *executionContext) _IOTDeployment(ctx context.Context, sel ast.Selectio
 			out.Values[i] = graphql.MarshalString("IOTDeployment")
 		case "accountName":
 			out.Values[i] = ec._IOTDeployment_accountName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "CIDR":
-			out.Values[i] = ec._IOTDeployment_CIDR(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -23923,6 +24485,8 @@ func (ec *executionContext) _IOTDevice(ctx context.Context, sel ast.SelectionSet
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "currentBlueprint":
+			out.Values[i] = ec._IOTDevice_currentBlueprint(ctx, field, obj)
 		case "deploymentName":
 			out.Values[i] = ec._IOTDevice_deploymentName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -23933,6 +24497,8 @@ func (ec *executionContext) _IOTDevice(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "expectedBlueprint":
+			out.Values[i] = ec._IOTDevice_expectedBlueprint(ctx, field, obj)
 		case "id":
 			out.Values[i] = ec._IOTDevice_id(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -23985,6 +24551,75 @@ func (ec *executionContext) _IOTDevice(ctx context.Context, sel ast.SelectionSet
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "status":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._IOTDevice_status(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "syncStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._IOTDevice_syncStatus(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updateTime":
 			field := field
 
@@ -24021,11 +24656,6 @@ func (ec *executionContext) _IOTDevice(ctx context.Context, sel ast.SelectionSet
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "version":
-			out.Values[i] = ec._IOTDevice_version(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24065,6 +24695,8 @@ func (ec *executionContext) _IOTDeviceBlueprint(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "apiVersion":
+			out.Values[i] = ec._IOTDeviceBlueprint_apiVersion(ctx, field, obj)
 		case "bluePrintType":
 			field := field
 
@@ -24142,6 +24774,11 @@ func (ec *executionContext) _IOTDeviceBlueprint(ctx context.Context, sel ast.Sel
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "deploymentName":
+			out.Values[i] = ec._IOTDeviceBlueprint_deploymentName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "displayName":
 			out.Values[i] = ec._IOTDeviceBlueprint_displayName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -24152,6 +24789,8 @@ func (ec *executionContext) _IOTDeviceBlueprint(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "kind":
+			out.Values[i] = ec._IOTDeviceBlueprint_kind(ctx, field, obj)
 		case "lastUpdatedBy":
 			out.Values[i] = ec._IOTDeviceBlueprint_lastUpdatedBy(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -24159,11 +24798,8 @@ func (ec *executionContext) _IOTDeviceBlueprint(ctx context.Context, sel ast.Sel
 			}
 		case "markedForDeletion":
 			out.Values[i] = ec._IOTDeviceBlueprint_markedForDeletion(ctx, field, obj)
-		case "name":
-			out.Values[i] = ec._IOTDeviceBlueprint_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
+		case "metadata":
+			out.Values[i] = ec._IOTDeviceBlueprint_metadata(ctx, field, obj)
 		case "projectName":
 			out.Values[i] = ec._IOTDeviceBlueprint_projectName(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -24174,6 +24810,108 @@ func (ec *executionContext) _IOTDeviceBlueprint(ctx context.Context, sel ast.Sel
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "spec":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._IOTDeviceBlueprint_spec(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "status":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._IOTDeviceBlueprint_status(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "syncStatus":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._IOTDeviceBlueprint_syncStatus(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updateTime":
 			field := field
 
@@ -24210,11 +24948,6 @@ func (ec *executionContext) _IOTDeviceBlueprint(ctx context.Context, sel ast.Sel
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "version":
-			out.Values[i] = ec._IOTDeviceBlueprint_version(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -24398,185 +25131,6 @@ func (ec *executionContext) _IOTDevicePaginatedRecords(ctx context.Context, sel 
 			}
 		case "totalCount":
 			out.Values[i] = ec._IOTDevicePaginatedRecords_totalCount(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var iOTEnvironmentImplementors = []string{"IOTEnvironment"}
-
-func (ec *executionContext) _IOTEnvironment(ctx context.Context, sel ast.SelectionSet, obj *model.IOTEnvironment) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, iOTEnvironmentImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("IOTEnvironment")
-		case "accountName":
-			out.Values[i] = ec._IOTEnvironment_accountName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "createdBy":
-			out.Values[i] = ec._IOTEnvironment_createdBy(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "creationTime":
-			out.Values[i] = ec._IOTEnvironment_creationTime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "displayName":
-			out.Values[i] = ec._IOTEnvironment_displayName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "id":
-			out.Values[i] = ec._IOTEnvironment_id(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "lastUpdatedBy":
-			out.Values[i] = ec._IOTEnvironment_lastUpdatedBy(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "markedForDeletion":
-			out.Values[i] = ec._IOTEnvironment_markedForDeletion(ctx, field, obj)
-		case "name":
-			out.Values[i] = ec._IOTEnvironment_name(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "projectName":
-			out.Values[i] = ec._IOTEnvironment_projectName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "recordVersion":
-			out.Values[i] = ec._IOTEnvironment_recordVersion(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "updateTime":
-			out.Values[i] = ec._IOTEnvironment_updateTime(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var iOTEnvironmentEdgeImplementors = []string{"IOTEnvironmentEdge"}
-
-func (ec *executionContext) _IOTEnvironmentEdge(ctx context.Context, sel ast.SelectionSet, obj *model.IOTEnvironmentEdge) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, iOTEnvironmentEdgeImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("IOTEnvironmentEdge")
-		case "cursor":
-			out.Values[i] = ec._IOTEnvironmentEdge_cursor(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "node":
-			out.Values[i] = ec._IOTEnvironmentEdge_node(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		default:
-			panic("unknown field " + strconv.Quote(field.Name))
-		}
-	}
-	out.Dispatch(ctx)
-	if out.Invalids > 0 {
-		return graphql.Null
-	}
-
-	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
-
-	for label, dfs := range deferred {
-		ec.processDeferredGroup(graphql.DeferredGroup{
-			Label:    label,
-			Path:     graphql.GetPath(ctx),
-			FieldSet: dfs,
-			Context:  ctx,
-		})
-	}
-
-	return out
-}
-
-var iOTEnvironmentPaginatedRecordsImplementors = []string{"IOTEnvironmentPaginatedRecords"}
-
-func (ec *executionContext) _IOTEnvironmentPaginatedRecords(ctx context.Context, sel ast.SelectionSet, obj *model.IOTEnvironmentPaginatedRecords) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, iOTEnvironmentPaginatedRecordsImplementors)
-
-	out := graphql.NewFieldSet(fields)
-	deferred := make(map[string]*graphql.FieldSet)
-	for i, field := range fields {
-		switch field.Name {
-		case "__typename":
-			out.Values[i] = graphql.MarshalString("IOTEnvironmentPaginatedRecords")
-		case "edges":
-			out.Values[i] = ec._IOTEnvironmentPaginatedRecords_edges(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "pageInfo":
-			out.Values[i] = ec._IOTEnvironmentPaginatedRecords_pageInfo(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "totalCount":
-			out.Values[i] = ec._IOTEnvironmentPaginatedRecords_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -25073,7 +25627,7 @@ func (ec *executionContext) _MatchFilter(ctx context.Context, sel ast.SelectionS
 
 var metadataImplementors = []string{"Metadata"}
 
-func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet, obj *v1.ObjectMeta) graphql.Marshaler {
+func (ec *executionContext) _Metadata(ctx context.Context, sel ast.SelectionSet, obj *v11.ObjectMeta) graphql.Marshaler {
 	fields := graphql.CollectFields(ec.OperationContext, sel, metadataImplementors)
 
 	out := graphql.NewFieldSet(fields)
@@ -25331,21 +25885,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "iot_createApp":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_iot_createApp(ctx, field)
-			})
-		case "iot_updateApp":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_iot_updateApp(ctx, field)
-			})
-		case "iot_deleteApp":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_iot_deleteApp(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -25595,44 +26134,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_iot_getDeployment(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "iot_listApps":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_iot_listApps(ctx, field)
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "iot_getApp":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_iot_getApp(ctx, field)
 				return res
 			}
 
@@ -26213,14 +26714,48 @@ func (ec *executionContext) marshalNGithub__com___kloudlite___api___common__Crea
 	return ec._Github__com___kloudlite___api___common__CreatedOrUpdatedBy(ctx, sel, &v)
 }
 
-func (ec *executionContext) marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2ᚖgithubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx context.Context, sel ast.SelectionSet, v *common.CreatedOrUpdatedBy) graphql.Marshaler {
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___pkg___types__SyncAction2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncAction(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIPkgTypesSyncAction, error) {
+	var res model.GithubComKloudliteAPIPkgTypesSyncAction
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncAction2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncAction(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIPkgTypesSyncAction) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___pkg___types__SyncState2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncState(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIPkgTypesSyncState, error) {
+	var res model.GithubComKloudliteAPIPkgTypesSyncState
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncState2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncState(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIPkgTypesSyncState) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncStatus(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIPkgTypesSyncStatus) graphql.Marshaler {
+	return ec._Github__com___kloudlite___api___pkg___types__SyncStatus(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___types__SyncStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesSyncStatus(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIPkgTypesSyncStatus) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
 		}
 		return graphql.Null
 	}
-	return ec._Github__com___kloudlite___api___common__CreatedOrUpdatedBy(ctx, sel, v)
+	return ec._Github__com___kloudlite___api___pkg___types__SyncStatus(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__App2ᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐApp(ctx context.Context, sel ast.SelectionSet, v *v1.App) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___crds___v1__App(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppContainer2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppContainerᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppContainer) graphql.Marshaler {
@@ -26299,6 +26834,11 @@ func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis_
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__AppIn2ᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐApp(ctx context.Context, v interface{}) (*v1.App, error) {
+	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSpec2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpec(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteOperatorApisCrdsV1AppSpec) graphql.Marshaler {
 	return ec._Github__com___kloudlite___operator___apis___crds___v1__AppSpec(ctx, sel, &v)
 }
@@ -26321,6 +26861,16 @@ func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis_
 func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn, error) {
 	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppSpecIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppStatus(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppStatus) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___crds___v1__AppStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppSvc2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSvc(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1AppSvc) graphql.Marshaler {
@@ -26442,75 +26992,6 @@ func (ec *executionContext) marshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋre
 		}
 	}
 	return res
-}
-
-func (ec *executionContext) marshalNIOTApp2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx context.Context, sel ast.SelectionSet, v *entities.IOTApp) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._IOTApp(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNIOTAppEdge2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTAppEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.IOTAppEdge) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNIOTAppEdge2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTAppEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNIOTAppEdge2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTAppEdge(ctx context.Context, sel ast.SelectionSet, v *model.IOTAppEdge) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._IOTAppEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNIOTAppIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx context.Context, v interface{}) (entities.IOTApp, error) {
-	res, err := ec.unmarshalInputIOTAppIn(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNIOTConsoleCheckNameAvailabilityOutput2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋdomainᚐCheckNameAvailabilityOutput(ctx context.Context, sel ast.SelectionSet, v domain.CheckNameAvailabilityOutput) graphql.Marshaler {
@@ -26732,70 +27213,6 @@ func (ec *executionContext) marshalNIOTDeviceEdge2ᚖgithubᚗcomᚋkloudliteᚋ
 func (ec *executionContext) unmarshalNIOTDeviceIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTDevice(ctx context.Context, v interface{}) (entities.IOTDevice, error) {
 	res, err := ec.unmarshalInputIOTDeviceIn(ctx, v)
 	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNIOTEnvironment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTEnvironment(ctx context.Context, sel ast.SelectionSet, v *model.IOTEnvironment) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._IOTEnvironment(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalNIOTEnvironmentEdge2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTEnvironmentEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.IOTEnvironmentEdge) graphql.Marshaler {
-	ret := make(graphql.Array, len(v))
-	var wg sync.WaitGroup
-	isLen1 := len(v) == 1
-	if !isLen1 {
-		wg.Add(len(v))
-	}
-	for i := range v {
-		i := i
-		fc := &graphql.FieldContext{
-			Index:  &i,
-			Result: &v[i],
-		}
-		ctx := graphql.WithFieldContext(ctx, fc)
-		f := func(i int) {
-			defer func() {
-				if r := recover(); r != nil {
-					ec.Error(ctx, ec.Recover(ctx, r))
-					ret = nil
-				}
-			}()
-			if !isLen1 {
-				defer wg.Done()
-			}
-			ret[i] = ec.marshalNIOTEnvironmentEdge2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTEnvironmentEdge(ctx, sel, v[i])
-		}
-		if isLen1 {
-			f(i)
-		} else {
-			go f(i)
-		}
-
-	}
-	wg.Wait()
-
-	for _, e := range ret {
-		if e == graphql.Null {
-			return graphql.Null
-		}
-	}
-
-	return ret
-}
-
-func (ec *executionContext) marshalNIOTEnvironmentEdge2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTEnvironmentEdge(ctx context.Context, sel ast.SelectionSet, v *model.IOTEnvironmentEdge) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._IOTEnvironmentEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNIOTProject2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTProject(ctx context.Context, sel ast.SelectionSet, v *entities.IOTProject) graphql.Marshaler {
@@ -27502,6 +27919,127 @@ func (ec *executionContext) marshalODate2ᚖstring(ctx context.Context, sel ast.
 	return res
 }
 
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTDeviceBlueprint(ctx context.Context, sel ast.SelectionSet, v *entities.IOTDeviceBlueprint) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__App2ᚕᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐAppᚄ(ctx context.Context, sel ast.SelectionSet, v []*v1.App) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGithub__com___kloudlite___operator___apis___crds___v1__App2ᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐApp(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__AppIn2ᚕᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐAppᚄ(ctx context.Context, v interface{}) ([]*v1.App, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*v1.App, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__AppIn2ᚖgithubᚗcomᚋkloudliteᚋoperatorᚋapisᚋcrdsᚋv1ᚐApp(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__AppStatus2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppStatusᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNGithub__com___kloudlite___operator___apis___crds___v1__AppStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppStatus(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__AppSvc2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppSvcᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppSvc) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -27567,6 +28105,28 @@ func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis_
 		}
 	}
 	return res, nil
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpecIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__BlueprintStatus2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1BlueprintStatus(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1ConfigOrSecret(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret, error) {
@@ -28082,20 +28642,6 @@ func (ec *executionContext) marshalOGithub__com___kloudlite___operator___pkg___r
 	return ec._Github__com___kloudlite___operator___pkg___raw____json__RawJson(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOIOTApp2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTApp(ctx context.Context, sel ast.SelectionSet, v *entities.IOTApp) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._IOTApp(ctx, sel, v)
-}
-
-func (ec *executionContext) marshalOIOTAppPaginatedRecords2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐIOTAppPaginatedRecords(ctx context.Context, sel ast.SelectionSet, v *model.IOTAppPaginatedRecords) graphql.Marshaler {
-	if v == nil {
-		return graphql.Null
-	}
-	return ec._IOTAppPaginatedRecords(ctx, sel, v)
-}
-
 func (ec *executionContext) marshalOIOTDeployment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋentitiesᚐIOTDeployment(ctx context.Context, sel ast.SelectionSet, v *entities.IOTDeployment) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -28456,23 +29002,15 @@ func (ec *executionContext) unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudlite�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, sel ast.SelectionSet, v v1.ObjectMeta) graphql.Marshaler {
+func (ec *executionContext) marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, sel ast.SelectionSet, v v11.ObjectMeta) graphql.Marshaler {
 	return ec._Metadata(ctx, sel, &v)
 }
 
-func (ec *executionContext) unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (*v1.ObjectMeta, error) {
+func (ec *executionContext) unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx context.Context, v interface{}) (*v11.ObjectMeta, error) {
 	if v == nil {
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputMetadataIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) unmarshalOSearchIOTApps2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋiotᚑconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchIOTApps(ctx context.Context, v interface{}) (*model.SearchIOTApps, error) {
-	if v == nil {
-		return nil, nil
-	}
-	res, err := ec.unmarshalInputSearchIOTApps(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

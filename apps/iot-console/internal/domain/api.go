@@ -2,9 +2,12 @@ package domain
 
 import (
 	"context"
+	"time"
+
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
 type IotConsoleContext struct {
@@ -19,6 +22,10 @@ type IotConsoleContext struct {
 type IotResourceContext struct {
 	IotConsoleContext
 	ProjectName string
+}
+
+type UpdateAndDeleteOpts struct {
+	MessageTimestamp time.Time
 }
 
 func (r IotResourceContext) IOTConsoleDBFilters() repos.Filter {
@@ -38,6 +45,12 @@ func (i IotConsoleContext) GetUserName() string {
 	return i.UserName
 }
 func (i IotConsoleContext) GetAccountName() string { return i.AccountName }
+
+const (
+	PublishAdd    PublishMsg = "added"
+	PublishDelete PublishMsg = "deleted"
+	PublishUpdate PublishMsg = "updated"
+)
 
 type Domain interface {
 	CheckNameAvailability(ctx IotResourceContext, deviceBlueprintName *string, deploymentName *string, resourceType ResourceType, name string) (*CheckNameAvailabilityOutput, error)
@@ -71,10 +84,7 @@ type Domain interface {
 	UpdateDeviceBlueprint(ctx IotResourceContext, deviceBlueprint entities.IOTDeviceBlueprint) (*entities.IOTDeviceBlueprint, error)
 	DeleteDeviceBlueprint(ctx IotResourceContext, name string) error
 
-	ListApps(ctx IotResourceContext, deviceBlueprintName string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.IOTApp], error)
-	GetApp(ctx IotResourceContext, deviceBlueprintName string, name string) (*entities.IOTApp, error)
-
-	CreateApp(ctx IotResourceContext, deviceBlueprintName string, app entities.IOTApp) (*entities.IOTApp, error)
-	UpdateApp(ctx IotResourceContext, deviceBlueprintName string, app entities.IOTApp) (*entities.IOTApp, error)
-	DeleteApp(ctx IotResourceContext, deviceBlueprintName string, name string) error
+	OnBlueprintApplyError(ctx IotConsoleContext, clusterName string, name string, errMsg string, blueprint entities.IOTDeviceBlueprint, opts UpdateAndDeleteOpts) error
+	OnBlueprintDeleteMessage(ctx IotConsoleContext, clusterName string, blueprint entities.IOTDeviceBlueprint) error
+	OnBlueprintUpdateMessage(ctx IotConsoleContext, clusterName string, blueprint entities.IOTDeviceBlueprint, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 }

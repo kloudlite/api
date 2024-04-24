@@ -29,6 +29,7 @@ type messageReceiver string
 const (
 	ConsoleReceiver           messageReceiver = "kloudlite-console"
 	InfraReceiver             messageReceiver = "kloudlite-infra"
+	IotConsoleReceiver        messageReceiver = "kloudlite-iot-console"
 	ContainerRegistryReceiver messageReceiver = "kloudlite-cr"
 )
 

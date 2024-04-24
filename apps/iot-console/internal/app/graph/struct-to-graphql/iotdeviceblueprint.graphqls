@@ -1,17 +1,22 @@
 type IOTDeviceBlueprint @shareable {
   accountName: String!
+  apiVersion: String
   bluePrintType: Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
+  deploymentName: String!
   displayName: String!
   id: ID!
+  kind: String
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   markedForDeletion: Boolean
-  name: String!
+  metadata: Metadata @goField(name: "objectMeta")
   projectName: String!
   recordVersion: Int!
+  spec: Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec
+  status: Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
-  version: String!
 }
 
 type IOTDeviceBlueprintEdge @shareable {
@@ -26,9 +31,12 @@ type IOTDeviceBlueprintPaginatedRecords @shareable {
 }
 
 input IOTDeviceBlueprintIn {
+  apiVersion: String
   bluePrintType: Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType!
+  deploymentName: String!
   displayName: String!
-  name: String!
-  version: String!
+  kind: String
+  metadata: MetadataIn
+  spec: Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn
 }
 

@@ -7,6 +7,7 @@ import (
 	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
 func (d *domain) findApp(ctx IotResourceContext, deviceBlueprintName string, name string) (*entities.IOTApp, error) {
@@ -90,4 +91,58 @@ func (d *domain) DeleteApp(ctx IotResourceContext, deviceBlueprintName string, n
 		return errors.NewE(err)
 	}
 	return nil
+}
+
+func (d *domain) OnAppUpdateMessage(ctx IotConsoleContext, app entities.IOTApp, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
+	xApp, err := d.findApp(ctx, app.Name)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	if xApp == nil {
+		return errors.Newf("no apps found")
+	}
+	recordVersion, err := d.MatchRecordVersion(app.Annotations, xApp.RecordVersion)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	uapp, err := d.iotAppRepo.PatchById(
+		ctx,
+		xApp.Id,
+		common.PatchForSyncFromAgent(&app, recordVersion, status, common.PatchOpts{
+			MessageTimestamp: opts.MessageTimestamp,
+		}))
+	d.resourceEventPublisher.PublishResourceEvent(ctx, uapp.GetResourceType(), uapp.GetName(), PublishUpdate)
+	return errors.NewE(err)
+}
+
+func (d *domain) OnAppDeleteMessage(ctx IotConsoleContext, app entities.IOTApp) error {
+	err := d.iotAppRepo.DeleteOne(
+		ctx,
+		ctx.DBFilters().Add(fields.MetadataName, app.Name),
+	)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	d.resourceEventPublisher.PublishResourceEvent(ctx, entities.ResourceTypeApp, app.Name, PublishDelete)
+	return nil
+}
+
+func (d *domain) OnAppApplyError(ctx IotConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error {
+	uapp, err := d.iotAppRepo.Patch(
+		ctx,
+		ctx.DBFilters().Add(fields.MetadataName, name),
+		common.PatchForErrorFromAgent(
+			errMsg,
+			common.PatchOpts{
+				MessageTimestamp: opts.MessageTimestamp,
+			},
+		),
+	)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	d.resourceEventPublisher.PublishResourceEvent(ctx, entities.ResourceTypeApp, uapp.Name, PublishDelete)
+	return errors.NewE(err)
 }

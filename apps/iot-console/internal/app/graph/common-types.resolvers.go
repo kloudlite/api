@@ -10,14 +10,57 @@ import (
 	"time"
 
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/generated"
+	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/model"
+	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/common"
 	fn "github.com/kloudlite/api/pkg/functions"
+	v11 "github.com/kloudlite/operator/apis/crds/v1"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
+
+// BluePrintType is the resolver for the bluePrintType field.
+func (r *github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver) BluePrintType(ctx context.Context, obj *entities.IOTDeviceBlueprint) (model.GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType, error) {
+	panic(fmt.Errorf("not implemented: BluePrintType - bluePrintType"))
+}
+
+// CreationTime is the resolver for the creationTime field.
+func (r *github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver) CreationTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error) {
+	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+}
+
+// Spec is the resolver for the spec field.
+func (r *github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver) Spec(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintSpec, error) {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
+}
+
+// Status is the resolver for the status field.
+func (r *github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver) Status(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteOperatorApisCrdsV1BlueprintStatus, error) {
+	panic(fmt.Errorf("not implemented: Status - status"))
+}
+
+// SyncStatus is the resolver for the syncStatus field.
+func (r *github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver) SyncStatus(ctx context.Context, obj *entities.IOTDeviceBlueprint) (*model.GithubComKloudliteAPIPkgTypesSyncStatus, error) {
+	panic(fmt.Errorf("not implemented: SyncStatus - syncStatus"))
+}
+
+// UpdateTime is the resolver for the updateTime field.
+func (r *github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver) UpdateTime(ctx context.Context, obj *entities.IOTDeviceBlueprint) (string, error) {
+	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+}
 
 // UserID is the resolver for the userId field.
 func (r *github__com___kloudlite___api___common__CreatedOrUpdatedByResolver) UserID(ctx context.Context, obj *common.CreatedOrUpdatedBy) (string, error) {
 	return string(obj.UserId), nil
+}
+
+// Spec is the resolver for the spec field.
+func (r *github__com___kloudlite___operator___apis___crds___v1__AppResolver) Spec(ctx context.Context, obj *v11.App) (*model.GithubComKloudliteOperatorApisCrdsV1AppSpec, error) {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
+}
+
+// Status is the resolver for the status field.
+func (r *github__com___kloudlite___operator___apis___crds___v1__AppResolver) Status(ctx context.Context, obj *v11.App) (*model.GithubComKloudliteOperatorPkgOperatorStatus, error) {
+	panic(fmt.Errorf("not implemented: Status - status"))
 }
 
 // Annotations is the resolver for the annotations field.
@@ -54,6 +97,16 @@ func (r *metadataResolver) Labels(ctx context.Context, obj *v1.ObjectMeta) (map[
 	return fn.JsonConvert[map[string]any](obj.Labels)
 }
 
+// Metadata is the resolver for the metadata field.
+func (r *github__com___kloudlite___operator___apis___crds___v1__AppInResolver) Metadata(ctx context.Context, obj *v11.App, data *v1.ObjectMeta) error {
+	panic(fmt.Errorf("not implemented: Metadata - metadata"))
+}
+
+// Spec is the resolver for the spec field.
+func (r *github__com___kloudlite___operator___apis___crds___v1__AppInResolver) Spec(ctx context.Context, obj *v11.App, data *model.GithubComKloudliteOperatorApisCrdsV1AppSpecIn) error {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
+}
+
 // Annotations is the resolver for the annotations field.
 func (r *metadataInResolver) Annotations(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error {
 	if obj == nil {
@@ -72,17 +125,35 @@ func (r *metadataInResolver) Labels(ctx context.Context, obj *v1.ObjectMeta, dat
 	return fn.JsonConversion(data, &obj.Labels)
 }
 
+// Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint returns generated.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver implementation.
+func (r *Resolver) Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint() generated.Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver {
+	return &github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver{r}
+}
+
 // Github__com___kloudlite___api___common__CreatedOrUpdatedBy returns generated.Github__com___kloudlite___api___common__CreatedOrUpdatedByResolver implementation.
 func (r *Resolver) Github__com___kloudlite___api___common__CreatedOrUpdatedBy() generated.Github__com___kloudlite___api___common__CreatedOrUpdatedByResolver {
 	return &github__com___kloudlite___api___common__CreatedOrUpdatedByResolver{r}
 }
 
+// Github__com___kloudlite___operator___apis___crds___v1__App returns generated.Github__com___kloudlite___operator___apis___crds___v1__AppResolver implementation.
+func (r *Resolver) Github__com___kloudlite___operator___apis___crds___v1__App() generated.Github__com___kloudlite___operator___apis___crds___v1__AppResolver {
+	return &github__com___kloudlite___operator___apis___crds___v1__AppResolver{r}
+}
+
 // Metadata returns generated.MetadataResolver implementation.
 func (r *Resolver) Metadata() generated.MetadataResolver { return &metadataResolver{r} }
+
+// Github__com___kloudlite___operator___apis___crds___v1__AppIn returns generated.Github__com___kloudlite___operator___apis___crds___v1__AppInResolver implementation.
+func (r *Resolver) Github__com___kloudlite___operator___apis___crds___v1__AppIn() generated.Github__com___kloudlite___operator___apis___crds___v1__AppInResolver {
+	return &github__com___kloudlite___operator___apis___crds___v1__AppInResolver{r}
+}
 
 // MetadataIn returns generated.MetadataInResolver implementation.
 func (r *Resolver) MetadataIn() generated.MetadataInResolver { return &metadataInResolver{r} }
 
+type github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintResolver struct{ *Resolver }
 type github__com___kloudlite___api___common__CreatedOrUpdatedByResolver struct{ *Resolver }
+type github__com___kloudlite___operator___apis___crds___v1__AppResolver struct{ *Resolver }
 type metadataResolver struct{ *Resolver }
+type github__com___kloudlite___operator___apis___crds___v1__AppInResolver struct{ *Resolver }
 type metadataInResolver struct{ *Resolver }

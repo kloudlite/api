@@ -15,7 +15,6 @@ const (
 	ResourceTypeIOTProject         ResourceType = "iot_project"
 	ResourceTypeIOTDeviceBlueprint ResourceType = "iot_device_blueprint"
 	ResourceTypeIOTDeployment      ResourceType = "iot_deployment"
-	ResourceTypeIOTApp             ResourceType = "iot_app"
 	ResourceTypeIOTDevice          ResourceType = "iot_device"
 )
 
@@ -81,15 +80,6 @@ func (d *domain) CheckNameAvailability(ctx IotResourceContext, deviceBlueprintNa
 				fields.ProjectName:   ctx.ProjectName,
 				fc.IOTDeploymentName: name,
 			}, d.iotDeploymentRepo)
-		}
-	case ResourceTypeIOTApp:
-		{
-			return checkAppResourceName(ctx, repos.Filter{
-				fields.AccountName:           ctx.AccountName,
-				fields.ProjectName:           ctx.ProjectName,
-				fc.IOTAppDeviceBlueprintName: deviceBlueprintName,
-				fields.MetadataName:          name,
-			}, d.iotAppRepo)
 		}
 	case ResourceTypeIOTDevice:
 		{

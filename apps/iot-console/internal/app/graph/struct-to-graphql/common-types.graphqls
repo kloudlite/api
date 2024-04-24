@@ -3,10 +3,49 @@ type Github__com___kloudlite___api___apps___iot____console___internal___entities
   name: String!
 }
 
+type Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint @shareable {
+  accountName: String!
+  apiVersion: String
+  bluePrintType: Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType!
+  createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  creationTime: Date!
+  deploymentName: String!
+  displayName: String!
+  id: ID!
+  kind: String
+  lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  markedForDeletion: Boolean
+  metadata: Metadata @goField(name: "objectMeta")
+  projectName: String!
+  recordVersion: Int!
+  spec: Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec
+  status: Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
+  updateTime: Date!
+}
+
 type Github__com___kloudlite___api___common__CreatedOrUpdatedBy @shareable {
   userEmail: String!
   userId: String!
   userName: String!
+}
+
+type Github__com___kloudlite___api___pkg___types__SyncStatus @shareable {
+  action: Github__com___kloudlite___api___pkg___types__SyncAction!
+  error: String
+  lastSyncedAt: Date
+  recordVersion: Int!
+  state: Github__com___kloudlite___api___pkg___types__SyncState!
+  syncScheduledAt: Date
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__App @shareable {
+  apiVersion: String
+  enabled: Boolean
+  kind: String
+  metadata: Metadata @goField(name: "objectMeta")
+  spec: Github__com___kloudlite___operator___apis___crds___v1__AppSpec!
+  status: Github__com___kloudlite___operator___pkg___operator__Status
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__AppContainer @shareable {
@@ -39,11 +78,38 @@ type Github__com___kloudlite___operator___apis___crds___v1__AppSpec @shareable {
   topologySpreadConstraints: [K8s__io___api___core___v1__TopologySpreadConstraint!]
 }
 
+type Github__com___kloudlite___operator___apis___crds___v1__AppStatus @shareable {
+  checkList: [Github__com___kloudlite___operator___pkg___operator__CheckMeta!]
+  checks: Map
+  isReady: Boolean!
+  lastReadyGeneration: Int
+  lastReconcileTime: Date
+  message: Github__com___kloudlite___operator___pkg___raw____json__RawJson
+  name: String!
+  resources: [Github__com___kloudlite___operator___pkg___operator__ResourceRef!]
+}
+
 type Github__com___kloudlite___operator___apis___crds___v1__AppSvc @shareable {
   name: String
   port: Int!
   targetPort: Int
   type: String
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpec @shareable {
+  apps: [Github__com___kloudlite___operator___apis___crds___v1__App!]
+  version: String!
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__BlueprintStatus @shareable {
+  apps: [Github__com___kloudlite___operator___apis___crds___v1__AppStatus!]
+  checkList: [Github__com___kloudlite___operator___pkg___operator__CheckMeta!]
+  checks: Map
+  isReady: Boolean!
+  lastReadyGeneration: Int
+  lastReconcileTime: Date
+  message: Github__com___kloudlite___operator___pkg___raw____json__RawJson
+  resources: [Github__com___kloudlite___operator___pkg___operator__ResourceRef!]
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__ContainerEnv @shareable {
@@ -220,6 +286,14 @@ input Github__com___kloudlite___operator___apis___crds___v1__AppContainerIn {
   volumes: [Github__com___kloudlite___operator___apis___crds___v1__ContainerVolumeIn!]
 }
 
+input Github__com___kloudlite___operator___apis___crds___v1__AppIn {
+  apiVersion: String
+  enabled: Boolean
+  kind: String
+  metadata: MetadataIn
+  spec: Github__com___kloudlite___operator___apis___crds___v1__AppSpecIn!
+}
+
 input Github__com___kloudlite___operator___apis___crds___v1__AppSpecIn {
   containers: [Github__com___kloudlite___operator___apis___crds___v1__AppContainerIn!]!
   displayName: String
@@ -240,6 +314,11 @@ input Github__com___kloudlite___operator___apis___crds___v1__AppSvcIn {
   port: Int!
   targetPort: Int
   type: String
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__BlueprintSpecIn {
+  apps: [Github__com___kloudlite___operator___apis___crds___v1__AppIn!]
+  version: String!
 }
 
 input Github__com___kloudlite___operator___apis___crds___v1__ContainerEnvIn {
@@ -350,6 +429,21 @@ input MetadataIn {
 enum Github__com___kloudlite___api___apps___iot____console___internal___entities__BluePrintType {
   group_blueprint
   singleton_blueprint
+}
+
+enum Github__com___kloudlite___api___pkg___types__SyncAction {
+  APPLY
+  DELETE
+}
+
+enum Github__com___kloudlite___api___pkg___types__SyncState {
+  APPLIED_AT_AGENT
+  DELETED_AT_AGENT
+  DELETING_AT_AGENT
+  ERRORED_AT_AGENT
+  IDLE
+  IN_QUEUE
+  UPDATED_AT_AGENT
 }
 
 enum Github__com___kloudlite___operator___apis___crds___v1__ConfigOrSecret {

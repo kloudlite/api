@@ -45,5 +45,4 @@ func main() {
 
 	common.PrintReadyBanner()
 	<-app.Done()
-
 }

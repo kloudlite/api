@@ -7,7 +7,15 @@ import (
 	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
+
+func newIOTResourceContext(ctx IotConsoleContext, projectName string) IotResourceContext {
+	return IotResourceContext{
+		IotConsoleContext: ctx,
+		ProjectName:       projectName,
+	}
+}
 
 func (d *domain) findDeviceBlueprint(ctx IotResourceContext, name string) (*entities.IOTDeviceBlueprint, error) {
 	filter := ctx.IOTConsoleDBFilters()
@@ -88,4 +96,64 @@ func (d *domain) DeleteDeviceBlueprint(ctx IotResourceContext, name string) erro
 		return errors.NewE(err)
 	}
 	return nil
+}
+
+func (d *domain) onDeviceUpdate(ctx IotConsoleContext, clusterName string, bp entities.IOTDeviceBlueprint, status types.ResourceStatus, opts UpdateAndDeleteOpts, newBp *entities.IOTDeviceBlueprint) error {
+	devName, err := entities.ExtractDeviceName(clusterName)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	xDev, err := d.findDevice(newIOTResourceContext(ctx, bp.ProjectName), *devName, bp.DeploymentName)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	if xDev == nil {
+		return errors.Newf("no apps found")
+	}
+	recordVersion, err := d.MatchRecordVersion(bp.Annotations, xDev.RecordVersion)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	xDev.CurrentBlueprint = newBp
+
+	uapp, err := d.iotDeviceRepo.PatchById(
+		ctx,
+		xDev.Id,
+		common.PatchForSyncFromAgent(xDev, recordVersion, status, common.PatchOpts{
+			MessageTimestamp: opts.MessageTimestamp,
+		}))
+
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeIOTDevice, uapp.GetName(), PublishUpdate)
+	return errors.NewE(err)
+
+}
+
+func (d *domain) OnBlueprintUpdateMessage(ctx IotConsoleContext, clusterName string, bp entities.IOTDeviceBlueprint, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
+	return d.onDeviceUpdate(ctx, clusterName, bp, status, opts, &bp)
+}
+
+func (d *domain) OnBlueprintDeleteMessage(ctx IotConsoleContext, clusterName string, bp entities.IOTDeviceBlueprint) error {
+	return d.onDeviceUpdate(ctx, clusterName, bp, types.ResourceStatus(types.ResourceStatusDeleted.String()), UpdateAndDeleteOpts{}, nil)
+}
+
+func (d *domain) OnBlueprintApplyError(ctx IotConsoleContext, clusterName string, bpName string, errMsg string, blueprint entities.IOTDeviceBlueprint, opts UpdateAndDeleteOpts) error {
+	uapp, err := d.iotDeviceRepo.Patch(
+		ctx,
+		newIOTResourceContext(ctx, blueprint.ProjectName).IOTConsoleDBFilters().Add(fields.MetadataName, bpName),
+		common.PatchForErrorFromAgent(
+			errMsg,
+			common.PatchOpts{
+				MessageTimestamp: opts.MessageTimestamp,
+			},
+		),
+	)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeIOTDevice, uapp.GetName(), PublishUpdate)
+	return errors.NewE(err)
 }

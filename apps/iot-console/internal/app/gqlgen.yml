@@ -83,10 +83,6 @@ models:
     model: github.com/kloudlite/api/apps/iot-console/internal/entities.IOTDeployment
   IOTDeploymentIn: *iot-deployment-model
 
-  IOTApp: &iot-app-model
-    model: github.com/kloudlite/api/apps/iot-console/internal/entities.IOTApp
-  IOTAppIn: *iot-app-model
-
   MatchFilter: &match-filter-model
     model: github.com/kloudlite/api/pkg/repos.MatchFilter
   MatchFilterIn: *match-filter-model
@@ -103,6 +99,14 @@ models:
 
   Github__com___kloudlite___api___common__CreatedOrUpdatedBy:
     model: github.com/kloudlite/api/common.CreatedOrUpdatedBy
+
+  Github__com___kloudlite___operator___apis___crds___v1__App: &app-model
+    model: github.com/kloudlite/operator/apis/crds/v1.App
+
+  Github__com___kloudlite___operator___apis___crds___v1__AppIn: *app-model
+
+  Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint: *iot-device-blueprint-model
+  Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprintIn: *iot-device-blueprint-model
 
   ResourceType:
     model: github.com/kloudlite/api/apps/iot-console/internal/domain.ResourceType

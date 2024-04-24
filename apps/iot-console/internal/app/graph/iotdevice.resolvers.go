@@ -6,9 +6,11 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/generated"
+	"github.com/kloudlite/api/apps/iot-console/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 )
 
@@ -18,6 +20,16 @@ func (r *iOTDeviceResolver) CreationTime(ctx context.Context, obj *entities.IOTD
 		return "", errNilDevice
 	}
 	return obj.CreationTime.Format(time.RFC3339), nil
+}
+
+// Status is the resolver for the status field.
+func (r *iOTDeviceResolver) Status(ctx context.Context, obj *entities.IOTDevice) (*model.GithubComKloudliteOperatorPkgOperatorStatus, error) {
+	panic(fmt.Errorf("not implemented: Status - status"))
+}
+
+// SyncStatus is the resolver for the syncStatus field.
+func (r *iOTDeviceResolver) SyncStatus(ctx context.Context, obj *entities.IOTDevice) (*model.GithubComKloudliteAPIPkgTypesSyncStatus, error) {
+	panic(fmt.Errorf("not implemented: SyncStatus - syncStatus"))
 }
 
 // UpdateTime is the resolver for the updateTime field.

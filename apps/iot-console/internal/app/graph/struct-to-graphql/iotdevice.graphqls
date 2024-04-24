@@ -3,8 +3,10 @@ type IOTDevice @shareable {
   clusterToken: String!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
+  currentBlueprint: Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint
   deploymentName: String!
   displayName: String!
+  expectedBlueprint: Github__com___kloudlite___api___apps___iot____console___internal___entities__IOTDeviceBlueprint
   id: ID!
   index: Int!
   ip: String!
@@ -16,8 +18,9 @@ type IOTDevice @shareable {
   publicKey: String!
   recordVersion: Int!
   serviceCIDR: String!
+  status: Github__com___kloudlite___operator___pkg___operator__Status
+  syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
-  version: String!
 }
 
 type IOTDeviceEdge @shareable {
@@ -35,6 +38,5 @@ input IOTDeviceIn {
   displayName: String!
   name: String!
   publicKey: String!
-  version: String!
 }
 

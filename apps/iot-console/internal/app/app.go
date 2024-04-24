@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/gofiber/fiber/v2"
 	"github.com/kloudlite/api/apps/iot-console/internal/app/graph"
@@ -20,6 +21,8 @@ import (
 	httpServer "github.com/kloudlite/api/pkg/http-server"
 	"github.com/kloudlite/api/pkg/kv"
 	"github.com/kloudlite/api/pkg/logging"
+	msg_nats "github.com/kloudlite/api/pkg/messaging/nats"
+	"github.com/kloudlite/api/pkg/nats"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
 )
@@ -34,7 +37,6 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.IOTDeployment]("deployments", "depl", entities.IOTDeploymentIndexes),
 	repos.NewFxMongoRepo[*entities.IOTDevice]("devices", "dev", entities.IOTDeviceIndexes),
 	repos.NewFxMongoRepo[*entities.IOTDeviceBlueprint]("device_blueprints", "devblueprint", entities.IOTDeviceBlueprintIndexes),
-	repos.NewFxMongoRepo[*entities.IOTApp]("apps", "app", entities.IOTAppIndexes),
 
 	fx.Provide(
 		func(conn IAMGrpcClient) iam.IAMClient {
@@ -47,6 +49,49 @@ var Module = fx.Module("app",
 			return message_office_internal.NewMessageOfficeInternalClient(conn)
 		},
 	),
+
+	fx.Provide(func(jsc *nats.JetstreamClient, logger logging.Logger) SendTargetClusterMessagesProducer {
+		return msg_nats.NewJetstreamProducer(jsc)
+	}),
+
+	fx.Provide(func(jsc *nats.JetstreamClient, ev *env.Env) (ReceiveResourceUpdatesConsumer, error) {
+		topic := common.GetPlatformClusterMessagingTopic("*", "*", common.IotConsoleReceiver, common.EventResourceUpdate)
+
+		consumerName := "iot-console:resource-updates"
+		return msg_nats.NewJetstreamConsumer(context.TODO(), jsc, msg_nats.JetstreamConsumerArgs{
+			Stream: ev.NatsStream,
+			ConsumerConfig: msg_nats.ConsumerConfig{
+				Name:           consumerName,
+				Durable:        consumerName,
+				Description:    "this consumer receives iot-console resource updates, processes them, and keeps our Database updated about things happening in the cluster",
+				FilterSubjects: []string{topic},
+			},
+		})
+	}),
+
+	fx.Invoke(func(lf fx.Lifecycle, consumer ReceiveResourceUpdatesConsumer, d domain.Domain, logger logging.Logger) {
+		lf.Append(fx.Hook{
+			OnStart: func(context.Context) error {
+				go processResourceUpdates(consumer, d, logger)
+				return nil
+			},
+			OnStop: func(ctx context.Context) error {
+				return consumer.Stop(ctx)
+			},
+		})
+	}),
+
+	fx.Invoke(func(lf fx.Lifecycle, consumer ErrorOnApplyConsumer, d domain.Domain, logger logging.Logger) {
+		lf.Append(fx.Hook{
+			OnStart: func(context.Context) error {
+				go processErrorOnApply(consumer, logger, d)
+				return nil
+			},
+			OnStop: func(ctx context.Context) error {
+				return consumer.Stop(ctx)
+			},
+		})
+	}),
 
 	fx.Invoke(
 		func(server httpServer.Server, d domain.Domain, sessionRepo kv.Repo[*common.AuthSession], ev *env.Env) {

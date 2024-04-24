@@ -1,9 +1,12 @@
 package domain
 
 import (
+	"strconv"
+
 	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/apps/iot-console/internal/entities"
 	"github.com/kloudlite/api/apps/iot-console/internal/env"
+	"github.com/kloudlite/api/constants"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 	message_office_internal "github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal"
 	"github.com/kloudlite/api/pkg/errors"
@@ -25,7 +28,8 @@ type domain struct {
 	iotDeploymentRepo      repos.DbRepo[*entities.IOTDeployment]
 	iotDeviceRepo          repos.DbRepo[*entities.IOTDevice]
 	iotDeviceBlueprintRepo repos.DbRepo[*entities.IOTDeviceBlueprint]
-	iotAppRepo             repos.DbRepo[*entities.IOTApp]
+
+	resourceEventPublisher ResourceEventPublisher
 
 	envVars *env.Env
 }
@@ -47,6 +51,33 @@ func (d *domain) canPerformActionInAccount(ctx IotConsoleContext, action iamT.Ac
 	return nil
 }
 
+func (d *domain) parseRecordVersionFromAnnotations(annotations map[string]string) (int, error) {
+	annotatedVersion, ok := annotations[constants.RecordVersionKey]
+	if !ok {
+		return 0, errors.Newf("no annotation with record version key (%s), found on the resource", constants.RecordVersionKey)
+	}
+
+	annVersion, err := strconv.ParseInt(annotatedVersion, 10, 32)
+	if err != nil {
+		return 0, errors.NewE(err)
+	}
+
+	return int(annVersion), nil
+}
+
+func (d *domain) MatchRecordVersion(annotations map[string]string, rv int) (int, error) {
+	annVersion, err := d.parseRecordVersionFromAnnotations(annotations)
+	if err != nil {
+		return -1, errors.NewE(err)
+	}
+
+	if annVersion != rv {
+		return -1, errors.Newf("record version mismatch, expected %d, got %d", rv, annVersion)
+	}
+
+	return annVersion, nil
+}
+
 type IOTConsoleCacheStore kv.BinaryDataRepo
 
 var Module = fx.Module("domain",
@@ -61,7 +92,6 @@ var Module = fx.Module("domain",
 		iotDeploymentRepo repos.DbRepo[*entities.IOTDeployment],
 		iotDeviceRepo repos.DbRepo[*entities.IOTDevice],
 		iotDeviceBlueprintRepo repos.DbRepo[*entities.IOTDeviceBlueprint],
-		iotAppRepo repos.DbRepo[*entities.IOTApp],
 
 		ev *env.Env,
 	) Domain {
@@ -72,7 +102,6 @@ var Module = fx.Module("domain",
 			iotDeploymentRepo:           iotDeploymentRepo,
 			iotDeviceRepo:               iotDeviceRepo,
 			iotDeviceBlueprintRepo:      iotDeviceBlueprintRepo,
-			iotAppRepo:                  iotAppRepo,
 			envVars:                     ev,
 			messageOfficeInternalClient: messageOfficeInternalClient,
 			iamClient:                   iamClient,
