@@ -1,0 +1,20 @@
+type NotificationConf @shareable {
+  accountName: String!
+  createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  creationTime: Date!
+  emailConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig
+  id: ID!
+  lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  markedForDeletion: Boolean
+  recordVersion: Int!
+  slackConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig
+  telegramConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig
+  updateTime: Date!
+}
+
+input NotificationConfIn {
+  emailConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn
+  slackConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn
+  telegramConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn
+}
+

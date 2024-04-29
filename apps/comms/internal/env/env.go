@@ -16,6 +16,12 @@ type Env struct {
 
 	ResetPasswordWebUrl string `env:"RESET_PASSWORD_WEB_URL" required:"true"`
 	VerifyEmailWebUrl   string `env:"VERIFY_EMAIL_WEB_URL" required:"true"`
+
+	AccountCookieName string `env:"ACCOUNT_COOKIE_NAME" required:"true"`
+
+	// NATS:start
+	NotificationNatsStream string `env:"NOTIFICATION_NATS_STREAM" required:"true"`
+	// NATS:start
 }
 
 func LoadEnv() (*Env, error) {

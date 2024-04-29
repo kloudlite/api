@@ -1,0 +1,60 @@
+type Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig @shareable {
+  enabled: Boolean!
+  mailAddress: String!
+}
+
+type Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig @shareable {
+  enabled: Boolean!
+  webhook: String!
+}
+
+type Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig @shareable {
+  enabled: Boolean!
+}
+
+type Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams @shareable {
+  clusterName: String!
+}
+
+type Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams @shareable {
+  envName: String!
+}
+
+type Github__com___kloudlite___api___common__CreatedOrUpdatedBy @shareable {
+  userEmail: String!
+  userId: String!
+  userName: String!
+}
+
+type PageInfo @shareable {
+  endCursor: String
+  hasNextPage: Boolean
+  hasPreviousPage: Boolean
+  startCursor: String
+}
+
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn {
+  enabled: Boolean!
+  mailAddress: String!
+}
+
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn {
+  enabled: Boolean!
+  webhook: String!
+}
+
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn {
+  enabled: Boolean!
+}
+
+enum Github__com___kloudlite___api___apps___comms___types__NotificationResourceType {
+  account
+  cluster
+  environment
+}
+
+enum Github__com___kloudlite___api___apps___comms___types__NotificationType {
+  alert
+  notification
+}
+
