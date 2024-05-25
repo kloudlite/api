@@ -133,13 +133,14 @@ models:
     model: github.com/kloudlite/api/apps/infra/internal/entities.Node
 
   ResType:
-    model: github.com/kloudlite/api/apps/infra/internal/domain.ResType
+    model: github.com/kloudlite/api/apps/infra/internal/domain/name-check.ResType
 
   Github__com___kloudlite___api___apps___infra___internal___entities__MsvcTemplateEntry:
     model: github.com/kloudlite/api/apps/infra/internal/entities.MsvcTemplateEntry
 
   CheckNameAvailabilityOutput:
-    model: github.com/kloudlite/api/apps/infra/internal/domain.CheckNameAvailabilityOutput
+    # model: github.com/kloudlite/api/apps/infra/internal/domain.CheckNameAvailabilityOutput
+    model: github.com/kloudlite/api/apps/infra/internal/domain/name-check.CheckNameAvailabilityOutput
   
   MatchFilter: &match-filter-model
     model: github.com/kloudlite/api/pkg/repos.MatchFilter

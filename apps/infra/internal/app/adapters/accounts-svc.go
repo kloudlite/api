@@ -1,12 +1,14 @@
-package app
+package adapters
 
 import (
 	"context"
 	"errors"
-	errors2 "github.com/kloudlite/operator/pkg/errors"
 	"time"
 
-	"github.com/kloudlite/api/apps/infra/internal/domain"
+	errors2 "github.com/kloudlite/operator/pkg/errors"
+
+	"github.com/kloudlite/api/apps/infra/internal/domain/ports"
+	"github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts"
 )
 
@@ -24,7 +26,7 @@ func (as *accountsSvc) GetAccount(ctx context.Context, userId string, accountNam
 	})
 	if err != nil {
 		if errors.Is(err, context.DeadlineExceeded) {
-			return nil, domain.ErrGRPCCall{Err: err}
+			return nil, types.ErrGRPCCall{Err: err}
 		}
 		return nil, errors2.NewE(err)
 	}
@@ -32,7 +34,7 @@ func (as *accountsSvc) GetAccount(ctx context.Context, userId string, accountNam
 	return out, nil
 }
 
-func NewAccountsSvc(accountsClient accounts.AccountsClient) domain.AccountsSvc {
+func NewAccountsSvc(accountsClient accounts.AccountsClient) ports.AccountsSvc {
 	return &accountsSvc{
 		accountsClient: accountsClient,
 	}

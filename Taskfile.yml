@@ -26,10 +26,7 @@ tasks:
 
           printf "mocking $package_path.$interface_name "
           mkdir -p mocks/$mock_module_path
-          set -x 
-          whereis mocki
           mocki --package $package_path --interface $interface_name > mocks/$mock_module_path/$file_name
-          set +x
           echo "✅"
         }
 
@@ -37,12 +34,12 @@ tasks:
 
         gen_mock github.com/kloudlite/api/pkg/k8s Client
 
-        # gen_mock github.com/kloudlite/api/apps/infra/internal/domain AccountsSvc
-        #
-        # gen_mock github.com/kloudlite/api/grpc-interfaces/github.com/kloudlite/api/rpc/iam IAMClient
-        # gen_mock github.com/kloudlite/api/grpc-interfaces/github.com/kloudlite/api/rpc/accounts AccountsClient
-        # gen_mock github.com/kloudlite/api/grpc-interfaces/github.com/kloudlite/api/rpc/message-office-internal MessageOfficeInternalClient
-        #
+        gen_mock github.com/kloudlite/api/apps/infra/internal/domain AccountsSvc
+
+        gen_mock github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam IAMClient
+        gen_mock github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts AccountsClient
+        gen_mock github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal MessageOfficeInternalClient
+
         # gen_mock github.com/kloudlite/api/pkg/kafka Producer
         # gen_mock github.com/kloudlite/api/pkg/kafka Consumer
 

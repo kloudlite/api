@@ -47,7 +47,7 @@ func (d *Domain) claimNextFreeDeviceIP(ctx types.InfraContext, deviceName string
 				continue
 			}
 
-			if err := d.IncrementGlobalVPNAllocatedDevices(ctx, 1); err != nil {
+			if err := d.IncrementGlobalVPNAllocatedDevices(ctx, gvpn.Id, 1); err != nil {
 				continue
 			}
 
@@ -133,7 +133,7 @@ func (d *Domain) ListGlobalVPNDevice(ctx types.InfraContext, gvpn string, search
 		map[string]repos.MatchFilter{
 			fc.GlobalVPNDeviceCreationMethod: {
 				MatchType:  repos.MatchTypeNotInArray,
-				NotInArray: []any{gvpnConnectionDeviceMethod, kloudliteGlobalVPNDevice},
+				NotInArray: []any{types.GlobalVPNConnectionDeviceMethod, types.KloudliteGlobalVPNDeviceMethod},
 			},
 		},
 		search,
@@ -181,13 +181,13 @@ func (d *Domain) createGlobalVPNDevice(ctx types.InfraContext, gvpnDevice entiti
 	return gv, nil
 }
 
-func (d *Domain) buildPeersFromGlobalVPNDevices(ctx types.InfraContext, gvpn string) (publicPeers []wgv1.Peer, privatePeers []wgv1.Peer, err error) {
+func (d *Domain) BuildPeersFromGlobalVPNDevices(ctx types.InfraContext, gvpn string) (publicPeers []wgv1.Peer, privatePeers []wgv1.Peer, err error) {
 	devices, err := d.GlobalVPNDeviceRepo.Find(ctx, repos.Query{
 		Filter: map[string]any{
 			fc.AccountName:                  ctx.AccountName,
 			fc.GlobalVPNDeviceGlobalVPNName: gvpn,
 			fc.GlobalVPNDeviceCreationMethod: map[string]any{
-				"$ne": gvpnConnectionDeviceMethod,
+				"$ne": types.GlobalVPNConnectionDeviceMethod,
 			},
 		},
 	})
@@ -243,12 +243,12 @@ func (d *Domain) getGlobalVPNDeviceWgConfig(ctx types.InfraContext, gvpn string,
 		return "", err
 	}
 
-	gvpnConnPeers, err := d.BuildGlobalVPNConnectionPeers(gvpnConns)
+	gvpnConnPeers, err := d.BuildGlobalVPNConnectionPeers(ctx, gvpnConns)
 	if err != nil {
 		return "", err
 	}
 
-	pubPeers, privPeers, err := d.buildPeersFromGlobalVPNDevices(ctx, gvpn)
+	pubPeers, privPeers, err := d.BuildPeersFromGlobalVPNDevices(ctx, gvpn)
 	if err != nil {
 		return "", err
 	}

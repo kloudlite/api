@@ -5,6 +5,7 @@ import (
 	io2 "io"
 
 	"github.com/kloudlite/api/pkg/repos"
+	corev1 "k8s.io/api/core/v1"
 )
 
 type Type1 interface {
@@ -43,4 +44,8 @@ type Type5 interface {
 
 type Type6 interface {
 	Method1(writer io2.Writer)
+}
+
+type Type8 interface {
+	ListSecrets(ctx context.Context, namespace string, secretType corev1.SecretType) ([]corev1.Secret, error)
 }

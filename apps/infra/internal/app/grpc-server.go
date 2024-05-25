@@ -4,6 +4,8 @@ import (
 	"context"
 
 	"github.com/kloudlite/api/apps/infra/internal/domain"
+	"github.com/kloudlite/api/apps/infra/internal/domain/clusters"
+	"github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/grpc-interfaces/infra"
 	"github.com/kloudlite/api/pkg/errors"
 	fn "github.com/kloudlite/api/pkg/functions"
@@ -20,7 +22,7 @@ type grpcServer struct {
 
 // GetClusterKubeconfig implements infra.InfraServer.
 func (g *grpcServer) GetClusterKubeconfig(ctx context.Context, in *infra.GetClusterIn) (*infra.GetClusterKubeconfigOut, error) {
-	infraCtx := domain.InfraContext{
+	infraCtx := types.InfraContext{
 		Context:     ctx,
 		UserId:      repos.ID(in.UserId),
 		UserEmail:   in.UserEmail,
@@ -46,7 +48,7 @@ func (g *grpcServer) GetClusterKubeconfig(ctx context.Context, in *infra.GetClus
 
 // GetCluster implements infra.InfraServer.
 func (g *grpcServer) GetCluster(ctx context.Context, in *infra.GetClusterIn) (*infra.GetClusterOut, error) {
-	infraCtx := domain.InfraContext{
+	infraCtx := types.InfraContext{
 		Context:     ctx,
 		UserId:      repos.ID(in.UserId),
 		UserEmail:   in.UserEmail,
@@ -83,7 +85,7 @@ func (g *grpcServer) GetCluster(ctx context.Context, in *infra.GetClusterIn) (*i
 
 // GetNodepool implements infra.InfraServer
 func (g *grpcServer) GetNodepool(ctx context.Context, in *infra.GetNodepoolIn) (*infra.GetNodepoolOut, error) {
-	infraCtx := domain.InfraContext{
+	infraCtx := types.InfraContext{
 		Context:     ctx,
 		UserId:      repos.ID(in.UserId),
 		UserEmail:   in.UserEmail,
@@ -106,7 +108,7 @@ func (g *grpcServer) GetNodepool(ctx context.Context, in *infra.GetNodepoolIn) (
 }
 
 func (g *grpcServer) ClusterExists(ctx context.Context, in *infra.ClusterExistsIn) (*infra.ClusterExistsOut, error) {
-	infraCtx := domain.InfraContext{
+	infraCtx := types.InfraContext{
 		Context:     ctx,
 		UserId:      repos.ID(in.UserId),
 		UserEmail:   in.UserEmail,
@@ -115,7 +117,7 @@ func (g *grpcServer) ClusterExists(ctx context.Context, in *infra.ClusterExistsI
 	}
 	cluster, err := g.d.GetCluster(infraCtx, in.ClusterName)
 	if err != nil {
-		if errors.Is(err, domain.ErrClusterNotFound) {
+		if errors.Is(err, clusters.ErrClusterNotFound) {
 			return &infra.ClusterExistsOut{Exists: false}, nil
 		}
 		return nil, errors.NewE(err)

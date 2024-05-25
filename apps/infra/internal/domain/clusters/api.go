@@ -77,7 +77,7 @@ func (d *Domain) GetClusterAdminKubeconfig(ctx domainT.InfraContext, clusterName
 		return nil, errors.NewE(err)
 	}
 
-	cluster, err := d.FindCluster(ctx, clusterName)
+	cluster, err := d.findCluster(ctx, clusterName)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -498,7 +498,7 @@ func (d *Domain) UpgradeHelmKloudliteAgent(ctx domainT.InfraContext, clusterName
 		return errors.NewE(err)
 	}
 
-	cluster, err := d.FindCluster(ctx, clusterName)
+	cluster, err := d.findCluster(ctx, clusterName)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -548,7 +548,7 @@ func (d *Domain) GetCluster(ctx domainT.InfraContext, name string) (*entities.Cl
 		return nil, errors.NewE(err)
 	}
 
-	c, err := d.FindCluster(ctx, name)
+	c, err := d.findCluster(ctx, name)
 	if err != nil {
 		if errors.Is(err, ErrClusterNotFound) {
 			byokCluster, err := d.FindBYOKCluster(ctx, name)
@@ -668,7 +668,7 @@ func (d *Domain) DeleteCluster(ctx domainT.InfraContext, name string) error {
 }
 
 func (d *Domain) OnClusterDeleteMessage(ctx domainT.InfraContext, cluster entities.Cluster) error {
-	xcluster, err := d.FindCluster(ctx, cluster.Name)
+	xcluster, err := d.findCluster(ctx, cluster.Name)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -711,7 +711,7 @@ func (d *Domain) OnClusterDeleteMessage(ctx domainT.InfraContext, cluster entiti
 }
 
 func (d *Domain) OnClusterUpdateMessage(ctx domainT.InfraContext, cluster entities.Cluster, status types.ResourceStatus, opts domainT.UpdateAndDeleteOpts) error {
-	xCluster, err := d.FindCluster(ctx, cluster.Name)
+	xCluster, err := d.findCluster(ctx, cluster.Name)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -745,7 +745,7 @@ func (d *Domain) OnClusterUpdateMessage(ctx domainT.InfraContext, cluster entiti
 	return errors.NewE(err)
 }
 
-func (d *Domain) FindCluster(ctx domainT.InfraContext, clusterName string) (*entities.Cluster, error) {
+func (d *Domain) findCluster(ctx domainT.InfraContext, clusterName string) (*entities.Cluster, error) {
 	accNs, err := d.GetAccNamespace(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)

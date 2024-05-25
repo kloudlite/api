@@ -12,24 +12,31 @@ import (
 	"github.com/kloudlite/api/pkg/k8s"
 
 	byok_clusters "github.com/kloudlite/api/apps/infra/internal/domain/byok-clusters"
+	cluster_managed_service "github.com/kloudlite/api/apps/infra/internal/domain/cluster-managed-service"
 	"github.com/kloudlite/api/apps/infra/internal/domain/clusters"
 	commonDomain "github.com/kloudlite/api/apps/infra/internal/domain/common"
 	global_vpn "github.com/kloudlite/api/apps/infra/internal/domain/global-vpn"
 	global_vpn_connection "github.com/kloudlite/api/apps/infra/internal/domain/global-vpn-connection"
 	global_vpn_device "github.com/kloudlite/api/apps/infra/internal/domain/global-vpn-device"
 	helm_releases "github.com/kloudlite/api/apps/infra/internal/domain/helm-releases"
+	ingress_hosts "github.com/kloudlite/api/apps/infra/internal/domain/ingress-hosts"
+	managed_svc_templates "github.com/kloudlite/api/apps/infra/internal/domain/managed-svc-templates"
+	name_check "github.com/kloudlite/api/apps/infra/internal/domain/name-check"
+	namespace "github.com/kloudlite/api/apps/infra/internal/domain/namespaces"
 	"github.com/kloudlite/api/apps/infra/internal/domain/nodepool"
 	persistent_volume "github.com/kloudlite/api/apps/infra/internal/domain/persistent-volume"
 	persistent_volume_claim "github.com/kloudlite/api/apps/infra/internal/domain/persistent-volume-claim"
 	"github.com/kloudlite/api/apps/infra/internal/domain/ports"
 	provider_secret "github.com/kloudlite/api/apps/infra/internal/domain/provider-secret"
 	"github.com/kloudlite/api/apps/infra/internal/domain/types"
+	volume_attachment "github.com/kloudlite/api/apps/infra/internal/domain/volume-attachment"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/apps/infra/internal/env"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 	message_office_internal "github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/message-office-internal"
+	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/logging"
 	"github.com/kloudlite/api/pkg/repos"
 	wgv1 "github.com/kloudlite/operator/apis/wireguard/v1"
@@ -47,10 +54,17 @@ type (
 	PersistentVolumeClaimDomainImpl struct {
 		*persistent_volume_claim.Domain
 	}
-	GlobalVPNDomainImpl           struct{ *global_vpn.Domain }
-	GlobalVPNConnectionDomainImpl struct{ *global_vpn_connection.Domain }
-	GlobalVPNDeviceDomainImpl     struct{ *global_vpn_device.Domain }
-	IngressHostsDomainImpl        struct{ *global_vpn_device.Domain }
+	GlobalVPNDomainImpl             struct{ *global_vpn.Domain }
+	GlobalVPNConnectionDomainImpl   struct{ *global_vpn_connection.Domain }
+	GlobalVPNDeviceDomainImpl       struct{ *global_vpn_device.Domain }
+	IngressHostsDomainImpl          struct{ *ingress_hosts.Domain }
+	ClusterManagedServiceDomainImpl struct {
+		*cluster_managed_service.Domain
+	}
+	ManagedSvcTemplatesDomainImpl struct{ *managed_svc_templates.Domain }
+	NamespaceDomainImpl           struct{ *namespace.Domain }
+	VolumeAttachmentDomainImpl    struct{ *volume_attachment.Domain }
+	NameCheckDomainImpl           struct{ *name_check.Domain }
 )
 
 type domain struct {
@@ -68,41 +82,14 @@ type domain struct {
 	GlobalVPNConnectionDomainImpl
 	GlobalVPNDeviceDomainImpl
 
-	clusterRepo repos.DbRepo[*entities.Cluster]
+	IngressHostsDomainImpl
+	ClusterManagedServiceDomainImpl
 
-	byokClusterRepo           repos.DbRepo[*entities.BYOKCluster]
-	clusterManagedServiceRepo repos.DbRepo[*entities.ClusterManagedService]
-	helmReleaseRepo           repos.DbRepo[*entities.HelmRelease]
-	nodeRepo                  repos.DbRepo[*entities.Node]
-	nodePoolRepo              repos.DbRepo[*entities.NodePool]
+	ManagedSvcTemplatesDomainImpl
+	NamespaceDomainImpl
 
-	gvpnConnRepo            repos.DbRepo[*entities.GlobalVPNConnection]
-	freeClusterSvcCIDRRepo  repos.DbRepo[*entities.FreeClusterSvcCIDR]
-	claimClusterSvcCIDRRepo repos.DbRepo[*entities.ClaimClusterSvcCIDR]
-
-	gvpnRepo        repos.DbRepo[*entities.GlobalVPN]
-	gvpnDevicesRepo repos.DbRepo[*entities.GlobalVPNDevice]
-
-	// deviceAddressPoolRepo repos.DbRepo[*entities.GlobalVPNDeviceAddressPool]
-	freeDeviceIpRepo  repos.DbRepo[*entities.FreeDeviceIP]
-	claimDeviceIPRepo repos.DbRepo[*entities.ClaimDeviceIP]
-
-	domainEntryRepo      repos.DbRepo[*entities.DomainEntry]
-	secretRepo           repos.DbRepo[*entities.CloudProviderSecret]
-	pvcRepo              repos.DbRepo[*entities.PersistentVolumeClaim]
-	namespaceRepo        repos.DbRepo[*entities.Namespace]
-	pvRepo               repos.DbRepo[*entities.PersistentVolume]
-	volumeAttachmentRepo repos.DbRepo[*entities.VolumeAttachment]
-
-	iamClient                   iam.IAMClient
-	accountsSvc                 AccountsSvc
-	messageOfficeInternalClient message_office_internal.MessageOfficeInternalClient
-	resDispatcher               ResourceDispatcher
-	k8sClient                   k8s.Client
-	resourceEventPublisher      ResourceEventPublisher
-
-	msvcTemplates    []*entities.MsvcTemplate
-	msvcTemplatesMap map[string]map[string]*entities.MsvcTemplateEntry
+	VolumeAttachmentDomainImpl
+	NameCheckDomainImpl
 }
 
 var Module = fx.Module("domain",
@@ -117,8 +104,7 @@ var Module = fx.Module("domain",
 			secretRepo repos.DbRepo[*entities.CloudProviderSecret],
 			domainNameRepo repos.DbRepo[*entities.DomainEntry],
 
-			resourceDispatcher ResourceDispatcher,
-			resourceDispatcherV2 ports.ResourceDispatcher,
+			resourceDispatcher ports.ResourceDispatcher,
 
 			helmReleaseRepo repos.DbRepo[*entities.HelmRelease],
 
@@ -145,12 +131,11 @@ var Module = fx.Module("domain",
 			msgOfficeSvc ports.MessageOfficeInternalSvc,
 			accountsSvcV2 ports.AccountsSvc,
 
-			accountsSvc AccountsSvc,
+			accountsSvc ports.AccountsSvc,
 			msgOfficeInternalClient message_office_internal.MessageOfficeInternalClient,
 			logger logging.Logger,
 
-			resourceEventPublisher ResourceEventPublisher,
-			resourceEventPublisherV2 ports.ResourceEventPublisher,
+			resourceEventPublisher ports.ResourceEventPublisher,
 		) (Domain, error) {
 			open, err := os.Open(ev.MsvcTemplateFilePath)
 			if err != nil {
@@ -185,8 +170,8 @@ var Module = fx.Module("domain",
 				K8sClient:              k8sClient,
 				IAMSvc:                 iamSvc,
 				AccountsSvc:            accountsSvc,
-				ResDispatcher:          resourceDispatcherV2,
-				ResourceEventPublisher: resourceEventPublisherV2,
+				ResDispatcher:          resourceDispatcher,
+				ResourceEventPublisher: resourceEventPublisher,
 			}
 
 			gvpnDomain := &global_vpn.Domain{
@@ -194,7 +179,40 @@ var Module = fx.Module("domain",
 				GlobalVPNRepo: gvpnRepo,
 				GlobalVPNDevice: global_vpn.GlobalVPNDevice{
 					CreateGlobalVPNDevice: func(ctx types.InfraContext, gvpn entities.GlobalVPNDevice) (*entities.GlobalVPNDevice, error) {
-						panic("not implemented")
+						return global_vpn_device.CreateGlobalVPNDevice(ctx, global_vpn_device.CreateGlobalVPNDeviceArgs{
+							Logger:              logger,
+							Device:              gvpn,
+							FreeDeviceIPRepo:    freeDeviceIpRepo,
+							ClaimDeviceIPRepo:   claimDeviceIPRepo,
+							GlobalVPNDeviceRepo: gvpnDevicesRepo,
+
+							GetGlobalVPN: func(ctx types.InfraContext, gvpnName string) (*entities.GlobalVPN, error) {
+								return global_vpn.GetGlobalVPN(ctx, global_vpn.GetGlobalVPNArgs{
+									GlobalVPNName: gvpnName,
+									GlobalVPNRepo: gvpnRepo,
+								})
+							},
+							IncrementGlobalVPNAllocatedDevices: func(ctx types.InfraContext, gvpnId repos.ID, incrementBy int) error {
+								return global_vpn.IncrementAllocatedGlobalVPNDevices(ctx, global_vpn.IncrementAllocatedGlobalVPNDevicesArgs{
+									IncrementBy:   incrementBy,
+									GlobalVPNId:   gvpnId,
+									GlobalVPNRepo: gvpnRepo,
+								})
+							},
+							SyncGlobalVPNConnections: func(ctx types.InfraContext, gvpnName string) error {
+								return global_vpn_connection.SyncGlobalVPNConnections(ctx, global_vpn_connection.SyncGlobalVPNConnectionsArgs{
+									GlobalVPNName:           gvpnName,
+									GlobalVPNConnectionRepo: gvpnConnRepo,
+									GeneratePeersFromGlobalVPNDevices: func(ctx types.InfraContext, vpnName string) ([]wgv1.Peer, []wgv1.Peer, error) {
+										return global_vpn_device.GeneratePeersFromGlobalVPNDevices(ctx, global_vpn_device.GeneratePeersFromGlobalVPNDevicesArgs{
+											GlobalVPNName:       vpnName,
+											GlobalVPNDeviceRepo: gvpnDevicesRepo,
+										})
+									},
+									ResDispatcher: resourceDispatcher,
+								})
+							},
+						})
 					},
 				},
 				ClusterDomain: global_vpn.ClusterDomain{
@@ -216,19 +234,36 @@ var Module = fx.Module("domain",
 					FindGlobalVPN: func(ctx types.InfraContext, gvpnName string) (*entities.GlobalVPN, error) {
 						return gvpnDomain.FindGlobalVPN(ctx, gvpnName)
 					},
-					IncrementGlobalVPNAllocatedDevices: func(ctx types.InfraContext, value int) error {
-						panic("not implmented")
+					IncrementGlobalVPNAllocatedDevices: func(ctx types.InfraContext, gvpnId repos.ID, value int) error {
+						return global_vpn.IncrementAllocatedGlobalVPNDevices(ctx, global_vpn.IncrementAllocatedGlobalVPNDevicesArgs{
+							IncrementBy:   value,
+							GlobalVPNId:   gvpnId,
+							GlobalVPNRepo: gvpnRepo,
+						})
 					},
 				},
 				GlobalVPNConnectionDomain: global_vpn_device.GlobalVPNConnectionDomain{
 					SyncGlobalVPNConnections: func(ctx types.InfraContext, gvpnName string) error {
-						panic("not implemented")
+						return global_vpn_connection.SyncGlobalVPNConnections(ctx, global_vpn_connection.SyncGlobalVPNConnectionsArgs{
+							GlobalVPNName:           gvpnName,
+							GlobalVPNConnectionRepo: gvpnConnRepo,
+							GeneratePeersFromGlobalVPNDevices: func(ctx types.InfraContext, vpnName string) ([]wgv1.Peer, []wgv1.Peer, error) {
+								return global_vpn_device.GeneratePeersFromGlobalVPNDevices(ctx, global_vpn_device.GeneratePeersFromGlobalVPNDevicesArgs{
+									GlobalVPNName:       vpnName,
+									GlobalVPNDeviceRepo: gvpnDevicesRepo,
+								})
+							},
+							ResDispatcher: resourceDispatcher,
+						})
 					},
 					ListGlobalVPNConnections: func(ctx types.InfraContext, gvpnName string) ([]*entities.GlobalVPNConnection, error) {
-						panic("not implemented")
+						return global_vpn_connection.ListGlobalVPNConnections(ctx, global_vpn_connection.ListGlobalVPNConnectionsArgs{
+							GlobalVPNName:           gvpnName,
+							GlobalVPNConnectionRepo: gvpnConnRepo,
+						})
 					},
-					BuildGlobalVPNConnectionPeers: func(vpns []*entities.GlobalVPNConnection) ([]wgv1.Peer, error) {
-						panic("not implemented")
+					BuildGlobalVPNConnectionPeers: func(ctx types.InfraContext, vpns []*entities.GlobalVPNConnection) ([]wgv1.Peer, error) {
+						return global_vpn_connection.GenerateGlobalVPNConnectionPeers(ctx, vpns)
 					},
 				},
 			}
@@ -251,7 +286,7 @@ var Module = fx.Module("domain",
 						return gvpnDeviceDomain.DeleteGlobalVPNDevice(ctx, gvpnName, deviceName)
 					},
 					BuildPeersFromGlobalVPNDevices: func(ctx types.InfraContext, gvpnName string) ([]wgv1.Peer, []wgv1.Peer, error) {
-						panic("not implemented")
+						return gvpnDeviceDomain.BuildPeersFromGlobalVPNDevices(ctx, gvpnName)
 					},
 					SyncKloudliteDeviceOnPlatform: func(ctx types.InfraContext, gvpnName string) error {
 						panic("not implemented")
@@ -259,10 +294,22 @@ var Module = fx.Module("domain",
 				},
 				BYOKDomain: global_vpn_connection.BYOKDomain{
 					IsBYOKCluster: func(ctx types.InfraContext, name string) bool {
-						panic("not implemented")
+						ok, err := byok_clusters.IsBYOKCluster(ctx, byok_clusters.IsBYOKClusterArgs{
+							ClusterName:     name,
+							BYOKClusterRepo: byokClusterRepo,
+						})
+						if err != nil {
+							return false
+						}
+						return ok
 					},
 					MarkBYOKClusterReady: func(ctx types.InfraContext, name string, timestamp time.Time) error {
-						panic("not implemented")
+						_, err := byok_clusters.MarkBYOKClusterReady(ctx, byok_clusters.MarkBYOKClusterReadyArgs{
+							ClusterName:     name,
+							BYOKClusterRepo: byokClusterRepo,
+							Time:            timestamp,
+						})
+						return err
 					},
 				},
 			}
@@ -279,13 +326,20 @@ var Module = fx.Module("domain",
 						return gvpnDomain.FindGlobalVPN(ctx, gvpnName)
 					},
 				},
-				GlobalVPNConnectionDomain: clusters.GlobalVPNConnectionDomain{},
-				GlobalVPNDeviceDomain:     clusters.GlobalVPNDeviceDomain{},
-				BYOKClusterDomain:         clusters.BYOKClusterDomain{},
-				ProviderSecretDomain:      clusters.ProviderSecretDomain{},
-				NodepoolDomain:            clusters.NodepoolDomain{},
-				PVDomain:                  clusters.PVDomain{},
-				HelmReleaseDomain:         clusters.HelmReleaseDomain{},
+				GlobalVPNConnectionDomain: clusters.GlobalVPNConnectionDomain{
+					EnsureGlobalVPNConnection: func(ctx types.InfraContext, clusterName string, groupName string, clusterPublicEndpoint string) (*entities.GlobalVPNConnection, error) {
+					},
+					FindGlobalVPNConnection: func(ctx types.InfraContext, gvpnName string, clusterName string) (*entities.GlobalVPNConnection, error) {
+					},
+					DeleteGlobalVPNConnection: func(ctx types.InfraContext, gvpnName string, clusterName string) error {
+					},
+				},
+				GlobalVPNDeviceDomain: clusters.GlobalVPNDeviceDomain{},
+				BYOKClusterDomain:     clusters.BYOKClusterDomain{},
+				ProviderSecretDomain:  clusters.ProviderSecretDomain{},
+				NodepoolDomain:        clusters.NodepoolDomain{},
+				PVDomain:              clusters.PVDomain{},
+				HelmReleaseDomain:     clusters.HelmReleaseDomain{},
 			}
 
 			helmReleaseDomain := &helm_releases.Domain{
@@ -337,7 +391,10 @@ var Module = fx.Module("domain",
 				NodepoolRepo: nodePoolRepo,
 				ClusterDomain: nodepool.ClusterDomain{
 					FindCluster: func(ctx types.InfraContext, name string) (*entities.Cluster, error) {
-						return clusterDomain.FindCluster(ctx, name)
+						return clusters.GetCluster(ctx, clusters.GetClusterArgs{
+							ClusterRepo: clusterRepo,
+							ClusterName: name,
+						})
 					},
 				},
 				ProviderSecretDomain: nodepool.ProviderSecretDomain{
@@ -364,6 +421,90 @@ var Module = fx.Module("domain",
 				PersistentVolumeClaimRepo: pvcRepo,
 			}
 
+			clusterManagedServiceDomain := &cluster_managed_service.Domain{
+				Domain:                    cd,
+				ClusterManagedServiceRepo: clustermanagedserviceRepo,
+			}
+
+			ingressHostsDomain := &ingress_hosts.Domain{
+				Domain:          cd,
+				DomainEntryRepo: domainNameRepo,
+			}
+
+			msvcTemplatesDomain := &managed_svc_templates.Domain{
+				ManagedSvcTemplates:    templates,
+				ManagedSvcTemplatesMap: msvcTemplatesMap,
+			}
+
+			namespaceDomain := &namespace.Domain{
+				NamespaceRepo: namespaceRepo,
+			}
+
+			volumeAttachDomain := &volume_attachment.Domain{
+				Domain:               cd,
+				VolumeAttachmentRepo: volumeAttachmentRepo,
+			}
+
+			nameCheckDomain := &name_check.Domain{
+				ClusterDomain: name_check.ClusterDomain{
+					IsClusterNameAvailable: func(ctx types.InfraContext, name string) (bool, error) {
+						c, err := clusters.GetCluster(ctx, clusters.GetClusterArgs{
+							ClusterRepo: clusterRepo,
+							ClusterName: name,
+						})
+						if err != nil {
+							return false, err
+						}
+						return fn.IsNil(c), nil
+					},
+				},
+				GlobalVPNDeviceDomain: name_check.GlobalVPNDeviceDomain{
+					IsGlobalVPNDeviceNameAvailable: func(ctx types.InfraContext, name string) (bool, error) {
+						c, err := gvpnDomain.FindGlobalVPN(ctx, name)
+						if err != nil {
+							return false, err
+						}
+						return fn.IsNil(c), nil
+					},
+				},
+				NodepoolDomain: name_check.NodepoolDomain{
+					IsNodepoolNameAvailable: func(ctx types.InfraContext, clusterName string, name string) (bool, error) {
+						c, err := nodepoolDomain.FindNodePool(ctx, clusterName, name)
+						if err != nil {
+							return false, err
+						}
+						return fn.IsNil(c), nil
+					},
+				},
+				HelmReleaseDomain: name_check.HelmReleaseDomain{
+					IsHelmReleaseNameAvailable: func(ctx types.InfraContext, clusterName string, name string) (bool, error) {
+						c, err := helmReleaseDomain.FindHelmRelease(ctx, clusterName, name)
+						if err != nil {
+							return false, err
+						}
+						return fn.IsNil(c), nil
+					},
+				},
+				ClusterManagedServiceDomain: name_check.ClusterManagedServiceDomain{
+					IsClusterManagedSvcNameAvailable: func(ctx types.InfraContext, clusterName string, name string) (bool, error) {
+						c, err := clusterManagedServiceDomain.FindClusterManagedService(ctx, name)
+						if err != nil {
+							return false, err
+						}
+						return fn.IsNil(c), nil
+					},
+				},
+				ProviderSecretDomain: name_check.ProviderSecretDomain{
+					IsProviderSecretNameAvailable: func(ctx types.InfraContext, name string) (bool, error) {
+						c, err := providerSecretDomain.FindProviderSecret(ctx, name)
+						if err != nil {
+							return false, err
+						}
+						return fn.IsNil(c), nil
+					},
+				},
+			}
+
 			return &domain{
 				CommonDomainImpl:                CommonDomainImpl{Domain: cd},
 				ClusterDomainImpl:               ClusterDomainImpl{Domain: clusterDomain},
@@ -376,38 +517,12 @@ var Module = fx.Module("domain",
 				GlobalVPNDomainImpl:             GlobalVPNDomainImpl{Domain: gvpnDomain},
 				GlobalVPNDeviceDomainImpl:       GlobalVPNDeviceDomainImpl{Domain: gvpnDeviceDomain},
 
-				msvcTemplatesMap: msvcTemplatesMap,
-				msvcTemplates:    templates,
-				clusterRepo:      clusterRepo,
-				gvpnConnRepo:     gvpnConnRepo,
-				// deviceAddressPoolRepo:   deviceAddressPoolRepo,
-
-				claimDeviceIPRepo:       claimDeviceIPRepo,
-				freeDeviceIpRepo:        freeDeviceIpRepo,
-				freeClusterSvcCIDRRepo:  freeClusterSvcCIDRRepo,
-				claimClusterSvcCIDRRepo: claimClusterSvcCIDRRepo,
-
-				gvpnRepo:        gvpnRepo,
-				gvpnDevicesRepo: gvpnDevicesRepo,
-
-				byokClusterRepo:             byokClusterRepo,
-				clusterManagedServiceRepo:   clustermanagedserviceRepo,
-				nodeRepo:                    nodeRepo,
-				nodePoolRepo:                nodePoolRepo,
-				secretRepo:                  secretRepo,
-				domainEntryRepo:             domainNameRepo,
-				resDispatcher:               resourceDispatcher,
-				k8sClient:                   k8sClient,
-				iamClient:                   iamClient,
-				accountsSvc:                 accountsSvc,
-				messageOfficeInternalClient: msgOfficeInternalClient,
-				resourceEventPublisher:      resourceEventPublisher,
-				helmReleaseRepo:             helmReleaseRepo,
-
-				pvcRepo:              pvcRepo,
-				volumeAttachmentRepo: volumeAttachmentRepo,
-				pvRepo:               pvRepo,
-				namespaceRepo:        namespaceRepo,
+				ClusterManagedServiceDomainImpl: ClusterManagedServiceDomainImpl{Domain: clusterManagedServiceDomain},
+				IngressHostsDomainImpl:          IngressHostsDomainImpl{Domain: ingressHostsDomain},
+				ManagedSvcTemplatesDomainImpl:   ManagedSvcTemplatesDomainImpl{Domain: msvcTemplatesDomain},
+				NamespaceDomainImpl:             NamespaceDomainImpl{Domain: namespaceDomain},
+				VolumeAttachmentDomainImpl:      VolumeAttachmentDomainImpl{Domain: volumeAttachDomain},
+				NameCheckDomainImpl:             NameCheckDomainImpl{Domain: nameCheckDomain},
 			}, nil
 		}),
 )

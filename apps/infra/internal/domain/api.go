@@ -1,11 +1,9 @@
 package domain
 
 import (
-	"context"
-	"time"
-
 	networkingv1 "k8s.io/api/networking/v1"
 
+	name_check "github.com/kloudlite/api/apps/infra/internal/domain/name-check"
 	provider_secret "github.com/kloudlite/api/apps/infra/internal/domain/provider-secret"
 	domainT "github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
@@ -13,29 +11,29 @@ import (
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
-type InfraContext struct {
-	context.Context
-	UserId      repos.ID
-	UserEmail   string
-	UserName    string
-	AccountName string
-}
-
-func (i InfraContext) GetUserId() repos.ID {
-	return i.UserId
-}
-
-func (i InfraContext) GetUserEmail() string {
-	return i.UserEmail
-}
-
-func (i InfraContext) GetUserName() string {
-	return i.UserName
-}
-
-type UpdateAndDeleteOpts struct {
-	MessageTimestamp time.Time
-}
+// type InfraContext struct {
+// 	context.Context
+// 	UserId      repos.ID
+// 	UserEmail   string
+// 	UserName    string
+// 	AccountName string
+// }
+//
+// func (i InfraContext) GetUserId() repos.ID {
+// 	return i.UserId
+// }
+//
+// func (i InfraContext) GetUserEmail() string {
+// 	return i.UserEmail
+// }
+//
+// func (i InfraContext) GetUserName() string {
+// 	return i.UserName
+// }
+//
+// type UpdateAndDeleteOpts struct {
+// 	MessageTimestamp time.Time
+// }
 
 type ResourceType string
 
@@ -54,7 +52,7 @@ const (
 )
 
 type Domain interface {
-	CheckNameAvailability(ctx InfraContext, typeArg ResType, clusterName *string, name string) (*CheckNameAvailabilityOutput, error)
+	NameCheckDomain
 
 	ClusterDomain
 	HelmReleaseDomain
@@ -68,15 +66,23 @@ type Domain interface {
 
 	PersistentVolumeDomain
 	PersistentVolumeClaimDomain
+	NamespaceDomain
+	VolumeAttachmentDomain
 
-	// IngressHostsDomain
-	// ManagedSvcTemplatesDomain
+	IngressHostsDomain
+	ClusterManagedServiceDomain
+
+	ManagedSvcTemplatesDomain
 
 	// ListNodes(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Node], error)
 	// GetNode(ctx InfraContext, clusterName string, nodeName string) (*entities.Node, error)
 
 	// OnNodeUpdateMessage(ctx InfraContext, clusterName string, node entities.Node) error
 	// OnNodeDeleteMessage(ctx InfraContext, clusterName string, node entities.Node) error
+}
+
+type NameCheckDomain interface {
+	CheckNameAvailability(ctx domainT.InfraContext, typeArg name_check.ResType, clusterName *string, name string) (*name_check.CheckNameAvailabilityOutput, error)
 }
 
 type ProviderSecretDomain interface {
@@ -194,29 +200,29 @@ type PersistentVolumeClaimDomain interface {
 }
 
 type VolumeAttachmentDomain interface {
-	ListVolumeAttachments(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VolumeAttachment], error)
-	GetVolumeAttachment(ctx InfraContext, clusterName string, volAttachmentName string) (*entities.VolumeAttachment, error)
-	OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error
+	ListVolumeAttachments(ctx domainT.InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.VolumeAttachment], error)
+	GetVolumeAttachment(ctx domainT.InfraContext, clusterName string, volAttachmentName string) (*entities.VolumeAttachment, error)
+	OnVolumeAttachmentUpdateMessage(ctx domainT.InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts domainT.UpdateAndDeleteOpts) error
+	OnVolumeAttachmentDeleteMessage(ctx domainT.InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error
 }
 
 type NamespaceDomain interface {
-	ListNamespaces(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Namespace], error)
-	GetNamespace(ctx InfraContext, clusterName string, namespace string) (*entities.Namespace, error)
-	OnNamespaceUpdateMessage(ctx InfraContext, clusterName string, namespace entities.Namespace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnNamespaceDeleteMessage(ctx InfraContext, clusterName string, namespace entities.Namespace) error
+	ListNamespaces(ctx domainT.InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Namespace], error)
+	GetNamespace(ctx domainT.InfraContext, clusterName string, namespace string) (*entities.Namespace, error)
+	OnNamespaceUpdateMessage(ctx domainT.InfraContext, clusterName string, namespace entities.Namespace, status types.ResourceStatus, opts domainT.UpdateAndDeleteOpts) error
+	OnNamespaceDeleteMessage(ctx domainT.InfraContext, clusterName string, namespace entities.Namespace) error
 }
 
 type IngressHostsDomain interface {
-	ListDomainEntries(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.DomainEntry], error)
-	GetDomainEntry(ctx InfraContext, name string) (*entities.DomainEntry, error)
+	ListDomainEntries(ctx domainT.InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.DomainEntry], error)
+	GetDomainEntry(ctx domainT.InfraContext, name string) (*entities.DomainEntry, error)
 
-	CreateDomainEntry(ctx InfraContext, domainName entities.DomainEntry) (*entities.DomainEntry, error)
-	UpdateDomainEntry(ctx InfraContext, domainName entities.DomainEntry) (*entities.DomainEntry, error)
-	DeleteDomainEntry(ctx InfraContext, name string) error
+	CreateDomainEntry(ctx domainT.InfraContext, domainName entities.DomainEntry) (*entities.DomainEntry, error)
+	UpdateDomainEntry(ctx domainT.InfraContext, domainName entities.DomainEntry) (*entities.DomainEntry, error)
+	DeleteDomainEntry(ctx domainT.InfraContext, name string) error
 
-	OnIngressUpdateMessage(ctx InfraContext, clusterName string, ingress networkingv1.Ingress, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnIngressDeleteMessage(ctx InfraContext, clusterName string, ingress networkingv1.Ingress) error
+	OnIngressUpdateMessage(ctx domainT.InfraContext, clusterName string, ingress networkingv1.Ingress, status types.ResourceStatus, opts domainT.UpdateAndDeleteOpts) error
+	OnIngressDeleteMessage(ctx domainT.InfraContext, clusterName string, ingress networkingv1.Ingress) error
 }
 
 type ManagedSvcTemplatesDomain interface {

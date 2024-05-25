@@ -54,3 +54,10 @@ var ClusterIndices = []repos.IndexField{
 		Unique: true,
 	},
 }
+
+func UniqueCluster(accountName string, clusterName string) repos.Filter {
+	return repos.Filter{
+		fc.AccountName:  accountName,
+		fc.MetadataName: clusterName,
+	}
+}

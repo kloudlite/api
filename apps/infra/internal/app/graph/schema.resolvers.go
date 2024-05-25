@@ -12,7 +12,7 @@ import (
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
-	"github.com/kloudlite/api/apps/infra/internal/domain"
+	name_check "github.com/kloudlite/api/apps/infra/internal/domain/name-check"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	"github.com/kloudlite/api/common/fields"
 	fn "github.com/kloudlite/api/pkg/functions"
@@ -375,7 +375,7 @@ func (r *mutationResolver) InfraDeletePv(ctx context.Context, clusterName string
 }
 
 // InfraCheckNameAvailability is the resolver for the infra_checkNameAvailability field.
-func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType domain.ResType, clusterName *string, name string) (*domain.CheckNameAvailabilityOutput, error) {
+func (r *queryResolver) InfraCheckNameAvailability(ctx context.Context, resType name_check.ResType, clusterName *string, name string) (*name_check.CheckNameAvailabilityOutput, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)

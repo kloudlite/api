@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 
 	"github.com/kloudlite/api/apps/infra/internal/domain"
+	domainT "github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	msgOfficeT "github.com/kloudlite/api/apps/message-office/types"
 	t "github.com/kloudlite/api/apps/tenant-agent/types"
@@ -46,7 +47,7 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 			mLogger.Infof("[%d] processed message", counter)
 		}()
 
-		dctx := domain.InfraContext{
+		dctx := domainT.InfraContext{
 			Context:     context.TODO(),
 			UserId:      "sys-user:error-on-apply-worker",
 			UserEmail:   "",
@@ -54,7 +55,7 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 			AccountName: em.AccountName,
 		}
 
-		opts := domain.UpdateAndDeleteOpts{MessageTimestamp: msg.Timestamp}
+		opts := domainT.UpdateAndDeleteOpts{MessageTimestamp: msg.Timestamp}
 
 		gvkstr := obj.GroupVersionKind().String()
 		switch gvkstr {

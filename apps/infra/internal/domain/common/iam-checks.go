@@ -3,30 +3,11 @@ package common
 import (
 	"fmt"
 
-	"github.com/kloudlite/api/pkg/errors"
-
 	iamT "github.com/kloudlite/api/apps/iam/types"
+	"github.com/kloudlite/api/apps/infra/internal/domain/types"
 	domainT "github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 )
-
-type ErrIAMUnauthorized struct {
-	UserId   string
-	Resource string
-	Action   string
-}
-
-func (e ErrIAMUnauthorized) Error() string {
-	return fmt.Sprintf("user (%q) is unauthorized to perform action (%q) on resource (%q)", e.UserId, e.Action, e.Resource)
-}
-
-type ErrGRPCCall struct {
-	Err error
-}
-
-func (e ErrGRPCCall) Error() string {
-	return fmt.Sprintf("grpc call failed with error: %v", errors.NewE(e.Err))
-}
 
 func (d *Domain) CanPerformActionInAccount(ctx domainT.InfraContext, action iamT.Action) error {
 	co, err := d.IAMSvc.Can(ctx, &iam.CanIn{
@@ -37,10 +18,10 @@ func (d *Domain) CanPerformActionInAccount(ctx domainT.InfraContext, action iamT
 		Action: string(action),
 	})
 	if err != nil {
-		return ErrGRPCCall{Err: err}
+		return types.ErrGRPCCall{Err: err}
 	}
 	if !co.Status {
-		return ErrIAMUnauthorized{
+		return types.ErrIAMUnauthorized{
 			UserId:   string(ctx.UserId),
 			Resource: fmt.Sprintf("account: %s", ctx.AccountName),
 			Action:   string(action),
@@ -58,10 +39,10 @@ func (d *Domain) CanPerformActionInDevice(ctx domainT.InfraContext, action iamT.
 		Action: string(action),
 	})
 	if err != nil {
-		return ErrGRPCCall{Err: err}
+		return types.ErrGRPCCall{Err: err}
 	}
 	if !co.Status {
-		return ErrIAMUnauthorized{
+		return types.ErrIAMUnauthorized{
 			UserId:   string(ctx.UserId),
 			Resource: fmt.Sprintf("device: %s", devName),
 			Action:   string(action),

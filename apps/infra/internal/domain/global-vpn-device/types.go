@@ -22,11 +22,11 @@ type Domain struct {
 type GlobalVPNDomain struct {
 	FindGlobalVPN func(ctx types.InfraContext, gvpnName string) (*entities.GlobalVPN, error)
 
-	IncrementGlobalVPNAllocatedDevices func(ctx types.InfraContext, value int) error
+	IncrementGlobalVPNAllocatedDevices func(ctx types.InfraContext, gvpnId repos.ID, incrementBy int) error
 }
 
 type GlobalVPNConnectionDomain struct {
 	SyncGlobalVPNConnections      func(ctx types.InfraContext, gvpnName string) error
 	ListGlobalVPNConnections      func(ctx types.InfraContext, gvpnName string) ([]*entities.GlobalVPNConnection, error)
-	BuildGlobalVPNConnectionPeers func(vpns []*entities.GlobalVPNConnection) ([]wgv1.Peer, error)
+	BuildGlobalVPNConnectionPeers func(ctx types.InfraContext, vpns []*entities.GlobalVPNConnection) ([]wgv1.Peer, error)
 }

@@ -86,15 +86,13 @@ func (p *Parser) TypeExtracter(ut types.Type, variadic bool) (string, error) {
 
 			alias := pkgName
 
-			if _, ok := p.Imports[pkgPath]; !ok {
-				v, ok2 := p.pkgImports[pkgPath]
-				if ok2 {
-					if v.Alias != "" {
-						alias = v.Alias
-					}
+			if v, ok := p.pkgImports[pkgPath]; ok {
+				if v.Alias != "" {
+					alias = v.Alias
 				}
+			}
 
-				// pkgName = fmt.Sprintf("%s%d", pkgName, p.getCounter())
+			if _, ok := p.Imports[pkgPath]; !ok {
 				p.Imports[pkgPath] = ImportInfo{PackagePath: pkgPath, Alias: alias}
 			}
 

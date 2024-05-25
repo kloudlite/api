@@ -52,3 +52,11 @@ var GlobalVPNDeviceIndices = []repos.IndexField{
 		Unique: true,
 	},
 }
+
+func UniqueGlobalVPNDevice(accountName string, gvpnName string, deviceName string) repos.Filter {
+	return repos.Filter{
+		fc.AccountName:                  accountName,
+		fc.GlobalVPNDeviceGlobalVPNName: gvpnName,
+		fc.MetadataName:                 deviceName,
+	}
+}

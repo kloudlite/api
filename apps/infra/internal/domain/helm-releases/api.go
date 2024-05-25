@@ -16,7 +16,7 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func (d *Domain) findHelmRelease(ctx domainT.InfraContext, clusterName string, hrName string) (*entities.HelmRelease, error) {
+func (d *Domain) FindHelmRelease(ctx domainT.InfraContext, clusterName string, hrName string) (*entities.HelmRelease, error) {
 	cluster, err := d.HelmReleaseRepo.FindOne(ctx, repos.Filter{
 		fields.ClusterName:  clusterName,
 		fields.AccountName:  ctx.AccountName,
@@ -250,7 +250,7 @@ func (d *Domain) OnHelmReleaseDeleteMessage(ctx domainT.InfraContext, clusterNam
 }
 
 func (d *Domain) OnHelmReleaseUpdateMessage(ctx domainT.InfraContext, clusterName string, hr entities.HelmRelease, status types.ResourceStatus, opts domainT.UpdateAndDeleteOpts) error {
-	xhr, err := d.findHelmRelease(ctx, clusterName, hr.Name)
+	xhr, err := d.FindHelmRelease(ctx, clusterName, hr.Name)
 	if err != nil {
 		return errors.NewE(err)
 	}

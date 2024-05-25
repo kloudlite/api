@@ -233,6 +233,41 @@ func TestFindAndParseInterface(t *testing.T) {
 			},
 			wantErr: true,
 		},
+
+		{
+			name: "test 8: [real world failing] github.com/kloudlite/api/pkg/k8s.Client ListSecrets method",
+			args: args{
+				packagePath:   "github.com/kloudlite/api/cmd/mocki/internal/parser/test_data",
+				interfaceName: "Type8",
+			},
+			want: &parser.Info{
+				Imports: map[string]parser.ImportInfo{
+					"k8s.io/api/core/v1": {
+						Alias:       "corev1",
+						PackagePath: "k8s.io/api/core/v1",
+					},
+					"context": {
+						Alias:       "context",
+						PackagePath: "context",
+					},
+				},
+				Implementations: []string{
+					`func (tMock *Type8) ListSecrets(ctx context.Context, namespace string, secretType corev1.SecretType) ([]corev1.Secret, error) {
+	if tMock.MockListSecrets != nil {
+		tMock.registerCall("ListSecrets", ctx, namespace, secretType)
+		return tMock.MockListSecrets(ctx, namespace, secretType)
+	}
+  panic("Type8: method 'ListSecrets' not implemented, yet")
+}`,
+				},
+				MockFunctions: []string{
+					`MockListSecrets func(ctx context.Context, namespace string, secretType corev1.SecretType) ([]corev1.Secret, error)`,
+				},
+				StructName:         "Type8",
+				ReceiverStructName: "Type8",
+			},
+			wantErr: false,
+		},
 	}
 
 	for _, tt := range tests {

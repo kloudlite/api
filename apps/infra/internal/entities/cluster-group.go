@@ -65,3 +65,10 @@ var GlobalVPNIndices = []repos.IndexField{
 		Unique: true,
 	},
 }
+
+func UniqueGlobalVPN(accountName string, name string) repos.Filter {
+	return repos.Filter{
+		fc.AccountName:  accountName,
+		fc.MetadataName: name,
+	}
+}

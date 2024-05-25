@@ -22,11 +22,6 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-const (
-	gvpnConnectionDeviceMethod     = "gvpn-connection"
-	kloudliteGlobalVPNDeviceMethod = "kloudlite-global-vpn-device"
-)
-
 func (d *Domain) getGlobalVPNConnectionPeers(vpns []*entities.GlobalVPNConnection) ([]wgv1.Peer, error) {
 	peers := make([]wgv1.Peer, 0, len(vpns))
 	for _, c := range vpns {
@@ -195,7 +190,7 @@ func (d *Domain) createGlobalVPNConnection(ctx domainT.InfraContext, gvpnConn en
 		},
 		AccountName:    ctx.AccountName,
 		GlobalVPNName:  gvpnConn.Name,
-		CreationMethod: gvpnConnectionDeviceMethod,
+		CreationMethod: domainT.GlobalVPNConnectionDeviceMethod,
 	})
 	if err != nil {
 		return nil, err
@@ -277,7 +272,6 @@ func (d *Domain) EnsureGlobalVPNConnection(ctx domainT.InfraContext, clusterName
 		AccountName:           ctx.AccountName,
 		ClusterName:           clusterName,
 		ClusterPublicEndpoint: clusterPublicEndpoint,
-		ClusterSvcCIDR:        clusterSvcCIDR,
 		ParsedWgParams:        nil,
 	})
 }

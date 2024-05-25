@@ -12,8 +12,8 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/app/graph"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/domain"
-	commonDomain "github.com/kloudlite/api/apps/infra/internal/domain/common"
 	"github.com/kloudlite/api/apps/infra/internal/domain/ports"
+	domainT "github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/apps/infra/internal/env"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/constants"
@@ -71,47 +71,41 @@ var Module = fx.Module(
 	repos.NewFxMongoRepo[*entities.PersistentVolume]("pv", "pv", entities.PersistentVolumeIndices),
 	repos.NewFxMongoRepo[*entities.VolumeAttachment]("volume_attachments", "volatt", entities.VolumeAttachmentIndices),
 
-	fx.Provide(
-		func(conn IAMGrpcClient) iam.IAMClient {
-			return iam.NewIAMClient(conn)
-		},
-	),
+	fx.Provide(func(conn IAMGrpcClient) iam.IAMClient {
+		return iam.NewIAMClient(conn)
+	}),
 
-	fx.Provide(func(conn AccountGrpcClient) (domain.AccountsSvc, error) {
+	fx.Provide(func(cli iam.IAMClient) ports.IAMSvc {
+		return adapters.NewIAMSvc(cli)
+	}),
+
+	fx.Provide(func(conn AccountGrpcClient) (ports.AccountsSvc, error) {
 		ac := accounts.NewAccountsClient(conn)
-		return NewAccountsSvc(ac), nil
+		return adapters.NewAccountsSvc(ac), nil
 	}),
 
 	fx.Provide(func(client MessageOfficeInternalGrpcClient) message_office_internal.MessageOfficeInternalClient {
 		return message_office_internal.NewMessageOfficeInternalClient(client)
 	}),
 
-	fx.Provide(func(jsc *nats.JetstreamClient, logger logging.Logger) SendTargetClusterMessagesProducer {
-		return msg_nats.NewJetstreamProducer(jsc)
+	fx.Provide(func(cli message_office_internal.MessageOfficeInternalClient) ports.MessageOfficeInternalSvc {
+		return adapters.NewMessageOfficeInternalSvc(cli)
 	}),
 
 	fx.Provide(func(jsc *nats.JetstreamClient, logger logging.Logger) adapters.SendTargetClusterMessagesProducer {
 		return msg_nats.NewJetstreamProducer(jsc)
 	}),
 
-	fx.Provide(func(p SendTargetClusterMessagesProducer) domain.ResourceDispatcher {
-		return NewResourceDispatcher(p)
-	}),
-
 	fx.Provide(func(p adapters.SendTargetClusterMessagesProducer) ports.ResourceDispatcher {
 		return adapters.NewResourceDispatcher(p)
 	}),
 
-	fx.Invoke(func(lf fx.Lifecycle, producer SendTargetClusterMessagesProducer) {
+	fx.Invoke(func(lf fx.Lifecycle, producer adapters.SendTargetClusterMessagesProducer) {
 		lf.Append(fx.Hook{
 			OnStop: func(ctx context.Context) error {
 				return producer.Stop(ctx)
 			},
 		})
-	}),
-
-	fx.Provide(func(cli *nats.Client, logger logging.Logger) domain.ResourceEventPublisher {
-		return NewResourceEventPublisher(cli, logger)
 	}),
 
 	fx.Provide(func(cli *nats.Client, logger logging.Logger) ports.ResourceEventPublisher {
@@ -222,7 +216,7 @@ var Module = fx.Module(
 				if klAccount == "" {
 					return nil, errors.Newf("no cookie named '%s' present in request", env.AccountCookieName)
 				}
-				cc := domain.InfraContext{
+				cc := domainT.InfraContext{
 					Context:     ctx,
 					AccountName: klAccount,
 					UserId:      sess.UserId,

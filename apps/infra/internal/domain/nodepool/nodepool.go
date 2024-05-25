@@ -231,7 +231,7 @@ func (d *Domain) GetNodePool(ctx domainT.InfraContext, clusterName string, poolN
 	if err := d.CanPerformActionInAccount(ctx, iamT.GetNodepool); err != nil {
 		return nil, errors.NewE(err)
 	}
-	np, err := d.findNodePool(ctx, clusterName, poolName)
+	np, err := d.FindNodePool(ctx, clusterName, poolName)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -249,7 +249,7 @@ func (d *Domain) ListNodePools(ctx domainT.InfraContext, clusterName string, mat
 	return d.NodepoolRepo.FindPaginated(ctx, d.NodepoolRepo.MergeMatchFilters(filter, matchFilters), pagination)
 }
 
-func (d *Domain) findNodePool(ctx domainT.InfraContext, clusterName string, poolName string) (*entities.NodePool, error) {
+func (d *Domain) FindNodePool(ctx domainT.InfraContext, clusterName string, poolName string) (*entities.NodePool, error) {
 	np, err := d.NodepoolRepo.FindOne(ctx, repos.Filter{
 		fields.AccountName:  ctx.AccountName,
 		fields.ClusterName:  clusterName,
@@ -273,7 +273,7 @@ func (d *Domain) ResyncNodePool(ctx domainT.InfraContext, clusterName string, po
 	}(); err != nil {
 		return errors.NewE(err)
 	}
-	np, err := d.findNodePool(ctx, clusterName, poolName)
+	np, err := d.FindNodePool(ctx, clusterName, poolName)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -300,7 +300,7 @@ func (d *Domain) OnNodePoolDeleteMessage(ctx domainT.InfraContext, clusterName s
 }
 
 func (d *Domain) OnNodePoolUpdateMessage(ctx domainT.InfraContext, clusterName string, nodePool entities.NodePool, status types.ResourceStatus, opts domainT.UpdateAndDeleteOpts) error {
-	xnp, err := d.findNodePool(ctx, clusterName, nodePool.Name)
+	xnp, err := d.FindNodePool(ctx, clusterName, nodePool.Name)
 	if err != nil {
 		return errors.NewE(err)
 	}
