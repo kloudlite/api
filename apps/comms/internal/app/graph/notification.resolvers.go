@@ -7,66 +7,30 @@ package graph
 import (
 	"context"
 	"fmt"
-	"time"
 
 	"github.com/kloudlite/api/apps/comms/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/comms/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/comms/types"
-	fn "github.com/kloudlite/api/pkg/functions"
 )
+
+// Content is the resolver for the content field.
+func (r *notificationResolver) Content(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotifyContent, error) {
+	panic(fmt.Errorf("not implemented: Content - content"))
+}
 
 // CreationTime is the resolver for the creationTime field.
 func (r *notificationResolver) CreationTime(ctx context.Context, obj *types.Notification) (string, error) {
-	if obj == nil {
-		return "", fmt.Errorf("obj is nil")
-	}
-
-	return obj.CreationTime.Format(time.RFC3339), nil
-}
-
-// NotificationClusterParams is the resolver for the notificationClusterParams field.
-func (r *notificationResolver) NotificationClusterParams(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams, error) {
-	if obj == nil {
-		return nil, fmt.Errorf("obj is nil")
-	}
-
-	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams](obj.NotificationClusterParams)
-}
-
-// NotificationEnvParams is the resolver for the notificationEnvParams field.
-func (r *notificationResolver) NotificationEnvParams(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams, error) {
-	if obj == nil {
-		return nil, fmt.Errorf("obj is nil")
-	}
-
-	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams](obj.NotificationEnvParams)
+	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
 }
 
 // NotificationType is the resolver for the notificationType field.
 func (r *notificationResolver) NotificationType(ctx context.Context, obj *types.Notification) (model.GithubComKloudliteAPIAppsCommsTypesNotificationType, error) {
-	if obj == nil {
-		return "", fmt.Errorf("obj is nil")
-	}
-
-	return model.GithubComKloudliteAPIAppsCommsTypesNotificationType(obj.NotificationType), nil
-}
-
-// ResourceType is the resolver for the resourceType field.
-func (r *notificationResolver) ResourceType(ctx context.Context, obj *types.Notification) (model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType, error) {
-	if obj == nil {
-		return "", fmt.Errorf("obj is nil")
-	}
-
-	return model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType(obj.ResourceType), nil
+	panic(fmt.Errorf("not implemented: NotificationType - notificationType"))
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *notificationResolver) UpdateTime(ctx context.Context, obj *types.Notification) (string, error) {
-	if obj == nil {
-		return "", fmt.Errorf("obj is nil")
-	}
-
-	return obj.UpdateTime.Format(time.RFC3339), nil
+	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
 }
 
 // Notification returns generated.NotificationResolver implementation.

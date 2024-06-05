@@ -8,6 +8,7 @@ import (
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 	"github.com/kloudlite/api/pkg/kv"
 	"github.com/kloudlite/api/pkg/logging"
+	"github.com/kloudlite/api/pkg/mail"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
 )
@@ -23,7 +24,13 @@ type Impl struct {
 	cacheClient kv.BinaryDataRepo
 	authClient  auth.AuthClient
 
+	eTemplates *EmailTemplates
+
 	resourceEventPublisher ResourceEventPublisher
+
+	mailer mail.Mailer
+
+	// CommsServer CommsServer
 }
 
 var Module = fx.Module("domain", fx.Provide(func(e *env.Env,
@@ -36,6 +43,9 @@ var Module = fx.Module("domain", fx.Provide(func(e *env.Env,
 	cacheClient kv.BinaryDataRepo,
 	authClient auth.AuthClient,
 	resourceEventPublisher ResourceEventPublisher,
+
+	eTemplates *EmailTemplates,
+	mailer mail.Mailer,
 ) (Domain, error) {
 	return &Impl{
 		iamClient:              iamClient,
@@ -48,5 +58,7 @@ var Module = fx.Module("domain", fx.Provide(func(e *env.Env,
 		notificationRepo:       notificationRepo,
 		subscriptionRepo:       subscriptionRepo,
 		notificationConfigRepo: notificationConfigRepo,
+		mailer:                 mailer,
+		eTemplates:             eTemplates,
 	}, nil
 }))

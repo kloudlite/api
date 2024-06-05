@@ -10,40 +10,56 @@ import (
 	"github.com/kloudlite/api/apps/comms/types"
 )
 
-type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig struct {
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail struct {
 	Enabled     bool   `json:"enabled"`
 	MailAddress string `json:"mailAddress"`
 }
 
-type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn struct {
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn struct {
 	Enabled     bool   `json:"enabled"`
 	MailAddress string `json:"mailAddress"`
 }
 
-type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig struct {
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack struct {
+	Channel string `json:"channel"`
 	Enabled bool   `json:"enabled"`
 	Webhook string `json:"webhook"`
 }
 
-type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn struct {
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn struct {
+	Channel string `json:"channel"`
 	Enabled bool   `json:"enabled"`
 	Webhook string `json:"webhook"`
 }
 
-type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig struct {
-	Enabled bool `json:"enabled"`
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram struct {
+	ChatID  string `json:"chatId"`
+	Enabled bool   `json:"enabled"`
+	Token   string `json:"token"`
 }
 
-type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn struct {
-	Enabled bool `json:"enabled"`
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn struct {
+	ChatID  string `json:"chatId"`
+	Enabled bool   `json:"enabled"`
+	Token   string `json:"token"`
 }
 
-type GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams struct {
-	ClusterName string `json:"clusterName"`
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook struct {
+	Enabled bool   `json:"enabled"`
+	URL     string `json:"url"`
 }
 
-type GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams struct {
-	EnvName string `json:"envName"`
+type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn struct {
+	Enabled bool   `json:"enabled"`
+	URL     string `json:"url"`
+}
+
+type GithubComKloudliteAPIAppsCommsTypesNotifyContent struct {
+	Body    string `json:"body"`
+	Image   string `json:"image"`
+	Link    string `json:"link"`
+	Subject string `json:"subject"`
+	Title   string `json:"title"`
 }
 
 type Mutation struct {
@@ -68,49 +84,6 @@ type PageInfo struct {
 }
 
 type Query struct {
-}
-
-type GithubComKloudliteAPIAppsCommsTypesNotificationResourceType string
-
-const (
-	GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeAccount     GithubComKloudliteAPIAppsCommsTypesNotificationResourceType = "account"
-	GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeCluster     GithubComKloudliteAPIAppsCommsTypesNotificationResourceType = "cluster"
-	GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeEnvironment GithubComKloudliteAPIAppsCommsTypesNotificationResourceType = "environment"
-)
-
-var AllGithubComKloudliteAPIAppsCommsTypesNotificationResourceType = []GithubComKloudliteAPIAppsCommsTypesNotificationResourceType{
-	GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeAccount,
-	GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeCluster,
-	GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeEnvironment,
-}
-
-func (e GithubComKloudliteAPIAppsCommsTypesNotificationResourceType) IsValid() bool {
-	switch e {
-	case GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeAccount, GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeCluster, GithubComKloudliteAPIAppsCommsTypesNotificationResourceTypeEnvironment:
-		return true
-	}
-	return false
-}
-
-func (e GithubComKloudliteAPIAppsCommsTypesNotificationResourceType) String() string {
-	return string(e)
-}
-
-func (e *GithubComKloudliteAPIAppsCommsTypesNotificationResourceType) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GithubComKloudliteAPIAppsCommsTypesNotificationResourceType(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___apps___comms___types__NotificationResourceType", str)
-	}
-	return nil
-}
-
-func (e GithubComKloudliteAPIAppsCommsTypesNotificationResourceType) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
 type GithubComKloudliteAPIAppsCommsTypesNotificationType string
@@ -151,5 +124,50 @@ func (e *GithubComKloudliteAPIAppsCommsTypesNotificationType) UnmarshalGQL(v int
 }
 
 func (e GithubComKloudliteAPIAppsCommsTypesNotificationType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteAPIPkgReposMatchType string
+
+const (
+	GithubComKloudliteAPIPkgReposMatchTypeArray      GithubComKloudliteAPIPkgReposMatchType = "array"
+	GithubComKloudliteAPIPkgReposMatchTypeExact      GithubComKloudliteAPIPkgReposMatchType = "exact"
+	GithubComKloudliteAPIPkgReposMatchTypeNotInArray GithubComKloudliteAPIPkgReposMatchType = "not_in_array"
+	GithubComKloudliteAPIPkgReposMatchTypeRegex      GithubComKloudliteAPIPkgReposMatchType = "regex"
+)
+
+var AllGithubComKloudliteAPIPkgReposMatchType = []GithubComKloudliteAPIPkgReposMatchType{
+	GithubComKloudliteAPIPkgReposMatchTypeArray,
+	GithubComKloudliteAPIPkgReposMatchTypeExact,
+	GithubComKloudliteAPIPkgReposMatchTypeNotInArray,
+	GithubComKloudliteAPIPkgReposMatchTypeRegex,
+}
+
+func (e GithubComKloudliteAPIPkgReposMatchType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIPkgReposMatchTypeArray, GithubComKloudliteAPIPkgReposMatchTypeExact, GithubComKloudliteAPIPkgReposMatchTypeNotInArray, GithubComKloudliteAPIPkgReposMatchTypeRegex:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIPkgReposMatchType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIPkgReposMatchType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIPkgReposMatchType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___pkg___repos__MatchType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIPkgReposMatchType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

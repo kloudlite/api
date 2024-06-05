@@ -46,11 +46,13 @@ type Config struct {
 
 type ResolverRoot interface {
 	Github__com___kloudlite___api___common__CreatedOrUpdatedBy() Github__com___kloudlite___api___common__CreatedOrUpdatedByResolver
+	MatchFilter() MatchFilterResolver
 	Mutation() MutationResolver
 	Notification() NotificationResolver
 	NotificationConf() NotificationConfResolver
 	Query() QueryResolver
 	Subscription() SubscriptionResolver
+	MatchFilterIn() MatchFilterInResolver
 	NotificationConfIn() NotificationConfInResolver
 }
 
@@ -69,26 +71,34 @@ type ComplexityRoot struct {
 		SortDirection func(childComplexity int) int
 	}
 
-	Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig struct {
+	Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email struct {
 		Enabled     func(childComplexity int) int
 		MailAddress func(childComplexity int) int
 	}
 
-	Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig struct {
+	Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack struct {
+		Channel func(childComplexity int) int
 		Enabled func(childComplexity int) int
 		Webhook func(childComplexity int) int
 	}
 
-	Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig struct {
+	Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram struct {
+		ChatID  func(childComplexity int) int
 		Enabled func(childComplexity int) int
+		Token   func(childComplexity int) int
 	}
 
-	Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams struct {
-		ClusterName func(childComplexity int) int
+	Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook struct {
+		Enabled func(childComplexity int) int
+		URL     func(childComplexity int) int
 	}
 
-	Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams struct {
-		EnvName func(childComplexity int) int
+	Github__com___kloudlite___api___apps___comms___types__NotifyContent struct {
+		Body    func(childComplexity int) int
+		Image   func(childComplexity int) int
+		Link    func(childComplexity int) int
+		Subject func(childComplexity int) int
+		Title   func(childComplexity int) int
 	}
 
 	Github__com___kloudlite___api___common__CreatedOrUpdatedBy struct {
@@ -98,10 +108,11 @@ type ComplexityRoot struct {
 	}
 
 	MatchFilter struct {
-		Array     func(childComplexity int) int
-		Exact     func(childComplexity int) int
-		MatchType func(childComplexity int) int
-		Regex     func(childComplexity int) int
+		Array      func(childComplexity int) int
+		Exact      func(childComplexity int) int
+		MatchType  func(childComplexity int) int
+		NotInArray func(childComplexity int) int
+		Regex      func(childComplexity int) int
 	}
 
 	Mutation struct {
@@ -111,31 +122,30 @@ type ComplexityRoot struct {
 	}
 
 	Notification struct {
-		AccountName               func(childComplexity int) int
-		CreationTime              func(childComplexity int) int
-		Id                        func(childComplexity int) int
-		MarkedForDeletion         func(childComplexity int) int
-		NotificationClusterParams func(childComplexity int) int
-		NotificationEnvParams     func(childComplexity int) int
-		NotificationType          func(childComplexity int) int
-		Read                      func(childComplexity int) int
-		RecordVersion             func(childComplexity int) int
-		ResourceType              func(childComplexity int) int
-		UpdateTime                func(childComplexity int) int
+		AccountName       func(childComplexity int) int
+		Content           func(childComplexity int) int
+		CreationTime      func(childComplexity int) int
+		Id                func(childComplexity int) int
+		MarkedForDeletion func(childComplexity int) int
+		NotificationType  func(childComplexity int) int
+		Read              func(childComplexity int) int
+		RecordVersion     func(childComplexity int) int
+		UpdateTime        func(childComplexity int) int
 	}
 
 	NotificationConf struct {
-		AccountName            func(childComplexity int) int
-		CreatedBy              func(childComplexity int) int
-		CreationTime           func(childComplexity int) int
-		EmailConfigurations    func(childComplexity int) int
-		Id                     func(childComplexity int) int
-		LastUpdatedBy          func(childComplexity int) int
-		MarkedForDeletion      func(childComplexity int) int
-		RecordVersion          func(childComplexity int) int
-		SlackConfigurations    func(childComplexity int) int
-		TelegramConfigurations func(childComplexity int) int
-		UpdateTime             func(childComplexity int) int
+		AccountName       func(childComplexity int) int
+		CreatedBy         func(childComplexity int) int
+		CreationTime      func(childComplexity int) int
+		Email             func(childComplexity int) int
+		Id                func(childComplexity int) int
+		LastUpdatedBy     func(childComplexity int) int
+		MarkedForDeletion func(childComplexity int) int
+		RecordVersion     func(childComplexity int) int
+		Slack             func(childComplexity int) int
+		Telegram          func(childComplexity int) int
+		UpdateTime        func(childComplexity int) int
+		Webhook           func(childComplexity int) int
 	}
 
 	NotificationEdge struct {
@@ -189,28 +199,30 @@ type ComplexityRoot struct {
 type Github__com___kloudlite___api___common__CreatedOrUpdatedByResolver interface {
 	UserID(ctx context.Context, obj *common.CreatedOrUpdatedBy) (string, error)
 }
+type MatchFilterResolver interface {
+	MatchType(ctx context.Context, obj *repos.MatchFilter) (model.GithubComKloudliteAPIPkgReposMatchType, error)
+}
 type MutationResolver interface {
 	CommsUpdateNotificationConfig(ctx context.Context, config entities.NotificationConf) (*entities.NotificationConf, error)
 	CommsUpdateSubscriptionConfig(ctx context.Context, config entities.Subscription, id repos.ID) (*entities.Subscription, error)
 	CommsMarkNotificationAsRead(ctx context.Context, id repos.ID) (*types.Notification, error)
 }
 type NotificationResolver interface {
+	Content(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotifyContent, error)
 	CreationTime(ctx context.Context, obj *types.Notification) (string, error)
 
-	NotificationClusterParams(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams, error)
-	NotificationEnvParams(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams, error)
 	NotificationType(ctx context.Context, obj *types.Notification) (model.GithubComKloudliteAPIAppsCommsTypesNotificationType, error)
 
-	ResourceType(ctx context.Context, obj *types.Notification) (model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType, error)
 	UpdateTime(ctx context.Context, obj *types.Notification) (string, error)
 }
 type NotificationConfResolver interface {
 	CreationTime(ctx context.Context, obj *entities.NotificationConf) (string, error)
-	EmailConfigurations(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig, error)
+	Email(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail, error)
 
-	SlackConfigurations(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig, error)
-	TelegramConfigurations(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig, error)
+	Slack(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack, error)
+	Telegram(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram, error)
 	UpdateTime(ctx context.Context, obj *entities.NotificationConf) (string, error)
+	Webhook(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook, error)
 }
 type QueryResolver interface {
 	CommsListNotifications(ctx context.Context, pagination *repos.CursorPagination) (*model.NotificationPaginatedRecords, error)
@@ -230,10 +242,14 @@ type SubscriptionResolver interface {
 	UpdateTime(ctx context.Context) (<-chan string, error)
 }
 
+type MatchFilterInResolver interface {
+	MatchType(ctx context.Context, obj *repos.MatchFilter, data model.GithubComKloudliteAPIPkgReposMatchType) error
+}
 type NotificationConfInResolver interface {
-	EmailConfigurations(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn) error
-	SlackConfigurations(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn) error
-	TelegramConfigurations(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn) error
+	Email(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn) error
+	Slack(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn) error
+	Telegram(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn) error
+	Webhook(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn) error
 }
 
 type executableSchema struct {
@@ -297,54 +313,110 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.CursorPagination.SortDirection(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig.enabled":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig.Enabled == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email.enabled":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email.Enabled == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig.Enabled(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email.Enabled(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig.mailAddress":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig.MailAddress == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email.mailAddress":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email.MailAddress == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig.MailAddress(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email.MailAddress(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig.enabled":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig.Enabled == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.channel":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.Channel == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig.Enabled(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.Channel(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig.webhook":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig.Webhook == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.enabled":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.Enabled == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig.Webhook(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.Enabled(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig.enabled":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig.Enabled == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.webhook":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.Webhook == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig.Enabled(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack.Webhook(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams.clusterName":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams.ClusterName == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.chatId":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.ChatID == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams.ClusterName(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.ChatID(childComplexity), true
 
-	case "Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams.envName":
-		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams.EnvName == nil {
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.enabled":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.Enabled == nil {
 			break
 		}
 
-		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams.EnvName(childComplexity), true
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.Enabled(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.token":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.Token == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram.Token(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook.enabled":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook.Enabled == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook.Enabled(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook.url":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook.URL == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook.URL(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___types__NotifyContent.body":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Body == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Body(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___types__NotifyContent.image":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Image == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Image(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___types__NotifyContent.link":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Link == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Link(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___types__NotifyContent.subject":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Subject == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Subject(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___comms___types__NotifyContent.title":
+		if e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Title == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___comms___types__NotifyContent.Title(childComplexity), true
 
 	case "Github__com___kloudlite___api___common__CreatedOrUpdatedBy.userEmail":
 		if e.complexity.Github__com___kloudlite___api___common__CreatedOrUpdatedBy.UserEmail == nil {
@@ -387,6 +459,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.MatchFilter.MatchType(childComplexity), true
+
+	case "MatchFilter.notInArray":
+		if e.complexity.MatchFilter.NotInArray == nil {
+			break
+		}
+
+		return e.complexity.MatchFilter.NotInArray(childComplexity), true
 
 	case "MatchFilter.regex":
 		if e.complexity.MatchFilter.Regex == nil {
@@ -438,6 +517,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.AccountName(childComplexity), true
 
+	case "Notification.content":
+		if e.complexity.Notification.Content == nil {
+			break
+		}
+
+		return e.complexity.Notification.Content(childComplexity), true
+
 	case "Notification.creationTime":
 		if e.complexity.Notification.CreationTime == nil {
 			break
@@ -459,20 +545,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Notification.MarkedForDeletion(childComplexity), true
 
-	case "Notification.notificationClusterParams":
-		if e.complexity.Notification.NotificationClusterParams == nil {
-			break
-		}
-
-		return e.complexity.Notification.NotificationClusterParams(childComplexity), true
-
-	case "Notification.notificationEnvParams":
-		if e.complexity.Notification.NotificationEnvParams == nil {
-			break
-		}
-
-		return e.complexity.Notification.NotificationEnvParams(childComplexity), true
-
 	case "Notification.notificationType":
 		if e.complexity.Notification.NotificationType == nil {
 			break
@@ -493,13 +565,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Notification.RecordVersion(childComplexity), true
-
-	case "Notification.resourceType":
-		if e.complexity.Notification.ResourceType == nil {
-			break
-		}
-
-		return e.complexity.Notification.ResourceType(childComplexity), true
 
 	case "Notification.updateTime":
 		if e.complexity.Notification.UpdateTime == nil {
@@ -529,12 +594,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NotificationConf.CreationTime(childComplexity), true
 
-	case "NotificationConf.emailConfigurations":
-		if e.complexity.NotificationConf.EmailConfigurations == nil {
+	case "NotificationConf.email":
+		if e.complexity.NotificationConf.Email == nil {
 			break
 		}
 
-		return e.complexity.NotificationConf.EmailConfigurations(childComplexity), true
+		return e.complexity.NotificationConf.Email(childComplexity), true
 
 	case "NotificationConf.id":
 		if e.complexity.NotificationConf.Id == nil {
@@ -564,19 +629,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.NotificationConf.RecordVersion(childComplexity), true
 
-	case "NotificationConf.slackConfigurations":
-		if e.complexity.NotificationConf.SlackConfigurations == nil {
+	case "NotificationConf.slack":
+		if e.complexity.NotificationConf.Slack == nil {
 			break
 		}
 
-		return e.complexity.NotificationConf.SlackConfigurations(childComplexity), true
+		return e.complexity.NotificationConf.Slack(childComplexity), true
 
-	case "NotificationConf.telegramConfigurations":
-		if e.complexity.NotificationConf.TelegramConfigurations == nil {
+	case "NotificationConf.telegram":
+		if e.complexity.NotificationConf.Telegram == nil {
 			break
 		}
 
-		return e.complexity.NotificationConf.TelegramConfigurations(childComplexity), true
+		return e.complexity.NotificationConf.Telegram(childComplexity), true
 
 	case "NotificationConf.updateTime":
 		if e.complexity.NotificationConf.UpdateTime == nil {
@@ -584,6 +649,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.NotificationConf.UpdateTime(childComplexity), true
+
+	case "NotificationConf.webhook":
+		if e.complexity.NotificationConf.Webhook == nil {
+			break
+		}
+
+		return e.complexity.NotificationConf.Webhook(childComplexity), true
 
 	case "NotificationEdge.cursor":
 		if e.complexity.NotificationEdge.Cursor == nil {
@@ -786,9 +858,10 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputCursorPaginationIn,
-		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn,
-		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn,
-		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn,
+		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn,
+		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn,
+		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn,
+		ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn,
 		ec.unmarshalInputMatchFilterIn,
 		ec.unmarshalInputNotificationConfIn,
 		ec.unmarshalInputPaginationIn,
@@ -923,26 +996,34 @@ type Mutation {
   comms_markNotificationAsRead(id: ID!): Notification @isLoggedInAndVerified @hasAccount
 }
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig @shareable {
+	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email @shareable {
   enabled: Boolean!
   mailAddress: String!
 }
 
-type Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig @shareable {
+type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack @shareable {
+  channel: String!
   enabled: Boolean!
   webhook: String!
 }
 
-type Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig @shareable {
+type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram @shareable {
+  chatId: String!
   enabled: Boolean!
+  token: String!
 }
 
-type Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams @shareable {
-  clusterName: String!
+type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook @shareable {
+  enabled: Boolean!
+  url: String!
 }
 
-type Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams @shareable {
-  envName: String!
+type Github__com___kloudlite___api___apps___comms___types__NotifyContent @shareable {
+  body: String!
+  image: String!
+  link: String!
+  subject: String!
+  title: String!
 }
 
 type Github__com___kloudlite___api___common__CreatedOrUpdatedBy @shareable {
@@ -958,29 +1039,38 @@ type PageInfo @shareable {
   startCursor: String
 }
 
-input Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn {
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn {
   enabled: Boolean!
   mailAddress: String!
 }
 
-input Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn {
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn {
+  channel: String!
   enabled: Boolean!
   webhook: String!
 }
 
-input Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn {
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn {
+  chatId: String!
   enabled: Boolean!
+  token: String!
 }
 
-enum Github__com___kloudlite___api___apps___comms___types__NotificationResourceType {
-  account
-  cluster
-  environment
+input Github__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn {
+  enabled: Boolean!
+  url: String!
 }
 
 enum Github__com___kloudlite___api___apps___comms___types__NotificationType {
   alert
   notification
+}
+
+enum Github__com___kloudlite___api___pkg___repos__MatchType {
+  array
+  exact
+  not_in_array
+  regex
 }
 
 `, BuiltIn: false},
@@ -1018,35 +1108,29 @@ directive @goField(
 	{Name: "../struct-to-graphql/matchfilter.graphqls", Input: `type MatchFilter @shareable {
   array: [Any!]
   exact: Any
-  matchType: MatchFilterMatchType!
+  matchType: Github__com___kloudlite___api___pkg___repos__MatchType!
+  notInArray: [Any!]
   regex: String
 }
 
 input MatchFilterIn {
   array: [Any!]
   exact: Any
-  matchType: MatchFilterMatchType!
+  matchType: Github__com___kloudlite___api___pkg___repos__MatchType!
+  notInArray: [Any!]
   regex: String
-}
-
-enum MatchFilterMatchType {
-  array
-  exact
-  regex
 }
 
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/notification.graphqls", Input: `type Notification @shareable {
   accountName: String!
+  content: Github__com___kloudlite___api___apps___comms___types__NotifyContent!
   creationTime: Date!
   id: ID!
   markedForDeletion: Boolean
-  notificationClusterParams: Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams
-  notificationEnvParams: Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams
   notificationType: Github__com___kloudlite___api___apps___comms___types__NotificationType!
   read: Boolean!
   recordVersion: Int!
-  resourceType: Github__com___kloudlite___api___apps___comms___types__NotificationResourceType!
   updateTime: Date!
 }
 
@@ -1066,20 +1150,22 @@ type NotificationPaginatedRecords @shareable {
   accountName: String!
   createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   creationTime: Date!
-  emailConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig
+  email: Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email
   id: ID!
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
   markedForDeletion: Boolean
   recordVersion: Int!
-  slackConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig
-  telegramConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig
+  slack: Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack
+  telegram: Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram
   updateTime: Date!
+  webhook: Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook
 }
 
 input NotificationConfIn {
-  emailConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn
-  slackConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn
-  telegramConfigurations: Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn
+  email: Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn
+  slack: Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn
+  telegram: Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn
+  webhook: Github__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn
 }
 
 `, BuiltIn: false},
@@ -1568,8 +1654,8 @@ func (ec *executionContext) fieldContext_CursorPagination_sortDirection(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_enabled(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1599,9 +1685,9 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1612,8 +1698,8 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_mailAddress(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_mailAddress(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_mailAddress(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_mailAddress(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1643,9 +1729,9 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_mailAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_mailAddress(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1656,8 +1742,52 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_enabled(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_channel(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_channel(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Channel, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_channel(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1687,9 +1817,9 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1700,8 +1830,8 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_webhook(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_webhook(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_webhook(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_webhook(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1731,9 +1861,9 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_webhook(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_webhook(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1744,8 +1874,52 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig_enabled(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_chatId(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_chatId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ChatID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_chatId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1775,9 +1949,9 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1788,8 +1962,8 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams_clusterName(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams_clusterName(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_token(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_token(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1802,7 +1976,7 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___type
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.ClusterName, nil
+		return obj.Token, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1819,9 +1993,9 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___type
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams_clusterName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_token(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -1832,8 +2006,8 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams_envName(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams_envName(ctx, field)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_enabled(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_enabled(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -1846,7 +2020,51 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___type
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.EnvName, nil
+		return obj.Enabled, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_enabled(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_url(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.URL, nil
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1863,9 +2081,229 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___type
 	return ec.marshalNString2string(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams_envName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_url(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams",
+		Object:     "Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotifyContent_body(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_body(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Body, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_body(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___types__NotifyContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotifyContent_image(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_image(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Image, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_image(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___types__NotifyContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotifyContent_link(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_link(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Link, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_link(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___types__NotifyContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotifyContent_subject(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_subject(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Subject, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_subject(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___types__NotifyContent",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotifyContent_title(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_title(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Title, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_title(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___comms___types__NotifyContent",
 		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
@@ -2104,7 +2542,7 @@ func (ec *executionContext) _MatchFilter_matchType(ctx context.Context, field gr
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.MatchType, nil
+		return ec.resolvers.MatchFilter().MatchType(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -2116,19 +2554,60 @@ func (ec *executionContext) _MatchFilter_matchType(ctx context.Context, field gr
 		}
 		return graphql.Null
 	}
-	res := resTmp.(repos.MatchType)
+	res := resTmp.(model.GithubComKloudliteAPIPkgReposMatchType)
 	fc.Result = res
-	return ec.marshalNMatchFilterMatchType2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchType(ctx, field.Selections, res)
+	return ec.marshalNGithub__com___kloudlite___api___pkg___repos__MatchType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgReposMatchType(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_MatchFilter_matchType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "MatchFilter",
 		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___api___pkg___repos__MatchType does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _MatchFilter_notInArray(ctx context.Context, field graphql.CollectedField, obj *repos.MatchFilter) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_MatchFilter_notInArray(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NotInArray, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]any)
+	fc.Result = res
+	return ec.marshalOAny2ᚕinterfaceᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_MatchFilter_notInArray(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "MatchFilter",
+		Field:      field,
 		IsMethod:   false,
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type MatchFilterMatchType does not have child fields")
+			return nil, errors.New("field of type Any does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2243,8 +2722,8 @@ func (ec *executionContext) fieldContext_Mutation_comms_updateNotificationConfig
 				return ec.fieldContext_NotificationConf_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_NotificationConf_creationTime(ctx, field)
-			case "emailConfigurations":
-				return ec.fieldContext_NotificationConf_emailConfigurations(ctx, field)
+			case "email":
+				return ec.fieldContext_NotificationConf_email(ctx, field)
 			case "id":
 				return ec.fieldContext_NotificationConf_id(ctx, field)
 			case "lastUpdatedBy":
@@ -2253,12 +2732,14 @@ func (ec *executionContext) fieldContext_Mutation_comms_updateNotificationConfig
 				return ec.fieldContext_NotificationConf_markedForDeletion(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_NotificationConf_recordVersion(ctx, field)
-			case "slackConfigurations":
-				return ec.fieldContext_NotificationConf_slackConfigurations(ctx, field)
-			case "telegramConfigurations":
-				return ec.fieldContext_NotificationConf_telegramConfigurations(ctx, field)
+			case "slack":
+				return ec.fieldContext_NotificationConf_slack(ctx, field)
+			case "telegram":
+				return ec.fieldContext_NotificationConf_telegram(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_NotificationConf_updateTime(ctx, field)
+			case "webhook":
+				return ec.fieldContext_NotificationConf_webhook(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type NotificationConf", field.Name)
 		},
@@ -2404,24 +2885,20 @@ func (ec *executionContext) fieldContext_Mutation_comms_markNotificationAsRead(c
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_Notification_accountName(ctx, field)
+			case "content":
+				return ec.fieldContext_Notification_content(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Notification_creationTime(ctx, field)
 			case "id":
 				return ec.fieldContext_Notification_id(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Notification_markedForDeletion(ctx, field)
-			case "notificationClusterParams":
-				return ec.fieldContext_Notification_notificationClusterParams(ctx, field)
-			case "notificationEnvParams":
-				return ec.fieldContext_Notification_notificationEnvParams(ctx, field)
 			case "notificationType":
 				return ec.fieldContext_Notification_notificationType(ctx, field)
 			case "read":
 				return ec.fieldContext_Notification_read(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Notification_recordVersion(ctx, field)
-			case "resourceType":
-				return ec.fieldContext_Notification_resourceType(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Notification_updateTime(ctx, field)
 			}
@@ -2481,6 +2958,62 @@ func (ec *executionContext) fieldContext_Notification_accountName(ctx context.Co
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Notification_content(ctx context.Context, field graphql.CollectedField, obj *types.Notification) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Notification_content(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Notification().Content(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsTypesNotifyContent)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___apps___comms___types__NotifyContent2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotifyContent(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Notification_content(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Notification",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "body":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_body(ctx, field)
+			case "image":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_image(ctx, field)
+			case "link":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_link(ctx, field)
+			case "subject":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_subject(ctx, field)
+			case "title":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotifyContent_title(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___types__NotifyContent", field.Name)
 		},
 	}
 	return fc, nil
@@ -2615,96 +3148,6 @@ func (ec *executionContext) fieldContext_Notification_markedForDeletion(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _Notification_notificationClusterParams(ctx context.Context, field graphql.CollectedField, obj *types.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_notificationClusterParams(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Notification().NotificationClusterParams(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams)
-	fc.Result = res
-	return ec.marshalOGithub__com___kloudlite___api___apps___comms___types__NotificationClusterParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationClusterParams(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Notification_notificationClusterParams(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Notification",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "clusterName":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams_clusterName(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams", field.Name)
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Notification_notificationEnvParams(ctx context.Context, field graphql.CollectedField, obj *types.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_notificationEnvParams(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Notification().NotificationEnvParams(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams)
-	fc.Result = res
-	return ec.marshalOGithub__com___kloudlite___api___apps___comms___types__NotificationEnvParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationEnvParams(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Notification_notificationEnvParams(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Notification",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "envName":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams_envName(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams", field.Name)
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Notification_notificationType(ctx context.Context, field graphql.CollectedField, obj *types.Notification) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Notification_notificationType(ctx, field)
 	if err != nil {
@@ -2832,50 +3275,6 @@ func (ec *executionContext) fieldContext_Notification_recordVersion(ctx context.
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Notification_resourceType(ctx context.Context, field graphql.CollectedField, obj *types.Notification) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Notification_resourceType(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Notification().ResourceType(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___apps___comms___types__NotificationResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationResourceType(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Notification_resourceType(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Notification",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Github__com___kloudlite___api___apps___comms___types__NotificationResourceType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3065,8 +3464,8 @@ func (ec *executionContext) fieldContext_NotificationConf_creationTime(ctx conte
 	return fc, nil
 }
 
-func (ec *executionContext) _NotificationConf_emailConfigurations(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NotificationConf_emailConfigurations(ctx, field)
+func (ec *executionContext) _NotificationConf_email(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NotificationConf_email(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3079,7 +3478,7 @@ func (ec *executionContext) _NotificationConf_emailConfigurations(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NotificationConf().EmailConfigurations(rctx, obj)
+		return ec.resolvers.NotificationConf().Email(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3088,12 +3487,12 @@ func (ec *executionContext) _NotificationConf_emailConfigurations(ctx context.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig)
+	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail)
 	fc.Result = res
-	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig(ctx, field.Selections, res)
+	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Email2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_NotificationConf_emailConfigurations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NotificationConf_email(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NotificationConf",
 		Field:      field,
@@ -3102,11 +3501,11 @@ func (ec *executionContext) fieldContext_NotificationConf_emailConfigurations(ct
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
 			case "enabled":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_enabled(ctx, field)
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_enabled(ctx, field)
 			case "mailAddress":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_mailAddress(ctx, field)
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_mailAddress(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email", field.Name)
 		},
 	}
 	return fc, nil
@@ -3293,8 +3692,8 @@ func (ec *executionContext) fieldContext_NotificationConf_recordVersion(ctx cont
 	return fc, nil
 }
 
-func (ec *executionContext) _NotificationConf_slackConfigurations(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NotificationConf_slackConfigurations(ctx, field)
+func (ec *executionContext) _NotificationConf_slack(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NotificationConf_slack(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3307,7 +3706,7 @@ func (ec *executionContext) _NotificationConf_slackConfigurations(ctx context.Co
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NotificationConf().SlackConfigurations(rctx, obj)
+		return ec.resolvers.NotificationConf().Slack(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3316,12 +3715,12 @@ func (ec *executionContext) _NotificationConf_slackConfigurations(ctx context.Co
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig)
+	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack)
 	fc.Result = res
-	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig(ctx, field.Selections, res)
+	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Slack2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_NotificationConf_slackConfigurations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NotificationConf_slack(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NotificationConf",
 		Field:      field,
@@ -3329,19 +3728,21 @@ func (ec *executionContext) fieldContext_NotificationConf_slackConfigurations(ct
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "channel":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_channel(ctx, field)
 			case "enabled":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_enabled(ctx, field)
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_enabled(ctx, field)
 			case "webhook":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_webhook(ctx, field)
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_webhook(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack", field.Name)
 		},
 	}
 	return fc, nil
 }
 
-func (ec *executionContext) _NotificationConf_telegramConfigurations(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_NotificationConf_telegramConfigurations(ctx, field)
+func (ec *executionContext) _NotificationConf_telegram(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NotificationConf_telegram(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -3354,7 +3755,7 @@ func (ec *executionContext) _NotificationConf_telegramConfigurations(ctx context
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.NotificationConf().TelegramConfigurations(rctx, obj)
+		return ec.resolvers.NotificationConf().Telegram(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3363,12 +3764,12 @@ func (ec *executionContext) _NotificationConf_telegramConfigurations(ctx context
 	if resTmp == nil {
 		return graphql.Null
 	}
-	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig)
+	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram)
 	fc.Result = res
-	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig(ctx, field.Selections, res)
+	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_NotificationConf_telegramConfigurations(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_NotificationConf_telegram(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "NotificationConf",
 		Field:      field,
@@ -3376,10 +3777,14 @@ func (ec *executionContext) fieldContext_NotificationConf_telegramConfigurations
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			switch field.Name {
+			case "chatId":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_chatId(ctx, field)
 			case "enabled":
-				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig_enabled(ctx, field)
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_enabled(ctx, field)
+			case "token":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_token(ctx, field)
 			}
-			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig", field.Name)
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram", field.Name)
 		},
 	}
 	return fc, nil
@@ -3424,6 +3829,53 @@ func (ec *executionContext) fieldContext_NotificationConf_updateTime(ctx context
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _NotificationConf_webhook(ctx context.Context, field graphql.CollectedField, obj *entities.NotificationConf) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_NotificationConf_webhook(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.NotificationConf().Webhook(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_NotificationConf_webhook(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "NotificationConf",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "enabled":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_enabled(ctx, field)
+			case "url":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_url(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook", field.Name)
 		},
 	}
 	return fc, nil
@@ -3514,24 +3966,20 @@ func (ec *executionContext) fieldContext_NotificationEdge_node(ctx context.Conte
 			switch field.Name {
 			case "accountName":
 				return ec.fieldContext_Notification_accountName(ctx, field)
+			case "content":
+				return ec.fieldContext_Notification_content(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_Notification_creationTime(ctx, field)
 			case "id":
 				return ec.fieldContext_Notification_id(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Notification_markedForDeletion(ctx, field)
-			case "notificationClusterParams":
-				return ec.fieldContext_Notification_notificationClusterParams(ctx, field)
-			case "notificationEnvParams":
-				return ec.fieldContext_Notification_notificationEnvParams(ctx, field)
 			case "notificationType":
 				return ec.fieldContext_Notification_notificationType(ctx, field)
 			case "read":
 				return ec.fieldContext_Notification_read(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Notification_recordVersion(ctx, field)
-			case "resourceType":
-				return ec.fieldContext_Notification_resourceType(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Notification_updateTime(ctx, field)
 			}
@@ -4089,8 +4537,8 @@ func (ec *executionContext) fieldContext_Query_comms_getNotificationConfig(ctx c
 				return ec.fieldContext_NotificationConf_createdBy(ctx, field)
 			case "creationTime":
 				return ec.fieldContext_NotificationConf_creationTime(ctx, field)
-			case "emailConfigurations":
-				return ec.fieldContext_NotificationConf_emailConfigurations(ctx, field)
+			case "email":
+				return ec.fieldContext_NotificationConf_email(ctx, field)
 			case "id":
 				return ec.fieldContext_NotificationConf_id(ctx, field)
 			case "lastUpdatedBy":
@@ -4099,12 +4547,14 @@ func (ec *executionContext) fieldContext_Query_comms_getNotificationConfig(ctx c
 				return ec.fieldContext_NotificationConf_markedForDeletion(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_NotificationConf_recordVersion(ctx, field)
-			case "slackConfigurations":
-				return ec.fieldContext_NotificationConf_slackConfigurations(ctx, field)
-			case "telegramConfigurations":
-				return ec.fieldContext_NotificationConf_telegramConfigurations(ctx, field)
+			case "slack":
+				return ec.fieldContext_NotificationConf_slack(ctx, field)
+			case "telegram":
+				return ec.fieldContext_NotificationConf_telegram(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_NotificationConf_updateTime(ctx, field)
+			case "webhook":
+				return ec.fieldContext_NotificationConf_webhook(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type NotificationConf", field.Name)
 		},
@@ -6828,8 +7278,8 @@ func (ec *executionContext) unmarshalInputCursorPaginationIn(ctx context.Context
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn, error) {
-	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn, error) {
+	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
@@ -6862,20 +7312,27 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps__
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn, error) {
-	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn, error) {
+	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"enabled", "webhook"}
+	fieldsInOrder := [...]string{"channel", "enabled", "webhook"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
+		case "channel":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("channel"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Channel = data
 		case "enabled":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
 			data, err := ec.unmarshalNBoolean2bool(ctx, v)
@@ -6896,14 +7353,55 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps__
 	return it, nil
 }
 
-func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn, error) {
-	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn, error) {
+	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn
 	asMap := map[string]interface{}{}
 	for k, v := range obj.(map[string]interface{}) {
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"enabled"}
+	fieldsInOrder := [...]string{"chatId", "enabled", "token"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "chatId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("chatId"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ChatID = data
+		case "enabled":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("enabled"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Enabled = data
+		case "token":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("token"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Token = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn, error) {
+	var it model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"enabled", "url"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6917,6 +7415,13 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps__
 				return it, err
 			}
 			it.Enabled = data
+		case "url":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("url"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.URL = data
 		}
 	}
 
@@ -6930,7 +7435,7 @@ func (ec *executionContext) unmarshalInputMatchFilterIn(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"array", "exact", "matchType", "regex"}
+	fieldsInOrder := [...]string{"array", "exact", "matchType", "notInArray", "regex"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -6953,11 +7458,20 @@ func (ec *executionContext) unmarshalInputMatchFilterIn(ctx context.Context, obj
 			it.Exact = data
 		case "matchType":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("matchType"))
-			data, err := ec.unmarshalNMatchFilterMatchType2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchType(ctx, v)
+			data, err := ec.unmarshalNGithub__com___kloudlite___api___pkg___repos__MatchType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgReposMatchType(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.MatchType = data
+			if err = ec.resolvers.MatchFilterIn().MatchType(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "notInArray":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("notInArray"))
+			data, err := ec.unmarshalOAny2ᚕinterfaceᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NotInArray = data
 		case "regex":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("regex"))
 			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
@@ -6978,38 +7492,47 @@ func (ec *executionContext) unmarshalInputNotificationConfIn(ctx context.Context
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"emailConfigurations", "slackConfigurations", "telegramConfigurations"}
+	fieldsInOrder := [...]string{"email", "slack", "telegram", "webhook"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
 			continue
 		}
 		switch k {
-		case "emailConfigurations":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("emailConfigurations"))
-			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn(ctx, v)
+		case "email":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("email"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			if err = ec.resolvers.NotificationConfIn().EmailConfigurations(ctx, &it, data); err != nil {
+			if err = ec.resolvers.NotificationConfIn().Email(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "slackConfigurations":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slackConfigurations"))
-			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn(ctx, v)
+		case "slack":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("slack"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			if err = ec.resolvers.NotificationConfIn().SlackConfigurations(ctx, &it, data); err != nil {
+			if err = ec.resolvers.NotificationConfIn().Slack(ctx, &it, data); err != nil {
 				return it, err
 			}
-		case "telegramConfigurations":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("telegramConfigurations"))
-			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn(ctx, v)
+		case "telegram":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("telegram"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			if err = ec.resolvers.NotificationConfIn().TelegramConfigurations(ctx, &it, data); err != nil {
+			if err = ec.resolvers.NotificationConfIn().Telegram(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "webhook":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("webhook"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.NotificationConfIn().Webhook(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -7140,24 +7663,24 @@ func (ec *executionContext) _CursorPagination(ctx context.Context, sel ast.Selec
 	return out
 }
 
-var github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig"}
+var github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email"}
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigImplementors)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig")
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email")
 		case "enabled":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_enabled(ctx, field, obj)
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_enabled(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "mailAddress":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig_mailAddress(ctx, field, obj)
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email_mailAddress(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7184,24 +7707,29 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return out
 }
 
-var github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig"}
+var github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack"}
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigImplementors)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig")
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack")
+		case "channel":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_channel(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "enabled":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_enabled(ctx, field, obj)
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_enabled(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
 		case "webhook":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig_webhook(ctx, field, obj)
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack_webhook(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7228,19 +7756,29 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return out
 }
 
-var github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig"}
+var github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram"}
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigImplementors)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig")
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram")
+		case "chatId":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_chatId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		case "enabled":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig_enabled(ctx, field, obj)
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_enabled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "token":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram_token(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7267,19 +7805,24 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___inte
 	return out
 }
 
-var github__com___kloudlite___api___apps___comms___types__NotificationClusterParamsImplementors = []string{"Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams"}
+var github__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookImplementors = []string{"Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook"}
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___types__NotificationClusterParamsImplementors)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams")
-		case "clusterName":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams_clusterName(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook")
+		case "enabled":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_enabled(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "url":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook_url(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7306,19 +7849,39 @@ func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___type
 	return out
 }
 
-var github__com___kloudlite___api___apps___comms___types__NotificationEnvParamsImplementors = []string{"Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams"}
+var github__com___kloudlite___api___apps___comms___types__NotifyContentImplementors = []string{"Github__com___kloudlite___api___apps___comms___types__NotifyContent"}
 
-func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams) graphql.Marshaler {
-	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___types__NotificationEnvParamsImplementors)
+func (ec *executionContext) _Github__com___kloudlite___api___apps___comms___types__NotifyContent(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___comms___types__NotifyContentImplementors)
 
 	out := graphql.NewFieldSet(fields)
 	deferred := make(map[string]*graphql.FieldSet)
 	for i, field := range fields {
 		switch field.Name {
 		case "__typename":
-			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams")
-		case "envName":
-			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams_envName(ctx, field, obj)
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___comms___types__NotifyContent")
+		case "body":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent_body(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "image":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent_image(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "link":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent_link(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "subject":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent_subject(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "title":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent_title(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -7441,10 +8004,43 @@ func (ec *executionContext) _MatchFilter(ctx context.Context, sel ast.SelectionS
 		case "exact":
 			out.Values[i] = ec._MatchFilter_exact(ctx, field, obj)
 		case "matchType":
-			out.Values[i] = ec._MatchFilter_matchType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._MatchFilter_matchType(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "notInArray":
+			out.Values[i] = ec._MatchFilter_notInArray(ctx, field, obj)
 		case "regex":
 			out.Values[i] = ec._MatchFilter_regex(ctx, field, obj)
 		default:
@@ -7540,6 +8136,42 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "content":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Notification_content(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "creationTime":
 			field := field
 
@@ -7583,72 +8215,6 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			}
 		case "markedForDeletion":
 			out.Values[i] = ec._Notification_markedForDeletion(ctx, field, obj)
-		case "notificationClusterParams":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Notification_notificationClusterParams(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "notificationEnvParams":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Notification_notificationEnvParams(ctx, field, obj)
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "notificationType":
 			field := field
 
@@ -7695,42 +8261,6 @@ func (ec *executionContext) _Notification(ctx context.Context, sel ast.Selection
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "resourceType":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Notification_resourceType(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updateTime":
 			field := field
 
@@ -7847,7 +8377,7 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "emailConfigurations":
+		case "email":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -7856,7 +8386,7 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._NotificationConf_emailConfigurations(ctx, field, obj)
+				res = ec._NotificationConf_email(ctx, field, obj)
 				return res
 			}
 
@@ -7897,7 +8427,7 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
-		case "slackConfigurations":
+		case "slack":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -7906,7 +8436,7 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._NotificationConf_slackConfigurations(ctx, field, obj)
+				res = ec._NotificationConf_slack(ctx, field, obj)
 				return res
 			}
 
@@ -7930,7 +8460,7 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "telegramConfigurations":
+		case "telegram":
 			field := field
 
 			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
@@ -7939,7 +8469,7 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._NotificationConf_telegramConfigurations(ctx, field, obj)
+				res = ec._NotificationConf_telegram(ctx, field, obj)
 				return res
 			}
 
@@ -7976,6 +8506,39 @@ func (ec *executionContext) _NotificationConf(ctx context.Context, sel ast.Selec
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "webhook":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._NotificationConf_webhook(ctx, field, obj)
 				return res
 			}
 
@@ -8790,16 +9353,6 @@ func (ec *executionContext) marshalNFieldSet2string(ctx context.Context, sel ast
 	return res
 }
 
-func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___comms___types__NotificationResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationResourceType(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType, error) {
-	var res model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___comms___types__NotificationResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationResourceType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsCommsTypesNotificationResourceType) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___comms___types__NotificationType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationType(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsCommsTypesNotificationType, error) {
 	var res model.GithubComKloudliteAPIAppsCommsTypesNotificationType
 	err := res.UnmarshalGQL(v)
@@ -8808,6 +9361,20 @@ func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___com
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___comms___types__NotificationType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsCommsTypesNotificationType) graphql.Marshaler {
 	return v
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___comms___types__NotifyContent2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotifyContent(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) graphql.Marshaler {
+	return ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent(ctx, sel, &v)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___comms___types__NotifyContent2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotifyContent(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsTypesNotifyContent) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___api___apps___comms___types__NotifyContent(ctx, sel, v)
 }
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___api___common__CreatedOrUpdatedBy2githubᚗcomᚋkloudliteᚋapiᚋcommonᚐCreatedOrUpdatedBy(ctx context.Context, sel ast.SelectionSet, v common.CreatedOrUpdatedBy) graphql.Marshaler {
@@ -8822,6 +9389,16 @@ func (ec *executionContext) marshalNGithub__com___kloudlite___api___common__Crea
 		return graphql.Null
 	}
 	return ec._Github__com___kloudlite___api___common__CreatedOrUpdatedBy(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___pkg___repos__MatchType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgReposMatchType(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIPkgReposMatchType, error) {
+	var res model.GithubComKloudliteAPIPkgReposMatchType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___pkg___repos__MatchType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgReposMatchType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIPkgReposMatchType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx context.Context, v interface{}) (repos.ID, error) {
@@ -8847,22 +9424,6 @@ func (ec *executionContext) unmarshalNInt2int(ctx context.Context, v interface{}
 
 func (ec *executionContext) marshalNInt2int(ctx context.Context, sel ast.SelectionSet, v int) graphql.Marshaler {
 	res := graphql.MarshalInt(v)
-	if res == graphql.Null {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-	}
-	return res
-}
-
-func (ec *executionContext) unmarshalNMatchFilterMatchType2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchType(ctx context.Context, v interface{}) (repos.MatchType, error) {
-	tmp, err := graphql.UnmarshalString(v)
-	res := repos.MatchType(tmp)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNMatchFilterMatchType2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchType(ctx context.Context, sel ast.SelectionSet, v repos.MatchType) graphql.Marshaler {
-	res := graphql.MarshalString(string(v))
 	if res == graphql.Null {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
 			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
@@ -9484,63 +10045,64 @@ func (ec *executionContext) marshalOCursorPaginationSortDirection2githubᚗcom�
 	return res
 }
 
-func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfig) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Email2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfig(ctx, sel, v)
+	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Email(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailConfigIn, error) {
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailConfigIn(ctx, v)
+	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__EmailIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfig) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Slack2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfig(ctx, sel, v)
+	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackConfigIn, error) {
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackConfigIn(ctx, v)
+	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfig) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfig(ctx, sel, v)
+	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram(ctx, sel, v)
 }
 
-func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramConfigIn, error) {
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn, error) {
 	if v == nil {
 		return nil, nil
 	}
-	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramConfigIn(ctx, v)
+	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___types__NotificationClusterParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationClusterParams(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsTypesNotificationClusterParams) graphql.Marshaler {
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
 	}
-	return ec._Github__com___kloudlite___api___apps___comms___types__NotificationClusterParams(ctx, sel, v)
+	return ec._Github__com___kloudlite___api___apps___comms___internal___domain___entities__Webhook(ctx, sel, v)
 }
 
-func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___comms___types__NotificationEnvParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsTypesNotificationEnvParams(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsCommsTypesNotificationEnvParams) graphql.Marshaler {
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋcommsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn, error) {
 	if v == nil {
-		return graphql.Null
+		return nil, nil
 	}
-	return ec._Github__com___kloudlite___api___apps___comms___types__NotificationEnvParams(ctx, sel, v)
+	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___comms___internal___domain___entities__WebhookIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) unmarshalOInt2int(ctx context.Context, v interface{}) (int, error) {

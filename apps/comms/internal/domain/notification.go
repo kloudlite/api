@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"context"
+
 	"github.com/kloudlite/api/apps/comms/types"
 	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/common/fields"
@@ -71,7 +73,25 @@ func (d *Impl) MarkNotificationAsRead(ctx CommsContext, id repos.ID) (*types.Not
 	return n, nil
 }
 
-func (d *Impl) CreateNotification(ctx CommsContext, notification *types.Notification) (*types.Notification, error) {
+func (d *Impl) Notify(ctx context.Context, notification *types.Notification) error {
+	_, err := d.notificationRepo.Create(ctx, notification)
+	if err != nil {
+		return err
+	}
 
-	return nil, nil
+	nc, err := d.notificationConfigRepo.FindOne(ctx, repos.Filter{})
+	if err != nil {
+		return err
+	}
+
+	if nc == nil {
+		return errors.NewE(errors.Newf("notification config not found"))
+	}
+
+	np := newNotificationProcessor(context.Background(), d, notification, nc)
+	if err := np.Send(); err != nil {
+		return err
+	}
+
+	return nil
 }

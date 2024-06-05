@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"context"
+
 	"github.com/kloudlite/api/apps/comms/internal/domain/entities"
 	"github.com/kloudlite/api/apps/comms/types"
 	"github.com/kloudlite/api/pkg/repos"
@@ -16,7 +18,7 @@ type Domain interface {
 	UpdateSubscriptionConfig(ctx CommsContext, id repos.ID, config entities.Subscription) (*entities.Subscription, error)
 	GetSubscriptionConfig(ctx CommsContext, id repos.ID) (*entities.Subscription, error)
 
-	CreateNotification(ctx CommsContext, notification *types.Notification) (*types.Notification, error)
+	Notify(ctx context.Context, notification *types.Notification) error
 }
 
 type PublishMsg string

@@ -47,6 +47,7 @@ func (d *Impl) GetNotificationConfig(ctx CommsContext) (*entities.NotificationCo
 
 	return nc, nil
 }
+
 func (d *Impl) UpdateNotificationConfig(ctx CommsContext, config entities.NotificationConf) (*entities.NotificationConf, error) {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(ctx.UserId),
@@ -74,9 +75,12 @@ func (d *Impl) UpdateNotificationConfig(ctx CommsContext, config entities.Notifi
 		return nil, errors.NewE(errors.Newf("notification config not found"))
 	}
 
-	xnc.EmailConfiguration = config.EmailConfiguration
-	xnc.SlackConfiguration = config.SlackConfiguration
-	xnc.TelegramConfiguration = config.TelegramConfiguration
+	// TODO:(@abdheshnayak) - check for subscription
+
+	xnc.Email = config.Email
+	xnc.Slack = config.Slack
+	xnc.Telegram = config.Telegram
+	xnc.Webhook = config.Webhook
 
 	return d.notificationConfigRepo.UpdateById(ctx, xnc.Id, xnc)
 }

@@ -5,18 +5,25 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-type EmailConfig struct {
+type Email struct {
 	Enabled     bool   `json:"enabled"`
 	MailAddress string `json:"mailAddress"`
 }
 
-type SlackConfig struct {
+type Slack struct {
 	Enabled bool   `json:"enabled"`
-	Webhook string `json:"webhook"`
+	Url     string `json:"url"`
 }
 
-type TelegramConfig struct {
-	Enabled bool `json:"enabled"`
+type Telegram struct {
+	Enabled bool   `json:"enabled"`
+	Token   string `json:"token"`
+	ChatID  string `json:"chatId"`
+}
+
+type Webhook struct {
+	Enabled bool   `json:"enabled"`
+	URL     string `json:"url"`
 }
 
 type NotificationConf struct {
@@ -24,9 +31,10 @@ type NotificationConf struct {
 	CreatedBy        common.CreatedOrUpdatedBy `json:"createdBy" graphql:"noinput"`
 	LastUpdatedBy    common.CreatedOrUpdatedBy `json:"lastUpdatedBy" graphql:"noinput"`
 
-	EmailConfiguration    *EmailConfig    `json:"emailConfigurations"`
-	SlackConfiguration    *SlackConfig    `json:"slackConfigurations"`
-	TelegramConfiguration *TelegramConfig `json:"telegramConfigurations"`
+	Email    *Email    `json:"email"`
+	Slack    *Slack    `json:"slack"`
+	Telegram *Telegram `json:"telegram"`
+	Webhook  *Webhook  `json:"webhook"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
 }

@@ -5,16 +5,16 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-type SubscriptionConf struct {
-	AlertsEnabled        bool `json:"alertsEnabled"`
-	NotificationsEnabled bool `json:"notificationsEnabled"`
-}
+//	type SubscriptionConf struct {
+//		AlertsEnabled        bool `json:"alertsEnabled"`
+//		NotificationsEnabled bool `json:"notificationsEnabled"`
+//	}
 
 type Subscription struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
-	CreatedBy        common.CreatedOrUpdatedBy `json:"createdBy" graphql:"noinput"`
-	LastUpdatedBy    common.CreatedOrUpdatedBy `json:"lastUpdatedBy" graphql:"noinput"`
+	CreatedBy     common.CreatedOrUpdatedBy `json:"createdBy" graphql:"noinput"`
+	LastUpdatedBy common.CreatedOrUpdatedBy `json:"lastUpdatedBy" graphql:"noinput"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
 	MailAddress string `json:"mailAddress"`
@@ -32,7 +32,6 @@ var SubscriptionIndexes = []repos.IndexField{
 	},
 	{
 		Field: []repos.IndexKey{
-			{Key: "name", Value: repos.IndexAsc},
 			{Key: "accountName", Value: repos.IndexAsc},
 		},
 		Unique: true,

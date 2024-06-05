@@ -1,51 +1,45 @@
 package types
 
 import (
+	"fmt"
+
 	"github.com/kloudlite/api/pkg/egob"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-type EnvResources string
-
-const (
-	EnvResourcesApps             EnvResources = "apps"
-	EnvResourcesConfigs          EnvResources = "configs"
-	EnvResourcesSecrets          EnvResources = "secrets"
-	EnvResourcesManagedResources EnvResources = "managedResources"
-)
-
-type NotificationEnvParams struct {
-	EnvName string `json:"envName" graphql:"noinput"`
-}
-
-type NotificationClusterParams struct {
-	ClusterName string `json:"clusterName" graphql:"noinput"`
-}
-
-type NotificationResourceType string
 type NotificationType string
 
 const (
-	NotificationTypeAlert        NotificationType = "alert"
-	NotificationTypeNotification NotificationType = "notification"
+	NotifyTypeAlert  NotificationType = "alert"
+	NotifyTypeNotify NotificationType = "notification"
 )
 
-const (
-	NotificationResourceTypeEnvironment NotificationResourceType = "environment"
-	NotificationResourceTypeCluster     NotificationResourceType = "cluster"
-	NotificationResourceTypeAccount     NotificationResourceType = "account"
-)
+type NotifyContent struct {
+	Title   string `json:"title" graphql:"noinput"`
+	Subject string `json:"subject" graphql:"noinput"`
+	Body    string `json:"body" graphql:"noinput"`
+	Link    string `json:"link" graphql:"noinput"`
+	Image   string `json:"image" graphql:"noinput"`
+}
 
 type Notification struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
-	ResourceType     NotificationResourceType `json:"resourceType" graphql:"noinput"`
-	NotificationType NotificationType         `json:"notificationType" graphql:"noinput"`
+	Type             NotificationType `json:"notificationType" graphql:"noinput"`
 
-	NotificationEnvParams     *NotificationEnvParams     `json:"notificationEnvParams" graphql:"noinput"`
-	NotificationClusterParams *NotificationClusterParams `json:"notificationClusterParams" graphql:"noinput"`
+	Content     NotifyContent `json:"content" graphql:"noinput"`
+	AccountName string        `json:"accountName" graphql:"noinput"`
+	Read        bool          `json:"read" graphql:"noinput"`
+}
 
-	AccountName string `json:"accountName" graphql:"noinput"`
-	Read        bool   `json:"read" graphql:"noinput"`
+func (obj *Notification) ToPlain() string {
+	return fmt.Sprintf(`%s
+
+%s
+
+%s
+
+Account: %s
+`, obj.Type, obj.Content.Title, obj.Content.Body, obj.AccountName)
 }
 
 func (obj *Notification) ToBytes() ([]byte, error) {
