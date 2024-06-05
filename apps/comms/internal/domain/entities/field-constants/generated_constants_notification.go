@@ -4,29 +4,29 @@ package field_constants
 
 // constant vars generated for struct Notification
 const (
-	NotificationAccountName                          = "accountName"
-	NotificationCreationTime                         = "creationTime"
-	NotificationId                                   = "id"
-	NotificationMarkedForDeletion                    = "markedForDeletion"
-	NotificationNotificationClusterParams            = "notificationClusterParams"
-	NotificationNotificationClusterParamsClusterName = "notificationClusterParams.clusterName"
-	NotificationNotificationEnvParams                = "notificationEnvParams"
-	NotificationNotificationEnvParamsEnvName         = "notificationEnvParams.envName"
-	NotificationNotificationType                     = "notificationType"
-	NotificationRead                                 = "read"
-	NotificationRecordVersion                        = "recordVersion"
-	NotificationResourceType                         = "resourceType"
-	NotificationUpdateTime                           = "updateTime"
+	NotificationAccountName       = "accountName"
+	NotificationContent           = "content"
+	NotificationContentBody       = "content.body"
+	NotificationContentImage      = "content.image"
+	NotificationContentLink       = "content.link"
+	NotificationContentSubject    = "content.subject"
+	NotificationContentTitle      = "content.title"
+	NotificationCreationTime      = "creationTime"
+	NotificationId                = "id"
+	NotificationMarkedForDeletion = "markedForDeletion"
+	NotificationNotificationType  = "notificationType"
+	NotificationRead              = "read"
+	NotificationRecordVersion     = "recordVersion"
+	NotificationUpdateTime        = "updateTime"
 )
 
-// constant vars generated for struct NotificationClusterParams
+// constant vars generated for struct NotifyContent
 const (
-	NotificationClusterParamsClusterName = "clusterName"
-)
-
-// constant vars generated for struct NotificationEnvParams
-const (
-	NotificationEnvParamsEnvName = "envName"
+	NotifyContentBody    = "body"
+	NotifyContentImage   = "image"
+	NotifyContentLink    = "link"
+	NotifyContentSubject = "subject"
+	NotifyContentTitle   = "title"
 )
 
 // constant vars generated for struct

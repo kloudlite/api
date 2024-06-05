@@ -2,48 +2,52 @@
 
 package field_constants
 
-// constant vars generated for struct EmailConfig
+// constant vars generated for struct Email
 const (
-	EmailConfigEnabled     = "enabled"
-	EmailConfigMailAddress = "mailAddress"
+	EmailEnabled     = "enabled"
+	EmailMailAddress = "mailAddress"
 )
 
 // constant vars generated for struct NotificationConf
 const (
-	NotificationConfEmailConfigurations            = "emailConfigurations"
-	NotificationConfEmailConfigurationsEnabled     = "emailConfigurations.enabled"
-	NotificationConfEmailConfigurationsMailAddress = "emailConfigurations.mailAddress"
-	NotificationConfSlackConfigurations            = "slackConfigurations"
-	NotificationConfSlackConfigurationsEnabled     = "slackConfigurations.enabled"
-	NotificationConfSlackConfigurationsWebhook     = "slackConfigurations.webhook"
-	NotificationConfTelegramConfigurations         = "telegramConfigurations"
-	NotificationConfTelegramConfigurationsEnabled  = "telegramConfigurations.enabled"
+	NotificationConfEmail            = "email"
+	NotificationConfEmailEnabled     = "email.enabled"
+	NotificationConfEmailMailAddress = "email.mailAddress"
+	NotificationConfSlack            = "slack"
+	NotificationConfSlackEnabled     = "slack.enabled"
+	NotificationConfSlackUrl         = "slack.url"
+	NotificationConfTelegram         = "telegram"
+	NotificationConfTelegramChatId   = "telegram.chatId"
+	NotificationConfTelegramEnabled  = "telegram.enabled"
+	NotificationConfTelegramToken    = "telegram.token"
+	NotificationConfWebhook          = "webhook"
+	NotificationConfWebhookEnabled   = "webhook.enabled"
+	NotificationConfWebhookUrl       = "webhook.url"
 )
 
-// constant vars generated for struct SlackConfig
+// constant vars generated for struct Slack
 const (
-	SlackConfigEnabled = "enabled"
-	SlackConfigWebhook = "webhook"
+	SlackEnabled = "enabled"
+	SlackUrl     = "url"
 )
 
 // constant vars generated for struct Subscription
 const (
-	SubscriptionConfigurations                     = "configurations"
-	SubscriptionConfigurationsAlertsEnabled        = "configurations.alertsEnabled"
-	SubscriptionConfigurationsNotificationsEnabled = "configurations.notificationsEnabled"
-	SubscriptionEnabled                            = "enabled"
-	SubscriptionMailAddress                        = "mailAddress"
+	SubscriptionEnabled     = "enabled"
+	SubscriptionMailAddress = "mailAddress"
 )
 
-// constant vars generated for struct SubscriptionConf
+// constant vars generated for struct Telegram
 const (
-	SubscriptionConfAlertsEnabled        = "alertsEnabled"
-	SubscriptionConfNotificationsEnabled = "notificationsEnabled"
+	TelegramChatId  = "chatId"
+	TelegramEnabled = "enabled"
+	TelegramToken   = "token"
 )
 
-// constant vars generated for struct TelegramConfig
+// constant vars generated for struct Webhook
 const (
-	TelegramConfigEnabled = "enabled"
+	WebhookEnabled = "enabled"
+	WebhookUrl     = "url"
 )
 
 // constant vars generated for struct
