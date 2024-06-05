@@ -10,17 +10,33 @@ import (
 
 	"github.com/kloudlite/api/apps/comms/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/comms/internal/app/graph/model"
+	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
 // MatchType is the resolver for the matchType field.
 func (r *matchFilterResolver) MatchType(ctx context.Context, obj *repos.MatchFilter) (model.GithubComKloudliteAPIPkgReposMatchType, error) {
-	panic(fmt.Errorf("not implemented: MatchType - matchType"))
+
+	if obj == nil {
+		return "", fmt.Errorf("obj is nil")
+	}
+
+	return fn.JsonConvert[model.GithubComKloudliteAPIPkgReposMatchType](obj.MatchType)
 }
 
 // MatchType is the resolver for the matchType field.
 func (r *matchFilterInResolver) MatchType(ctx context.Context, obj *repos.MatchFilter, data model.GithubComKloudliteAPIPkgReposMatchType) error {
-	panic(fmt.Errorf("not implemented: MatchType - matchType"))
+	if obj == nil {
+		return fmt.Errorf("obj is nil")
+	}
+
+	mt, err := fn.JsonConvert[repos.MatchType](data)
+	if err != nil {
+		return err
+	}
+
+	obj.MatchType = mt
+	return nil
 }
 
 // MatchFilter returns generated.MatchFilterResolver implementation.
