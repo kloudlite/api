@@ -39,6 +39,19 @@ func toMap(v any) (map[string]any, error) {
 	return m, nil
 }
 
+func toArray(v any) ([]any, error) {
+	b, err := json.Marshal(v)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	var m []any
+	if err := json.Unmarshal(b, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return m, nil
+}
+
 func fromMap[T Entity](v map[string]any) (T, error) {
 	var emptyResult T
 	b, err := json.Marshal(v)
@@ -307,6 +320,26 @@ func (repo *dbRepo[T]) Create(ctx context.Context, data T) (T, error) {
 	return bsonToStruct[T](r2)
 }
 
+func (repo *dbRepo[T]) CreateMany(ctx context.Context, entries []T) error {
+	for i := range entries {
+		repo.withId(entries[i])
+		entries[i].SetCreationTime(time.Now())
+		entries[i].SetUpdateTime(time.Now())
+	}
+
+	inputM, err := toArray(entries)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	bulkData := make([]mongo.WriteModel, 0, len(inputM))
+	for i := range inputM {
+		bulkData = append(bulkData, mongo.NewInsertOneModel().SetDocument(inputM[i]))
+	}
+	_, err = repo.db.Collection(repo.collectionName).BulkWrite(ctx, bulkData)
+	return err
+}
+
 func (repo *dbRepo[T]) Exists(ctx context.Context, filter Filter) (bool, error) {
 	one := repo.db.Collection(repo.collectionName).FindOne(ctx, filter)
 	var m map[string]any
@@ -467,6 +500,23 @@ func (repo *dbRepo[T]) UpdateById(ctx context.Context, id ID, updatedData T, opt
 	return bsonToStruct[T](r)
 }
 
+var ErrRecordMismatch = fmt.Errorf("update with version check failed, last updated time mismatch")
+
+func (repo *dbRepo[T]) UpdateWithVersionCheck(ctx context.Context, id ID, updatedData T) (T, error) {
+	currRecord := repo.db.Collection(repo.collectionName).FindOne(ctx, &Filter{"id": id})
+	t, err := bsonToStruct[T](currRecord)
+	if err != nil {
+		return t, err
+	}
+
+	if updatedData.GetUpdateTime().Compare(t.GetUpdateTime()) == 0 {
+		// it is the same record, so update them
+		return repo.UpdateById(ctx, id, updatedData)
+	}
+
+	return t, ErrRecordMismatch
+}
+
 func (repo *dbRepo[T]) Upsert(ctx context.Context, filter Filter, data T) (T, error) {
 	id := func() ID {
 		if data.GetId() != "" {
@@ -580,24 +630,32 @@ func (repo *dbRepo[T]) ErrAlreadyExists(err error) bool {
 	return mongo.IsDuplicateKeyError(err)
 }
 
-func (repo *dbRepo[T]) MergeMatchFilters(filter Filter, mFilter map[string]MatchFilter) Filter {
+func (repo *dbRepo[T]) MergeMatchFilters(filter Filter, matchFilters ...map[string]MatchFilter) Filter {
 	if filter == nil {
 		filter = map[string]any{}
 	}
 
-	for k, v := range mFilter {
-		_, ok := filter[k]
-		if ok {
-			fmt.Printf("skipping search filter field %q, as it is already specified in filter", k)
-			continue
-		}
-		switch v.MatchType {
-		case MatchTypeExact:
-			filter[k] = v.Exact
-		case MatchTypeArray:
-			filter[k] = bson.M{"$in": v.Array}
-		case MatchTypeRegex:
-			filter[k] = bson.M{"$regex": primitive.Regex{Pattern: *v.Regex, Options: "i"}}
+	for _, mfilter := range matchFilters {
+		for k, v := range mfilter {
+			_, ok := filter[k]
+			if ok {
+				fmt.Printf("skipping search filter field %q, as it is already specified in filter", k)
+				continue
+			}
+			switch v.MatchType {
+			case MatchTypeExact:
+				filter[k] = v.Exact
+			case MatchTypeArray:
+				filter[k] = bson.M{"$in": v.Array}
+			case MatchTypeNotInArray:
+				filter[k] = bson.M{"$nin": v.NotInArray}
+			case MatchTypeRegex:
+				filter[k] = bson.M{"$regex": primitive.Regex{Pattern: *v.Regex, Options: "i"}}
+			default:
+				{
+					fmt.Printf("[WARN, repo, mongo]: unknown match type: %q, supported ones: %+v\n", v.MatchType, []MatchType{MatchTypeExact, MatchTypeArray, MatchTypeNotInArray, MatchTypeRegex})
+				}
+			}
 		}
 	}
 	return filter

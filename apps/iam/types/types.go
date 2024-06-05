@@ -96,6 +96,13 @@ const (
 	GetNodepool    Action = "get-nodepool"
 	UpdateNodepool Action = "update-nodepool"
 
+	// managed resource
+	CreateManagedResource Action = "create-managed-resource"
+	DeleteManagedResource Action = "delete-managed-resource"
+	ListManagedResources  Action = "list-managed-resources"
+	GetManagedResource    Action = "get-managed-resource"
+	UpdateManagedResource Action = "update-managed-resource"
+
 	CreateCloudProviderSecret Action = "create-cloud-provider-secret"
 	UpdateCloudProviderSecret Action = "update-cloud-provider-secret"
 	DeleteCloudProviderSecret Action = "delete-cloud-provider-secret"
@@ -120,6 +127,7 @@ const (
 	RemoveProjectMembership   Action = "remove-project-membership"
 
 	CreateEnvironment Action = "create-environment"
+	CloneEnvironment  Action = "clone-environment"
 	UpdateEnvironment Action = "update-environment"
 	DeleteEnvironment Action = "delete-environment"
 	GetEnvironment    Action = "get-environment"
@@ -160,6 +168,13 @@ const (
 	UpdateBuildIntegration Action = "update-build-integration"
 	CreateBuildIntegration Action = "create-build-integration"
 	DeleteBuildIntegration Action = "delete-build-integration"
+
+	// image pull secrets
+	ListImagePullSecrets  Action = "list-image-pull-secrets"
+	GetImagePullSecret    Action = "get-image-pull-secret"
+	UpdateImagePullSecret Action = "update-image-pull-secret"
+	CreateImagePullSecret Action = "create-image-pull-secret"
+	DeleteImagePullSecret Action = "delete-image-pull-secret"
 )
 
 func NewResourceRef(accountName string, resourceType ResourceType, resourceName string) string {

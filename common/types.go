@@ -43,3 +43,14 @@ var CreatedOrUpdatedByResourceSync = CreatedOrUpdatedBy{
 	UserName:  CreatedByResourceSyncUsername,
 	UserEmail: CreatedByResourceSyncUserEmail,
 }
+
+var CreatedOrUpdatedByKloudlite = CreatedOrUpdatedBy{
+	UserId:    repos.ID(""),
+	UserName:  "kloudlite",
+	UserEmail: "support@kloudlite.io",
+}
+
+type EncodedValue struct {
+	Value    string `json:"value"`
+	Encoding string `json:"encoding"`
+}

@@ -52,6 +52,40 @@ type GithubComKloudliteOperatorApisCrdsV1AppContainerIn struct {
 	Volumes         []*GithubComKloudliteOperatorApisCrdsV1ContainerVolumeIn `json:"volumes,omitempty"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1AppInterceptPortMappings struct {
+	AppPort    int `json:"appPort"`
+	DevicePort int `json:"devicePort"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AppInterceptPortMappingsIn struct {
+	AppPort    int `json:"appPort"`
+	DevicePort int `json:"devicePort"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AppRouter struct {
+	BackendProtocol *string                                        `json:"backendProtocol,omitempty"`
+	BasicAuth       *GithubComKloudliteOperatorApisCrdsV1BasicAuth `json:"basicAuth,omitempty"`
+	Cors            *GithubComKloudliteOperatorApisCrdsV1Cors      `json:"cors,omitempty"`
+	Domains         []string                                       `json:"domains"`
+	HTTPS           *GithubComKloudliteOperatorApisCrdsV1HTTPS     `json:"https,omitempty"`
+	IngressClass    *string                                        `json:"ingressClass,omitempty"`
+	MaxBodySizeInMb *int                                           `json:"maxBodySizeInMB,omitempty"`
+	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimit `json:"rateLimit,omitempty"`
+	Routes          []*GithubComKloudliteOperatorApisCrdsV1Route   `json:"routes,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AppRouterIn struct {
+	BackendProtocol *string                                          `json:"backendProtocol,omitempty"`
+	BasicAuth       *GithubComKloudliteOperatorApisCrdsV1BasicAuthIn `json:"basicAuth,omitempty"`
+	Cors            *GithubComKloudliteOperatorApisCrdsV1CorsIn      `json:"cors,omitempty"`
+	Domains         []string                                         `json:"domains"`
+	HTTPS           *GithubComKloudliteOperatorApisCrdsV1HTTPSIn     `json:"https,omitempty"`
+	IngressClass    *string                                          `json:"ingressClass,omitempty"`
+	MaxBodySizeInMb *int                                             `json:"maxBodySizeInMB,omitempty"`
+	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimitIn `json:"rateLimit,omitempty"`
+	Routes          []*GithubComKloudliteOperatorApisCrdsV1RouteIn   `json:"routes,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1AppSpec struct {
 	Containers                []*GithubComKloudliteOperatorApisCrdsV1AppContainer `json:"containers"`
 	DisplayName               *string                                             `json:"displayName,omitempty"`
@@ -61,6 +95,7 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpec struct {
 	NodeSelector              map[string]interface{}                              `json:"nodeSelector,omitempty"`
 	Region                    *string                                             `json:"region,omitempty"`
 	Replicas                  *int                                                `json:"replicas,omitempty"`
+	Router                    *GithubComKloudliteOperatorApisCrdsV1AppRouter      `json:"router,omitempty"`
 	ServiceAccount            *string                                             `json:"serviceAccount,omitempty"`
 	Services                  []*GithubComKloudliteOperatorApisCrdsV1AppSvc       `json:"services,omitempty"`
 	Tolerations               []*K8sIoAPICoreV1Toleration                         `json:"tolerations,omitempty"`
@@ -76,6 +111,7 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecIn struct {
 	NodeSelector              map[string]interface{}                                `json:"nodeSelector,omitempty"`
 	Region                    *string                                               `json:"region,omitempty"`
 	Replicas                  *int                                                  `json:"replicas,omitempty"`
+	Router                    *GithubComKloudliteOperatorApisCrdsV1AppRouterIn      `json:"router,omitempty"`
 	ServiceAccount            *string                                               `json:"serviceAccount,omitempty"`
 	Services                  []*GithubComKloudliteOperatorApisCrdsV1AppSvcIn       `json:"services,omitempty"`
 	Tolerations               []*K8sIoAPICoreV1TolerationIn                         `json:"tolerations,omitempty"`
@@ -83,17 +119,25 @@ type GithubComKloudliteOperatorApisCrdsV1AppSpecIn struct {
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSvc struct {
-	Name       *string `json:"name,omitempty"`
-	Port       int     `json:"port"`
-	TargetPort *int    `json:"targetPort,omitempty"`
-	Type       *string `json:"type,omitempty"`
+	Port     int     `json:"port"`
+	Protocol *string `json:"protocol,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppSvcIn struct {
-	Name       *string `json:"name,omitempty"`
-	Port       int     `json:"port"`
-	TargetPort *int    `json:"targetPort,omitempty"`
-	Type       *string `json:"type,omitempty"`
+	Port     int     `json:"port"`
+	Protocol *string `json:"protocol,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BasicAuth struct {
+	Enabled    bool    `json:"enabled"`
+	SecretName *string `json:"secretName,omitempty"`
+	Username   *string `json:"username,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BasicAuthIn struct {
+	Enabled    bool    `json:"enabled"`
+	SecretName *string `json:"secretName,omitempty"`
+	Username   *string `json:"username,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ContainerEnv struct {
@@ -148,6 +192,18 @@ type GithubComKloudliteOperatorApisCrdsV1ContainerVolumeItemIn struct {
 	Key      string  `json:"key"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1Cors struct {
+	AllowCredentials *bool    `json:"allowCredentials,omitempty"`
+	Enabled          *bool    `json:"enabled,omitempty"`
+	Origins          []string `json:"origins,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1CorsIn struct {
+	AllowCredentials *bool    `json:"allowCredentials,omitempty"`
+	Enabled          *bool    `json:"enabled,omitempty"`
+	Origins          []string `json:"origins,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1EnvFrom struct {
 	RefName string                                             `json:"refName"`
 	Type    GithubComKloudliteOperatorApisCrdsV1ConfigOrSecret `json:"type"`
@@ -186,14 +242,28 @@ type GithubComKloudliteOperatorApisCrdsV1HTTPGetProbeIn struct {
 	Port        int                    `json:"port"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1HTTPS struct {
+	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
+	Enabled       bool    `json:"enabled"`
+	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1HTTPSIn struct {
+	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
+	Enabled       bool    `json:"enabled"`
+	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1Intercept struct {
-	Enabled  bool   `json:"enabled"`
-	ToDevice string `json:"toDevice"`
+	Enabled      bool                                                            `json:"enabled"`
+	PortMappings []*GithubComKloudliteOperatorApisCrdsV1AppInterceptPortMappings `json:"portMappings,omitempty"`
+	ToDevice     string                                                          `json:"toDevice"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1InterceptIn struct {
-	Enabled  bool   `json:"enabled"`
-	ToDevice string `json:"toDevice"`
+	Enabled      bool                                                              `json:"enabled"`
+	PortMappings []*GithubComKloudliteOperatorApisCrdsV1AppInterceptPortMappingsIn `json:"portMappings,omitempty"`
+	ToDevice     string                                                            `json:"toDevice"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1Probe struct {
@@ -214,6 +284,34 @@ type GithubComKloudliteOperatorApisCrdsV1ProbeIn struct {
 	Shell            *GithubComKloudliteOperatorApisCrdsV1ShellProbeIn   `json:"shell,omitempty"`
 	TCP              *GithubComKloudliteOperatorApisCrdsV1TCPProbeIn     `json:"tcp,omitempty"`
 	Type             string                                              `json:"type"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RateLimit struct {
+	Connections *int  `json:"connections,omitempty"`
+	Enabled     *bool `json:"enabled,omitempty"`
+	Rpm         *int  `json:"rpm,omitempty"`
+	Rps         *int  `json:"rps,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RateLimitIn struct {
+	Connections *int  `json:"connections,omitempty"`
+	Enabled     *bool `json:"enabled,omitempty"`
+	Rpm         *int  `json:"rpm,omitempty"`
+	Rps         *int  `json:"rps,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1Route struct {
+	App     string `json:"app"`
+	Path    string `json:"path"`
+	Port    int    `json:"port"`
+	Rewrite *bool  `json:"rewrite,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RouteIn struct {
+	App     string `json:"app"`
+	Path    string `json:"path"`
+	Port    int    `json:"port"`
+	Rewrite *bool  `json:"rewrite,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ShellProbe struct {
@@ -246,6 +344,7 @@ type GithubComKloudliteOperatorPkgOperatorCheck struct {
 type GithubComKloudliteOperatorPkgOperatorCheckMeta struct {
 	Debug       *bool   `json:"debug,omitempty"`
 	Description *string `json:"description,omitempty"`
+	Hide        *bool   `json:"hide,omitempty"`
 	Name        string  `json:"name"`
 	Title       string  `json:"title"`
 }
@@ -491,6 +590,51 @@ func (e *GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType) Unmar
 }
 
 func (e GithubComKloudliteAPIAppsIotConsoleInternalEntitiesBluePrintType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteAPIPkgReposMatchType string
+
+const (
+	GithubComKloudliteAPIPkgReposMatchTypeArray      GithubComKloudliteAPIPkgReposMatchType = "array"
+	GithubComKloudliteAPIPkgReposMatchTypeExact      GithubComKloudliteAPIPkgReposMatchType = "exact"
+	GithubComKloudliteAPIPkgReposMatchTypeNotInArray GithubComKloudliteAPIPkgReposMatchType = "not_in_array"
+	GithubComKloudliteAPIPkgReposMatchTypeRegex      GithubComKloudliteAPIPkgReposMatchType = "regex"
+)
+
+var AllGithubComKloudliteAPIPkgReposMatchType = []GithubComKloudliteAPIPkgReposMatchType{
+	GithubComKloudliteAPIPkgReposMatchTypeArray,
+	GithubComKloudliteAPIPkgReposMatchTypeExact,
+	GithubComKloudliteAPIPkgReposMatchTypeNotInArray,
+	GithubComKloudliteAPIPkgReposMatchTypeRegex,
+}
+
+func (e GithubComKloudliteAPIPkgReposMatchType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIPkgReposMatchTypeArray, GithubComKloudliteAPIPkgReposMatchTypeExact, GithubComKloudliteAPIPkgReposMatchTypeNotInArray, GithubComKloudliteAPIPkgReposMatchTypeRegex:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIPkgReposMatchType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIPkgReposMatchType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIPkgReposMatchType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___pkg___repos__MatchType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIPkgReposMatchType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -4,28 +4,53 @@ package field_constants
 
 // constant vars generated for struct App
 const (
-	AppCiBuildId                     = "ciBuildId"
-	AppEnabled                       = "enabled"
-	AppSpec                          = "spec"
-	AppSpecContainers                = "spec.containers"
-	AppSpecDisplayName               = "spec.displayName"
-	AppSpecFreeze                    = "spec.freeze"
-	AppSpecHpa                       = "spec.hpa"
-	AppSpecHpaEnabled                = "spec.hpa.enabled"
-	AppSpecHpaMaxReplicas            = "spec.hpa.maxReplicas"
-	AppSpecHpaMinReplicas            = "spec.hpa.minReplicas"
-	AppSpecHpaThresholdCpu           = "spec.hpa.thresholdCpu"
-	AppSpecHpaThresholdMemory        = "spec.hpa.thresholdMemory"
-	AppSpecIntercept                 = "spec.intercept"
-	AppSpecInterceptEnabled          = "spec.intercept.enabled"
-	AppSpecInterceptToDevice         = "spec.intercept.toDevice"
-	AppSpecNodeSelector              = "spec.nodeSelector"
-	AppSpecRegion                    = "spec.region"
-	AppSpecReplicas                  = "spec.replicas"
-	AppSpecServiceAccount            = "spec.serviceAccount"
-	AppSpecServices                  = "spec.services"
-	AppSpecTolerations               = "spec.tolerations"
-	AppSpecTopologySpreadConstraints = "spec.topologySpreadConstraints"
+	AppCiBuildId                      = "ciBuildId"
+	AppEnabled                        = "enabled"
+	AppSpec                           = "spec"
+	AppSpecContainers                 = "spec.containers"
+	AppSpecDisplayName                = "spec.displayName"
+	AppSpecFreeze                     = "spec.freeze"
+	AppSpecHpa                        = "spec.hpa"
+	AppSpecHpaEnabled                 = "spec.hpa.enabled"
+	AppSpecHpaMaxReplicas             = "spec.hpa.maxReplicas"
+	AppSpecHpaMinReplicas             = "spec.hpa.minReplicas"
+	AppSpecHpaThresholdCpu            = "spec.hpa.thresholdCpu"
+	AppSpecHpaThresholdMemory         = "spec.hpa.thresholdMemory"
+	AppSpecIntercept                  = "spec.intercept"
+	AppSpecInterceptDeviceHostSuffix  = "spec.intercept.deviceHostSuffix"
+	AppSpecInterceptEnabled           = "spec.intercept.enabled"
+	AppSpecInterceptPortMappings      = "spec.intercept.portMappings"
+	AppSpecInterceptToDevice          = "spec.intercept.toDevice"
+	AppSpecNodeSelector               = "spec.nodeSelector"
+	AppSpecRegion                     = "spec.region"
+	AppSpecReplicas                   = "spec.replicas"
+	AppSpecRouter                     = "spec.router"
+	AppSpecRouterBackendProtocol      = "spec.router.backendProtocol"
+	AppSpecRouterBasicAuth            = "spec.router.basicAuth"
+	AppSpecRouterBasicAuthEnabled     = "spec.router.basicAuth.enabled"
+	AppSpecRouterBasicAuthSecretName  = "spec.router.basicAuth.secretName"
+	AppSpecRouterBasicAuthUsername    = "spec.router.basicAuth.username"
+	AppSpecRouterCors                 = "spec.router.cors"
+	AppSpecRouterCorsAllowCredentials = "spec.router.cors.allowCredentials"
+	AppSpecRouterCorsEnabled          = "spec.router.cors.enabled"
+	AppSpecRouterCorsOrigins          = "spec.router.cors.origins"
+	AppSpecRouterDomains              = "spec.router.domains"
+	AppSpecRouterHttps                = "spec.router.https"
+	AppSpecRouterHttpsClusterIssuer   = "spec.router.https.clusterIssuer"
+	AppSpecRouterHttpsEnabled         = "spec.router.https.enabled"
+	AppSpecRouterHttpsForceRedirect   = "spec.router.https.forceRedirect"
+	AppSpecRouterIngressClass         = "spec.router.ingressClass"
+	AppSpecRouterMaxBodySizeInMB      = "spec.router.maxBodySizeInMB"
+	AppSpecRouterRateLimit            = "spec.router.rateLimit"
+	AppSpecRouterRateLimitConnections = "spec.router.rateLimit.connections"
+	AppSpecRouterRateLimitEnabled     = "spec.router.rateLimit.enabled"
+	AppSpecRouterRateLimitRpm         = "spec.router.rateLimit.rpm"
+	AppSpecRouterRateLimitRps         = "spec.router.rateLimit.rps"
+	AppSpecRouterRoutes               = "spec.router.routes"
+	AppSpecServiceAccount             = "spec.serviceAccount"
+	AppSpecServices                   = "spec.services"
+	AppSpecTolerations                = "spec.tolerations"
+	AppSpecTopologySpreadConstraints  = "spec.topologySpreadConstraints"
 )
 
 // constant vars generated for struct Config
@@ -52,7 +77,6 @@ const (
 // constant vars generated for struct Environment
 const (
 	EnvironmentSpec                           = "spec"
-	EnvironmentSpecProjectName                = "spec.projectName"
 	EnvironmentSpecRouting                    = "spec.routing"
 	EnvironmentSpecRoutingMode                = "spec.routing.mode"
 	EnvironmentSpecRoutingPrivateIngressClass = "spec.routing.privateIngressClass"
@@ -60,9 +84,22 @@ const (
 	EnvironmentSpecTargetNamespace            = "spec.targetNamespace"
 )
 
+// constant vars generated for struct ExternalApp
+const (
+	ExternalAppSpec                          = "spec"
+	ExternalAppSpecIntercept                 = "spec.intercept"
+	ExternalAppSpecInterceptDeviceHostSuffix = "spec.intercept.deviceHostSuffix"
+	ExternalAppSpecInterceptEnabled          = "spec.intercept.enabled"
+	ExternalAppSpecInterceptPortMappings     = "spec.intercept.portMappings"
+	ExternalAppSpecInterceptToDevice         = "spec.intercept.toDevice"
+	ExternalAppSpecRecord                    = "spec.record"
+	ExternalAppSpecRecordType                = "spec.recordType"
+)
+
 // constant vars generated for struct ImagePullSecret
 const (
 	ImagePullSecretDockerConfigJson   = "dockerConfigJson"
+	ImagePullSecretEnvironments       = "environments"
 	ImagePullSecretFormat             = "format"
 	ImagePullSecretGeneratedK8sSecret = "generatedK8sSecret"
 	ImagePullSecretRegistryPassword   = "registryPassword"
@@ -73,6 +110,9 @@ const (
 // constant vars generated for struct ManagedResource
 const (
 	ManagedResourceEnabled                                                 = "enabled"
+	ManagedResourceIsImported                                              = "isImported"
+	ManagedResourceManagedServiceName                                      = "managedServiceName"
+	ManagedResourceMresRef                                                 = "mresRef"
 	ManagedResourceOutput                                                  = "output"
 	ManagedResourceOutputCredentialsRef                                    = "output.credentialsRef"
 	ManagedResourceOutputCredentialsRefName                                = "output.credentialsRef.name"
@@ -83,9 +123,11 @@ const (
 	ManagedResourceSpecResourceTemplateKind                                = "spec.resourceTemplate.kind"
 	ManagedResourceSpecResourceTemplateMsvcRef                             = "spec.resourceTemplate.msvcRef"
 	ManagedResourceSpecResourceTemplateMsvcRefApiVersion                   = "spec.resourceTemplate.msvcRef.apiVersion"
+	ManagedResourceSpecResourceTemplateMsvcRefClusterName                  = "spec.resourceTemplate.msvcRef.clusterName"
 	ManagedResourceSpecResourceTemplateMsvcRefKind                         = "spec.resourceTemplate.msvcRef.kind"
 	ManagedResourceSpecResourceTemplateMsvcRefName                         = "spec.resourceTemplate.msvcRef.name"
 	ManagedResourceSpecResourceTemplateMsvcRefNamespace                    = "spec.resourceTemplate.msvcRef.namespace"
+	ManagedResourceSpecResourceTemplateMsvcRefSharedSecret                 = "spec.resourceTemplate.msvcRef.sharedSecret"
 	ManagedResourceSpecResourceTemplateSpec                                = "spec.resourceTemplate.spec"
 	ManagedResourceSyncedOutputSecretRef                                   = "syncedOutputSecretRef"
 	ManagedResourceSyncedOutputSecretRefApiVersion                         = "syncedOutputSecretRef.apiVersion"
@@ -110,29 +152,6 @@ const (
 	ManagedResourceSyncedOutputSecretRefMetadataUid                        = "syncedOutputSecretRef.metadata.uid"
 	ManagedResourceSyncedOutputSecretRefStringData                         = "syncedOutputSecretRef.stringData"
 	ManagedResourceSyncedOutputSecretRefType                               = "syncedOutputSecretRef.type"
-)
-
-// constant vars generated for struct Project
-const (
-	ProjectSpec                = "spec"
-	ProjectSpecTargetNamespace = "spec.targetNamespace"
-)
-
-// constant vars generated for struct ProjectManagedService
-const (
-	ProjectManagedServiceOutput                                = "output"
-	ProjectManagedServiceOutputCredentialsRef                  = "output.credentialsRef"
-	ProjectManagedServiceOutputCredentialsRefName              = "output.credentialsRef.name"
-	ProjectManagedServiceSpec                                  = "spec"
-	ProjectManagedServiceSpecMsvcSpec                          = "spec.msvcSpec"
-	ProjectManagedServiceSpecMsvcSpecNodeSelector              = "spec.msvcSpec.nodeSelector"
-	ProjectManagedServiceSpecMsvcSpecServiceTemplate           = "spec.msvcSpec.serviceTemplate"
-	ProjectManagedServiceSpecMsvcSpecServiceTemplateApiVersion = "spec.msvcSpec.serviceTemplate.apiVersion"
-	ProjectManagedServiceSpecMsvcSpecServiceTemplateKind       = "spec.msvcSpec.serviceTemplate.kind"
-	ProjectManagedServiceSpecMsvcSpecServiceTemplateSpec       = "spec.msvcSpec.serviceTemplate.spec"
-	ProjectManagedServiceSpecMsvcSpecTolerations               = "spec.msvcSpec.tolerations"
-	ProjectManagedServiceSpecTargetNamespace                   = "spec.targetNamespace"
-	ProjectManagedServiceSyncedOutputSecretRef                 = "syncedOutputSecretRef"
 )
 
 // constant vars generated for struct ResourceMapping
@@ -221,7 +240,6 @@ const (
 	MetadataResourceVersion            = "metadata.resourceVersion"
 	MetadataSelfLink                   = "metadata.selfLink"
 	MetadataUid                        = "metadata.uid"
-	ProjectName                        = "projectName"
 	RecordVersion                      = "recordVersion"
 	Status                             = "status"
 	StatusCheckList                    = "status.checkList"

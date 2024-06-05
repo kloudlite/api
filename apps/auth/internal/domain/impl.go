@@ -8,6 +8,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"github.com/kloudlite/api/apps/auth/internal/entities"
+	"github.com/kloudlite/api/apps/auth/internal/env"
 	"strings"
 	"time"
 
@@ -48,11 +49,14 @@ type domainI struct {
 	commsClient     comms.CommsClient
 	verifyTokenRepo kv.Repo[*entities.VerifyToken]
 	resetTokenRepo  kv.Repo[*entities.ResetPasswordToken]
+	inviteCodeRepo  repos.DbRepo[*entities.InviteCode]
 	logger          logging.Logger
 	github          Github
 	gitlab          Gitlab
 	google          Google
 	remoteLoginRepo repos.DbRepo[*entities.RemoteLogin]
+
+	envVars *env.Env
 }
 
 func (d *domainI) SetRemoteLoginAuthHeader(ctx context.Context, loginId repos.ID, authHeader string) error {
@@ -196,6 +200,7 @@ func (d *domainI) SignUp(ctx context.Context, name string, email string, passwor
 			Email:        email,
 			Password:     hex.EncodeToString(sum[:]),
 			Verified:     false,
+			Approved:     false,
 			Metadata:     nil,
 			Joined:       time.Now(),
 			PasswordSalt: salt,
@@ -206,10 +211,19 @@ func (d *domainI) SignUp(ctx context.Context, name string, email string, passwor
 		return nil, errors.NewE(err)
 	}
 
-	err = d.generateAndSendVerificationToken(ctx, user)
-	if err != nil {
-		return nil, errors.NewE(err)
+	if _, err := d.commsClient.SendWaitingEmail(
+		ctx, &comms.WelcomeEmailInput{
+			Email: user.Email,
+			Name:  user.Name,
+		},
+	); err != nil {
+		d.logger.Errorf(err)
 	}
+
+	//err = d.generateAndSendVerificationToken(ctx, user)
+	//if err != nil {
+	//	return nil, errors.NewE(err)
+	//}
 
 	return newAuthSession(user.Id, user.Email, user.Name, user.Verified, "email/password"), nil
 }
@@ -264,7 +278,15 @@ func (d *domainI) VerifyEmail(ctx context.Context, token string) (*common.AuthSe
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	if _, err := d.commsClient.SendWelcomeEmail(
+	//if _, err := d.commsClient.SendWelcomeEmail(
+	//	ctx, &comms.WelcomeEmailInput{
+	//		Email: user.Email,
+	//		Name:  user.Name,
+	//	},
+	//); err != nil {
+	//	d.logger.Errorf(err)
+	//}
+	if _, err := d.commsClient.SendWaitingEmail(
 		ctx, &comms.WelcomeEmailInput{
 			Email: user.Email,
 			Name:  user.Name,
@@ -404,7 +426,15 @@ func (d *domainI) addOAuthLogin(ctx context.Context, provider string, token *oau
 		user = u
 		user.Joined = time.Now()
 		user, err = d.userRepo.Create(ctx, user)
-		if _, err := d.commsClient.SendWelcomeEmail(
+		//if _, err := d.commsClient.SendWelcomeEmail(
+		//	ctx, &comms.WelcomeEmailInput{
+		//		Email: user.Email,
+		//		Name:  user.Name,
+		//	},
+		//); err != nil {
+		//	d.logger.Errorf(err)
+		//}
+		if _, err := d.commsClient.SendWaitingEmail(
 			ctx, &comms.WelcomeEmailInput{
 				Email: user.Email,
 				Name:  user.Name,
@@ -598,7 +628,6 @@ func (d *domainI) GetAccessToken(ctx context.Context, provider string, userId st
 	if err != nil {
 		return nil, errors.NewEf(err, "could not update access token")
 	}
-	// fmt.Println("accToken: ", accToken)
 	return accToken, nil
 }
 
@@ -654,11 +683,13 @@ func fxDomain(
 	remoteLoginRepo repos.DbRepo[*entities.RemoteLogin],
 	verifyTokenRepo kv.Repo[*entities.VerifyToken],
 	resetTokenRepo kv.Repo[*entities.ResetPasswordToken],
+	inviteCodeRepo repos.DbRepo[*entities.InviteCode],
 	github Github,
 	gitlab Gitlab,
 	google Google,
 	logger logging.Logger,
 	commsClient comms.CommsClient,
+	ev *env.Env,
 ) Domain {
 	return &domainI{
 		remoteLoginRepo: remoteLoginRepo,
@@ -667,9 +698,11 @@ func fxDomain(
 		accessTokenRepo: accessTokenRepo,
 		verifyTokenRepo: verifyTokenRepo,
 		resetTokenRepo:  resetTokenRepo,
+		inviteCodeRepo:  inviteCodeRepo,
 		github:          github,
 		gitlab:          gitlab,
 		google:          google,
 		logger:          logger,
+		envVars:         ev,
 	}
 }

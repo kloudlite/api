@@ -87,6 +87,7 @@ func toConsoleContext(ctx context.Context) (domain.ConsoleContext, error) {
 
 var (
 	errNilApp                   = errors.Newf("app obj is nil")
+	errNilExternalApp           = errors.Newf("external app obj is nil")
 	errNilConfig                = errors.Newf("config obj is nil")
 	errNilSecret                = errors.Newf("secret obj is nil")
 	errNilEnvironment           = errors.Newf("environment obj is nil")
@@ -98,10 +99,10 @@ var (
 	errNilRouter                = errors.Newf("router obj is nil")
 )
 
-func newResourceContext(ctx domain.ConsoleContext, projectName string, environmentName string) domain.ResourceContext {
-	return domain.ResourceContext{
-		ConsoleContext:  ctx,
-		ProjectName:     projectName,
-		EnvironmentName: environmentName,
-	}
+func newResourceContext(ctx domain.ConsoleContext, environmentName string) domain.ResourceContext {
+	return domain.ResourceContext{ConsoleContext: ctx, EnvironmentName: environmentName}
+}
+
+func newMresContext(ctx domain.ConsoleContext, msvcName string) domain.ManagedResourceContext {
+	return domain.ManagedResourceContext{ConsoleContext: ctx, ManagedServiceName: msvcName}
 }

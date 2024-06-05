@@ -168,6 +168,7 @@ type Github__com___kloudlite___operator___apis___clusters___v1__ClusterSpec @sha
   cloudflareEnabled: Boolean
   cloudProvider: Github__com___kloudlite___operator___apis___common____types__CloudProvider!
   clusterInternalDnsHost: String
+  clusterServiceCIDR: String
   clusterTokenRef: Github__com___kloudlite___operator___apis___common____types__SecretKeyRef
   gcp: Github__com___kloudlite___operator___apis___clusters___v1__GCPClusterConfig
   kloudliteRelease: String!
@@ -182,6 +183,7 @@ type Github__com___kloudlite___operator___apis___clusters___v1__GCPClusterConfig
   gcpProjectID: String!
   masterNodes: Github__com___kloudlite___operator___apis___clusters___v1__GCPMasterNodesConfig
   region: String!
+  serviceAccount: Github__com___kloudlite___operator___apis___clusters___v1__GCPServiceAccount!
   vpc: Github__com___kloudlite___operator___apis___clusters___v1__GcpVPCParams
 }
 
@@ -201,6 +203,14 @@ type Github__com___kloudlite___operator___apis___clusters___v1__GCPNodePoolConfi
   nodes: Map
   poolType: Github__com___kloudlite___operator___apis___clusters___v1__GCPPoolType!
   region: String!
+  serviceAccount: Github__com___kloudlite___operator___apis___clusters___v1__GCPServiceAccount!
+  vpc: Github__com___kloudlite___operator___apis___clusters___v1__GcpVPCParams
+}
+
+type Github__com___kloudlite___operator___apis___clusters___v1__GCPServiceAccount @shareable {
+  email: String
+  enabled: Boolean!
+  scopes: [String!]
 }
 
 type Github__com___kloudlite___operator___apis___clusters___v1__GcpVPCParams @shareable {
@@ -294,7 +304,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__ManagedServiceSpec @
 type Github__com___kloudlite___operator___apis___crds___v1__ServiceTemplate @shareable {
   apiVersion: String!
   kind: String!
-  spec: Map!
+  spec: Map
 }
 
 type Github__com___kloudlite___operator___pkg___operator__Check @shareable {
@@ -311,6 +321,7 @@ type Github__com___kloudlite___operator___pkg___operator__Check @shareable {
 type Github__com___kloudlite___operator___pkg___operator__CheckMeta @shareable {
   debug: Boolean
   description: String
+  hide: Boolean
   name: String!
   title: String!
 }
@@ -875,7 +886,6 @@ input Github__com___kloudlite___operator___apis___common____types__SecretRefIn {
 
 input Github__com___kloudlite___operator___apis___crds___v1__ClusterManagedServiceSpecIn {
   msvcSpec: Github__com___kloudlite___operator___apis___crds___v1__ManagedServiceSpecIn!
-  targetNamespace: String!
 }
 
 input Github__com___kloudlite___operator___apis___crds___v1__HelmChartSpecIn {
@@ -906,7 +916,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__ManagedServiceSpecI
 input Github__com___kloudlite___operator___apis___crds___v1__ServiceTemplateIn {
   apiVersion: String!
   kind: String!
-  spec: Map!
+  spec: Map
 }
 
 input K8s__io___api___core___v1__AWSElasticBlockStoreVolumeSourceIn {
@@ -1324,6 +1334,13 @@ input MetadataIn {
   labels: Map
   name: String!
   namespace: String
+}
+
+enum Github__com___kloudlite___api___pkg___repos__MatchType {
+  array
+  exact
+  not_in_array
+  regex
 }
 
 enum Github__com___kloudlite___api___pkg___types__SyncAction {

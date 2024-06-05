@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	fc "github.com/kloudlite/api/apps/console/internal/entities/field-constants"
 	"time"
 
 	"github.com/kloudlite/api/common/fields"
@@ -42,14 +43,25 @@ func (c ConsoleContext) GetAccountName() string {
 
 type ResourceContext struct {
 	ConsoleContext
-	ProjectName     string
+	//ProjectName     string
 	EnvironmentName string
+}
+
+type ManagedResourceContext struct {
+	ConsoleContext
+	ManagedServiceName string
+}
+
+func (m ManagedResourceContext) MresDBFilters() repos.Filter {
+	return repos.Filter{
+		fields.AccountName:                   m.AccountName,
+		fc.ManagedResourceManagedServiceName: m.ManagedServiceName,
+	}
 }
 
 func (r ResourceContext) DBFilters() repos.Filter {
 	return repos.Filter{
 		fields.AccountName:     r.AccountName,
-		fields.ProjectName:     r.ProjectName,
 		fields.EnvironmentName: r.EnvironmentName,
 	}
 }
@@ -66,6 +78,13 @@ func NewConsoleContext(parent context.Context, userId repos.ID, accountName stri
 		UserId:  userId,
 
 		AccountName: accountName,
+	}
+}
+
+func NewManagedResourceContext(ctx ConsoleContext, msvcName string) ManagedResourceContext {
+	return ManagedResourceContext{
+		ConsoleContext:     ctx,
+		ManagedServiceName: msvcName,
 	}
 }
 
@@ -114,34 +133,35 @@ type UpdateAndDeleteOpts struct {
 }
 
 type Domain interface {
-	CheckNameAvailability(ctx context.Context, accountName string, projectName *string, environmentName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error)
+	CheckNameAvailability(ctx context.Context, accountName string, environmentName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error)
 
-	ListProjects(ctx context.Context, userId repos.ID, accountName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error)
-	GetProject(ctx ConsoleContext, name string) (*entities.Project, error)
+	// INFO: project have been disabled
+	// ListProjects(ctx context.Context, userId repos.ID, accountName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error)
+	// GetProject(ctx ConsoleContext, name string) (*entities.Project, error)
+	//
+	// CreateProject(ctx ConsoleContext, project entities.Project) (*entities.Project, error)
+	// UpdateProject(ctx ConsoleContext, project entities.Project) (*entities.Project, error)
+	// DeleteProject(ctx ConsoleContext, name string) error
+	//
+	// OnProjectApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
+	// OnProjectDeleteMessage(ctx ConsoleContext, project entities.Project) error
+	// OnProjectUpdateMessage(ctx ConsoleContext, cluster entities.Project, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
-	CreateProject(ctx ConsoleContext, project entities.Project) (*entities.Project, error)
-	UpdateProject(ctx ConsoleContext, project entities.Project) (*entities.Project, error)
-	DeleteProject(ctx ConsoleContext, name string) error
+	// ResyncProject(ctx ConsoleContext, name string) error
 
-	OnProjectApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
-	OnProjectDeleteMessage(ctx ConsoleContext, project entities.Project) error
-	OnProjectUpdateMessage(ctx ConsoleContext, cluster entities.Project, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	ListEnvironments(ctx ConsoleContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Environment], error)
+	GetEnvironment(ctx ConsoleContext, name string) (*entities.Environment, error)
 
-	ResyncProject(ctx ConsoleContext, name string) error
-
-	ListEnvironments(ctx ConsoleContext, projectName string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Environment], error)
-	GetEnvironment(ctx ConsoleContext, projectName string, name string) (*entities.Environment, error)
-
-	CreateEnvironment(ctx ConsoleContext, projectName string, env entities.Environment) (*entities.Environment, error)
-	CloneEnvironment(ctx ConsoleContext, projectName string, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode crdsv1.EnvironmentRoutingMode) (*entities.Environment, error)
-	UpdateEnvironment(ctx ConsoleContext, projectName string, env entities.Environment) (*entities.Environment, error)
-	DeleteEnvironment(ctx ConsoleContext, projectName string, name string) error
+	CreateEnvironment(ctx ConsoleContext, env entities.Environment) (*entities.Environment, error)
+	CloneEnvironment(ctx ConsoleContext, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode crdsv1.EnvironmentRoutingMode) (*entities.Environment, error)
+	UpdateEnvironment(ctx ConsoleContext, env entities.Environment) (*entities.Environment, error)
+	DeleteEnvironment(ctx ConsoleContext, name string) error
 
 	OnEnvironmentApplyError(ctx ConsoleContext, errMsg, namespace, name string, opts UpdateAndDeleteOpts) error
 	OnEnvironmentDeleteMessage(ctx ConsoleContext, env entities.Environment) error
 	OnEnvironmentUpdateMessage(ctx ConsoleContext, env entities.Environment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
-	ResyncEnvironment(ctx ConsoleContext, projectName string, name string) error
+	ResyncEnvironment(ctx ConsoleContext, name string) error
 
 	ListApps(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.App], error)
 	GetApp(ctx ResourceContext, name string) (*entities.App, error)
@@ -150,7 +170,7 @@ type Domain interface {
 	UpdateApp(ctx ResourceContext, app entities.App) (*entities.App, error)
 	DeleteApp(ctx ResourceContext, name string) error
 
-	InterceptApp(ctx ResourceContext, appName string, deviceName string, intercept bool) (bool, error)
+	InterceptApp(ctx ResourceContext, appName string, deviceName string, intercept bool, portMappings []crdsv1.AppInterceptPortMappings) (bool, error)
 	RestartApp(ctx ResourceContext, appName string) error
 
 	OnAppApplyError(ctx ResourceContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
@@ -200,49 +220,72 @@ type Domain interface {
 
 	ResyncRouter(ctx ResourceContext, name string) error
 
-	ListManagedResources(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
-	GetManagedResource(ctx ResourceContext, name string) (*entities.ManagedResource, error)
+	ListManagedResources(ctx ManagedResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
+	GetManagedResource(ctx ManagedResourceContext, name string) (*entities.ManagedResource, error)
 
-	GetManagedResourceOutputKeys(ctx ResourceContext, name string) ([]string, error)
-	GetManagedResourceOutputKVs(ctx ResourceContext, keyrefs []ManagedResourceKeyRef) ([]*ManagedResourceKeyValueRef, error)
+	ListImportedManagedResources(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
+	GetImportedManagedResource(ctx ResourceContext, name string) (*entities.ManagedResource, error)
 
-	CreateManagedResource(ctx ResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
-	UpdateManagedResource(ctx ResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
-	DeleteManagedResource(ctx ResourceContext, name string) error
+	GetManagedResourceOutputKeys(ctx ManagedResourceContext, name string) ([]string, error)
+	GetManagedResourceOutputKVs(ctx ManagedResourceContext, keyrefs []ManagedResourceKeyRef) ([]*ManagedResourceKeyValueRef, error)
 
-	OnManagedResourceApplyError(ctx ResourceContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
-	OnManagedResourceDeleteMessage(ctx ResourceContext, mres entities.ManagedResource) error
-	OnManagedResourceUpdateMessage(ctx ResourceContext, mres entities.ManagedResource, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	CreateManagedResource(ctx ManagedResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
+	UpdateManagedResource(ctx ManagedResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
+	DeleteManagedResource(ctx ManagedResourceContext, name string) error
 
-	ResyncManagedResource(ctx ResourceContext, name string) error
+	ImportManagedResource(ctx ManagedResourceContext, mresName string, envName string) (*entities.ManagedResource, error)
+	DeleteImportedManagedResource(ctx ResourceContext, mresName string) error
+
+	OnManagedResourceApplyError(ctx ConsoleContext, errMsg string, msvcName string, name string, opts UpdateAndDeleteOpts) error
+	OnManagedResourceDeleteMessage(ctx ConsoleContext, msvcName string, mres entities.ManagedResource) error
+	OnManagedResourceUpdateMessage(ctx ConsoleContext, msvcName string, mres entities.ManagedResource, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+
+	ResyncManagedResource(ctx ConsoleContext, msvcName string, name string) error
+
+	/// External Apps
+	ListExternalApps(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ExternalApp], error)
+	GetExternalApp(ctx ResourceContext, name string) (*entities.ExternalApp, error)
+
+	CreateExternalApp(ctx ResourceContext, externalApp entities.ExternalApp) (*entities.ExternalApp, error)
+	UpdateExternalApp(ctx ResourceContext, externalAppIn entities.ExternalApp) (*entities.ExternalApp, error)
+	DeleteExternalApp(ctx ResourceContext, name string) error
+
+	InterceptExternalApp(ctx ResourceContext, externalAppName string, deviceName string, intercept bool, portMappings []crdsv1.AppInterceptPortMappings) (bool, error)
+
+	OnExternalAppApplyError(ctx ResourceContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
+	OnExternalAppDeleteMessage(ctx ResourceContext, externalApp entities.ExternalApp) error
+	OnExternalAppUpdateMessage(ctx ResourceContext, externalApp entities.ExternalApp, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+
+	ResyncExternalApp(ctx ResourceContext, name string) error
 
 	// image pull secrets
-	ListImagePullSecrets(ctx ResourceContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ImagePullSecret], error)
-	GetImagePullSecret(ctx ResourceContext, name string) (*entities.ImagePullSecret, error)
-	CreateImagePullSecret(ctx ResourceContext, secret entities.ImagePullSecret) (*entities.ImagePullSecret, error)
-	DeleteImagePullSecret(ctx ResourceContext, name string) error
+	ListImagePullSecrets(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ImagePullSecret], error)
+	GetImagePullSecret(ctx ConsoleContext, name string) (*entities.ImagePullSecret, error)
+	CreateImagePullSecret(ctx ConsoleContext, secret entities.ImagePullSecret) (*entities.ImagePullSecret, error)
+	UpdateImagePullSecret(ctx ConsoleContext, secret entities.ImagePullSecret) (*entities.ImagePullSecret, error)
+	DeleteImagePullSecret(ctx ConsoleContext, name string) error
 
-	OnImagePullSecretApplyError(ctx ResourceContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
-	OnImagePullSecretDeleteMessage(ctx ResourceContext, ips entities.ImagePullSecret) error
-	OnImagePullSecretUpdateMessage(ctx ResourceContext, ips entities.ImagePullSecret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnImagePullSecretApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
+	OnImagePullSecretDeleteMessage(ctx ConsoleContext, ips entities.ImagePullSecret) error
+	OnImagePullSecretUpdateMessage(ctx ConsoleContext, ips entities.ImagePullSecret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
-	ResyncImagePullSecret(ctx ResourceContext, name string) error
+	ResyncImagePullSecret(ctx ConsoleContext, name string) error
 
 	GetEnvironmentResourceMapping(ctx ConsoleContext, resType entities.ResourceType, clusterName string, namespace string, name string) (*entities.ResourceMapping, error)
-	GetProjectResourceMapping(ctx ConsoleContext, resType entities.ResourceType, clusterName string, namespace string, name string) (*entities.ResourceMapping, error)
+	//GetProjectResourceMapping(ctx ConsoleContext, resType entities.ResourceType, clusterName string, namespace string, name string) (*entities.ResourceMapping, error)
 
-	ListProjectManagedServices(ctx ConsoleContext, projectName string, mf map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ProjectManagedService], error)
-	GetProjectManagedService(ctx ConsoleContext, projectName string, serviceName string) (*entities.ProjectManagedService, error)
-	CreateProjectManagedService(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) (*entities.ProjectManagedService, error)
-	UpdateProjectManagedService(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) (*entities.ProjectManagedService, error)
-	DeleteProjectManagedService(ctx ConsoleContext, projectName string, name string) error
+	//ListProjectManagedServices(ctx ConsoleContext, projectName string, mf map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ProjectManagedService], error)
+	//GetProjectManagedService(ctx ConsoleContext, projectName string, serviceName string) (*entities.ProjectManagedService, error)
+	//CreateProjectManagedService(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) (*entities.ProjectManagedService, error)
+	//UpdateProjectManagedService(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) (*entities.ProjectManagedService, error)
+	//DeleteProjectManagedService(ctx ConsoleContext, projectName string, name string) error
 
-	RestartProjectManagedService(ctx ConsoleContext, projectName string, name string) error
-
-	OnProjectManagedServiceApplyError(ctx ConsoleContext, projectName, name, errMsg string, opts UpdateAndDeleteOpts) error
-	OnProjectManagedServiceDeleteMessage(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) error
-	OnProjectManagedServiceUpdateMessage(ctx ConsoleContext, projectName string, service entities.ProjectManagedService, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	ResyncProjectManagedService(ctx ConsoleContext, projectName, name string) error
+	//RestartProjectManagedService(ctx ConsoleContext, projectName string, name string) error
+	//
+	//OnProjectManagedServiceApplyError(ctx ConsoleContext, projectName, name, errMsg string, opts UpdateAndDeleteOpts) error
+	//OnProjectManagedServiceDeleteMessage(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) error
+	//OnProjectManagedServiceUpdateMessage(ctx ConsoleContext, projectName string, service entities.ProjectManagedService, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	//ResyncProjectManagedService(ctx ConsoleContext, projectName, name string) error
 
 	ListVPNDevices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ConsoleVPNDevice], error)
 	ListVPNDevicesForUser(ctx ConsoleContext) ([]*entities.ConsoleVPNDevice, error)
@@ -251,7 +294,7 @@ type Domain interface {
 	UpdateVPNDevice(ctx ConsoleContext, device entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
 	DeleteVPNDevice(ctx ConsoleContext, name string) error
 	UpdateVpnDevicePorts(ctx ConsoleContext, devName string, ports []*wgv1.Port) error
-	ActivateVpnDeviceOnEnvironment(ctx ConsoleContext, devName string, projectName string, envName string) error
+	ActivateVpnDeviceOnEnvironment(ctx ConsoleContext, devName string, envName string) error
 
 	OnVPNDeviceApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
 	OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.ConsoleVPNDevice) error
@@ -271,6 +314,6 @@ const (
 
 type ResourceEventPublisher interface {
 	PublishConsoleEvent(ctx ConsoleContext, resourceType entities.ResourceType, name string, update PublishMsg)
-	PublishProjectResourceEvent(ctx ConsoleContext, projectName string, resourceType entities.ResourceType, name string, update PublishMsg)
+	PublishEnvironmentResourceEvent(ctx ConsoleContext, envName string, resourceType entities.ResourceType, name string, update PublishMsg)
 	PublishResourceEvent(ctx ResourceContext, resourceType entities.ResourceType, name string, update PublishMsg)
 }

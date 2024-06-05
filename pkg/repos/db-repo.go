@@ -45,16 +45,18 @@ type Query struct {
 type MatchType string
 
 const (
-	MatchTypeExact = "exact"
-	MatchTypeArray = "array"
-	MatchTypeRegex = "regex"
+	MatchTypeExact      MatchType = "exact"
+	MatchTypeArray      MatchType = "array"
+	MatchTypeNotInArray MatchType = "not_in_array"
+	MatchTypeRegex      MatchType = "regex"
 )
 
 type MatchFilter struct {
-	MatchType MatchType `json:"matchType" graphql:"enum=exact;array;regex;"`
-	Exact     any       `json:"exact,omitempty"`
-	Array     []any     `json:"array,omitempty"`
-	Regex     *string   `json:"regex,omitempty"`
+	MatchType  MatchType `json:"matchType"`
+	Exact      any       `json:"exact,omitempty"`
+	Array      []any     `json:"array,omitempty"`
+	NotInArray []any     `json:"notInArray,omitempty"`
+	Regex      *string   `json:"regex,omitempty"`
 }
 
 type ID string
@@ -90,6 +92,7 @@ type DbRepo[T Entity] interface {
 	FindPaginated(ctx context.Context, filter Filter, pagination CursorPagination) (*PaginatedRecord[T], error)
 	FindById(ctx context.Context, id ID) (T, error)
 	Create(ctx context.Context, data T) (T, error)
+	CreateMany(ctx context.Context, data []T) error
 	Exists(ctx context.Context, filter Filter) (bool, error)
 
 	Count(ctx context.Context, filter Filter) (int64, error)
@@ -99,6 +102,8 @@ type DbRepo[T Entity] interface {
 	UpdateMany(ctx context.Context, filter Filter, updatedData map[string]any) error
 	UpdateById(ctx context.Context, id ID, updatedData T, opts ...UpdateOpts) (T, error)
 	PatchById(ctx context.Context, id ID, patch Document, opts ...UpdateOpts) (T, error)
+
+	UpdateWithVersionCheck(ctx context.Context, id ID, updatedData T) (T, error)
 
 	Patch(ctx context.Context, filter Filter, patch Document, opts ...UpdateOpts) (T, error)
 	UpdateOne(ctx context.Context, filter Filter, updatedData T, opts ...UpdateOpts) (T, error)
@@ -110,7 +115,7 @@ type DbRepo[T Entity] interface {
 	DeleteOne(ctx context.Context, filter Filter) error
 
 	ErrAlreadyExists(err error) bool
-	MergeMatchFilters(filter Filter, matchFilters map[string]MatchFilter) Filter
+	MergeMatchFilters(filter Filter, matchFilters ...map[string]MatchFilter) Filter
 }
 
 type indexOrder bool

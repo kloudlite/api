@@ -47,7 +47,7 @@ func (d *domain) GetApp(ctx ResourceContext, name string) (*entities.App, error)
 
 func (d *domain) applyApp(ctx ResourceContext, app *entities.App) error {
 	addTrackingId(&app.App, app.Id)
-	return d.applyK8sResource(ctx, app.ProjectName, &app.App, app.RecordVersion)
+	return d.applyK8sResource(ctx, app.EnvironmentName, &app.App, app.RecordVersion)
 }
 
 func (d *domain) CreateApp(ctx ResourceContext, app entities.App) (*entities.App, error) {
@@ -55,7 +55,7 @@ func (d *domain) CreateApp(ctx ResourceContext, app entities.App) (*entities.App
 		return nil, errors.NewE(err)
 	}
 
-	env, err := d.findEnvironment(ctx.ConsoleContext, ctx.ProjectName, ctx.EnvironmentName)
+	env, err := d.findEnvironment(ctx.ConsoleContext, ctx.EnvironmentName)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -76,7 +76,6 @@ func (d *domain) CreateApp(ctx ResourceContext, app entities.App) (*entities.App
 	app.LastUpdatedBy = app.CreatedBy
 
 	app.AccountName = ctx.AccountName
-	app.ProjectName = ctx.ProjectName
 	app.EnvironmentName = ctx.EnvironmentName
 	app.SyncStatus = t.GenSyncStatus(t.SyncActionApply, app.RecordVersion)
 
@@ -118,7 +117,7 @@ func (d *domain) DeleteApp(ctx ResourceContext, name string) error {
 		return errors.NewE(err)
 	}
 	d.resourceEventPublisher.PublishResourceEvent(ctx, entities.ResourceTypeApp, uapp.Name, PublishUpdate)
-	if err := d.deleteK8sResource(ctx, uapp.ProjectName, &uapp.App); err != nil {
+	if err := d.deleteK8sResource(ctx, uapp.EnvironmentName, &uapp.App); err != nil {
 		if errors.Is(err, ErrNoClusterAttached) {
 			return d.appRepo.DeleteById(ctx, uapp.Id)
 		}
@@ -148,7 +147,6 @@ func (d *domain) UpdateApp(ctx ResourceContext, appIn entities.App) (*entities.A
 	}
 
 	// FIXME: hotfix till volume mounts for PVCs are not added in UI
-
 	pvcMounts := make(map[int][]crdsv1.ContainerVolume)
 	for i := range xapp.Spec.Containers {
 		for _, volume := range xapp.Spec.Containers[i].Volumes {
@@ -174,6 +172,15 @@ func (d *domain) UpdateApp(ctx ResourceContext, appIn entities.App) (*entities.A
 				appIn.Spec.Containers[i].Volumes = append(appIn.Spec.Containers[i].Volumes, pvcVolume)
 			}
 		}
+	}
+
+	// readiness and liveness probes
+	if xapp.Spec.Containers[0].LivenessProbe != nil && appIn.Spec.Containers[0].LivenessProbe == nil {
+		appIn.Spec.Containers[0].LivenessProbe = xapp.Spec.Containers[0].LivenessProbe
+	}
+
+	if xapp.Spec.Containers[0].ReadinessProbe != nil {
+		appIn.Spec.Containers[0].ReadinessProbe = xapp.Spec.Containers[0].ReadinessProbe
 	}
 
 	patchDoc := repos.Document{
@@ -202,16 +209,21 @@ func (d *domain) UpdateApp(ctx ResourceContext, appIn entities.App) (*entities.A
 }
 
 // InterceptApp implements Domain.
-func (d *domain) InterceptApp(ctx ResourceContext, appName string, deviceName string, intercept bool) (bool, error) {
+func (d *domain) InterceptApp(ctx ResourceContext, appName string, deviceName string, intercept bool, portMappings []crdsv1.AppInterceptPortMappings) (bool, error) {
 	if err := d.canMutateResourcesInEnvironment(ctx); err != nil {
 		return false, errors.NewE(err)
 	}
-	uApp, err := d.appRepo.Patch(ctx, ctx.DBFilters().Add(fields.MetadataName, appName), repos.Document{
-		fc.AppSpecIntercept: crdsv1.Intercept{
-			Enabled:  intercept,
-			ToDevice: deviceName,
-		},
-	})
+
+	patch := repos.Document{
+		fc.AppSpecInterceptEnabled:  intercept,
+		fc.AppSpecInterceptToDevice: deviceName,
+	}
+
+	if portMappings != nil {
+		patch[fc.AppSpecInterceptPortMappings] = portMappings
+	}
+
+	uApp, err := d.appRepo.Patch(ctx, ctx.DBFilters().Add(fields.MetadataName, appName), patch)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
@@ -231,7 +243,7 @@ func (d *domain) RestartApp(ctx ResourceContext, appName string) error {
 		return err
 	}
 
-	if err := d.restartK8sResource(ctx, ctx.ProjectName, app.Namespace, app.GetEnsuredLabels()); err != nil {
+	if err := d.restartK8sResource(ctx, ctx.EnvironmentName, app.Namespace, app.GetEnsuredLabels()); err != nil {
 		return err
 	}
 
@@ -288,6 +300,7 @@ func (d *domain) OnAppApplyError(ctx ResourceContext, errMsg string, name string
 	if err != nil {
 		return errors.NewE(err)
 	}
+
 	d.resourceEventPublisher.PublishResourceEvent(ctx, entities.ResourceTypeApp, uapp.Name, PublishDelete)
 	return errors.NewE(err)
 }
@@ -300,5 +313,5 @@ func (d *domain) ResyncApp(ctx ResourceContext, name string) error {
 	if err != nil {
 		return errors.NewE(err)
 	}
-	return d.resyncK8sResource(ctx, a.ProjectName, a.SyncStatus.Action, &a.App, a.RecordVersion)
+	return d.resyncK8sResource(ctx, a.EnvironmentName, a.SyncStatus.Action, &a.App, a.RecordVersion)
 }

@@ -7,17 +7,22 @@ package graph
 import (
 	"context"
 	"encoding/base64"
-
-	"github.com/kloudlite/api/common/fields"
+	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/infra/internal/domain"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
+	"github.com/kloudlite/api/common/fields"
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
 )
+
+// ClusterDNSSuffix is the resolver for the clusterDNSSuffix field.
+func (r *bYOKClusterResolver) ClusterDNSSuffix(ctx context.Context, obj *entities.BYOKCluster) (string, error) {
+	return fmt.Sprintf("%s.local", obj.Name), nil
+}
 
 // AdminKubeconfig is the resolver for the adminKubeconfig field.
 func (r *clusterResolver) AdminKubeconfig(ctx context.Context, obj *entities.Cluster) (*model.EncodedValue, error) {
@@ -36,6 +41,28 @@ func (r *clusterResolver) AdminKubeconfig(ctx context.Context, obj *entities.Clu
 
 	return &model.EncodedValue{
 		Value:    base64.StdEncoding.EncodeToString([]byte(*s)),
+		Encoding: "base64",
+	}, nil
+}
+
+// ClusterDNSSuffix is the resolver for the clusterDNSSuffix field.
+func (r *clusterResolver) ClusterDNSSuffix(ctx context.Context, obj *entities.Cluster) (string, error) {
+	return fmt.Sprintf("%s.local", obj.Name), nil
+}
+
+// WireguardConfig is the resolver for the wireguardConfig field.
+func (r *globalVPNDeviceResolver) WireguardConfig(ctx context.Context, obj *entities.GlobalVPNDevice) (*model.EncodedValue, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	wgconfig, err := r.Domain.GetGlobalVPNDeviceWgConfig(ictx, obj.GlobalVPNName, obj.Name)
+	if err != nil {
+		return nil, err
+	}
+
+	return &model.EncodedValue{
+		Value:    base64.StdEncoding.EncodeToString([]byte(wgconfig)),
 		Encoding: "base64",
 	}, nil
 }
@@ -71,32 +98,63 @@ func (r *mutationResolver) InfraDeleteCluster(ctx context.Context, name string) 
 	return true, nil
 }
 
-// InfraCreateClusterGroup is the resolver for the infra_createClusterGroup field.
-func (r *mutationResolver) InfraCreateClusterGroup(ctx context.Context, clusterGroup entities.ClusterGroup) (*entities.ClusterGroup, error) {
+// InfraCreateGlobalVpn is the resolver for the infra_createGlobalVPN field.
+func (r *mutationResolver) InfraCreateGlobalVpn(ctx context.Context, gvpn entities.GlobalVPN) (*entities.GlobalVPN, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	return r.Domain.CreateClusterGroup(ictx, clusterGroup)
+	return r.Domain.CreateGlobalVPN(ictx, gvpn)
 }
 
-// InfraUpdateClusterGroup is the resolver for the infra_updateClusterGroup field.
-func (r *mutationResolver) InfraUpdateClusterGroup(ctx context.Context, clusterGroup entities.ClusterGroup) (*entities.ClusterGroup, error) {
+// InfraUpdateGlobalVpn is the resolver for the infra_updateGlobalVPN field.
+func (r *mutationResolver) InfraUpdateGlobalVpn(ctx context.Context, gvpn entities.GlobalVPN) (*entities.GlobalVPN, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.UpdateClusterGroup(ictx, clusterGroup)
+	return r.Domain.UpdateGlobalVPN(ictx, gvpn)
 }
 
-// InfraDeleteClusterGroup is the resolver for the infra_deleteClusterGroup field.
-func (r *mutationResolver) InfraDeleteClusterGroup(ctx context.Context, name string) (bool, error) {
+// InfraDeleteGlobalVpn is the resolver for the infra_deleteGlobalVPN field.
+func (r *mutationResolver) InfraDeleteGlobalVpn(ctx context.Context, name string) (bool, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
-	if err := r.Domain.DeleteClusterGroup(ictx, name); err != nil {
+	if err := r.Domain.DeleteGlobalVPN(ictx, name); err != nil {
+		return false, errors.NewE(err)
+	}
+	return true, nil
+}
+
+// InfraCreateGlobalVPNDevice is the resolver for the infra_createGlobalVPNDevice field.
+func (r *mutationResolver) InfraCreateGlobalVPNDevice(ctx context.Context, gvpnDevice entities.GlobalVPNDevice) (*entities.GlobalVPNDevice, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.CreateGlobalVPNDevice(ictx, gvpnDevice)
+}
+
+// InfraUpdateGlobalVPNDevice is the resolver for the infra_updateGlobalVPNDevice field.
+func (r *mutationResolver) InfraUpdateGlobalVPNDevice(ctx context.Context, gvpnDevice entities.GlobalVPNDevice) (*entities.GlobalVPNDevice, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	return r.Domain.UpdateGlobalVPNDevice(ictx, gvpnDevice)
+}
+
+// InfraDeleteGlobalVPNDevice is the resolver for the infra_deleteGlobalVPNDevice field.
+func (r *mutationResolver) InfraDeleteGlobalVPNDevice(ctx context.Context, gvpn string, deviceName string) (bool, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return false, errors.NewE(err)
+	}
+	if err := r.Domain.DeleteGlobalVPNDevice(ictx, gvpn, deviceName); err != nil {
 		return false, errors.NewE(err)
 	}
 	return true, nil
@@ -109,6 +167,28 @@ func (r *mutationResolver) InfraCreateBYOKCluster(ctx context.Context, cluster e
 		return nil, errors.NewE(err)
 	}
 	return r.Domain.CreateBYOKCluster(ictx, cluster)
+}
+
+// InfraUpdatebYOKCluster is the resolver for the infra_updatebYOKCluster field.
+func (r *mutationResolver) InfraUpdateBYOKCluster(ctx context.Context, clusterName string, displayName string) (*entities.BYOKCluster, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	return r.Domain.UpdateBYOKCluster(ictx, clusterName, displayName)
+}
+
+// InfraDeleteBYOKCluster is the resolver for the infra_deleteBYOKCluster field.
+func (r *mutationResolver) InfraDeleteBYOKCluster(ctx context.Context, name string) (bool, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return false, errors.NewE(err)
+	}
+	if err := r.Domain.DeleteBYOKCluster(ictx, name); err != nil {
+		return false, err
+	}
+
+	return true, nil
 }
 
 // InfraUpgradeHelmKloudliteAgent is the resolver for the infra_upgradeHelmKloudliteAgent field.
@@ -221,31 +301,31 @@ func (r *mutationResolver) InfraDeleteNodePool(ctx context.Context, clusterName 
 }
 
 // InfraCreateClusterManagedService is the resolver for the infra_createClusterManagedService field.
-func (r *mutationResolver) InfraCreateClusterManagedService(ctx context.Context, clusterName string, service entities.ClusterManagedService) (*entities.ClusterManagedService, error) {
+func (r *mutationResolver) InfraCreateClusterManagedService(ctx context.Context, service entities.ClusterManagedService) (*entities.ClusterManagedService, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	return r.Domain.CreateClusterManagedService(ictx, clusterName, service)
+	return r.Domain.CreateClusterManagedService(ictx, service)
 }
 
 // InfraUpdateClusterManagedService is the resolver for the infra_updateClusterManagedService field.
-func (r *mutationResolver) InfraUpdateClusterManagedService(ctx context.Context, clusterName string, service entities.ClusterManagedService) (*entities.ClusterManagedService, error) {
+func (r *mutationResolver) InfraUpdateClusterManagedService(ctx context.Context, service entities.ClusterManagedService) (*entities.ClusterManagedService, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.UpdateClusterManagedService(ictx, clusterName, service)
+	return r.Domain.UpdateClusterManagedService(ictx, service)
 }
 
 // InfraDeleteClusterManagedService is the resolver for the infra_deleteClusterManagedService field.
-func (r *mutationResolver) InfraDeleteClusterManagedService(ctx context.Context, clusterName string, serviceName string) (bool, error) {
+func (r *mutationResolver) InfraDeleteClusterManagedService(ctx context.Context, name string) (bool, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
-	if err := r.Domain.DeleteClusterManagedService(ictx, clusterName, serviceName); err != nil {
+	if err := r.Domain.DeleteClusterManagedService(ictx, name); err != nil {
 		return false, errors.NewE(err)
 	}
 	return true, nil
@@ -372,8 +452,8 @@ func (r *queryResolver) InfraGetCluster(ctx context.Context, name string) (*enti
 	return r.Domain.GetCluster(ictx, name)
 }
 
-// InfraListClusterGroups is the resolver for the infra_listClusterGroups field.
-func (r *queryResolver) InfraListClusterGroups(ctx context.Context, search *model.SearchClusterGroup, pagination *repos.CursorPagination) (*model.ClusterGroupPaginatedRecords, error) {
+// InfraListBYOKClusters is the resolver for the infra_listBYOKClusters field.
+func (r *queryResolver) InfraListBYOKClusters(ctx context.Context, search *model.SearchCluster, pagination *repos.CursorPagination) (*model.BYOKClusterPaginatedRecords, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -391,41 +471,109 @@ func (r *queryResolver) InfraListClusterGroups(ctx context.Context, search *mode
 		}
 	}
 
-	pClusters, err := r.Domain.ListClustersGroup(ictx, filter, *pagination)
+	globalVPNs, err := r.Domain.ListBYOKCluster(ictx, filter, *pagination)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	ce := make([]*model.ClusterGroupEdge, len(pClusters.Edges))
-	for i := range pClusters.Edges {
-		ce[i] = &model.ClusterGroupEdge{
-			Node:   pClusters.Edges[i].Node,
-			Cursor: pClusters.Edges[i].Cursor,
-		}
-	}
-
-	m := model.ClusterGroupPaginatedRecords{
-		Edges: ce,
-		PageInfo: &model.PageInfo{
-			EndCursor:       &pClusters.PageInfo.EndCursor,
-			HasNextPage:     pClusters.PageInfo.HasNextPage,
-			HasPreviousPage: pClusters.PageInfo.HasPrevPage,
-			StartCursor:     &pClusters.PageInfo.StartCursor,
-		},
-		TotalCount: int(pClusters.TotalCount),
-	}
-
-	return &m, nil
+	return fn.JsonConvertP[model.BYOKClusterPaginatedRecords](globalVPNs)
 }
 
-// InfraGetClusterGroup is the resolver for the infra_getClusterGroup field.
-func (r *queryResolver) InfraGetClusterGroup(ctx context.Context, name string) (*entities.ClusterGroup, error) {
+// InfraGetBYOKCluster is the resolver for the infra_getBYOKCluster field.
+func (r *queryResolver) InfraGetBYOKCluster(ctx context.Context, name string) (*entities.BYOKCluster, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.GetClusterGroup(ictx, name)
+	return r.Domain.GetBYOKCluster(ictx, name)
+}
+
+// InfratGetBYOKClusterSetupInstructions is the resolver for the infrat_getBYOKClusterSetupInstructions field.
+func (r *queryResolver) InfratGetBYOKClusterSetupInstructions(ctx context.Context, name string) ([]string, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.GetBYOKClusterSetupInstructions(ictx, name)
+}
+
+// InfraListGlobalVPNs is the resolver for the infra_listGlobalVPNs field.
+func (r *queryResolver) InfraListGlobalVPNs(ctx context.Context, search *model.SearchGlobalVPNs, pagination *repos.CursorPagination) (*model.GlobalVPNPaginatedRecords, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	if pagination == nil {
+		pagination = &repos.DefaultCursorPagination
+	}
+
+	filter := map[string]repos.MatchFilter{}
+
+	if search != nil {
+		if search.Text != nil {
+			filter[fields.MetadataName] = *search.Text
+		}
+	}
+
+	globalVPNs, err := r.Domain.ListGlobalVPN(ictx, filter, *pagination)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return fn.JsonConvertP[model.GlobalVPNPaginatedRecords](globalVPNs)
+}
+
+// InfraGetGlobalVpn is the resolver for the infra_getGlobalVPN field.
+func (r *queryResolver) InfraGetGlobalVpn(ctx context.Context, name string) (*entities.GlobalVPN, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.GetGlobalVPN(ictx, name)
+}
+
+// InfraListGlobalVPNDevices is the resolver for the infra_listGlobalVPNDevices field.
+func (r *queryResolver) InfraListGlobalVPNDevices(ctx context.Context, gvpn string, search *model.SearchGlobalVPNDevices, pagination *repos.CursorPagination) (*model.GlobalVPNDevicePaginatedRecords, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	if pagination == nil {
+		pagination = &repos.DefaultCursorPagination
+	}
+
+	filter := map[string]repos.MatchFilter{}
+
+	if search != nil {
+		if search.Text != nil {
+			filter["metadata.name"] = *search.Text
+		}
+		if search.CreationMethod != nil {
+			filter["creationMethod"] = *search.CreationMethod
+		}
+	}
+
+	records, err := r.Domain.ListGlobalVPNDevice(ictx, gvpn, filter, *pagination)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return fn.JsonConvertP[model.GlobalVPNDevicePaginatedRecords](records)
+}
+
+// InfraGetGlobalVPNDevice is the resolver for the infra_getGlobalVPNDevice field.
+func (r *queryResolver) InfraGetGlobalVPNDevice(ctx context.Context, gvpn string, deviceName string) (*entities.GlobalVPNDevice, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.GetGlobalVPNDevice(ictx, gvpn, deviceName)
 }
 
 // InfraListNodePools is the resolver for the infra_listNodePools field.
@@ -619,7 +767,7 @@ func (r *queryResolver) InfraCheckAwsAccess(ctx context.Context, cloudproviderNa
 }
 
 // InfraListClusterManagedServices is the resolver for the infra_listClusterManagedServices field.
-func (r *queryResolver) InfraListClusterManagedServices(ctx context.Context, clusterName string, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) (*model.ClusterManagedServicePaginatedRecords, error) {
+func (r *queryResolver) InfraListClusterManagedServices(ctx context.Context, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) (*model.ClusterManagedServicePaginatedRecords, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -641,7 +789,7 @@ func (r *queryResolver) InfraListClusterManagedServices(ctx context.Context, clu
 		}
 	}
 
-	pClusters, err := r.Domain.ListClusterManagedServices(ictx, clusterName, filter, *pagination)
+	pClusters, err := r.Domain.ListClusterManagedServices(ictx, filter, *pagination)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -669,13 +817,13 @@ func (r *queryResolver) InfraListClusterManagedServices(ctx context.Context, clu
 }
 
 // InfraGetClusterManagedService is the resolver for the infra_getClusterManagedService field.
-func (r *queryResolver) InfraGetClusterManagedService(ctx context.Context, clusterName string, name string) (*entities.ClusterManagedService, error) {
+func (r *queryResolver) InfraGetClusterManagedService(ctx context.Context, name string) (*entities.ClusterManagedService, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.GetClusterManagedService(ictx, clusterName, name)
+	return r.Domain.GetClusterManagedService(ictx, name)
 }
 
 // InfraListHelmReleases is the resolver for the infra_listHelmReleases field.

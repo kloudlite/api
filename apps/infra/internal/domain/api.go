@@ -41,6 +41,7 @@ const (
 	ResourceTypeClusterManagedService ResourceType = "cluster_managed_service"
 	ResourceTypeCluster               ResourceType = "cluster"
 	ResourceTypeClusterGroup          ResourceType = "cluster_group"
+	ResourceTypeBYOKCluster           ResourceType = "byok_cluster"
 	ResourceTypeDomainEntries         ResourceType = "domain_entries"
 	ResourceTypeHelmRelease           ResourceType = "helm_release"
 	ResourceTypeNodePool              ResourceType = "nodepool"
@@ -53,18 +54,33 @@ const (
 type Domain interface {
 	CheckNameAvailability(ctx InfraContext, typeArg ResType, clusterName *string, name string) (*CheckNameAvailabilityOutput, error)
 
-	CreateClusterGroup(ctx InfraContext, cluster entities.ClusterGroup) (*entities.ClusterGroup, error)
-	UpdateClusterGroup(ctx InfraContext, cluster entities.ClusterGroup) (*entities.ClusterGroup, error)
-	DeleteClusterGroup(ctx InfraContext, name string) error
+	CreateGlobalVPN(ctx InfraContext, cluster entities.GlobalVPN) (*entities.GlobalVPN, error)
+	UpdateGlobalVPN(ctx InfraContext, cluster entities.GlobalVPN) (*entities.GlobalVPN, error)
+	DeleteGlobalVPN(ctx InfraContext, name string) error
 
-	ListClustersGroup(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ClusterGroup], error)
-	GetClusterGroup(ctx InfraContext, name string) (*entities.ClusterGroup, error)
+	ListGlobalVPN(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.GlobalVPN], error)
+	GetGlobalVPN(ctx InfraContext, name string) (*entities.GlobalVPN, error)
+
+	CreateGlobalVPNDevice(ctx InfraContext, device entities.GlobalVPNDevice) (*entities.GlobalVPNDevice, error)
+	UpdateGlobalVPNDevice(ctx InfraContext, device entities.GlobalVPNDevice) (*entities.GlobalVPNDevice, error)
+	DeleteGlobalVPNDevice(ctx InfraContext, gvpn string, device string) error
+
+	ListGlobalVPNDevice(ctx InfraContext, gvpn string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.GlobalVPNDevice], error)
+	GetGlobalVPNDevice(ctx InfraContext, gvpn string, device string) (*entities.GlobalVPNDevice, error)
+	GetGlobalVPNDeviceWgConfig(ctx InfraContext, gvpn string, device string) (string, error)
 
 	CreateCluster(ctx InfraContext, cluster entities.Cluster) (*entities.Cluster, error)
 	UpdateCluster(ctx InfraContext, cluster entities.Cluster) (*entities.Cluster, error)
 	DeleteCluster(ctx InfraContext, name string) error
 
 	CreateBYOKCluster(ctx InfraContext, cluster entities.BYOKCluster) (*entities.BYOKCluster, error)
+	UpdateBYOKCluster(ctx InfraContext, clusterName string, displayName string) (*entities.BYOKCluster, error)
+	ListBYOKCluster(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.BYOKCluster], error)
+	GetBYOKCluster(ctx InfraContext, name string) (*entities.BYOKCluster, error)
+	GetBYOKClusterSetupInstructions(ctx InfraContext, name string) ([]string, error)
+
+	DeleteBYOKCluster(ctx InfraContext, name string) error
+	UpsertBYOKClusterKubeconfig(ctx InfraContext, clusterName string, kubeconfig []byte) error
 
 	UpgradeHelmKloudliteAgent(ctx InfraContext, clusterName string) error
 
@@ -103,9 +119,11 @@ type Domain interface {
 	OnNodePoolUpdateMessage(ctx InfraContext, clusterName string, nodePool entities.NodePool, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnNodepoolApplyError(ctx InfraContext, clusterName string, name string, errMsg string, opts UpdateAndDeleteOpts) error
 
-	OnClusterConnDeleteMessage(ctx InfraContext, clusterName string, clusterConn entities.ClusterConnection) error
-	OnClusterConnUpdateMessage(ctx InfraContext, clusterName string, clusterConn entities.ClusterConnection, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	OnClusterConnApplyError(ctx InfraContext, clusterName string, name string, errMsg string, opts UpdateAndDeleteOpts) error
+	// ListGlobalVPNs(ctx InfraContext, clusterName string) (*entities.GlobalVPNConnection, error)
+
+	OnGlobalVPNConnectionDeleteMessage(ctx InfraContext, clusterName string, clusterConn entities.GlobalVPNConnection) error
+	OnGlobalVPNConnectionUpdateMessage(ctx InfraContext, clusterName string, clusterConn entities.GlobalVPNConnection, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnGlobalVPNConnectionApplyError(ctx InfraContext, clusterName string, name string, errMsg string, opts UpdateAndDeleteOpts) error
 
 	ListNodes(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Node], error)
 	GetNode(ctx InfraContext, clusterName string, nodeName string) (*entities.Node, error)
@@ -113,11 +131,11 @@ type Domain interface {
 	OnNodeUpdateMessage(ctx InfraContext, clusterName string, node entities.Node) error
 	OnNodeDeleteMessage(ctx InfraContext, clusterName string, node entities.Node) error
 
-	ListClusterManagedServices(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ClusterManagedService], error)
-	GetClusterManagedService(ctx InfraContext, clusterName string, serviceName string) (*entities.ClusterManagedService, error)
-	CreateClusterManagedService(ctx InfraContext, clusterName string, service entities.ClusterManagedService) (*entities.ClusterManagedService, error)
-	UpdateClusterManagedService(ctx InfraContext, clusterName string, service entities.ClusterManagedService) (*entities.ClusterManagedService, error)
-	DeleteClusterManagedService(ctx InfraContext, clusterName string, name string) error
+	ListClusterManagedServices(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ClusterManagedService], error)
+	GetClusterManagedService(ctx InfraContext, serviceName string) (*entities.ClusterManagedService, error)
+	CreateClusterManagedService(ctx InfraContext, cmsvc entities.ClusterManagedService) (*entities.ClusterManagedService, error)
+	UpdateClusterManagedService(ctx InfraContext, cmsvc entities.ClusterManagedService) (*entities.ClusterManagedService, error)
+	DeleteClusterManagedService(ctx InfraContext, name string) error
 
 	OnClusterManagedServiceApplyError(ctx InfraContext, clusterName, name, errMsg string, opts UpdateAndDeleteOpts) error
 	OnClusterManagedServiceDeleteMessage(ctx InfraContext, clusterName string, service entities.ClusterManagedService) error

@@ -36,64 +36,28 @@ const (
 
 // constant vars generated for struct BYOKCluster
 const (
-	BYOKClusterAccountId                           = "accountId"
-	BYOKClusterAvailabilityMode                    = "availabilityMode"
-	BYOKClusterAws                                 = "aws"
-	BYOKClusterAwsCredentials                      = "aws.credentials"
-	BYOKClusterAwsCredentialsAuthMechanism         = "aws.credentials.authMechanism"
-	BYOKClusterAwsCredentialsSecretRef             = "aws.credentials.secretRef"
-	BYOKClusterAwsCredentialsSecretRefName         = "aws.credentials.secretRef.name"
-	BYOKClusterAwsCredentialsSecretRefNamespace    = "aws.credentials.secretRef.namespace"
-	BYOKClusterAwsK3sMasters                       = "aws.k3sMasters"
-	BYOKClusterAwsK3sMastersIamInstanceProfileRole = "aws.k3sMasters.iamInstanceProfileRole"
-	BYOKClusterAwsK3sMastersInstanceType           = "aws.k3sMasters.instanceType"
-	BYOKClusterAwsK3sMastersNodes                  = "aws.k3sMasters.nodes"
-	BYOKClusterAwsK3sMastersNvidiaGpuEnabled       = "aws.k3sMasters.nvidiaGpuEnabled"
-	BYOKClusterAwsK3sMastersRootVolumeSize         = "aws.k3sMasters.rootVolumeSize"
-	BYOKClusterAwsK3sMastersRootVolumeType         = "aws.k3sMasters.rootVolumeType"
-	BYOKClusterAwsNodePools                        = "aws.nodePools"
-	BYOKClusterAwsRegion                           = "aws.region"
-	BYOKClusterAwsSpotNodePools                    = "aws.spotNodePools"
-	BYOKClusterAwsVpc                              = "aws.vpc"
-	BYOKClusterAwsVpcId                            = "aws.vpc.id"
-	BYOKClusterAwsVpcPublicSubnets                 = "aws.vpc.publicSubnets"
-	BYOKClusterBackupToS3Enabled                   = "backupToS3Enabled"
-	BYOKClusterCloudProvider                       = "cloudProvider"
-	BYOKClusterCloudflareEnabled                   = "cloudflareEnabled"
-	BYOKClusterClusterInternalDnsHost              = "clusterInternalDnsHost"
-	BYOKClusterClusterTokenRef                     = "clusterTokenRef"
-	BYOKClusterClusterTokenRefKey                  = "clusterTokenRef.key"
-	BYOKClusterClusterTokenRefName                 = "clusterTokenRef.name"
-	BYOKClusterClusterTokenRefNamespace            = "clusterTokenRef.namespace"
-	BYOKClusterGcp                                 = "gcp"
-	BYOKClusterGcpCredentialsRef                   = "gcp.credentialsRef"
-	BYOKClusterGcpCredentialsRefName               = "gcp.credentialsRef.name"
-	BYOKClusterGcpCredentialsRefNamespace          = "gcp.credentialsRef.namespace"
-	BYOKClusterGcpGcpProjectID                     = "gcp.gcpProjectID"
-	BYOKClusterGcpMasterNodes                      = "gcp.masterNodes"
-	BYOKClusterGcpMasterNodesNodes                 = "gcp.masterNodes.nodes"
-	BYOKClusterGcpMasterNodesRootVolumeSize        = "gcp.masterNodes.rootVolumeSize"
-	BYOKClusterGcpMasterNodesRootVolumeType        = "gcp.masterNodes.rootVolumeType"
-	BYOKClusterGcpRegion                           = "gcp.region"
-	BYOKClusterGcpServiceAccount                   = "gcp.serviceAccount"
-	BYOKClusterGcpServiceAccountEmail              = "gcp.serviceAccount.email"
-	BYOKClusterGcpServiceAccountEnabled            = "gcp.serviceAccount.enabled"
-	BYOKClusterGcpServiceAccountScopes             = "gcp.serviceAccount.scopes"
-	BYOKClusterGcpVpc                              = "gcp.vpc"
-	BYOKClusterGcpVpcName                          = "gcp.vpc.name"
-	BYOKClusterKloudliteRelease                    = "kloudliteRelease"
-	BYOKClusterMessageQueueTopicName               = "messageQueueTopicName"
-	BYOKClusterOutput                              = "output"
-	BYOKClusterOutputJobName                       = "output.jobName"
-	BYOKClusterOutputJobNamespace                  = "output.jobNamespace"
-	BYOKClusterOutputKeyAWSVPCId                   = "output.keyAWSVPCId"
-	BYOKClusterOutputKeyAWSVPCPublicSubnets        = "output.keyAWSVPCPublicSubnets"
-	BYOKClusterOutputKeyK3sAgentJoinToken          = "output.keyK3sAgentJoinToken"
-	BYOKClusterOutputKeyK3sServerJoinToken         = "output.keyK3sServerJoinToken"
-	BYOKClusterOutputKeyKubeconfig                 = "output.keyKubeconfig"
-	BYOKClusterOutputSecretName                    = "output.secretName"
-	BYOKClusterPublicDNSHost                       = "publicDNSHost"
-	BYOKClusterTaintMasterNodes                    = "taintMasterNodes"
+	BYOKClusterClusterPublicEndpoint = "clusterPublicEndpoint"
+	BYOKClusterClusterSvcCIDR        = "clusterSvcCIDR"
+	BYOKClusterClusterToken          = "clusterToken"
+	BYOKClusterGlobalVPN             = "globalVPN"
+	BYOKClusterKubeconfig            = "kubeconfig"
+	BYOKClusterKubeconfigEncoding    = "kubeconfig.encoding"
+	BYOKClusterKubeconfigValue       = "kubeconfig.value"
+	BYOKClusterMessageQueueTopicName = "messageQueueTopicName"
+)
+
+// constant vars generated for struct ClaimClusterSvcCIDR
+const (
+	ClaimClusterSvcCIDRClaimedByCluster = "claimedByCluster"
+	ClaimClusterSvcCIDRClusterSvcCIDR   = "clusterSvcCIDR"
+	ClaimClusterSvcCIDRGlobalVPNName    = "globalVPNName"
+)
+
+// constant vars generated for struct ClaimDeviceIP
+const (
+	ClaimDeviceIPClaimedBy     = "claimedBy"
+	ClaimDeviceIPGlobalVPNName = "globalVPNName"
+	ClaimDeviceIPIpAddr        = "ipAddr"
 )
 
 // constant vars generated for struct CloudProviderSecret
@@ -119,7 +83,7 @@ const (
 
 // constant vars generated for struct Cluster
 const (
-	ClusterClusterGroupName                        = "clusterGroupName"
+	ClusterGlobalVPN                               = "globalVPN"
 	ClusterSpec                                    = "spec"
 	ClusterSpecAccountId                           = "spec.accountId"
 	ClusterSpecAccountName                         = "spec.accountName"
@@ -147,6 +111,7 @@ const (
 	ClusterSpecCloudProvider                       = "spec.cloudProvider"
 	ClusterSpecCloudflareEnabled                   = "spec.cloudflareEnabled"
 	ClusterSpecClusterInternalDnsHost              = "spec.clusterInternalDnsHost"
+	ClusterSpecClusterServiceCIDR                  = "spec.clusterServiceCIDR"
 	ClusterSpecClusterTokenRef                     = "spec.clusterTokenRef"
 	ClusterSpecClusterTokenRefKey                  = "spec.clusterTokenRef.key"
 	ClusterSpecClusterTokenRefName                 = "spec.clusterTokenRef.name"
@@ -182,32 +147,6 @@ const (
 	ClusterSpecTaintMasterNodes                    = "spec.taintMasterNodes"
 )
 
-// constant vars generated for struct ClusterConnection
-const (
-	ClusterConnectionCidr                         = "cidr"
-	ClusterConnectionClusterGroupName             = "clusterGroupName"
-	ClusterConnectionEndpoint                     = "endpoint"
-	ClusterConnectionSpec                         = "spec"
-	ClusterConnectionSpecAgentsResources          = "spec.agentsResources"
-	ClusterConnectionSpecAgentsResourcesClaims    = "spec.agentsResources.claims"
-	ClusterConnectionSpecAgentsResourcesLimits    = "spec.agentsResources.limits"
-	ClusterConnectionSpecAgentsResourcesRequests  = "spec.agentsResources.requests"
-	ClusterConnectionSpecDnsServer                = "spec.dnsServer"
-	ClusterConnectionSpecGatewayResources         = "spec.gatewayResources"
-	ClusterConnectionSpecGatewayResourcesClaims   = "spec.gatewayResources.claims"
-	ClusterConnectionSpecGatewayResourcesLimits   = "spec.gatewayResources.limits"
-	ClusterConnectionSpecGatewayResourcesRequests = "spec.gatewayResources.requests"
-	ClusterConnectionSpecId                       = "spec.id"
-	ClusterConnectionSpecInterface                = "spec.interface"
-	ClusterConnectionSpecIpAddress                = "spec.ipAddress"
-	ClusterConnectionSpecNodeport                 = "spec.nodeport"
-	ClusterConnectionSpecPeers                    = "spec.peers"
-	ClusterConnectionSpecPublicKey                = "spec.publicKey"
-)
-
-// constant vars generated for struct ClusterGroup
-const ()
-
 // constant vars generated for struct ClusterManagedService
 const (
 	ClusterManagedServiceOutput                                                  = "output"
@@ -220,7 +159,9 @@ const (
 	ClusterManagedServiceSpecMsvcSpecServiceTemplateApiVersion                   = "spec.msvcSpec.serviceTemplate.apiVersion"
 	ClusterManagedServiceSpecMsvcSpecServiceTemplateKind                         = "spec.msvcSpec.serviceTemplate.kind"
 	ClusterManagedServiceSpecMsvcSpecServiceTemplateSpec                         = "spec.msvcSpec.serviceTemplate.spec"
+	ClusterManagedServiceSpecMsvcSpecSharedSecret                                = "spec.msvcSpec.sharedSecret"
 	ClusterManagedServiceSpecMsvcSpecTolerations                                 = "spec.msvcSpec.tolerations"
+	ClusterManagedServiceSpecSharedSecret                                        = "spec.sharedSecret"
 	ClusterManagedServiceSpecTargetNamespace                                     = "spec.targetNamespace"
 	ClusterManagedServiceSyncedOutputSecretRef                                   = "syncedOutputSecretRef"
 	ClusterManagedServiceSyncedOutputSecretRefApiVersion                         = "syncedOutputSecretRef.apiVersion"
@@ -252,9 +193,82 @@ const (
 	DomainEntryDomainName = "domainName"
 )
 
+// constant vars generated for struct FreeClusterSvcCIDR
+const (
+	FreeClusterSvcCIDRClusterSvcCIDR = "clusterSvcCIDR"
+	FreeClusterSvcCIDRGlobalVPNName  = "globalVPNName"
+)
+
+// constant vars generated for struct FreeDeviceIP
+const (
+	FreeDeviceIPGlobalVPNName = "globalVPNName"
+	FreeDeviceIPIpAddr        = "ipAddr"
+)
+
 // constant vars generated for struct GCPSecretCredentials
 const (
 	GCPSecretCredentialsServiceAccountJSON = "serviceAccountJSON"
+)
+
+// constant vars generated for struct GlobalVPN
+const (
+	GlobalVPNCIDR                           = "CIDR"
+	GlobalVPNAllocatableCIDRSuffix          = "allocatableCIDRSuffix"
+	GlobalVPNKloudliteDevice                = "kloudliteDevice"
+	GlobalVPNKloudliteDeviceIpAddr          = "kloudliteDevice.ipAddr"
+	GlobalVPNKloudliteDeviceName            = "kloudliteDevice.name"
+	GlobalVPNNumAllocatedClusterCIDRs       = "numAllocatedClusterCIDRs"
+	GlobalVPNNumAllocatedDevices            = "numAllocatedDevices"
+	GlobalVPNNumReservedIPsForNonClusterUse = "numReservedIPsForNonClusterUse"
+	GlobalVPNWgInterface                    = "wgInterface"
+)
+
+// constant vars generated for struct GlobalVPNConnDeviceRef
+const (
+	GlobalVPNConnDeviceRefIpAddr = "ipAddr"
+	GlobalVPNConnDeviceRefName   = "name"
+)
+
+// constant vars generated for struct GlobalVPNConnection
+const (
+	GlobalVPNConnectionClusterPublicEndpoint            = "clusterPublicEndpoint"
+	GlobalVPNConnectionClusterSvcCIDR                   = "clusterSvcCIDR"
+	GlobalVPNConnectionDeviceRef                        = "deviceRef"
+	GlobalVPNConnectionDeviceRefIpAddr                  = "deviceRef.ipAddr"
+	GlobalVPNConnectionDeviceRefName                    = "deviceRef.name"
+	GlobalVPNConnectionGlobalVPNName                    = "globalVPNName"
+	GlobalVPNConnectionParsedWgParams                   = "parsedWgParams"
+	GlobalVPNConnectionParsedWgParamsDnsServer          = "parsedWgParams.dnsServer"
+	GlobalVPNConnectionParsedWgParamsIp                 = "parsedWgParams.ip"
+	GlobalVPNConnectionParsedWgParamsPublicGatewayHosts = "parsedWgParams.publicGatewayHosts"
+	GlobalVPNConnectionParsedWgParamsPublicGatewayPort  = "parsedWgParams.publicGatewayPort"
+	GlobalVPNConnectionParsedWgParamsVirtualCidr        = "parsedWgParams.virtualCidr"
+	GlobalVPNConnectionParsedWgParamsWgPrivateKey       = "parsedWgParams.wg_private_key"
+	GlobalVPNConnectionParsedWgParamsWgPublicKey        = "parsedWgParams.wg_public_key"
+	GlobalVPNConnectionSpec                             = "spec"
+	GlobalVPNConnectionSpecAgentsResources              = "spec.agentsResources"
+	GlobalVPNConnectionSpecAgentsResourcesClaims        = "spec.agentsResources.claims"
+	GlobalVPNConnectionSpecAgentsResourcesLimits        = "spec.agentsResources.limits"
+	GlobalVPNConnectionSpecAgentsResourcesRequests      = "spec.agentsResources.requests"
+	GlobalVPNConnectionSpecGatewayResources             = "spec.gatewayResources"
+	GlobalVPNConnectionSpecGatewayResourcesClaims       = "spec.gatewayResources.claims"
+	GlobalVPNConnectionSpecGatewayResourcesLimits       = "spec.gatewayResources.limits"
+	GlobalVPNConnectionSpecGatewayResourcesRequests     = "spec.gatewayResources.requests"
+	GlobalVPNConnectionSpecPeers                        = "spec.peers"
+	GlobalVPNConnectionSpecWg                           = "spec.wg"
+	GlobalVPNConnectionSpecWgName                       = "spec.wg.name"
+	GlobalVPNConnectionSpecWgNamespace                  = "spec.wg.namespace"
+	GlobalVPNConnectionSpecWgInterface                  = "spec.wgInterface"
+)
+
+// constant vars generated for struct GlobalVPNDevice
+const (
+	GlobalVPNDeviceCreationMethod = "creationMethod"
+	GlobalVPNDeviceGlobalVPNName  = "globalVPNName"
+	GlobalVPNDeviceIpAddr         = "ipAddr"
+	GlobalVPNDevicePrivateKey     = "privateKey"
+	GlobalVPNDevicePublicEndpoint = "publicEndpoint"
+	GlobalVPNDevicePublicKey      = "publicKey"
 )
 
 // constant vars generated for struct HelmRelease
@@ -340,6 +354,7 @@ const (
 // constant vars generated for struct NodePool
 const (
 	NodePoolSpec                                    = "spec"
+	NodePoolSpecAllowSSH                            = "spec.allowSSH"
 	NodePoolSpecAws                                 = "spec.aws"
 	NodePoolSpecAwsAvailabilityZone                 = "spec.aws.availabilityZone"
 	NodePoolSpecAwsEc2Pool                          = "spec.aws.ec2Pool"

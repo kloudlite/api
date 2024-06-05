@@ -6,6 +6,12 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
+type InviteCode struct {
+	ID         repos.ID `json:"id"`
+	Name       string   `json:"name"`
+	InviteCode string   `json:"inviteCode"`
+}
+
 type OAuthProviderStatus struct {
 	Provider string `json:"provider"`
 	Enabled  bool   `json:"enabled"`
@@ -31,6 +37,7 @@ type User struct {
 	Avatar         *string                `json:"avatar,omitempty"`
 	Invite         string                 `json:"invite"`
 	Verified       bool                   `json:"verified"`
+	Approved       bool                   `json:"approved"`
 	Metadata       map[string]interface{} `json:"metadata,omitempty"`
 	Joined         string                 `json:"joined"`
 	ProviderGitlab map[string]interface{} `json:"providerGitlab,omitempty"`

@@ -23,10 +23,19 @@ func userModelFromEntity(userEntity *entities.User) *model.User {
 		Avatar:         userEntity.Avatar,
 		Invite:         string(userEntity.InvitationStatus),
 		Verified:       userEntity.Verified,
+		Approved:       userEntity.Approved,
 		Metadata:       userEntity.Metadata,
 		Joined:         userEntity.Joined.String(),
 		ProviderGitlab: mapFromProviderDetail(userEntity.ProviderGitlab),
 		ProviderGithub: mapFromProviderDetail(userEntity.ProviderGithub),
 		ProviderGoogle: mapFromProviderDetail(userEntity.ProviderGoogle),
+	}
+}
+
+func inviteCodeModelFromEntity(inviteCodeEntity *entities.InviteCode) *model.InviteCode {
+	return &model.InviteCode{
+		ID:         inviteCodeEntity.Id,
+		Name:       inviteCodeEntity.Name,
+		InviteCode: inviteCodeEntity.InviteCode,
 	}
 }

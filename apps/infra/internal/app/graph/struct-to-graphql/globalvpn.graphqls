@@ -1,0 +1,53 @@
+type GlobalVPN @shareable {
+  accountName: String!
+  allocatableCIDRSuffix: Int!
+  CIDR: String!
+  createdBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  creationTime: Date!
+  displayName: String!
+  id: ID!
+  kloudliteDevice: GlobalVPNKloudliteDevice!
+  lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  markedForDeletion: Boolean
+  metadata: Metadata! @goField(name: "objectMeta")
+  numAllocatedClusterCIDRs: Int!
+  numAllocatedDevices: Int!
+  numReservedIPsForNonClusterUse: Int!
+  recordVersion: Int!
+  updateTime: Date!
+  wgInterface: String!
+}
+
+type GlobalVPNEdge @shareable {
+  cursor: String!
+  node: GlobalVPN!
+}
+
+type GlobalVPNKloudliteDevice @shareable {
+  ipAddr: String!
+  name: String!
+}
+
+type GlobalVPNPaginatedRecords @shareable {
+  edges: [GlobalVPNEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input GlobalVPNIn {
+  allocatableCIDRSuffix: Int!
+  CIDR: String!
+  displayName: String!
+  kloudliteDevice: GlobalVPNKloudliteDeviceIn!
+  metadata: MetadataIn!
+  numAllocatedClusterCIDRs: Int!
+  numAllocatedDevices: Int!
+  numReservedIPsForNonClusterUse: Int!
+  wgInterface: String!
+}
+
+input GlobalVPNKloudliteDeviceIn {
+  ipAddr: String!
+  name: String!
+}
+

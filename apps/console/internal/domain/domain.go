@@ -46,11 +46,11 @@ type domain struct {
 	iamClient   iam.IAMClient
 	infraClient infra.InfraClient
 
-	projectRepo     repos.DbRepo[*entities.Project]
 	environmentRepo repos.DbRepo[*entities.Environment]
 	vpnDeviceRepo   repos.DbRepo[*entities.ConsoleVPNDevice]
 
 	appRepo         repos.DbRepo[*entities.App]
+	externalAppRepo repos.DbRepo[*entities.ExternalApp]
 	configRepo      repos.DbRepo[*entities.Config]
 	secretRepo      repos.DbRepo[*entities.Secret]
 	routerRepo      repos.DbRepo[*entities.Router]
@@ -62,7 +62,6 @@ type domain struct {
 	resourceEventPublisher ResourceEventPublisher
 	consoleCacheStore      kv.BinaryDataRepo
 	resourceMappingRepo    repos.DbRepo[*entities.ResourceMapping]
-	pmsRepo                repos.DbRepo[*entities.ProjectManagedService]
 }
 
 func errAlreadyMarkedForDeletion(label, namespace, name string) error {
@@ -138,8 +137,8 @@ func (d *domain) applyK8sResourceOnCluster(ctx K8sContext, clusterName string, o
 	return errors.NewE(err)
 }
 
-func (d *domain) applyK8sResource(ctx K8sContext, projectName string, obj client.Object, recordVersion int) error {
-	clusterName, err := d.getClusterAttachedToProject(ctx, projectName)
+func (d *domain) applyK8sResource(ctx K8sContext, envName string, obj client.Object, recordVersion int) error {
+	clusterName, err := d.getClusterAttachedToEnvironment(ctx, envName)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -184,7 +183,7 @@ func (d *domain) applyK8sResource(ctx K8sContext, projectName string, obj client
 }
 
 func (d *domain) restartK8sResource(ctx K8sContext, projectName string, namespace string, labels map[string]string) error {
-	clusterName, err := d.getClusterAttachedToProject(ctx, projectName)
+	clusterName, err := d.getClusterAttachedToEnvironment(ctx, projectName)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -248,8 +247,8 @@ func (d *domain) deleteK8sResourceOfCluster(ctx K8sContext, clusterName string, 
 	return errors.NewE(err)
 }
 
-func (d *domain) deleteK8sResource(ctx K8sContext, projectName string, obj client.Object) error {
-	clusterName, err := d.getClusterAttachedToProject(ctx, projectName)
+func (d *domain) deleteK8sResource(ctx K8sContext, environmentName string, obj client.Object) error {
+	clusterName, err := d.getClusterAttachedToEnvironment(ctx, environmentName)
 	if err != nil {
 		return errors.NewE(err)
 	}
@@ -285,15 +284,32 @@ func (d *domain) deleteK8sResource(ctx K8sContext, projectName string, obj clien
 	return errors.NewE(err)
 }
 
-func (d *domain) resyncK8sResource(ctx K8sContext, projectName string, action types.SyncAction, obj client.Object, rv int) error {
+func (d *domain) resyncK8sResource(ctx K8sContext, environmentName string, action types.SyncAction, obj client.Object, rv int) error {
 	switch action {
 	case types.SyncActionApply:
 		{
-			return d.applyK8sResource(ctx, projectName, obj, rv)
+			return d.applyK8sResource(ctx, environmentName, obj, rv)
 		}
 	case types.SyncActionDelete:
 		{
-			return d.deleteK8sResource(ctx, projectName, obj)
+			return d.deleteK8sResource(ctx, environmentName, obj)
+		}
+	default:
+		{
+			return errors.Newf("unknown sync action %q", action)
+		}
+	}
+}
+
+func (d *domain) resyncK8sResourceToCluster(ctx K8sContext, clusterName string, action types.SyncAction, obj client.Object, rv int) error {
+	switch action {
+	case types.SyncActionApply:
+		{
+			return d.applyK8sResourceOnCluster(ctx, clusterName, obj, rv)
+		}
+	case types.SyncActionDelete:
+		{
+			return d.deleteK8sResourceOfCluster(ctx, clusterName, obj)
 		}
 	default:
 		{
@@ -399,31 +415,11 @@ func (d *domain) canReadSecretsFromAccount(ctx context.Context, userId string, a
 	return nil
 }
 
-func (d *domain) checkProjectAccess(ctx ConsoleContext, projectName string, action iamT.Action) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
-		UserId: string(ctx.UserId),
-		ResourceRefs: []string{
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceProject, projectName),
-		},
-		Action: string(action),
-	})
-	if err != nil {
-		return errors.NewE(err)
-	}
-
-	if !co.Status {
-		return errors.Newf("unauthorized to access project %q", projectName)
-	}
-	return nil
-}
-
 func (d *domain) checkEnvironmentAccess(ctx ResourceContext, action iamT.Action) error {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: string(ctx.UserId),
 		ResourceRefs: []string{
 			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceProject, ctx.ProjectName),
 			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceEnvironment, ctx.EnvironmentName),
 		},
 		Action: string(action),
@@ -488,7 +484,7 @@ func cloneResource[T repos.Entity](ctx ResourceContext, d *domain, repoName repo
 		}
 	}
 
-	if err := d.applyK8sResource(ctx, ctx.ProjectName, obj, 0); err != nil {
+	if err := d.applyK8sResource(ctx, ctx.EnvironmentName, obj, 0); err != nil {
 		return errors.NewE(err)
 	}
 	return nil
@@ -505,15 +501,15 @@ var Module = fx.Module("domain",
 		iamClient iam.IAMClient,
 		infraClient infra.InfraClient,
 
-		projectRepo repos.DbRepo[*entities.Project],
 		environmentRepo repos.DbRepo[*entities.Environment],
+
 		appRepo repos.DbRepo[*entities.App],
+		externalAppRepo repos.DbRepo[*entities.ExternalApp],
 		configRepo repos.DbRepo[*entities.Config],
 		secretRepo repos.DbRepo[*entities.Secret],
 		routerRepo repos.DbRepo[*entities.Router],
 		mresRepo repos.DbRepo[*entities.ManagedResource],
 		ipsRepo repos.DbRepo[*entities.ImagePullSecret],
-		pmsRepo repos.DbRepo[*entities.ProjectManagedService],
 		resourceMappingRepo repos.DbRepo[*entities.ResourceMapping],
 		vpnDeviceRepo repos.DbRepo[*entities.ConsoleVPNDevice],
 
@@ -533,9 +529,9 @@ var Module = fx.Module("domain",
 			infraClient: infraClient,
 			logger:      logger,
 
-			projectRepo:         projectRepo,
 			environmentRepo:     environmentRepo,
 			appRepo:             appRepo,
+			externalAppRepo:     externalAppRepo,
 			configRepo:          configRepo,
 			routerRepo:          routerRepo,
 			secretRepo:          secretRepo,
@@ -548,7 +544,6 @@ var Module = fx.Module("domain",
 
 			resourceEventPublisher: resourceEventPublisher,
 			consoleCacheStore:      consoleCacheStore,
-			pmsRepo:                pmsRepo,
 		}
 	}),
 )

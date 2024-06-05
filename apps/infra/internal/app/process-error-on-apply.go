@@ -6,6 +6,7 @@ import (
 
 	"github.com/kloudlite/api/apps/infra/internal/domain"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
+	msgOfficeT "github.com/kloudlite/api/apps/message-office/types"
 	t "github.com/kloudlite/api/apps/tenant-agent/types"
 	"github.com/kloudlite/api/pkg/errors"
 	fn "github.com/kloudlite/api/pkg/functions"
@@ -22,8 +23,13 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 	processMsg := func(msg *types.ConsumeMsg) error {
 		counter += 1
 
+		em, err := msgOfficeT.UnmarshalErrMessage(msg.Payload)
+		if err != nil {
+			return errors.NewE(err)
+		}
+
 		var errObj t.AgentErrMessage
-		if err := json.Unmarshal(msg.Payload, &errObj); err != nil {
+		if err := json.Unmarshal(em.Error, &errObj); err != nil {
 			return errors.NewE(err)
 		}
 
@@ -31,8 +37,8 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 
 		mLogger := logger.WithKV(
 			"gvk", obj.GroupVersionKind(),
-			"accountName", errObj.AccountName,
-			"clusterName", errObj.ClusterName,
+			"accountName", em.AccountName,
+			"clusterName", em.ClusterName,
 		)
 
 		mLogger.Infof("[%d] received message", counter)
@@ -45,24 +51,24 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 			UserId:      "sys-user:error-on-apply-worker",
 			UserEmail:   "",
 			UserName:    "",
-			AccountName: errObj.AccountName,
+			AccountName: em.AccountName,
 		}
 
 		opts := domain.UpdateAndDeleteOpts{MessageTimestamp: msg.Timestamp}
 
 		gvkstr := obj.GroupVersionKind().String()
 		switch gvkstr {
-		case clusterConnGVK.String():
+		case globalVpnGVK.String():
 			{
-				cc, err := fn.JsonConvert[entities.ClusterConnection](obj.Object)
+				cc, err := fn.JsonConvert[entities.GlobalVPNConnection](obj.Object)
 				if err != nil {
 					return err
 				}
 
 				if errObj.Action == t.ActionApply {
-					return d.OnClusterConnApplyError(dctx, errObj.ClusterName, obj.GetName(), errObj.Error, opts)
+					return d.OnGlobalVPNConnectionApplyError(dctx, em.ClusterName, obj.GetName(), errObj.Error, opts)
 				}
-				return d.OnClusterConnDeleteMessage(dctx, errObj.ClusterName, cc)
+				return d.OnGlobalVPNConnectionDeleteMessage(dctx, em.ClusterName, cc)
 			}
 		case nodepoolGVK.String():
 			{
@@ -72,9 +78,9 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 				}
 
 				if errObj.Action == t.ActionApply {
-					return d.OnNodepoolApplyError(dctx, errObj.ClusterName, obj.GetName(), errObj.Error, opts)
+					return d.OnNodepoolApplyError(dctx, em.ClusterName, obj.GetName(), errObj.Error, opts)
 				}
-				return d.OnNodePoolDeleteMessage(dctx, errObj.ClusterName, nodepool)
+				return d.OnNodePoolDeleteMessage(dctx, em.ClusterName, nodepool)
 			}
 		case clusterMsvcGVK.String():
 			{
@@ -84,9 +90,9 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 				}
 
 				if errObj.Action == t.ActionApply {
-					return d.OnClusterManagedServiceApplyError(dctx, errObj.ClusterName, obj.GetName(), errObj.Error, opts)
+					return d.OnClusterManagedServiceApplyError(dctx, em.ClusterName, obj.GetName(), errObj.Error, opts)
 				}
-				return d.OnClusterManagedServiceDeleteMessage(dctx, errObj.ClusterName, cmsvc)
+				return d.OnClusterManagedServiceDeleteMessage(dctx, em.ClusterName, cmsvc)
 
 			}
 		case helmreleaseGVK.String():
@@ -97,9 +103,9 @@ func ProcessErrorOnApply(consumer ErrorOnApplyConsumer, logger logging.Logger, d
 				}
 
 				if errObj.Action == t.ActionApply {
-					return d.OnHelmReleaseApplyError(dctx, errObj.ClusterName, obj.GetName(), errObj.Error, opts)
+					return d.OnHelmReleaseApplyError(dctx, em.ClusterName, obj.GetName(), errObj.Error, opts)
 				}
-				return d.OnHelmReleaseDeleteMessage(dctx, errObj.ClusterName, helmRelease)
+				return d.OnHelmReleaseDeleteMessage(dctx, em.ClusterName, helmRelease)
 			}
 		default:
 			{

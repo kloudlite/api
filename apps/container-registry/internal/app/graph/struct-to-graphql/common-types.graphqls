@@ -110,6 +110,7 @@ type Github__com___kloudlite___operator___pkg___operator__Check @shareable {
 type Github__com___kloudlite___operator___pkg___operator__CheckMeta @shareable {
   debug: Boolean
   description: String
+  hide: Boolean
   name: String!
   title: String!
 }
@@ -220,6 +221,7 @@ input Github__com___kloudlite___operator___pkg___operator__CheckIn {
 input Github__com___kloudlite___operator___pkg___operator__CheckMetaIn {
   debug: Boolean
   description: String
+  hide: Boolean
   name: String!
   title: String!
 }
@@ -278,6 +280,13 @@ enum Github__com___kloudlite___api___apps___container____registry___internal___d
 enum Github__com___kloudlite___api___apps___container____registry___internal___domain___entities__RepoAccess {
   read
   read_write
+}
+
+enum Github__com___kloudlite___api___pkg___repos__MatchType {
+  array
+  exact
+  not_in_array
+  regex
 }
 
 enum Github__com___kloudlite___api___pkg___types__SyncAction {

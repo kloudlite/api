@@ -4,6 +4,9 @@ directive @hasAccount on FIELD_DEFINITION
 
 enum ResType {
     cluster
+    cluster_managed_service
+    byok_cluster
+    global_vpn_device
     # cloudprovider
     providersecret
     # edge
@@ -23,8 +26,13 @@ input SearchCluster {
     text: MatchFilterIn
 }
 
-input SearchClusterGroup {
+input SearchGlobalVPNs {
     text: MatchFilterIn
+}
+
+input SearchGlobalVPNDevices {
+    text: MatchFilterIn
+    creationMethod: MatchFilterIn
 }
 
 input SearchClusterManagedService {
@@ -80,9 +88,18 @@ type Query {
     infra_listClusters(search: SearchCluster, pagination: CursorPaginationIn): ClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
     infra_getCluster(name: String!): Cluster @isLoggedInAndVerified @hasAccount
 
-    # cluster groups
-    infra_listClusterGroups(search: SearchClusterGroup, pagination: CursorPaginationIn): ClusterGroupPaginatedRecords @isLoggedInAndVerified @hasAccount
-    infra_getClusterGroup(name: String!): ClusterGroup @isLoggedInAndVerified @hasAccount
+    # byok
+    infra_listBYOKClusters(search: SearchCluster, pagination: CursorPaginationIn): BYOKClusterPaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getBYOKCluster(name: String!): BYOKCluster @isLoggedInAndVerified @hasAccount
+    infrat_getBYOKClusterSetupInstructions(name: String!): [String!] @isLoggedInAndVerified @hasAccount
+
+    # global VPN
+    infra_listGlobalVPNs(search: SearchGlobalVPNs, pagination: CursorPaginationIn): GlobalVPNPaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getGlobalVPN(name: String!): GlobalVPN @isLoggedInAndVerified @hasAccount
+
+    # global VPN Devices
+    infra_listGlobalVPNDevices(gvpn: String!, search: SearchGlobalVPNDevices, pagination: CursorPaginationIn): GlobalVPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getGlobalVPNDevice(gvpn: String!, deviceName: String!): GlobalVPNDevice @isLoggedInAndVerified @hasAccount
 
     # get node pools
     infra_listNodePools(clusterName: String!, search: SearchNodepool, pagination: CursorPaginationIn): NodePoolPaginatedRecords @isLoggedInAndVerified @hasAccount
@@ -98,8 +115,8 @@ type Query {
 
     infra_checkAwsAccess(cloudproviderName: String!): CheckAwsAccessOutput! @isLoggedInAndVerified @hasAccount
 
-    infra_listClusterManagedServices(clusterName: String!, search: SearchClusterManagedService, pagination: CursorPaginationIn): ClusterManagedServicePaginatedRecords @isLoggedInAndVerified @hasAccount
-    infra_getClusterManagedService(clusterName: String!, name: String!): ClusterManagedService @isLoggedInAndVerified @hasAccount
+    infra_listClusterManagedServices(search: SearchClusterManagedService, pagination: CursorPaginationIn): ClusterManagedServicePaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getClusterManagedService(name: String!): ClusterManagedService @isLoggedInAndVerified @hasAccount
 
     infra_listHelmReleases(clusterName: String!, search: SearchHelmRelease, pagination: CursorPaginationIn): HelmReleasePaginatedRecords @isLoggedInAndVerified @hasAccount
     infra_getHelmRelease(clusterName: String!, name: String!): HelmRelease @isLoggedInAndVerified @hasAccount
@@ -128,11 +145,17 @@ type Mutation {
     infra_deleteCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
     # infra_resyncCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
-    infra_createClusterGroup(cluster: ClusterGroupIn!): ClusterGroup @isLoggedInAndVerified @hasAccount
-    infra_updateClusterGroup(cluster: ClusterGroupIn!): ClusterGroup @isLoggedInAndVerified @hasAccount
-    infra_deleteClusterGroup(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_createGlobalVPN(gvpn: GlobalVPNIn!): GlobalVPN @isLoggedInAndVerified @hasAccount
+    infra_updateGlobalVPN(gvpn: GlobalVPNIn!): GlobalVPN @isLoggedInAndVerified @hasAccount
+    infra_deleteGlobalVPN(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+
+    infra_createGlobalVPNDevice(gvpnDevice: GlobalVPNDeviceIn!): GlobalVPNDevice @isLoggedInAndVerified @hasAccount
+    infra_updateGlobalVPNDevice(gvpnDevice: GlobalVPNDeviceIn!): GlobalVPNDevice @isLoggedInAndVerified @hasAccount
+    infra_deleteGlobalVPNDevice(gvpn: String!, deviceName: String!): Boolean! @isLoggedInAndVerified @hasAccount
       
     infra_createBYOKCluster(cluster: BYOKClusterIn!): BYOKCluster @isLoggedInAndVerified @hasAccount
+    infra_updateBYOKCluster(clusterName: String!, displayName: String!): BYOKCluster @isLoggedInAndVerified @hasAccount
+    infra_deleteBYOKCluster(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     infra_upgradeHelmKloudliteAgent(clusterName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
@@ -148,9 +171,9 @@ type Mutation {
     infra_updateNodePool(clusterName: String!, pool: NodePoolIn!): NodePool @isLoggedInAndVerified @hasAccount
     infra_deleteNodePool(clusterName: String!, poolName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
-    infra_createClusterManagedService(clusterName: String!, service: ClusterManagedServiceIn!): ClusterManagedService @isLoggedInAndVerified @hasAccount
-    infra_updateClusterManagedService(clusterName: String!, service: ClusterManagedServiceIn!): ClusterManagedService @isLoggedInAndVerified @hasAccount
-    infra_deleteClusterManagedService(clusterName: String!, serviceName: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_createClusterManagedService(service: ClusterManagedServiceIn!): ClusterManagedService @isLoggedInAndVerified @hasAccount
+    infra_updateClusterManagedService(service: ClusterManagedServiceIn!): ClusterManagedService @isLoggedInAndVerified @hasAccount
+    infra_deleteClusterManagedService(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     infra_createHelmRelease(clusterName: String!, release: HelmReleaseIn!): HelmRelease @isLoggedInAndVerified @hasAccount
     infra_updateHelmRelease(clusterName: String!, release: HelmReleaseIn!): HelmRelease @isLoggedInAndVerified @hasAccount
@@ -166,4 +189,13 @@ type EncodedValue {
 
 extend type Cluster {
   adminKubeconfig: EncodedValue
+  clusterDNSSuffix: String!
+}
+
+extend type BYOKCluster {
+  clusterDNSSuffix: String!
+}
+
+extend type GlobalVPNDevice {
+  wireguardConfig: EncodedValue
 }
