@@ -16,7 +16,6 @@ import (
 
 // MatchType is the resolver for the matchType field.
 func (r *matchFilterResolver) MatchType(ctx context.Context, obj *repos.MatchFilter) (model.GithubComKloudliteAPIPkgReposMatchType, error) {
-
 	if obj == nil {
 		return "", fmt.Errorf("obj is nil")
 	}

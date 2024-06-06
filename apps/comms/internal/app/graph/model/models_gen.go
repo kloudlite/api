@@ -21,15 +21,13 @@ type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn struct {
 }
 
 type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack struct {
-	Channel string `json:"channel"`
 	Enabled bool   `json:"enabled"`
-	Webhook string `json:"webhook"`
+	URL     string `json:"url"`
 }
 
 type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn struct {
-	Channel string `json:"channel"`
 	Enabled bool   `json:"enabled"`
-	Webhook string `json:"webhook"`
+	URL     string `json:"url"`
 }
 
 type GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram struct {

@@ -27,7 +27,12 @@ import (
 	"github.com/kloudlite/api/pkg/grpc"
 
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/comms"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 	"go.uber.org/fx"
+)
+
+type (
+	IAMGrpcClient grpc.Client
 )
 
 type NotificationConsumer messaging.Consumer
@@ -38,6 +43,8 @@ var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.NotificationConf]("nconfs", "prj", entities.NotificationConfIndexes),
 	repos.NewFxMongoRepo[*entities.Subscription]("subscriptions", "prj", entities.SubscriptionIndexes),
 	repos.NewFxMongoRepo[*types.Notification]("notifications", "prj", entities.SubscriptionIndexes),
+
+	domain.Module,
 
 	fx.Provide(func(jc *nats.JetstreamClient, ev *env.Env, logger logging.Logger) (NotificationConsumer, error) {
 		topic := string(common.NotificationTopicName)
@@ -55,6 +62,12 @@ var Module = fx.Module("app",
 		})
 	}),
 
+	fx.Provide(
+		func(conn IAMGrpcClient) iam.IAMClient {
+			return iam.NewIAMClient(conn)
+		},
+	),
+
 	fx.Provide(func(et domain.EmailTemplatesDir) (*domain.EmailTemplates, error) {
 		return domain.GetEmailTemplates(et)
 	}),
@@ -63,6 +76,10 @@ var Module = fx.Module("app",
 
 	fx.Invoke(func(server CommsGrpcServer, commsServer comms.CommsServer) {
 		comms.RegisterCommsServer(server, commsServer)
+	}),
+
+	fx.Provide(func(cli *nats.Client, logger logging.Logger) domain.ResourceEventPublisher {
+		return NewResourceEventPublisher(cli, logger)
 	}),
 
 	fx.Invoke(

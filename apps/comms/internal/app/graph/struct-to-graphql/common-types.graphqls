@@ -4,9 +4,8 @@ type Github__com___kloudlite___api___apps___comms___internal___domain___entities
 }
 
 type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Slack @shareable {
-  channel: String!
   enabled: Boolean!
-  webhook: String!
+  url: String!
 }
 
 type Github__com___kloudlite___api___apps___comms___internal___domain___entities__Telegram @shareable {
@@ -47,9 +46,8 @@ input Github__com___kloudlite___api___apps___comms___internal___domain___entitie
 }
 
 input Github__com___kloudlite___api___apps___comms___internal___domain___entities__SlackIn {
-  channel: String!
   enabled: Boolean!
-  webhook: String!
+  url: String!
 }
 
 input Github__com___kloudlite___api___apps___comms___internal___domain___entities__TelegramIn {

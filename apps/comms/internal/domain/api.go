@@ -30,5 +30,5 @@ const (
 )
 
 type ResourceEventPublisher interface {
-	PublishBuildNotification(cluster *types.Notification, msg PublishMsg)
+	// PublishBuildNotification(cluster *types.Notification, msg PublishMsg)
 }

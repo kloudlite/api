@@ -17,7 +17,6 @@ import (
 
 // Content is the resolver for the content field.
 func (r *notificationResolver) Content(ctx context.Context, obj *types.Notification) (*model.GithubComKloudliteAPIAppsCommsTypesNotifyContent, error) {
-
 	if obj == nil {
 		return nil, fmt.Errorf("nil object")
 	}

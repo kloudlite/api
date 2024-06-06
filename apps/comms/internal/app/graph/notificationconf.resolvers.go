@@ -24,6 +24,33 @@ func (r *notificationConfResolver) CreationTime(ctx context.Context, obj *entiti
 	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
+// Email is the resolver for the email field.
+func (r *notificationConfResolver) Email(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail, error) {
+	if obj == nil {
+		return nil, fmt.Errorf("obj is nil")
+	}
+
+	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail](obj.Email)
+}
+
+// Slack is the resolver for the slack field.
+func (r *notificationConfResolver) Slack(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack, error) {
+	if obj == nil {
+		return nil, fmt.Errorf("obj is nil")
+	}
+
+	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack](obj.Slack)
+}
+
+// Telegram is the resolver for the telegram field.
+func (r *notificationConfResolver) Telegram(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram, error) {
+	if obj == nil {
+		return nil, fmt.Errorf("obj is nil")
+	}
+
+	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram](obj.Telegram)
+}
+
 // UpdateTime is the resolver for the updateTime field.
 func (r *notificationConfResolver) UpdateTime(ctx context.Context, obj *entities.NotificationConf) (string, error) {
 	if obj == nil {
@@ -35,7 +62,6 @@ func (r *notificationConfResolver) UpdateTime(ctx context.Context, obj *entities
 
 // Webhook is the resolver for the webhook field.
 func (r *notificationConfResolver) Webhook(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook, error) {
-
 	if obj.Webhook == nil {
 		return nil, nil
 	}
@@ -43,42 +69,7 @@ func (r *notificationConfResolver) Webhook(ctx context.Context, obj *entities.No
 	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhook](obj.Webhook)
 }
 
-// Webhook is the resolver for the webhook field.
-func (r *notificationConfInResolver) Webhook(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn) error {
-	if obj == nil {
-		return fmt.Errorf("obj is nil")
-	}
-
-	gckacideesci, err := fn.JsonConvertP[entities.Webhook](data)
-	if err != nil {
-		return err
-	}
-
-	obj.Webhook = gckacideesci
-	return nil
-}
-
-func (r *notificationConfResolver) Email(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail, error) {
-	if obj == nil {
-		return nil, fmt.Errorf("obj is nil")
-	}
-
-	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmail](obj.Email)
-}
-func (r *notificationConfResolver) Slack(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack, error) {
-	if obj == nil {
-		return nil, fmt.Errorf("obj is nil")
-	}
-
-	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlack](obj.Slack)
-}
-func (r *notificationConfResolver) Telegram(ctx context.Context, obj *entities.NotificationConf) (*model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram, error) {
-	if obj == nil {
-		return nil, fmt.Errorf("obj is nil")
-	}
-
-	return fn.JsonConvertP[model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegram](obj.Telegram)
-}
+// Email is the resolver for the email field.
 func (r *notificationConfInResolver) Email(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesEmailIn) error {
 	if obj == nil {
 		return fmt.Errorf("obj is nil")
@@ -93,6 +84,8 @@ func (r *notificationConfInResolver) Email(ctx context.Context, obj *entities.No
 
 	return nil
 }
+
+// Slack is the resolver for the slack field.
 func (r *notificationConfInResolver) Slack(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesSlackIn) error {
 	if obj == nil {
 		return fmt.Errorf("obj is nil")
@@ -106,6 +99,8 @@ func (r *notificationConfInResolver) Slack(ctx context.Context, obj *entities.No
 	obj.Slack = gckacideesci
 	return nil
 }
+
+// Telegram is the resolver for the telegram field.
 func (r *notificationConfInResolver) Telegram(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesTelegramIn) error {
 	if obj == nil {
 		return fmt.Errorf("obj is nil")
@@ -118,6 +113,21 @@ func (r *notificationConfInResolver) Telegram(ctx context.Context, obj *entities
 
 	obj.Telegram = gckacideetci
 
+	return nil
+}
+
+// Webhook is the resolver for the webhook field.
+func (r *notificationConfInResolver) Webhook(ctx context.Context, obj *entities.NotificationConf, data *model.GithubComKloudliteAPIAppsCommsInternalDomainEntitiesWebhookIn) error {
+	if obj == nil {
+		return fmt.Errorf("obj is nil")
+	}
+
+	gckacideesci, err := fn.JsonConvertP[entities.Webhook](data)
+	if err != nil {
+		return err
+	}
+
+	obj.Webhook = gckacideesci
 	return nil
 }
 

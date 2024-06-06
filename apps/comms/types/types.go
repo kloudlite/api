@@ -27,6 +27,7 @@ type Notification struct {
 	Type             NotificationType `json:"notificationType" graphql:"noinput"`
 
 	Content     NotifyContent `json:"content" graphql:"noinput"`
+	Priority    int           `json:"priority" graphql:"noinput"`
 	AccountName string        `json:"accountName" graphql:"noinput"`
 	Read        bool          `json:"read" graphql:"noinput"`
 }

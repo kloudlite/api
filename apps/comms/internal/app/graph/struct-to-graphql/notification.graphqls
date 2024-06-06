@@ -5,6 +5,7 @@ type Notification @shareable {
   id: ID!
   markedForDeletion: Boolean
   notificationType: Github__com___kloudlite___api___apps___comms___types__NotificationType!
+  priority: Int!
   read: Boolean!
   recordVersion: Int!
   updateTime: Date!
