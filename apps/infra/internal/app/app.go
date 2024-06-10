@@ -8,9 +8,12 @@ import (
 
 	"github.com/99designs/gqlgen/graphql"
 	"github.com/gofiber/fiber/v2"
+	"github.com/kloudlite/api/apps/infra/internal/app/adapters"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/domain"
+	commonDomain "github.com/kloudlite/api/apps/infra/internal/domain/common"
+	"github.com/kloudlite/api/apps/infra/internal/domain/ports"
 	"github.com/kloudlite/api/apps/infra/internal/env"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/constants"
@@ -87,8 +90,16 @@ var Module = fx.Module(
 		return msg_nats.NewJetstreamProducer(jsc)
 	}),
 
+	fx.Provide(func(jsc *nats.JetstreamClient, logger logging.Logger) adapters.SendTargetClusterMessagesProducer {
+		return msg_nats.NewJetstreamProducer(jsc)
+	}),
+
 	fx.Provide(func(p SendTargetClusterMessagesProducer) domain.ResourceDispatcher {
 		return NewResourceDispatcher(p)
+	}),
+
+	fx.Provide(func(p adapters.SendTargetClusterMessagesProducer) ports.ResourceDispatcher {
+		return adapters.NewResourceDispatcher(p)
 	}),
 
 	fx.Invoke(func(lf fx.Lifecycle, producer SendTargetClusterMessagesProducer) {
@@ -101,6 +112,10 @@ var Module = fx.Module(
 
 	fx.Provide(func(cli *nats.Client, logger logging.Logger) domain.ResourceEventPublisher {
 		return NewResourceEventPublisher(cli, logger)
+	}),
+
+	fx.Provide(func(cli *nats.Client, logger logging.Logger) ports.ResourceEventPublisher {
+		return adapters.NewResourceEventPublisher(cli, logger)
 	}),
 
 	domain.Module,

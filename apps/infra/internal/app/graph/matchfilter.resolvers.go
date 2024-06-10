@@ -29,5 +29,7 @@ func (r *Resolver) MatchFilter() generated.MatchFilterResolver { return &matchFi
 // MatchFilterIn returns generated.MatchFilterInResolver implementation.
 func (r *Resolver) MatchFilterIn() generated.MatchFilterInResolver { return &matchFilterInResolver{r} }
 
-type matchFilterResolver struct{ *Resolver }
-type matchFilterInResolver struct{ *Resolver }
+type (
+	matchFilterResolver   struct{ *Resolver }
+	matchFilterInResolver struct{ *Resolver }
+)

@@ -48,6 +48,8 @@ type Env struct {
 	// ClusterOffset = 5, reserving 5 * 8K IPs for wireguard devices and other devices, that are not Clusters
 	ClustersOffset int `env:"CLUSTERS_OFFSET" default:"5"`
 
+	DefaultGlobalVPN string `env:"DEFAULT_GLOBAL_VPN" default:"default"`
+
 	IsDev              bool
 	KubernetesApiProxy string `env:"KUBERNETES_API_PROXY"`
 

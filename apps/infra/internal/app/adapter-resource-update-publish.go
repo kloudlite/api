@@ -2,6 +2,7 @@ package app
 
 import (
 	"fmt"
+
 	"github.com/kloudlite/api/apps/infra/internal/domain"
 	"github.com/kloudlite/api/pkg/logging"
 	"github.com/kloudlite/api/pkg/nats"
@@ -42,3 +43,4 @@ func NewResourceEventPublisher(cli *nats.Client, logger logging.Logger) domain.R
 		logger,
 	}
 }
+

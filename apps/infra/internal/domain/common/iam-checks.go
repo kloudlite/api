@@ -1,10 +1,12 @@
-package domain
+package common
 
 import (
 	"fmt"
+
 	"github.com/kloudlite/api/pkg/errors"
 
 	iamT "github.com/kloudlite/api/apps/iam/types"
+	domainT "github.com/kloudlite/api/apps/infra/internal/domain/types"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 )
 
@@ -26,8 +28,8 @@ func (e ErrGRPCCall) Error() string {
 	return fmt.Sprintf("grpc call failed with error: %v", errors.NewE(e.Err))
 }
 
-func (d *commonDomain) canPerformActionInAccount(ctx InfraContext, action iamT.Action) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+func (d *Domain) CanPerformActionInAccount(ctx domainT.InfraContext, action iamT.Action) error {
+	co, err := d.IAMSvc.Can(ctx, &iam.CanIn{
 		UserId: string(ctx.UserId),
 		ResourceRefs: []string{
 			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
@@ -47,8 +49,8 @@ func (d *commonDomain) canPerformActionInAccount(ctx InfraContext, action iamT.A
 	return nil
 }
 
-func (d *commonDomain) canPerformActionInDevice(ctx InfraContext, action iamT.Action, devName string) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
+func (d *Domain) CanPerformActionInDevice(ctx domainT.InfraContext, action iamT.Action, devName string) error {
+	co, err := d.IAMSvc.Can(ctx, &iam.CanIn{
 		UserId: string(ctx.UserId),
 		ResourceRefs: []string{
 			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceInfraVPNDevice, devName),

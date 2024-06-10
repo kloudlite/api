@@ -1,10 +1,12 @@
 package app
 
 import (
+	"context"
 	"encoding/json"
 	"fmt"
 
 	"github.com/kloudlite/api/apps/infra/internal/domain"
+	commonDomain "github.com/kloudlite/api/apps/infra/internal/domain/common"
 	t "github.com/kloudlite/api/apps/tenant-agent/types"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/errors"
@@ -80,4 +82,71 @@ func (d *resourceDispatcherImpl) DeleteFromTargetCluster(ctx domain.InfraContext
 	})
 
 	return errors.NewE(err)
+}
+
+type resourceDispatcherImplV2 struct {
+	producer messaging.Producer
+}
+
+// ApplyToTargetCluster implements common.ResourceDispatcher.
+func (rd *resourceDispatcherImplV2) ApplyToTargetCluster(ctx context.Context, accountName string, clusterName string, obj client.Object, recordVersion int) error {
+	ann := obj.GetAnnotations()
+	if ann == nil {
+		ann = make(map[string]string, 1)
+	}
+	ann[constants.RecordVersionKey] = fmt.Sprintf("%d", recordVersion)
+	obj.SetAnnotations(ann)
+
+	m, err := fn.K8sObjToMap(obj)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	b, err := json.Marshal(t.AgentMessage{
+		AccountName: accountName,
+		ClusterName: clusterName,
+		Action:      t.ActionApply,
+		Object:      m,
+	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	err = rd.producer.Produce(ctx, msgTypes.ProduceMsg{
+		Subject: common.GetTenantClusterMessagingTopic(accountName, clusterName),
+		Payload: b,
+	})
+
+	return errors.NewE(err)
+}
+
+// DeleteFromTargetCluster implements common.ResourceDispatcher.
+func (rd *resourceDispatcherImplV2) DeleteFromTargetCluster(ctx context.Context, accountName string, clusterName string, obj client.Object) error {
+	m, err := fn.K8sObjToMap(obj)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	b, err := json.Marshal(t.AgentMessage{
+		AccountName: accountName,
+		ClusterName: clusterName,
+		Action:      t.ActionDelete,
+		Object:      m,
+	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	err = rd.producer.Produce(ctx, msgTypes.ProduceMsg{
+		Subject: common.GetTenantClusterMessagingTopic(accountName, clusterName),
+		Payload: b,
+	})
+
+	return errors.NewE(err)
+}
+
+func NewResourceDispatcherV2(producer SendTargetClusterMessagesProducer) commonDomain.ResourceDispatcher {
+	return &resourceDispatcherImplV2{
+		producer,
+	}
 }
