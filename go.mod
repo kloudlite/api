@@ -20,7 +20,7 @@ require (
 	github.com/pkg/errors v0.9.1
 	github.com/rs/zerolog v1.29.1
 	github.com/sendgrid/sendgrid-go v3.11.1+incompatible
-	github.com/vektah/gqlparser/v2 v2.5.11
+	github.com/vektah/gqlparser/v2 v2.5.14
 	github.com/xanzy/go-gitlab v0.63.0
 	github.com/xeipuuv/gojsonschema v1.2.0
 	github.com/yext/yerrors v0.0.0-20230716030415-7ebf68e23868 // indirect
