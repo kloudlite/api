@@ -11,7 +11,7 @@ require (
 	github.com/go-redis/redis/v8 v8.11.5
 	github.com/gobuffalo/flect v1.0.2
 	github.com/gofiber/adaptor/v2 v2.1.23
-	github.com/gofiber/fiber/v2 v2.52.2
+	github.com/gofiber/fiber/v2 v2.52.5
 	github.com/gofiber/websocket/v2 v2.0.21
 	github.com/google/go-github/v43 v43.0.0
 	github.com/google/go-github/v45 v45.2.0
