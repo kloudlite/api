@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
+
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/console/internal/app/graph/generated"
@@ -17,7 +18,7 @@ import (
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
 	v11 "github.com/kloudlite/operator/apis/crds/v1"
-	"github.com/kloudlite/operator/apis/wireguard/v1"
+	v1 "github.com/kloudlite/operator/apis/wireguard/v1"
 )
 
 // Build is the resolver for the build field.
@@ -443,6 +444,26 @@ func (r *mutationResolver) CoreDeleteVPNDevice(ctx context.Context, deviceName s
 	}
 
 	return true, nil
+}
+
+// CoreAddCollaboratorToEnvironment is the resolver for the core_addCollaboratorToEnvironment field.
+func (r *mutationResolver) CoreAddCollaboratorToEnvironment(ctx context.Context, envName string, userID repos.ID) (bool, error) {
+  cc, err := toConsoleContext(ctx)
+  if err != nil {
+    return false, errors.NewE(err)
+  }
+
+  return r.Domain.AddCollaboratorToEnvironment(cc, envName, userID)
+}
+
+// CoreRemoveCollaboratorFromEnvironment is the resolver for the core_removeCollaboratorFromEnvironment field.
+func (r *mutationResolver) CoreRemoveCollaboratorFromEnvironment(ctx context.Context, envName string, userID repos.ID) (bool, error) {
+  cc, err := toConsoleContext(ctx)
+  if err != nil {
+    return false, errors.NewE(err)
+  }
+
+  return r.Domain.RemoveCollaboratorFromEnvironment(cc, envName, userID)
 }
 
 // CoreCheckNameAvailability is the resolver for the core_checkNameAvailability field.
@@ -1021,6 +1042,21 @@ func (r *queryResolver) CoreGetVPNDevice(ctx context.Context, name string) (*ent
 		return nil, errors.NewE(err)
 	}
 	return r.Domain.GetVPNDevice(cc, name)
+}
+
+// CoreListMembershipsForEnvironment is the resolver for the core_listMembershipsForEnvironment field.
+func (r *queryResolver) CoreListMembershipsForEnvironment(ctx context.Context, envName string, role *model.GithubComKloudliteAPIAppsIamTypesRole) ([]*model.EnvMembership, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	l, err := r.Domain.ListMembershipsForEnv(cc, envName)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return fn.JsonConvert[[]*model.EnvMembership](l)
 }
 
 // Mutation returns generated.MutationResolver implementation.

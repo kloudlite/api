@@ -687,6 +687,15 @@ enum Github__com___kloudlite___api___apps___console___internal___entities__Resou
   vpn_device
 }
 
+enum Github__com___kloudlite___api___apps___iam___types__Role {
+  account_admin
+  account_member
+  account_owner
+  environment_collaborator
+  environment_owner
+  resource_owner
+}
+
 enum Github__com___kloudlite___api___pkg___repos__MatchType {
   array
   exact

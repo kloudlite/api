@@ -139,6 +139,8 @@ type Query {
 	core_listVPNDevices(search: CoreSearchVPNDevices, pq: CursorPaginationIn): ConsoleVPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccount
 	core_listVPNDevicesForUser: [ConsoleVPNDevice!] @isLoggedInAndVerified @hasAccount
 	core_getVPNDevice(name: String!): ConsoleVPNDevice @isLoggedInAndVerified @hasAccount
+
+  core_listMembershipsForEnvironment(envName: String!, role: Github__com___kloudlite___api___apps___iam___types__Role): [EnvMembership!] @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -190,6 +192,9 @@ type Mutation {
 	core_updateVpnClusterName(deviceName: String!,clusterName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
 	core_deleteVPNDevice(deviceName: String!): Boolean! @isLoggedInAndVerified @hasAccount
+
+  core_addCollaboratorToEnvironment(envName: String!, userId: ID!): Boolean! @isLoggedInAndVerified @hasAccount
+  core_removeCollaboratorFromEnvironment(envName: String!, userId: ID!): Boolean! @isLoggedInAndVerified @hasAccount
 }
 
 type Build @key(fields: "id") {

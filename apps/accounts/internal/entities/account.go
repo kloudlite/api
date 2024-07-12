@@ -1,6 +1,7 @@
 package entities
 
 import (
+	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/repos"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -18,6 +19,8 @@ type Account struct {
 	ContactEmail string  `json:"contactEmail,omitempty"`
 
 	KloudliteGatewayRegion string `json:"kloudliteGatewayRegion"`
+
+	Type iamT.AccountType `json:"type"`
 }
 
 var AccountIndices = []repos.IndexField{

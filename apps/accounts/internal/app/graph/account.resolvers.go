@@ -6,13 +6,16 @@ package graph
 
 import (
 	"context"
-	"github.com/kloudlite/api/pkg/errors"
 	"time"
 
+	"github.com/kloudlite/api/pkg/errors"
+
 	"github.com/kloudlite/api/apps/accounts/internal/app/graph/generated"
+	"github.com/kloudlite/api/apps/accounts/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/accounts/internal/entities"
+	t "github.com/kloudlite/api/apps/iam/types"
 	fn "github.com/kloudlite/api/pkg/functions"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CreationTime is the resolver for the creationTime field.
@@ -21,6 +24,19 @@ func (r *accountResolver) CreationTime(ctx context.Context, obj *entities.Accoun
 		return "", errors.Newf("account is nil")
 	}
 	return obj.BaseEntity.CreationTime.Format(time.RFC3339), nil
+}
+
+// Type is the resolver for the type field.
+func (r *accountResolver) Type(ctx context.Context, obj *entities.Account) (model.GithubComKloudliteAPIAppsIamTypesAccountType, error) {
+	if obj == nil {
+		return model.GithubComKloudliteAPIAppsIamTypesAccountType(""), errors.Newf("account is nil")
+	}
+
+	if obj.Type == "" {
+		obj.Type = t.AccountTypeFree
+	}
+
+	return model.GithubComKloudliteAPIAppsIamTypesAccountType(obj.Type), nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
@@ -37,6 +53,17 @@ func (r *accountInResolver) Metadata(ctx context.Context, obj *entities.Account,
 		return errors.Newf("obj is nil")
 	}
 	return fn.JsonConversion(data, &obj.ObjectMeta)
+}
+
+// Type is the resolver for the type field.
+func (r *accountInResolver) Type(ctx context.Context, obj *entities.Account, data model.GithubComKloudliteAPIAppsIamTypesAccountType) error {
+	if obj == nil {
+		return errors.Newf("obj is nil")
+	}
+
+	obj.Type = t.AccountType(data)
+
+	return nil
 }
 
 // Account returns generated.AccountResolver implementation.

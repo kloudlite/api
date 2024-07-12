@@ -218,6 +218,12 @@ type ComplexityRoot struct {
 		FindBuildByID func(childComplexity int, id repos.ID) int
 	}
 
+	EnvMembership struct {
+		EnvName func(childComplexity int) int
+		Role    func(childComplexity int) int
+		UserID  func(childComplexity int) int
+	}
+
 	Environment struct {
 		APIVersion        func(childComplexity int) int
 		AccountName       func(childComplexity int) int
@@ -745,42 +751,44 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		CoreCloneEnvironment              func(childComplexity int, clusterName string, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode v1.EnvironmentRoutingMode) int
-		CoreCreateApp                     func(childComplexity int, envName string, app entities.App) int
-		CoreCreateConfig                  func(childComplexity int, envName string, config entities.Config) int
-		CoreCreateEnvironment             func(childComplexity int, env entities.Environment) int
-		CoreCreateExternalApp             func(childComplexity int, envName string, externalApp entities.ExternalApp) int
-		CoreCreateImagePullSecret         func(childComplexity int, pullSecret entities.ImagePullSecret) int
-		CoreCreateManagedResource         func(childComplexity int, msvcName string, mres entities.ManagedResource) int
-		CoreCreateRouter                  func(childComplexity int, envName string, router entities.Router) int
-		CoreCreateSecret                  func(childComplexity int, envName string, secret entities.Secret) int
-		CoreCreateVPNDevice               func(childComplexity int, vpnDevice entities.ConsoleVPNDevice) int
-		CoreDeleteApp                     func(childComplexity int, envName string, appName string) int
-		CoreDeleteConfig                  func(childComplexity int, envName string, configName string) int
-		CoreDeleteEnvironment             func(childComplexity int, envName string) int
-		CoreDeleteExternalApp             func(childComplexity int, envName string, externalAppName string) int
-		CoreDeleteImagePullSecret         func(childComplexity int, name string) int
-		CoreDeleteImportedManagedResource func(childComplexity int, envName string, importName string) int
-		CoreDeleteManagedResource         func(childComplexity int, msvcName string, mresName string) int
-		CoreDeleteRouter                  func(childComplexity int, envName string, routerName string) int
-		CoreDeleteSecret                  func(childComplexity int, envName string, secretName string) int
-		CoreDeleteVPNDevice               func(childComplexity int, deviceName string) int
-		CoreImportManagedResource         func(childComplexity int, envName string, msvcName string, mresName string, importName string) int
-		CoreInterceptApp                  func(childComplexity int, envName string, appname string, deviceName string, intercept bool, portMappings []*v1.AppInterceptPortMappings) int
-		CoreInterceptExternalApp          func(childComplexity int, envName string, externalAppName string, deviceName string, intercept bool, portMappings []*v1.AppInterceptPortMappings) int
-		CoreUpdateApp                     func(childComplexity int, envName string, app entities.App) int
-		CoreUpdateConfig                  func(childComplexity int, envName string, config entities.Config) int
-		CoreUpdateEnvironment             func(childComplexity int, env entities.Environment) int
-		CoreUpdateExternalApp             func(childComplexity int, envName string, externalApp entities.ExternalApp) int
-		CoreUpdateImagePullSecret         func(childComplexity int, pullSecret entities.ImagePullSecret) int
-		CoreUpdateManagedResource         func(childComplexity int, msvcName string, mres entities.ManagedResource) int
-		CoreUpdateRouter                  func(childComplexity int, envName string, router entities.Router) int
-		CoreUpdateSecret                  func(childComplexity int, envName string, secret entities.Secret) int
-		CoreUpdateVPNDevice               func(childComplexity int, vpnDevice entities.ConsoleVPNDevice) int
-		CoreUpdateVPNDeviceEnv            func(childComplexity int, deviceName string, envName string) int
-		CoreUpdateVPNDevicePorts          func(childComplexity int, deviceName string, ports []*v11.Port) int
-		CoreUpdateVpnClusterName          func(childComplexity int, deviceName string, clusterName string) int
-		CoreUpdateVpnDeviceNs             func(childComplexity int, deviceName string, ns string) int
+		CoreAddCollaboratorToEnvironment      func(childComplexity int, envName string, userID repos.ID) int
+		CoreCloneEnvironment                  func(childComplexity int, clusterName string, sourceEnvName string, destinationEnvName string, displayName string, environmentRoutingMode v1.EnvironmentRoutingMode) int
+		CoreCreateApp                         func(childComplexity int, envName string, app entities.App) int
+		CoreCreateConfig                      func(childComplexity int, envName string, config entities.Config) int
+		CoreCreateEnvironment                 func(childComplexity int, env entities.Environment) int
+		CoreCreateExternalApp                 func(childComplexity int, envName string, externalApp entities.ExternalApp) int
+		CoreCreateImagePullSecret             func(childComplexity int, pullSecret entities.ImagePullSecret) int
+		CoreCreateManagedResource             func(childComplexity int, msvcName string, mres entities.ManagedResource) int
+		CoreCreateRouter                      func(childComplexity int, envName string, router entities.Router) int
+		CoreCreateSecret                      func(childComplexity int, envName string, secret entities.Secret) int
+		CoreCreateVPNDevice                   func(childComplexity int, vpnDevice entities.ConsoleVPNDevice) int
+		CoreDeleteApp                         func(childComplexity int, envName string, appName string) int
+		CoreDeleteConfig                      func(childComplexity int, envName string, configName string) int
+		CoreDeleteEnvironment                 func(childComplexity int, envName string) int
+		CoreDeleteExternalApp                 func(childComplexity int, envName string, externalAppName string) int
+		CoreDeleteImagePullSecret             func(childComplexity int, name string) int
+		CoreDeleteImportedManagedResource     func(childComplexity int, envName string, importName string) int
+		CoreDeleteManagedResource             func(childComplexity int, msvcName string, mresName string) int
+		CoreDeleteRouter                      func(childComplexity int, envName string, routerName string) int
+		CoreDeleteSecret                      func(childComplexity int, envName string, secretName string) int
+		CoreDeleteVPNDevice                   func(childComplexity int, deviceName string) int
+		CoreImportManagedResource             func(childComplexity int, envName string, msvcName string, mresName string, importName string) int
+		CoreInterceptApp                      func(childComplexity int, envName string, appname string, deviceName string, intercept bool, portMappings []*v1.AppInterceptPortMappings) int
+		CoreInterceptExternalApp              func(childComplexity int, envName string, externalAppName string, deviceName string, intercept bool, portMappings []*v1.AppInterceptPortMappings) int
+		CoreRemoveCollaboratorFromEnvironment func(childComplexity int, envName string, userID repos.ID) int
+		CoreUpdateApp                         func(childComplexity int, envName string, app entities.App) int
+		CoreUpdateConfig                      func(childComplexity int, envName string, config entities.Config) int
+		CoreUpdateEnvironment                 func(childComplexity int, env entities.Environment) int
+		CoreUpdateExternalApp                 func(childComplexity int, envName string, externalApp entities.ExternalApp) int
+		CoreUpdateImagePullSecret             func(childComplexity int, pullSecret entities.ImagePullSecret) int
+		CoreUpdateManagedResource             func(childComplexity int, msvcName string, mres entities.ManagedResource) int
+		CoreUpdateRouter                      func(childComplexity int, envName string, router entities.Router) int
+		CoreUpdateSecret                      func(childComplexity int, envName string, secret entities.Secret) int
+		CoreUpdateVPNDevice                   func(childComplexity int, vpnDevice entities.ConsoleVPNDevice) int
+		CoreUpdateVPNDeviceEnv                func(childComplexity int, deviceName string, envName string) int
+		CoreUpdateVPNDevicePorts              func(childComplexity int, deviceName string, ports []*v11.Port) int
+		CoreUpdateVpnClusterName              func(childComplexity int, deviceName string, clusterName string) int
+		CoreUpdateVpnDeviceNs                 func(childComplexity int, deviceName string, ns string) int
 	}
 
 	PageInfo struct {
@@ -817,6 +825,7 @@ type ComplexityRoot struct {
 		CoreListImagePullSecrets             func(childComplexity int, search *model.SearchImagePullSecrets, pq *repos.CursorPagination) int
 		CoreListImportedManagedResources     func(childComplexity int, envName string, search *model.SearchImportedManagedResources, pq *repos.CursorPagination) int
 		CoreListManagedResources             func(childComplexity int, search *model.SearchManagedResources, pq *repos.CursorPagination) int
+		CoreListMembershipsForEnvironment    func(childComplexity int, envName string, role *model.GithubComKloudliteAPIAppsIamTypesRole) int
 		CoreListRouters                      func(childComplexity int, envName string, search *model.SearchRouters, pq *repos.CursorPagination) int
 		CoreListSecrets                      func(childComplexity int, envName string, search *model.SearchSecrets, pq *repos.CursorPagination) int
 		CoreListVPNDevices                   func(childComplexity int, search *model.CoreSearchVPNDevices, pq *repos.CursorPagination) int
@@ -1048,6 +1057,8 @@ type MutationResolver interface {
 	CoreUpdateVpnDeviceNs(ctx context.Context, deviceName string, ns string) (bool, error)
 	CoreUpdateVpnClusterName(ctx context.Context, deviceName string, clusterName string) (bool, error)
 	CoreDeleteVPNDevice(ctx context.Context, deviceName string) (bool, error)
+	CoreAddCollaboratorToEnvironment(ctx context.Context, envName string, userID repos.ID) (bool, error)
+	CoreRemoveCollaboratorFromEnvironment(ctx context.Context, envName string, userID repos.ID) (bool, error)
 }
 type QueryResolver interface {
 	CoreCheckNameAvailability(ctx context.Context, envName *string, resType entities.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error)
@@ -1084,6 +1095,7 @@ type QueryResolver interface {
 	CoreListVPNDevices(ctx context.Context, search *model.CoreSearchVPNDevices, pq *repos.CursorPagination) (*model.ConsoleVPNDevicePaginatedRecords, error)
 	CoreListVPNDevicesForUser(ctx context.Context) ([]*entities.ConsoleVPNDevice, error)
 	CoreGetVPNDevice(ctx context.Context, name string) (*entities.ConsoleVPNDevice, error)
+	CoreListMembershipsForEnvironment(ctx context.Context, envName string, role *model.GithubComKloudliteAPIAppsIamTypesRole) ([]*model.EnvMembership, error)
 }
 type RouterResolver interface {
 	CreationTime(ctx context.Context, obj *entities.Router) (string, error)
@@ -1780,6 +1792,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Entity.FindBuildByID(childComplexity, args["id"].(repos.ID)), true
+
+	case "EnvMembership.envName":
+		if e.complexity.EnvMembership.EnvName == nil {
+			break
+		}
+
+		return e.complexity.EnvMembership.EnvName(childComplexity), true
+
+	case "EnvMembership.role":
+		if e.complexity.EnvMembership.Role == nil {
+			break
+		}
+
+		return e.complexity.EnvMembership.Role(childComplexity), true
+
+	case "EnvMembership.userId":
+		if e.complexity.EnvMembership.UserID == nil {
+			break
+		}
+
+		return e.complexity.EnvMembership.UserID(childComplexity), true
 
 	case "Environment.apiVersion":
 		if e.complexity.Environment.APIVersion == nil {
@@ -4077,6 +4110,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Metadata.Namespace(childComplexity), true
 
+	case "Mutation.core_addCollaboratorToEnvironment":
+		if e.complexity.Mutation.CoreAddCollaboratorToEnvironment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_core_addCollaboratorToEnvironment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CoreAddCollaboratorToEnvironment(childComplexity, args["envName"].(string), args["userId"].(repos.ID)), true
+
 	case "Mutation.core_cloneEnvironment":
 		if e.complexity.Mutation.CoreCloneEnvironment == nil {
 			break
@@ -4352,6 +4397,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Mutation.CoreInterceptExternalApp(childComplexity, args["envName"].(string), args["externalAppName"].(string), args["deviceName"].(string), args["intercept"].(bool), args["portMappings"].([]*v1.AppInterceptPortMappings)), true
+
+	case "Mutation.core_removeCollaboratorFromEnvironment":
+		if e.complexity.Mutation.CoreRemoveCollaboratorFromEnvironment == nil {
+			break
+		}
+
+		args, err := ec.field_Mutation_core_removeCollaboratorFromEnvironment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Mutation.CoreRemoveCollaboratorFromEnvironment(childComplexity, args["envName"].(string), args["userId"].(repos.ID)), true
 
 	case "Mutation.core_updateApp":
 		if e.complexity.Mutation.CoreUpdateApp == nil {
@@ -4802,6 +4859,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Query.CoreListManagedResources(childComplexity, args["search"].(*model.SearchManagedResources), args["pq"].(*repos.CursorPagination)), true
+
+	case "Query.core_listMembershipsForEnvironment":
+		if e.complexity.Query.CoreListMembershipsForEnvironment == nil {
+			break
+		}
+
+		args, err := ec.field_Query_core_listMembershipsForEnvironment_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CoreListMembershipsForEnvironment(childComplexity, args["envName"].(string), args["role"].(*model.GithubComKloudliteAPIAppsIamTypesRole)), true
 
 	case "Query.core_listRouters":
 		if e.complexity.Query.CoreListRouters == nil {
@@ -5359,6 +5428,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputConsoleVPNDeviceIn,
 		ec.unmarshalInputCoreSearchVPNDevices,
 		ec.unmarshalInputCursorPaginationIn,
+		ec.unmarshalInputEnvMembershipIn,
 		ec.unmarshalInputEnvironmentIn,
 		ec.unmarshalInputExternalAppIn,
 		ec.unmarshalInputGithub__com___kloudlite___api___apps___console___internal___entities__ManagedResourceRefIn,
@@ -5622,10 +5692,6 @@ input CoreSearchVPNDevices {
 type Query {
 	core_checkNameAvailability(envName: String, resType: ConsoleResType!, name: String!): ConsoleCheckNameAvailabilityOutput! @isLoggedIn @hasAccount
 
-	# core_listProjects(search: SearchProjects, pq: CursorPaginationIn): ProjectPaginatedRecords @isLoggedInAndVerified @hasAccount
-	# core_getProject(name: String!): Project @isLoggedInAndVerified @hasAccount
-	# core_resyncProject(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
-
 	core_listEnvironments(search: SearchEnvironments, pq: CursorPaginationIn): EnvironmentPaginatedRecords @isLoggedInAndVerified @hasAccount
 	core_getEnvironment(name: String!): Environment @isLoggedInAndVerified @hasAccount
 	core_resyncEnvironment(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
@@ -5660,29 +5726,20 @@ type Query {
 
 	core_getManagedResouceOutputKeys(msvcName: String, envName:String , name: String!): [String!]! @isLoggedInAndVerified @hasAccount
 	core_getManagedResouceOutputKeyValues(msvcName: String, envName:String, keyrefs: [ManagedResourceKeyRefIn]): [ManagedResourceKeyValueRef!]! @isLoggedInAndVerified @hasAccount
+
 	core_listManagedResources(search: SearchManagedResources, pq: CursorPaginationIn): ManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
 	core_getManagedResource(msvcName: String, envName: String, name: String!): ManagedResource @isLoggedInAndVerified @hasAccount
 	core_resyncManagedResource(msvcName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
-	# core_listImportedManagedResources(envName: String! ,search: SearchManagedResources, pq: CursorPaginationIn): ManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
-	# core_getImportedManagedResource(envName: String!, name: String!): ManagedResource @isLoggedInAndVerified @hasAccount
-
 	core_listImportedManagedResources(envName: String!, search: SearchImportedManagedResources, pq: CursorPaginationIn): ImportedManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
-
-	# core_listProjectManagedServices(search: SearchProjectManagedService, pq: CursorPaginationIn): ProjectManagedServicePaginatedRecords @isLoggedInAndVerified @hasAccount
-	# core_getProjectManagedService( name: String!): ProjectManagedService @isLoggedInAndVerified @hasAccount
-	# core_resyncProjectManagedService(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
-	# core_restartProjectManagedService(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
 	core_listVPNDevices(search: CoreSearchVPNDevices, pq: CursorPaginationIn): ConsoleVPNDevicePaginatedRecords @isLoggedInAndVerified @hasAccount
 	core_listVPNDevicesForUser: [ConsoleVPNDevice!] @isLoggedInAndVerified @hasAccount
 	core_getVPNDevice(name: String!): ConsoleVPNDevice @isLoggedInAndVerified @hasAccount
+
+  core_listMembershipsForEnvironment(envName: String!, role: Github__com___kloudlite___api___apps___iam___types__Role): [EnvMembership!] @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
-	# core_createProject(project: ProjectIn!): Project @isLoggedInAndVerified @hasAccount
-	# core_updateProject(project: ProjectIn!): Project @isLoggedInAndVerified @hasAccount
-	# core_deleteProject(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
-
 	core_createEnvironment(env: EnvironmentIn!): Environment @isLoggedInAndVerified @hasAccount
 	core_updateEnvironment(env: EnvironmentIn!): Environment @isLoggedInAndVerified @hasAccount
 	core_deleteEnvironment(envName: String!): Boolean! @isLoggedInAndVerified @hasAccount
@@ -5719,15 +5776,8 @@ type Mutation {
 	core_updateManagedResource(msvcName: String!, mres: ManagedResourceIn!): ManagedResource @isLoggedInAndVerified @hasAccount
 	core_deleteManagedResource(msvcName: String!, mresName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
-	# core_importManagedResource(envName: String!, msvcName: String!, mresName: String!, importName: String!): ManagedResource @isLoggedInAndVerified @hasAccount
-	# core_deleteImportedManagedResource(envName: String!, importName: String!): Boolean! @isLoggedInAndVerified @hasAccount
-
 	core_importManagedResource(envName: String!, msvcName: String!, mresName: String!, importName: String!): ImportedManagedResource @isLoggedInAndVerified @hasAccount
 	core_deleteImportedManagedResource(envName: String!, importName: String!): Boolean! @isLoggedInAndVerified @hasAccount
-
-	# core_createProjectManagedService(pmsvc: ProjectManagedServiceIn!): ProjectManagedService @isLoggedInAndVerified @hasAccount
-	# core_updateProjectManagedService(pmsvc: ProjectManagedServiceIn!): ProjectManagedService @isLoggedInAndVerified @hasAccount
-	# core_deleteProjectManagedService(pmsvcName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
 	core_createVPNDevice(vpnDevice: ConsoleVPNDeviceIn!): ConsoleVPNDevice @isLoggedInAndVerified @hasAccount
 	core_updateVPNDevice(vpnDevice: ConsoleVPNDeviceIn!): ConsoleVPNDevice @isLoggedInAndVerified @hasAccount
@@ -5738,6 +5788,9 @@ type Mutation {
 	core_updateVpnClusterName(deviceName: String!,clusterName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
 	core_deleteVPNDevice(deviceName: String!): Boolean! @isLoggedInAndVerified @hasAccount
+
+  core_addCollaboratorToEnvironment(envName: String!, userId: ID!): Boolean! @isLoggedInAndVerified @hasAccount
+  core_removeCollaboratorFromEnvironment(envName: String!, userId: ID!): Boolean! @isLoggedInAndVerified @hasAccount
 }
 
 type Build @key(fields: "id") {
@@ -6484,6 +6537,15 @@ enum Github__com___kloudlite___api___apps___console___internal___entities__Resou
   vpn_device
 }
 
+enum Github__com___kloudlite___api___apps___iam___types__Role {
+  account_admin
+  account_member
+  account_owner
+  environment_collaborator
+  environment_owner
+  resource_owner
+}
+
 enum Github__com___kloudlite___api___pkg___repos__MatchType {
   array
   exact
@@ -6743,6 +6805,19 @@ input EnvironmentIn {
   kind: String
   metadata: MetadataIn
   spec: Github__com___kloudlite___operator___apis___crds___v1__EnvironmentSpecIn
+}
+
+`, BuiltIn: false},
+	{Name: "../struct-to-graphql/envmembership.graphqls", Input: `type EnvMembership @shareable {
+  envName: String!
+  role: Github__com___kloudlite___api___apps___iam___types__Role!
+  userId: String!
+}
+
+input EnvMembershipIn {
+  envName: String!
+  role: Github__com___kloudlite___api___apps___iam___types__Role!
+  userId: String!
 }
 
 `, BuiltIn: false},
@@ -7170,6 +7245,30 @@ func (ec *executionContext) field_Entity_findBuildByID_args(ctx context.Context,
 		}
 	}
 	args["id"] = arg0
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_core_addCollaboratorToEnvironment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["envName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("envName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["envName"] = arg0
+	var arg1 repos.ID
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
 	return args, nil
 }
 
@@ -7767,6 +7866,30 @@ func (ec *executionContext) field_Mutation_core_interceptExternalApp_args(ctx co
 		}
 	}
 	args["portMappings"] = arg4
+	return args, nil
+}
+
+func (ec *executionContext) field_Mutation_core_removeCollaboratorFromEnvironment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["envName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("envName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["envName"] = arg0
+	var arg1 repos.ID
+	if tmp, ok := rawArgs["userId"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+		arg1, err = ec.unmarshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["userId"] = arg1
 	return args, nil
 }
 
@@ -8631,6 +8754,30 @@ func (ec *executionContext) field_Query_core_listManagedResources_args(ctx conte
 		}
 	}
 	args["pq"] = arg1
+	return args, nil
+}
+
+func (ec *executionContext) field_Query_core_listMembershipsForEnvironment_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	var arg0 string
+	if tmp, ok := rawArgs["envName"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("envName"))
+		arg0, err = ec.unmarshalNString2string(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["envName"] = arg0
+	var arg1 *model.GithubComKloudliteAPIAppsIamTypesRole
+	if tmp, ok := rawArgs["role"]; ok {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+		arg1, err = ec.unmarshalOGithub__com___kloudlite___api___apps___iam___types__Role2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx, tmp)
+		if err != nil {
+			return nil, err
+		}
+	}
+	args["role"] = arg1
 	return args, nil
 }
 
@@ -13027,6 +13174,138 @@ func (ec *executionContext) fieldContext_Entity_findBuildByID(ctx context.Contex
 	if fc.Args, err = ec.field_Entity_findBuildByID_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EnvMembership_envName(ctx context.Context, field graphql.CollectedField, obj *model.EnvMembership) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EnvMembership_envName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.EnvName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EnvMembership_envName(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EnvMembership",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EnvMembership_role(ctx context.Context, field graphql.CollectedField, obj *model.EnvMembership) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EnvMembership_role(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Role, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.GithubComKloudliteAPIAppsIamTypesRole)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___apps___iam___types__Role2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EnvMembership_role(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EnvMembership",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___api___apps___iam___types__Role does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _EnvMembership_userId(ctx context.Context, field graphql.CollectedField, obj *model.EnvMembership) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_EnvMembership_userId(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.UserID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_EnvMembership_userId(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "EnvMembership",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
 	}
 	return fc, nil
 }
@@ -31586,6 +31865,168 @@ func (ec *executionContext) fieldContext_Mutation_core_deleteVPNDevice(ctx conte
 	return fc, nil
 }
 
+func (ec *executionContext) _Mutation_core_addCollaboratorToEnvironment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_core_addCollaboratorToEnvironment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CoreAddCollaboratorToEnvironment(rctx, fc.Args["envName"].(string), fc.Args["userId"].(repos.ID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_core_addCollaboratorToEnvironment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_core_addCollaboratorToEnvironment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Mutation_core_removeCollaboratorFromEnvironment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Mutation_core_removeCollaboratorFromEnvironment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Mutation().CoreRemoveCollaboratorFromEnvironment(rctx, fc.Args["envName"].(string), fc.Args["userId"].(repos.ID))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(bool); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Mutation_core_removeCollaboratorFromEnvironment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Mutation",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Mutation_core_removeCollaboratorFromEnvironment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _PageInfo_endCursor(ctx context.Context, field graphql.CollectedField, obj *model.PageInfo) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_PageInfo_endCursor(ctx, field)
 	if err != nil {
@@ -34999,6 +35440,92 @@ func (ec *executionContext) fieldContext_Query_core_getVPNDevice(ctx context.Con
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Query_core_getVPNDevice_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Query_core_listMembershipsForEnvironment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_core_listMembershipsForEnvironment(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().CoreListMembershipsForEnvironment(rctx, fc.Args["envName"].(string), fc.Args["role"].(*model.GithubComKloudliteAPIAppsIamTypesRole))
+		}
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				return nil, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.([]*model.EnvMembership); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/kloudlite/api/apps/console/internal/app/graph/model.EnvMembership`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.EnvMembership)
+	fc.Result = res
+	return ec.marshalOEnvMembership2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐEnvMembershipᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_core_listMembershipsForEnvironment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "envName":
+				return ec.fieldContext_EnvMembership_envName(ctx, field)
+			case "role":
+				return ec.fieldContext_EnvMembership_role(ctx, field)
+			case "userId":
+				return ec.fieldContext_EnvMembership_userId(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type EnvMembership", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_core_listMembershipsForEnvironment_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -39948,6 +40475,47 @@ func (ec *executionContext) unmarshalInputCursorPaginationIn(ctx context.Context
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputEnvMembershipIn(ctx context.Context, obj interface{}) (model.EnvMembershipIn, error) {
+	var it model.EnvMembershipIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"envName", "role", "userId"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "envName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("envName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.EnvName = data
+		case "role":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("role"))
+			data, err := ec.unmarshalNGithub__com___kloudlite___api___apps___iam___types__Role2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Role = data
+		case "userId":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("userId"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.UserID = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputEnvironmentIn(ctx context.Context, obj interface{}) (entities.Environment, error) {
 	var it entities.Environment
 	asMap := map[string]interface{}{}
@@ -44577,6 +45145,55 @@ func (ec *executionContext) _Entity(ctx context.Context, sel ast.SelectionSet) g
 	return out
 }
 
+var envMembershipImplementors = []string{"EnvMembership"}
+
+func (ec *executionContext) _EnvMembership(ctx context.Context, sel ast.SelectionSet, obj *model.EnvMembership) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, envMembershipImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("EnvMembership")
+		case "envName":
+			out.Values[i] = ec._EnvMembership_envName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "role":
+			out.Values[i] = ec._EnvMembership_role(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "userId":
+			out.Values[i] = ec._EnvMembership_userId(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var environmentImplementors = []string{"Environment"}
 
 func (ec *executionContext) _Environment(ctx context.Context, sel ast.SelectionSet, obj *entities.Environment) graphql.Marshaler {
@@ -49182,6 +49799,20 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
+		case "core_addCollaboratorToEnvironment":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_core_addCollaboratorToEnvironment(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "core_removeCollaboratorFromEnvironment":
+			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
+				return ec._Mutation_core_removeCollaboratorFromEnvironment(ctx, field)
+			})
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -49977,6 +50608,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_core_getVPNDevice(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "core_listMembershipsForEnvironment":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_core_listMembershipsForEnvironment(ctx, field)
 				return res
 			}
 
@@ -51532,6 +52182,16 @@ func (ec *executionContext) marshalNDate2string(ctx context.Context, sel ast.Sel
 	return res
 }
 
+func (ec *executionContext) marshalNEnvMembership2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐEnvMembership(ctx context.Context, sel ast.SelectionSet, v *model.EnvMembership) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._EnvMembership(ctx, sel, v)
+}
+
 func (ec *executionContext) marshalNEnvironment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐEnvironment(ctx context.Context, sel ast.SelectionSet, v *entities.Environment) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -51721,6 +52381,16 @@ func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___con
 }
 
 func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___console___internal___entities__ResourceType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) graphql.Marshaler {
+	return v
+}
+
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___iam___types__Role2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsIamTypesRole, error) {
+	var res model.GithubComKloudliteAPIAppsIamTypesRole
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___iam___types__Role2githubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsIamTypesRole) graphql.Marshaler {
 	return v
 }
 
@@ -53596,6 +54266,53 @@ func (ec *executionContext) marshalODate2ᚖstring(ctx context.Context, sel ast.
 	return res
 }
 
+func (ec *executionContext) marshalOEnvMembership2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐEnvMembershipᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.EnvMembership) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNEnvMembership2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐEnvMembership(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
 func (ec *executionContext) marshalOEnvironment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐEnvironment(ctx context.Context, sel ast.SelectionSet, v *entities.Environment) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -53629,6 +54346,22 @@ func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___conso
 		return graphql.Null
 	}
 	return ec._Github__com___kloudlite___api___apps___console___internal___entities__SecretCreatedFor(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___iam___types__Role2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsIamTypesRole, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.GithubComKloudliteAPIAppsIamTypesRole)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___iam___types__Role2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesRole(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsIamTypesRole) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
 }
 
 func (ec *executionContext) marshalOGithub__com___kloudlite___api___pkg___types__EncodedString2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIPkgTypesEncodedString(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIPkgTypesEncodedString) graphql.Marshaler {

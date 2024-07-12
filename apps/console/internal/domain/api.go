@@ -317,6 +317,12 @@ type Domain interface {
 
 	ActivateVpnDeviceOnCluster(ctx ConsoleContext, devName string, clusterName string) error
 	ActivateVPNDeviceOnNamespace(ctx ConsoleContext, devName string, namespace string) error
+
+	ListMembershipsForEnv(ctx ConsoleContext, envName string) ([]*entities.EnvMembership, error)
+
+	AddCollaboratorToEnvironment(ctx ConsoleContext, envName string, userId repos.ID) (bool, error)
+
+	RemoveCollaboratorFromEnvironment(ctx ConsoleContext, envName string, userId repos.ID) (bool, error)
 }
 
 type PublishMsg string

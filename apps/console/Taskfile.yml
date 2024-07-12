@@ -38,6 +38,7 @@ tasks:
         --struct github.com/kloudlite/api/apps/console/internal/entities.ImagePullSecret
         --struct github.com/kloudlite/api/pkg/repos.MatchFilter
         --struct github.com/kloudlite/api/pkg/repos.CursorPagination
+        --struct github.com/kloudlite/api/apps/console/internal/entities.EnvMembership
         > ./internal/app/_struct-to-graphql/main.go
       - |+
         pushd ./internal/app/_struct-to-graphql

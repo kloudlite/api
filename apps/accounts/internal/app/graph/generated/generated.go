@@ -78,6 +78,7 @@ type ComplexityRoot struct {
 		ObjectMeta             func(childComplexity int) int
 		RecordVersion          func(childComplexity int) int
 		TargetNamespace        func(childComplexity int) int
+		Type                   func(childComplexity int) int
 		UpdateTime             func(childComplexity int) int
 	}
 
@@ -187,6 +188,7 @@ type ComplexityRoot struct {
 type AccountResolver interface {
 	CreationTime(ctx context.Context, obj *entities.Account) (string, error)
 
+	Type(ctx context.Context, obj *entities.Account) (model.GithubComKloudliteAPIAppsIamTypesAccountType, error)
 	UpdateTime(ctx context.Context, obj *entities.Account) (string, error)
 }
 type AccountMembershipResolver interface {
@@ -246,6 +248,7 @@ type UserResolver interface {
 
 type AccountInResolver interface {
 	Metadata(ctx context.Context, obj *entities.Account, data *v1.ObjectMeta) error
+	Type(ctx context.Context, obj *entities.Account, data model.GithubComKloudliteAPIAppsIamTypesAccountType) error
 }
 type MetadataInResolver interface {
 	Annotations(ctx context.Context, obj *v1.ObjectMeta, data map[string]interface{}) error
@@ -361,6 +364,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Account.TargetNamespace(childComplexity), true
+
+	case "Account.type":
+		if e.complexity.Account.Type == nil {
+			break
+		}
+
+		return e.complexity.Account.Type(childComplexity), true
 
 	case "Account.updateTime":
 		if e.complexity.Account.UpdateTime == nil {
@@ -1135,6 +1145,7 @@ extend type User @key(fields: "id") {
   metadata: Metadata @goField(name: "objectMeta")
   recordVersion: Int!
   targetNamespace: String
+  type: Github__com___kloudlite___api___apps___iam___types__AccountType!
   updateTime: Date!
 }
 
@@ -1145,6 +1156,7 @@ input AccountIn {
   kloudliteGatewayRegion: String!
   logo: String
   metadata: MetadataIn
+  type: Github__com___kloudlite___api___apps___iam___types__AccountType!
 }
 
 `, BuiltIn: false},
@@ -1202,12 +1214,17 @@ input MetadataIn {
   namespace: String
 }
 
+enum Github__com___kloudlite___api___apps___iam___types__AccountType {
+  free
+  premium
+}
+
 enum Github__com___kloudlite___api___apps___iam___types__Role {
   account_admin
   account_member
   account_owner
-  project_admin
-  project_member
+  environment_collaborator
+  environment_owner
   resource_owner
 }
 
@@ -2408,6 +2425,50 @@ func (ec *executionContext) fieldContext_Account_targetNamespace(ctx context.Con
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Account_type(ctx context.Context, field graphql.CollectedField, obj *entities.Account) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Account_type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Account().Type(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(model.GithubComKloudliteAPIAppsIamTypesAccountType)
+	fc.Result = res
+	return ec.marshalNGithub__com___kloudlite___api___apps___iam___types__AccountType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋaccountsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesAccountType(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Account_type(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Account",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Github__com___kloudlite___api___apps___iam___types__AccountType does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3947,6 +4008,8 @@ func (ec *executionContext) fieldContext_Mutation_accounts_createAccount(ctx con
 				return ec.fieldContext_Account_recordVersion(ctx, field)
 			case "targetNamespace":
 				return ec.fieldContext_Account_targetNamespace(ctx, field)
+			case "type":
+				return ec.fieldContext_Account_type(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			}
@@ -4052,6 +4115,8 @@ func (ec *executionContext) fieldContext_Mutation_accounts_updateAccount(ctx con
 				return ec.fieldContext_Account_recordVersion(ctx, field)
 			case "targetNamespace":
 				return ec.fieldContext_Account_targetNamespace(ctx, field)
+			case "type":
+				return ec.fieldContext_Account_type(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			}
@@ -5093,6 +5158,8 @@ func (ec *executionContext) fieldContext_Query_accounts_listAccounts(ctx context
 				return ec.fieldContext_Account_recordVersion(ctx, field)
 			case "targetNamespace":
 				return ec.fieldContext_Account_targetNamespace(ctx, field)
+			case "type":
+				return ec.fieldContext_Account_type(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			}
@@ -5184,6 +5251,8 @@ func (ec *executionContext) fieldContext_Query_accounts_getAccount(ctx context.C
 				return ec.fieldContext_Account_recordVersion(ctx, field)
 			case "targetNamespace":
 				return ec.fieldContext_Account_targetNamespace(ctx, field)
+			case "type":
+				return ec.fieldContext_Account_type(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Account_updateTime(ctx, field)
 			}
@@ -8265,7 +8334,7 @@ func (ec *executionContext) unmarshalInputAccountIn(ctx context.Context, obj int
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"contactEmail", "displayName", "isActive", "kloudliteGatewayRegion", "logo", "metadata"}
+	fieldsInOrder := [...]string{"contactEmail", "displayName", "isActive", "kloudliteGatewayRegion", "logo", "metadata", "type"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -8314,6 +8383,15 @@ func (ec *executionContext) unmarshalInputAccountIn(ctx context.Context, obj int
 				return it, err
 			}
 			if err = ec.resolvers.AccountIn().Metadata(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("type"))
+			data, err := ec.unmarshalNGithub__com___kloudlite___api___apps___iam___types__AccountType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋaccountsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesAccountType(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.AccountIn().Type(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -8603,6 +8681,42 @@ func (ec *executionContext) _Account(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "targetNamespace":
 			out.Values[i] = ec._Account_targetNamespace(ctx, field, obj)
+		case "type":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Account_type(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updateTime":
 			field := field
 
@@ -10393,6 +10507,16 @@ func (ec *executionContext) marshalNFieldSet2string(ctx context.Context, sel ast
 		}
 	}
 	return res
+}
+
+func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___iam___types__AccountType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋaccountsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesAccountType(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsIamTypesAccountType, error) {
+	var res model.GithubComKloudliteAPIAppsIamTypesAccountType
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___iam___types__AccountType2githubᚗcomᚋkloudliteᚋapiᚋappsᚋaccountsᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsIamTypesAccountType(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsIamTypesAccountType) graphql.Marshaler {
+	return v
 }
 
 func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___iam___types__Role2githubᚗcomᚋkloudliteᚋapiᚋappsᚋiamᚋtypesᚐRole(ctx context.Context, v interface{}) (types.Role, error) {

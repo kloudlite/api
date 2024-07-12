@@ -2,16 +2,21 @@ package app
 
 import (
 	"encoding/json"
-	"github.com/kloudlite/api/apps/iam/internal/entities"
-	"github.com/kloudlite/api/pkg/errors"
-	"github.com/kloudlite/api/pkg/logging"
 	"os"
 
+	"github.com/kloudlite/api/apps/iam/internal/entities"
+	"github.com/kloudlite/api/pkg/errors"
+	"github.com/kloudlite/api/pkg/grpc"
+	"github.com/kloudlite/api/pkg/logging"
+
 	"github.com/kloudlite/api/apps/iam/internal/env"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
 )
+
+type AccountsClient grpc.Client
 
 var Module = fx.Module(
 	"app",
@@ -32,6 +37,12 @@ var Module = fx.Module(
 	}),
 
 	repos.NewFxMongoRepo[*entities.RoleBinding]("role_bindings", "rb", entities.RoleBindingIndices),
+
+	fx.Provide(
+		func(conn AccountsClient) accounts.AccountsClient {
+			return accounts.NewAccountsClient(conn)
+		},
+	),
 
 	fx.Provide(func(logger logging.Logger, rbRepo repos.DbRepo[*entities.RoleBinding], rbm RoleBindingMap) iam.IAMServer {
 		return newIAMGrpcService(logger, rbRepo, rbm)

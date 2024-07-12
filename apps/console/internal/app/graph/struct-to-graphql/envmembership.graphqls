@@ -1,0 +1,12 @@
+type EnvMembership @shareable {
+  envName: String!
+  role: Github__com___kloudlite___api___apps___iam___types__Role!
+  userId: String!
+}
+
+input EnvMembershipIn {
+  envName: String!
+  role: Github__com___kloudlite___api___apps___iam___types__Role!
+  userId: String!
+}
+

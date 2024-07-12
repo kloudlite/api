@@ -9,7 +9,7 @@ type RoleBindingMap map[t.Action][]t.Role
 var roleBindings RoleBindingMap = RoleBindingMap{
 	// for accounts
 	t.CreateAccount: []t.Role{t.RoleAccountOwner},
-	t.GetAccount:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.GetAccount:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.UpdateAccount: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
 	t.DeleteAccount: []t.Role{t.RoleAccountOwner},
 
@@ -36,8 +36,8 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.CreateCluster: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.DeleteCluster: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.UpdateCluster: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
-	t.ListClusters:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetCluster:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListClusters:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetCluster:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 
 	// for helm release
 	t.CreateHelmRelease: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
@@ -58,22 +58,22 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.CreateDomainEntry: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.UpdateDomainEntry: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.DeleteDomainEntry: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
-	t.ListDomainEntries: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetDomainEntry:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListDomainEntries: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetDomainEntry:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 
 	// for nodepools
 	t.CreateNodepool: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.UpdateNodepool: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.DeleteNodepool: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
-	t.ListNodepools:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetNodepool:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListNodepools:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetNodepool:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 
 	// for managed resource
 	t.CreateManagedResource: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.UpdateManagedResource: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.DeleteManagedResource: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
-	t.ListManagedResources:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetManagedResource:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListManagedResources:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetManagedResource:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 
 	// for cloud provider secrets
 	t.CreateCloudProviderSecret: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
@@ -89,54 +89,34 @@ var roleBindings RoleBindingMap = RoleBindingMap{
 	t.ListImagePullSecrets:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.GetImagePullSecret:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 
-	// for projects
-	t.CreateProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
-	t.ListProjects:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetProject:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.UpdateProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.DeleteProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-
-	// for project invitations
-	t.InviteProjectAdmin:      []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
-	t.InviteProjectMember:     []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-	t.ListProjectInvitations:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-	t.GetProjectInvitation:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-	t.DeleteProjectInvitation: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-
-	t.MutateResourcesInProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-
-	t.ListMembershipsForProject: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-	t.UpdateProjectMembership:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-	t.RemoveProjectMembership:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin},
-
 	// for environments
-	t.ListEnvironments:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetEnvironment:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.CreateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.CloneEnvironment:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.UpdateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleResourceOwner},
-	t.DeleteEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleResourceOwner},
+	t.ListEnvironments:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetEnvironment:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleEnvironmentOwner, t.RoleEnvironmentCollaborator},
+	t.CreateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin},
+	t.CloneEnvironment:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleEnvironmentOwner, t.RoleEnvironmentCollaborator},
+	t.UpdateEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleResourceOwner, t.RoleEnvironmentOwner},
+	t.DeleteEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleResourceOwner, t.RoleEnvironmentOwner},
 
-	t.ReadResourcesInEnvironment:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.MutateResourcesInEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleResourceOwner},
+	t.ReadResourcesInEnvironment:   []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.MutateResourcesInEnvironment: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleResourceOwner, t.RoleEnvironmentCollaborator},
 
 	// for vpn devices
-	t.ListVPNDevices:            []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetVPNDevice:              []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.CreateVPNDevice:           []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListVPNDevices:            []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetVPNDevice:              []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.CreateVPNDevice:           []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 	t.UpdateVPNDevice:           []t.Role{t.RoleResourceOwner},
-	t.DeleteVPNDevice:           []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleProjectAdmin, t.RoleResourceOwner},
+	t.DeleteVPNDevice:           []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleResourceOwner},
 	t.GetVPNDeviceConnectConfig: []t.Role{t.RoleResourceOwner},
 
-	t.ListBuildIntegrations:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetBuildIntegration:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.CreateBuildIntegration: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.UpdateBuildIntegration: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.DeleteBuildIntegration: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListBuildIntegrations:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetBuildIntegration:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.CreateBuildIntegration: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.UpdateBuildIntegration: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.DeleteBuildIntegration: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 
-	t.ListBuildRuns:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.GetBuildRun:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.CreateBuildRun: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.UpdateBuildRun: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
-	t.DeleteBuildRun: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember, t.RoleProjectAdmin, t.RoleProjectMember},
+	t.ListBuildRuns:  []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.GetBuildRun:    []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.CreateBuildRun: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.UpdateBuildRun: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
+	t.DeleteBuildRun: []t.Role{t.RoleAccountOwner, t.RoleAccountAdmin, t.RoleAccountMember},
 }

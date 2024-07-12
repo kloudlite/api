@@ -16,4 +16,5 @@ message GetAccountOut {
   string targetNamespace = 2;
   string accountId = 3;
   string kloudliteGatewayRegion = 4;
+  string Type = 5;
 }

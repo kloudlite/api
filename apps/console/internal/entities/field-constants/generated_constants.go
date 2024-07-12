@@ -74,6 +74,13 @@ const (
 	ConsoleVPNDeviceWireguardConfigs      = "wireguardConfigs"
 )
 
+// constant vars generated for struct EnvMembership
+const (
+	EnvMembershipEnvName = "envName"
+	EnvMembershipRole    = "role"
+	EnvMembershipUserId  = "userId"
+)
+
 // constant vars generated for struct Environment
 const (
 	EnvironmentIsArchived                     = "isArchived"

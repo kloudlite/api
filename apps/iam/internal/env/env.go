@@ -11,6 +11,8 @@ type Env struct {
 	MongoDbName string `env:"MONGO_DB_NAME" required:"true"`
 
 	ActionRoleMapFile string `env:"ACTION_ROLE_MAP_FILE" required:"false"`
+
+	AccountsGrpcAddr string `env:"ACCOUNTS_GRPC_ADDR" required:"true"`
 }
 
 func LoadEnv() (*Env, error) {

@@ -69,6 +69,18 @@ type CoreSearchVPNDevices struct {
 	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
 }
 
+type EnvMembership struct {
+	EnvName string                                `json:"envName"`
+	Role    GithubComKloudliteAPIAppsIamTypesRole `json:"role"`
+	UserID  string                                `json:"userId"`
+}
+
+type EnvMembershipIn struct {
+	EnvName string                                `json:"envName"`
+	Role    GithubComKloudliteAPIAppsIamTypesRole `json:"role"`
+	UserID  string                                `json:"userId"`
+}
+
 type EnvironmentEdge struct {
 	Cursor string                `json:"cursor"`
 	Node   *entities.Environment `json:"node"`
@@ -957,6 +969,55 @@ func (e *GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) Unmarshal
 }
 
 func (e GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteAPIAppsIamTypesRole string
+
+const (
+	GithubComKloudliteAPIAppsIamTypesRoleAccountAdmin            GithubComKloudliteAPIAppsIamTypesRole = "account_admin"
+	GithubComKloudliteAPIAppsIamTypesRoleAccountMember           GithubComKloudliteAPIAppsIamTypesRole = "account_member"
+	GithubComKloudliteAPIAppsIamTypesRoleAccountOwner            GithubComKloudliteAPIAppsIamTypesRole = "account_owner"
+	GithubComKloudliteAPIAppsIamTypesRoleEnvironmentCollaborator GithubComKloudliteAPIAppsIamTypesRole = "environment_collaborator"
+	GithubComKloudliteAPIAppsIamTypesRoleEnvironmentOwner        GithubComKloudliteAPIAppsIamTypesRole = "environment_owner"
+	GithubComKloudliteAPIAppsIamTypesRoleResourceOwner           GithubComKloudliteAPIAppsIamTypesRole = "resource_owner"
+)
+
+var AllGithubComKloudliteAPIAppsIamTypesRole = []GithubComKloudliteAPIAppsIamTypesRole{
+	GithubComKloudliteAPIAppsIamTypesRoleAccountAdmin,
+	GithubComKloudliteAPIAppsIamTypesRoleAccountMember,
+	GithubComKloudliteAPIAppsIamTypesRoleAccountOwner,
+	GithubComKloudliteAPIAppsIamTypesRoleEnvironmentCollaborator,
+	GithubComKloudliteAPIAppsIamTypesRoleEnvironmentOwner,
+	GithubComKloudliteAPIAppsIamTypesRoleResourceOwner,
+}
+
+func (e GithubComKloudliteAPIAppsIamTypesRole) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIAppsIamTypesRoleAccountAdmin, GithubComKloudliteAPIAppsIamTypesRoleAccountMember, GithubComKloudliteAPIAppsIamTypesRoleAccountOwner, GithubComKloudliteAPIAppsIamTypesRoleEnvironmentCollaborator, GithubComKloudliteAPIAppsIamTypesRoleEnvironmentOwner, GithubComKloudliteAPIAppsIamTypesRoleResourceOwner:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIAppsIamTypesRole) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIAppsIamTypesRole) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIAppsIamTypesRole(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___apps___iam___types__Role", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIAppsIamTypesRole) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

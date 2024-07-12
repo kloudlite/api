@@ -3,14 +3,16 @@ package framework
 import (
 	"context"
 	"fmt"
+	"time"
+
 	"github.com/kloudlite/api/apps/iam/internal/app"
 	"github.com/kloudlite/api/apps/iam/internal/env"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/grpc"
+	rpc "github.com/kloudlite/api/pkg/grpc"
 	"github.com/kloudlite/api/pkg/logging"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
-	"time"
 )
 
 type fm struct {
@@ -36,6 +38,10 @@ var Module fx.Option = fx.Module(
 		return grpc.NewGrpcServer(grpc.ServerOpts{
 			Logger: logger,
 		})
+	}),
+
+	fx.Provide(func(ev *env.Env) (app.AccountsClient, error) {
+		return rpc.NewGrpcClient(ev.AccountsGrpcAddr)
 	}),
 
 	app.Module,

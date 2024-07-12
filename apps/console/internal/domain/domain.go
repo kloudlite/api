@@ -394,42 +394,6 @@ func (d *domain) MatchRecordVersion(annotations map[string]string, rv int) (int,
 	return annVersion, nil
 }
 
-func (d *domain) canMutateResourcesInProject(ctx ConsoleContext, projectName string) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
-		UserId: string(ctx.UserId),
-		ResourceRefs: []string{
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceProject, projectName),
-		},
-		Action: string(iamT.MutateResourcesInProject),
-	})
-	if err != nil {
-		return errors.NewE(err)
-	}
-	if !co.Status {
-		return errors.Newf("unauthorized to mutate resources in project (%s)", projectName)
-	}
-	return nil
-}
-
-func (d *domain) canReadResourcesInProject(ctx ConsoleContext, projectName string) error {
-	co, err := d.iamClient.Can(ctx, &iam.CanIn{
-		UserId: string(ctx.UserId),
-		ResourceRefs: []string{
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceAccount, ctx.AccountName),
-			iamT.NewResourceRef(ctx.AccountName, iamT.ResourceProject, projectName),
-		},
-		Action: string(iamT.GetProject),
-	})
-	if err != nil {
-		return errors.NewE(err)
-	}
-	if !co.Status {
-		return errors.Newf("unauthorized to read resources in project (%s)", projectName)
-	}
-	return nil
-}
-
 func (d *domain) canMutateSecretsInAccount(ctx context.Context, userId string, accountName string) error {
 	co, err := d.iamClient.Can(ctx, &iam.CanIn{
 		UserId: userId,

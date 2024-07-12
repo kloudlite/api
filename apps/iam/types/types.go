@@ -5,11 +5,17 @@ import (
 	"strings"
 )
 
+type AccountType string
+
+const (
+	AccountTypeFree    AccountType = "free"
+	AccountTypePremium AccountType = "premium"
+)
+
 type ResourceType string
 
 const (
 	ResourceAccount ResourceType = "account"
-	ResourceProject ResourceType = "project"
 
 	ResourceEnvironment      ResourceType = "environment"
 	ResourceConsoleVPNDevice ResourceType = "console_vpn_device"
@@ -21,12 +27,12 @@ type Role string
 const (
 	RoleResourceOwner Role = "resource_owner"
 
+	RoleEnvironmentOwner        Role = "environment_owner"
+	RoleEnvironmentCollaborator Role = "environment_collaborator"
+
 	RoleAccountOwner  Role = "account_owner"
 	RoleAccountAdmin  Role = "account_admin"
 	RoleAccountMember Role = "account_member"
-
-	RoleProjectAdmin  Role = "project_admin"
-	RoleProjectMember Role = "project_member"
 )
 
 type Action string
@@ -47,16 +53,16 @@ const (
 	ListAccountInvitations Action = "list-account-invitations"
 	GetAccountInvitation   Action = "get-account-invitation"
 
-	ListProjectInvitations Action = "list-project-invitations"
-	GetProjectInvitation   Action = "get-project-invitation"
-
 	DeleteAccountInvitation Action = "delete-account-invitation"
-	DeleteProjectInvitation Action = "delete-project-invitation"
 
 	ListMembershipsForAccount Action = "list-memberships-for-account"
 
 	RemoveAccountMembership Action = "remove-account-membership"
 	UpdateAccountMembership Action = "update-account-membership"
+
+	CreateEnvironmentMembership Action = "create-environment-membership"
+	RemoveEnvironmentMembership Action = "remove-environment-membership"
+	UpdateEnvironmentMembership Action = "update-environment-membership"
 
 	ActivateAccount   Action = "activate-account"
 	DeactivateAccount Action = "deactivate-account"
@@ -75,13 +81,6 @@ const (
 	ListClusterManagedServices  Action = "list-cluster-managed-services"
 	GetClusterManagedService    Action = "get-cluster-managed-service"
 	UpdateClusterManagedService Action = "update-cluster-managed-service"
-
-	// project managed services
-	CreateProjectManagedService Action = "create-project-managed-service"
-	DeleteProjectManagedService Action = "delete-project-managed-service"
-	ListProjectManagedServices  Action = "list-project-managed-services"
-	GetProjectManagedService    Action = "get-project-managed-service"
-	UpdateProjectManagedService Action = "update-project-managed-service"
 
 	// helm releases
 	CreateHelmRelease Action = "create-helm-release"
@@ -110,22 +109,6 @@ const (
 
 	ListCloudProviderSecrets Action = "list-cloud-provider-secrets"
 	GetCloudProviderSecret   Action = "get-cloud-provider-secret"
-
-	CreateProject Action = "create-project"
-	ListProjects  Action = "list-projects"
-	GetProject    Action = "get-project"
-	UpdateProject Action = "update-project"
-	DeleteProject Action = "delete-project"
-
-	// invite
-	InviteProjectAdmin  Action = "invite-project-admin"
-	InviteProjectMember Action = "invite-project-member"
-
-	MutateResourcesInProject Action = "mutate-resources-in-project"
-
-	ListMembershipsForProject Action = "list-memberships-for-project"
-	UpdateProjectMembership   Action = "update-project-membership"
-	RemoveProjectMembership   Action = "remove-project-membership"
 
 	CreateEnvironment Action = "create-environment"
 	CloneEnvironment  Action = "clone-environment"

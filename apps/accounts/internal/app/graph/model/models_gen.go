@@ -3,6 +3,10 @@
 package model
 
 import (
+	"fmt"
+	"io"
+	"strconv"
+
 	"github.com/kloudlite/api/apps/accounts/internal/entities"
 	"github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/pkg/repos"
@@ -39,3 +43,44 @@ type User struct {
 }
 
 func (User) IsEntity() {}
+
+type GithubComKloudliteAPIAppsIamTypesAccountType string
+
+const (
+	GithubComKloudliteAPIAppsIamTypesAccountTypeFree    GithubComKloudliteAPIAppsIamTypesAccountType = "free"
+	GithubComKloudliteAPIAppsIamTypesAccountTypePremium GithubComKloudliteAPIAppsIamTypesAccountType = "premium"
+)
+
+var AllGithubComKloudliteAPIAppsIamTypesAccountType = []GithubComKloudliteAPIAppsIamTypesAccountType{
+	GithubComKloudliteAPIAppsIamTypesAccountTypeFree,
+	GithubComKloudliteAPIAppsIamTypesAccountTypePremium,
+}
+
+func (e GithubComKloudliteAPIAppsIamTypesAccountType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIAppsIamTypesAccountTypeFree, GithubComKloudliteAPIAppsIamTypesAccountTypePremium:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIAppsIamTypesAccountType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIAppsIamTypesAccountType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIAppsIamTypesAccountType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___apps___iam___types__AccountType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIAppsIamTypesAccountType) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}

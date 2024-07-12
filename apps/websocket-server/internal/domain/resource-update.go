@@ -20,9 +20,9 @@ func (d *domain) checkAccess(ctx context.Context, rdata *res_watch.ReqData, user
 		ResourceRefs: func() []string {
 			var refs []string
 
-			if rdata.ProjectName != "" {
-				refs = append(refs, iamT.NewResourceRef(rdata.AccountName, iamT.ResourceProject, rdata.ProjectName))
-			}
+			// if rdata.ProjectName != "" {
+			// 	refs = append(refs, iamT.NewResourceRef(rdata.AccountName, iamT.ResourceProject, rdata.ProjectName))
+			// }
 
 			refs = append(refs, iamT.NewResourceRef(rdata.AccountName, iamT.ResourceAccount, rdata.AccountName))
 
@@ -30,11 +30,11 @@ func (d *domain) checkAccess(ctx context.Context, rdata *res_watch.ReqData, user
 
 		}(),
 		Action: string(func() iamT.Action {
-			if rdata.ProjectName != "" {
-				return iamT.GetAccount
-			} else {
-				return iamT.GetProject
-			}
+			return iamT.GetAccount
+			// if rdata.ProjectName != "" {
+			// } else {
+			// 	return iamT.GetProject
+			// }
 		}()),
 	})
 

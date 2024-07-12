@@ -229,7 +229,7 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, args CloneEnvironmentArgs)
 		UserId:       string(ctx.UserId),
 		ResourceType: string(iamT.ResourceEnvironment),
 		ResourceRef:  iamT.NewResourceRef(ctx.AccountName, iamT.ResourceEnvironment, destEnv.Spec.TargetNamespace),
-		Role:         string(iamT.RoleResourceOwner),
+		Role:         string(iamT.RoleEnvironmentOwner),
 	}); err != nil {
 		d.logger.Errorf(err, "error while adding membership")
 	}

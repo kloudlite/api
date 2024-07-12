@@ -12,6 +12,7 @@ type Account @shareable {
   metadata: Metadata @goField(name: "objectMeta")
   recordVersion: Int!
   targetNamespace: String
+  type: Github__com___kloudlite___api___apps___iam___types__AccountType!
   updateTime: Date!
 }
 
@@ -22,5 +23,6 @@ input AccountIn {
   kloudliteGatewayRegion: String!
   logo: String
   metadata: MetadataIn
+  type: Github__com___kloudlite___api___apps___iam___types__AccountType!
 }
 

@@ -7,6 +7,7 @@ import (
 
 	"github.com/kloudlite/api/apps/iam/internal/entities"
 	t "github.com/kloudlite/api/apps/iam/types"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
 )
@@ -28,6 +29,7 @@ type Domain interface {
 type domain struct {
 	rbRepo         repos.DbRepo[*entities.RoleBinding]
 	roleBindingMap map[t.Action][]t.Role
+	accountsClient accounts.AccountsClient
 }
 
 func (d domain) AddRoleBinding(ctx context.Context, rb entities.RoleBinding) (*entities.RoleBinding, error) {
@@ -142,6 +144,35 @@ func (d domain) ListRoleBindingsForUser(ctx context.Context, userId repos.ID, re
 }
 
 func (d domain) Can(ctx context.Context, userId repos.ID, resourceRefs []string, action t.Action) (bool, error) {
+
+	// override action and resourceRefs if account is not premium
+	if len(resourceRefs) == 0 {
+		return false, UnAuthorizedError{debugMsg: "resourceRefs is empty"}
+	}
+
+	accountName, rt, rn, err := t.ParseResourceRef(resourceRefs[0])
+	if err != nil {
+		return false, UnAuthorizedError{debugMsg: fmt.Sprintf("invalid resource ref %s", resourceRefs[0])}
+	}
+
+	acc, err := d.accountsClient.GetAccount(ctx, &accounts.GetAccountIn{
+		UserId:      string(userId),
+		AccountName: accountName,
+	})
+
+	if err != nil {
+		return false, UnAuthorizedError{debugMsg: fmt.Sprintf("could not get account %s", accountName)}
+	}
+
+	if acc.Type != string(t.AccountTypePremium) {
+		action = t.GetAccount
+		resourceRefs = []string{t.NewResourceRef(accountName, t.ResourceType(rt), rn)}
+	}
+
+	if err != nil {
+		return false, UnAuthorizedError{debugMsg: fmt.Sprintf("could not get account %s", accountName)}
+	}
+
 	if d.roleBindingMap == nil {
 		return false, UnAuthorizedError{debugMsg: "action-role-binding map is empty"}
 	}
@@ -177,9 +208,10 @@ func (d domain) Can(ctx context.Context, userId repos.ID, resourceRefs []string,
 	return false, UnAuthorizedError{debugMsg: fmt.Sprintf("no role bindings allow user %q to perform action %q on resource %q", userId, action, resourceRefs)}
 }
 
-func NewDomain(rbRepo repos.DbRepo[*entities.RoleBinding], roleBindingMap map[t.Action][]t.Role) Domain {
+func NewDomain(rbRepo repos.DbRepo[*entities.RoleBinding], roleBindingMap map[t.Action][]t.Role, accountsClient accounts.AccountsClient) Domain {
 	return &domain{
 		rbRepo:         rbRepo,
 		roleBindingMap: roleBindingMap,
+		accountsClient: accountsClient,
 	}
 }
