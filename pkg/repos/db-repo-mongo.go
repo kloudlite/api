@@ -4,6 +4,7 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
+	"reflect"
 	"regexp"
 	"strings"
 	"time"
@@ -171,6 +172,14 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		return nil, errors.Newf("paramter `before` requires paramter `last` to be specified")
 	}
 
+	var cursorKey string
+
+	if pagination.OrderBy == ""{
+		cursorKey = "_id"
+	} else {
+		cursorKey = pagination.OrderBy
+	}
+
 	queryFilter := Filter{}
 
 	for k, v := range filter {
@@ -182,11 +191,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		if err != nil {
 			return nil, errors.NewE(err)
 		}
-		objectID, err := primitive.ObjectIDFromHex(string(aft))
-		if err != nil {
-			return nil, errors.NewE(err)
-		}
-		queryFilter["_id"] = bson.M{"$gt": objectID}
+		queryFilter[cursorKey] = bson.M{"$gte": string(aft)}
 	}
 
 	if pagination.Before != nil {
@@ -194,11 +199,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		if err != nil {
 			return nil, errors.NewE(err)
 		}
-		objectID, err := primitive.ObjectIDFromHex(string(bef))
-		if err != nil {
-			return nil, errors.NewE(err)
-		}
-		queryFilter["_id"] = bson.M{"$lt": objectID}
+		queryFilter[cursorKey] = bson.M{"$lte": string(bef)}
 	}
 
 	var limit int64
@@ -210,7 +211,6 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		limit = *pagination.First + 1
 	}
 
-	// var results []T
 	curr, err := repo.db.Collection(repo.collectionName).Find(
 		ctx, queryFilter, &options.FindOptions{
 			Limit: &limit,
@@ -238,9 +238,19 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	pageInfo := PageInfo{}
 
+	getCursorOfResult := func(r T) string {
+		if pagination.OrderBy == "" {
+			v := reflect.ValueOf(r)
+			field := v.FieldByName(pagination.OrderBy)
+			return CursorToBase64(Cursor(field.String()))
+		} else {
+			return CursorToBase64(Cursor(r.GetPrimitiveID()))
+		}
+	}
+
 	if len(results) > 0 {
-		pageInfo.StartCursor = CursorToBase64(Cursor(string(results[0].GetPrimitiveID())))
-		pageInfo.EndCursor = CursorToBase64(Cursor(string(results[len(results)-1].GetPrimitiveID())))
+		pageInfo.StartCursor = getCursorOfResult(results[0])
+		pageInfo.EndCursor = getCursorOfResult(results[len(results)-1])
 
 		if pagination.First != nil {
 			pageInfo.HasNextPage = fn.New(len(results) > int(*pagination.First))
@@ -253,7 +263,6 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		if pagination.Last != nil {
 			pageInfo.HasNextPage = fn.New(pagination.Before != nil)
 			pageInfo.HasPrevPage = fn.New(len(results) > int(*pagination.Last))
-
 			if pageInfo.HasPrevPage != nil && *pageInfo.HasPrevPage {
 				results = results[:*pagination.Last]
 			}
@@ -264,7 +273,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	for i := range results {
 		edges[i] = RecordEdge[T]{
 			Node:   results[i],
-			Cursor: CursorToBase64(Cursor(results[i].GetPrimitiveID())),
+			Cursor: getCursorOfResult(results[i]),
 		}
 	}
 
