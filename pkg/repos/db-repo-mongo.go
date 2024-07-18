@@ -4,13 +4,13 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"reflect"
+	"github.com/PaesslerAG/jsonpath"
+	"go.mongodb.org/mongo-driver/bson/primitive"
 	"regexp"
 	"strings"
 	"time"
 
 	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
 	"go.uber.org/fx"
 
 	"github.com/kloudlite/api/pkg/errors"
@@ -155,23 +155,6 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 	return item, nil
 }
 
-func getFieldValueByName(s interface{}, fieldName string) (string, error) {
-	v := reflect.ValueOf(s)
-
-	// Check if the provided interface is a pointer and get the value it points to
-	if v.Kind() == reflect.Ptr {
-		v = v.Elem()
-	}
-
-	// Get the field by name
-	field := v.FieldByName(fieldName)
-	if !field.IsValid() {
-		return "", fmt.Errorf("no such field: %s in struct", fieldName)
-	}
-
-	return field.String(), nil
-}
-
 func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination CursorPagination) (*PaginatedRecord[T], error) {
 	if pagination.First != nil && pagination.Last != nil {
 		return nil, errors.Newf("first/last only one of these parameters could be passed on, you have specified both")
@@ -255,20 +238,26 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	pageInfo := PageInfo{}
 
-	getCursorOfResult := func(r T) (string) {
+	getCursorOfResult := func(r T) (string, error) {
 		if cursorKey == "_id" {
-			return CursorToBase64(Cursor(r.GetId()))
+			return CursorToBase64(Cursor(r.GetId())), nil
 		}
-		val, _ := getFieldValueByName(r, pagination.OrderBy)
+		val, err := jsonpath.Get(fmt.Sprintf("$.%s", cursorKey), r)
 		if err != nil {
-			return ""
+			return "", errors.NewE(err)
 		}
-		return CursorToBase64(Cursor(string(val)))
+		return CursorToBase64(Cursor(fmt.Sprintf("%v", val ))), nil
 	}
 
 	if len(results) > 0 {
-		pageInfo.StartCursor = getCursorOfResult(results[0])
-		pageInfo.EndCursor = getCursorOfResult(results[len(results)-1])
+		pageInfo.StartCursor, err = getCursorOfResult(results[0])
+		if err != nil {
+			return nil, errors.NewE(err)
+		}
+		pageInfo.EndCursor, err = getCursorOfResult(results[len(results)-1])
+		if err != nil {
+			return nil, errors.NewE(err)
+		}
 
 		if pagination.First != nil {
 			pageInfo.HasNextPage = fn.New(len(results) > int(*pagination.First))
@@ -289,9 +278,13 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	edges := make([]RecordEdge[T], len(results))
 	for i := range results {
+		c, err:= getCursorOfResult(results[i])
+		if err != nil {
+			return nil, errors.NewE(err)
+		}
 		edges[i] = RecordEdge[T]{
 			Node:   results[i],
-			Cursor: getCursorOfResult(results[i]),
+			Cursor:c,
 		}
 	}
 
