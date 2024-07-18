@@ -82,24 +82,24 @@ func bsonToStruct[T any](r *mongo.SingleResult) (T, error) {
 	return result, nil
 }
 
-func cursorToStruct[T any](ctx context.Context, curr *mongo.Cursor) ([]T, error) {
+func cursorToStruct[T any](ctx context.Context, curr *mongo.Cursor) ([]T, []map[string]any, error) {
 	var m []map[string]any
 	var results []T
 
 	if err := curr.All(ctx, &m); err != nil {
-		return results, errors.NewE(err)
+		return results, m,errors.NewE(err)
 	}
 
 	b, err := json.Marshal(m)
 	if err != nil {
-		return results, errors.NewE(err)
+		return results, m,errors.NewE(err)
 	}
 
 	if err := json.Unmarshal(b, &results); err != nil {
-		return results, errors.NewE(err)
+		return results, m,errors.NewE(err)
 	}
 
-	return results, nil
+	return results, m,nil
 }
 
 func (repo *dbRepo[T]) NewId() ID {
@@ -123,8 +123,8 @@ func (repo *dbRepo[T]) Find(ctx context.Context, query Query) ([]T, error) {
 		}
 		return nil, errors.NewE(err)
 	}
-
-	return cursorToStruct[T](ctx, curr)
+	toStruct, _, err := cursorToStruct[T](ctx, curr)
+	return toStruct, err
 }
 
 func (repo *dbRepo[T]) Count(ctx context.Context, filter Filter) (int64, error) {
@@ -226,7 +226,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 		return nil, errors.NewE(err)
 	}
 
-	results, err := cursorToStruct[T](ctx, curr)
+	results, rawResults, err := cursorToStruct[T](ctx, curr)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -238,11 +238,11 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	pageInfo := PageInfo{}
 
-	getCursorOfResult := func(r T) (string, error) {
+	getCursorOfResult := func(r T,m map[string]any) (string, error) {
 		if cursorKey == "_id" {
 			return CursorToBase64(Cursor(r.GetId())), nil
 		}
-		val, err := jsonpath.Get(fmt.Sprintf("$.%s", cursorKey), r)
+		val, err := jsonpath.Get(fmt.Sprintf("$.%s", cursorKey), m)
 		if err != nil {
 			return "", errors.NewE(err)
 		}
@@ -250,11 +250,11 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	}
 
 	if len(results) > 0 {
-		pageInfo.StartCursor, err = getCursorOfResult(results[0])
+		pageInfo.StartCursor, err = getCursorOfResult(results[0], rawResults[0])
 		if err != nil {
 			return nil, errors.NewE(err)
 		}
-		pageInfo.EndCursor, err = getCursorOfResult(results[len(results)-1])
+		pageInfo.EndCursor, err = getCursorOfResult(results[len(results)-1], rawResults[len(results)-1])
 		if err != nil {
 			return nil, errors.NewE(err)
 		}
@@ -278,7 +278,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	edges := make([]RecordEdge[T], len(results))
 	for i := range results {
-		c, err:= getCursorOfResult(results[i])
+		c, err:= getCursorOfResult(results[i], rawResults[i])
 		if err != nil {
 			return nil, errors.NewE(err)
 		}
