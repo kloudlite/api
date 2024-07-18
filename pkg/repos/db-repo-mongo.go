@@ -155,6 +155,23 @@ func (repo *dbRepo[T]) FindOne(ctx context.Context, filter Filter) (T, error) {
 	return item, nil
 }
 
+func getFieldValueByName(s interface{}, fieldName string) (string, error) {
+	v := reflect.ValueOf(s)
+
+	// Check if the provided interface is a pointer and get the value it points to
+	if v.Kind() == reflect.Ptr {
+		v = v.Elem()
+	}
+
+	// Get the field by name
+	field := v.FieldByName(fieldName)
+	if !field.IsValid() {
+		return "", fmt.Errorf("no such field: %s in struct", fieldName)
+	}
+
+	return field.String(), nil
+}
+
 func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, pagination CursorPagination) (*PaginatedRecord[T], error) {
 	if pagination.First != nil && pagination.Last != nil {
 		return nil, errors.Newf("first/last only one of these parameters could be passed on, you have specified both")
@@ -238,14 +255,15 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 
 	pageInfo := PageInfo{}
 
-	getCursorOfResult := func(r T) string {
-		if pagination.OrderBy == "" {
-			v := reflect.ValueOf(r)
-			field := v.FieldByName(pagination.OrderBy)
-			return CursorToBase64(Cursor(field.String()))
-		} else {
-			return CursorToBase64(Cursor(r.GetPrimitiveID()))
+	getCursorOfResult := func(r T) (string) {
+		if cursorKey == "_id" {
+			return CursorToBase64(Cursor(r.GetId()))
 		}
+		val, _ := getFieldValueByName(r, pagination.OrderBy)
+		if err != nil {
+			return ""
+		}
+		return CursorToBase64(Cursor(string(val)))
 	}
 
 	if len(results) > 0 {
