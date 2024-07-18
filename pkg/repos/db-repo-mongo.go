@@ -250,14 +250,7 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 	}
 
 	if len(results) > 0 {
-		pageInfo.StartCursor, err = getCursorOfResult(results[0], rawResults[0])
-		if err != nil {
-			return nil, errors.NewE(err)
-		}
-		pageInfo.EndCursor, err = getCursorOfResult(results[len(results)-1], rawResults[len(results)-1])
-		if err != nil {
-			return nil, errors.NewE(err)
-		}
+
 
 		if pagination.First != nil {
 			pageInfo.HasNextPage = fn.New(len(results) > int(*pagination.First))
@@ -273,6 +266,15 @@ func (repo *dbRepo[T]) FindPaginated(ctx context.Context, filter Filter, paginat
 			if pageInfo.HasPrevPage != nil && *pageInfo.HasPrevPage {
 				results = results[:*pagination.Last]
 			}
+		}
+
+		pageInfo.StartCursor, err = getCursorOfResult(results[0], rawResults[0])
+		if err != nil {
+			return nil, errors.NewE(err)
+		}
+		pageInfo.EndCursor, err = getCursorOfResult(results[len(results)-1], rawResults[len(results)-1])
+		if err != nil {
+			return nil, errors.NewE(err)
 		}
 	}
 
