@@ -50,6 +50,10 @@ func (d *domain) cleanupEnvironment(ctx ConsoleContext, envName string) error {
 		return errors.NewE(err)
 	}
 
+	if err := d.importedMresRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
 	return nil
 }
 
@@ -544,6 +548,10 @@ func (d *domain) DeleteEnvironment(ctx ConsoleContext, name string) error {
 	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, uenv.Name, PublishUpdate)
 
 	if uenv.IsArchived != nil && *uenv.IsArchived {
+		if err := d.cleanupEnvironment(ctx, name); err != nil {
+			return errors.NewE(err)
+		}
+
 		return d.environmentRepo.DeleteById(ctx, uenv.Id)
 	}
 
