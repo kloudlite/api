@@ -47,15 +47,18 @@ type domain struct {
 	infraClient infra.InfraClient
 
 	environmentRepo repos.DbRepo[*entities.Environment]
-	vpnDeviceRepo   repos.DbRepo[*entities.ConsoleVPNDevice]
 
-	appRepo         repos.DbRepo[*entities.App]
-	externalAppRepo repos.DbRepo[*entities.ExternalApp]
-	configRepo      repos.DbRepo[*entities.Config]
-	secretRepo      repos.DbRepo[*entities.Secret]
-	routerRepo      repos.DbRepo[*entities.Router]
-	mresRepo        repos.DbRepo[*entities.ManagedResource]
-	pullSecretsRepo repos.DbRepo[*entities.ImagePullSecret]
+	appRepo          repos.DbRepo[*entities.App]
+	externalAppRepo  repos.DbRepo[*entities.ExternalApp]
+	configRepo       repos.DbRepo[*entities.Config]
+	secretRepo       repos.DbRepo[*entities.Secret]
+	routerRepo       repos.DbRepo[*entities.Router]
+	mresRepo         repos.DbRepo[*entities.ManagedResource]
+	importedMresRepo repos.DbRepo[*entities.ImportedManagedResource]
+	pullSecretsRepo  repos.DbRepo[*entities.ImagePullSecret]
+
+	serviceBindingRepo        repos.DbRepo[*entities.ServiceBinding]
+	clusterManagedServiceRepo repos.DbRepo[*entities.ClusterManagedService]
 
 	envVars *env.Env
 
@@ -128,7 +131,7 @@ func (d *domain) applyK8sResourceOnCluster(ctx K8sContext, clusterName string, o
 		return errors.NewE(err)
 	}
 
-	subject := common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), clusterName)
+	subject := common.SendToAgentSubjectName(ctx.GetAccountName(), clusterName, obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName())
 
 	err = d.producer.Produce(ctx, msgTypes.ProduceMsg{
 		Subject: subject,
@@ -136,6 +139,8 @@ func (d *domain) applyK8sResourceOnCluster(ctx K8sContext, clusterName string, o
 	})
 	return errors.NewE(err)
 }
+
+// func (d *domain) applyK8sResource(ctx K8sContext, clusterName string, obj client.Object, recordVersion int) error {|}
 
 func (d *domain) applyK8sResource(ctx K8sContext, envName string, obj client.Object, recordVersion int) error {
 	clusterName, err := d.getClusterAttachedToEnvironment(ctx, envName)
@@ -173,12 +178,57 @@ func (d *domain) applyK8sResource(ctx K8sContext, envName string, obj client.Obj
 		return errors.NewE(err)
 	}
 
-	subject := common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), *clusterName)
+	subject := common.SendToAgentSubjectName(ctx.GetAccountName(), *clusterName, obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName())
 
 	err = d.producer.Produce(ctx, msgTypes.ProduceMsg{
 		Subject: subject,
 		Payload: b,
 	})
+	return errors.NewE(err)
+}
+
+type ApplyK8sResourceArgs struct {
+	ClusterName   string
+	Object        client.Object
+	RecordVersion int
+
+	Dispatcher MessageDispatcher
+}
+
+func applyK8sResource(ctx K8sContext, args ApplyK8sResourceArgs) error {
+	if args.ClusterName == "" {
+		// d.logger.Infof("skipping apply of k8s resource %s/%s, cluster name not provided", args.Object.GetNamespace(), args.Object.GetName())
+		return nil
+	}
+
+	if args.Object.GetObjectKind().GroupVersionKind().Empty() {
+		return errors.Newf("args.Objectect GVK is not set, can not apply")
+	}
+
+	ann := args.Object.GetAnnotations()
+	if ann == nil {
+		ann = make(map[string]string, 1)
+	}
+	ann[constants.RecordVersionKey] = fmt.Sprintf("%d", args.RecordVersion)
+	args.Object.SetAnnotations(ann)
+
+	m, err := fn.K8sObjToMap(args.Object)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	b, err := json.Marshal(t.AgentMessage{
+		AccountName: ctx.GetAccountName(),
+		ClusterName: args.ClusterName,
+		Action:      t.ActionApply,
+		Object:      m,
+	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	subject := common.SendToAgentSubjectName(ctx.GetAccountName(), args.ClusterName, args.Object.GetObjectKind().GroupVersionKind().String(), args.Object.GetNamespace(), args.Object.GetName())
+
+	err = args.Dispatcher.Produce(ctx, msgTypes.ProduceMsg{Subject: subject, Payload: b})
 	return errors.NewE(err)
 }
 
@@ -211,7 +261,7 @@ func (d *domain) restartK8sResource(ctx K8sContext, projectName string, namespac
 		return errors.NewE(err)
 	}
 
-	subject := common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), *clusterName)
+	subject := common.SendToAgentSubjectName(ctx.GetAccountName(), *clusterName, obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName())
 
 	err = d.producer.Produce(ctx, msgTypes.ProduceMsg{
 		Subject: subject,
@@ -239,8 +289,9 @@ func (d *domain) deleteK8sResourceOfCluster(ctx K8sContext, clusterName string, 
 		return errors.NewE(err)
 	}
 
+	subject := common.SendToAgentSubjectName(ctx.GetAccountName(), clusterName, obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName())
 	err = d.producer.Produce(ctx, msgTypes.ProduceMsg{
-		Subject: common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), clusterName),
+		Subject: subject,
 		Payload: b,
 	})
 
@@ -250,7 +301,7 @@ func (d *domain) deleteK8sResourceOfCluster(ctx K8sContext, clusterName string, 
 func (d *domain) deleteK8sResource(ctx K8sContext, environmentName string, obj client.Object) error {
 	clusterName, err := d.getClusterAttachedToEnvironment(ctx, environmentName)
 	if err != nil {
-		return errors.NewE(err)
+		return ErrNoClusterAttached
 	}
 
 	if clusterName == nil || *clusterName == "" {
@@ -276,8 +327,10 @@ func (d *domain) deleteK8sResource(ctx K8sContext, environmentName string, obj c
 		return errors.NewE(err)
 	}
 
+	subject := common.SendToAgentSubjectName(ctx.GetAccountName(), *clusterName, obj.GetObjectKind().GroupVersionKind().String(), obj.GetNamespace(), obj.GetName())
+
 	err = d.producer.Produce(ctx, msgTypes.ProduceMsg{
-		Subject: common.GetTenantClusterMessagingTopic(ctx.GetAccountName(), *clusterName),
+		Subject: subject,
 		Payload: b,
 	})
 
@@ -509,9 +562,11 @@ var Module = fx.Module("domain",
 		secretRepo repos.DbRepo[*entities.Secret],
 		routerRepo repos.DbRepo[*entities.Router],
 		mresRepo repos.DbRepo[*entities.ManagedResource],
+		importedMresRepo repos.DbRepo[*entities.ImportedManagedResource],
 		ipsRepo repos.DbRepo[*entities.ImagePullSecret],
 		resourceMappingRepo repos.DbRepo[*entities.ResourceMapping],
-		vpnDeviceRepo repos.DbRepo[*entities.ConsoleVPNDevice],
+		serviceBindingRepo repos.DbRepo[*entities.ServiceBinding],
+		clusterManagedServiceRepo repos.DbRepo[*entities.ClusterManagedService],
 
 		logger logging.Logger,
 		resourceEventPublisher ResourceEventPublisher,
@@ -529,16 +584,18 @@ var Module = fx.Module("domain",
 			infraClient: infraClient,
 			logger:      logger,
 
-			environmentRepo:     environmentRepo,
-			appRepo:             appRepo,
-			externalAppRepo:     externalAppRepo,
-			configRepo:          configRepo,
-			routerRepo:          routerRepo,
-			secretRepo:          secretRepo,
-			mresRepo:            mresRepo,
-			pullSecretsRepo:     ipsRepo,
-			resourceMappingRepo: resourceMappingRepo,
-			vpnDeviceRepo:       vpnDeviceRepo,
+			environmentRepo:           environmentRepo,
+			appRepo:                   appRepo,
+			externalAppRepo:           externalAppRepo,
+			configRepo:                configRepo,
+			routerRepo:                routerRepo,
+			secretRepo:                secretRepo,
+			mresRepo:                  mresRepo,
+			importedMresRepo:          importedMresRepo,
+			pullSecretsRepo:           ipsRepo,
+			resourceMappingRepo:       resourceMappingRepo,
+			serviceBindingRepo:        serviceBindingRepo,
+			clusterManagedServiceRepo: clusterManagedServiceRepo,
 
 			envVars: ev,
 

@@ -9,15 +9,17 @@ import (
 type ResourceType string
 
 const (
-	ResourceTypeEnvironment     ResourceType = "environment"
-	ResourceTypeApp             ResourceType = "app"
-	ResourceTypeExternalApp     ResourceType = "external_app"
-	ResourceTypeConfig          ResourceType = "config"
-	ResourceTypeSecret          ResourceType = "secret"
-	ResourceTypeImagePullSecret ResourceType = "image_pull_secret"
-	ResourceTypeRouter          ResourceType = "router"
-	ResourceTypeManagedResource ResourceType = "managed_resource"
-	ResourceTypeVPNDevice       ResourceType = "vpn_device"
+	ResourceTypeEnvironment             ResourceType = "environment"
+	ResourceTypeApp                     ResourceType = "app"
+	ResourceTypeExternalApp             ResourceType = "external_app"
+	ResourceTypeConfig                  ResourceType = "config"
+	ResourceTypeSecret                  ResourceType = "secret"
+	ResourceTypeImagePullSecret         ResourceType = "image_pull_secret"
+	ResourceTypeRouter                  ResourceType = "router"
+	ResourceTypeManagedResource         ResourceType = "managed_resource"
+	ResourceTypeImportedManagedResource ResourceType = "imported_managed_resource"
+	ResourceTypeClusterManagedService   ResourceType = "cluster_managed_service"
+	ResourceTypeServiceBinding          ResourceType = "service_binding"
 )
 
 type ResourceHeirarchy string
@@ -51,7 +53,6 @@ var ResourceMappingIndices = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
 			{Key: fields.AccountName, Value: repos.IndexAsc},
-			{Key: fields.ProjectName, Value: repos.IndexAsc},
 			{Key: fields.EnvironmentName, Value: repos.IndexAsc},
 			{Key: fc.ResourceMappingResourceType, Value: repos.IndexAsc},
 			{Key: fc.ResourceMappingResourceName, Value: repos.IndexAsc},

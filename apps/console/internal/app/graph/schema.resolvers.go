@@ -7,6 +7,7 @@ package graph
 import (
 	"context"
 	"fmt"
+
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/console/internal/app/graph/generated"
@@ -17,7 +18,6 @@ import (
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
 	v11 "github.com/kloudlite/operator/apis/crds/v1"
-	"github.com/kloudlite/operator/apis/wireguard/v1"
 )
 
 // Build is the resolver for the build field.
@@ -26,6 +26,23 @@ func (r *appResolver) Build(ctx context.Context, obj *entities.App) (*model.Buil
 		return nil, nil
 	}
 	return &model.Build{ID: *obj.CIBuildId}, nil
+}
+
+// ServiceHost is the resolver for the serviceHost field.
+func (r *appResolver) ServiceHost(ctx context.Context, obj *entities.App) (*string, error) {
+	if obj == nil {
+		return nil, errNilApp
+	}
+	return fn.New(fmt.Sprintf("%s.%s.%s.%s", obj.Name, obj.EnvironmentName, obj.AccountName, r.EnvVars.KloudliteDNSSuffix)), nil
+}
+
+// ManagedResource is the resolver for the ManagedResource field.
+func (r *importedManagedResourceResolver) ManagedResource(ctx context.Context, obj *entities.ImportedManagedResource) (*entities.ManagedResource, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	return r.Domain.GetManagedResourceByID(cc, obj.ManagedResourceRef.ID)
 }
 
 // CoreCreateEnvironment is the resolver for the core_createEnvironment field.
@@ -151,6 +168,18 @@ func (r *mutationResolver) CoreInterceptApp(ctx context.Context, envName string,
 	}
 
 	return r.Domain.InterceptApp(newResourceContext(cc, envName), appname, deviceName, intercept, pmappings)
+}
+
+// CoreRemoveDeviceIntercepts is the resolver for the core_removeDeviceIntercepts field.
+func (r *mutationResolver) CoreRemoveDeviceIntercepts(ctx context.Context, envName string, deviceName string) (bool, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return false, errors.NewE(err)
+	}
+	if err := r.Domain.RemoveDeviceIntercepts(newResourceContext(cc, envName), deviceName); err != nil {
+		return false, err
+	}
+	return true, nil
 }
 
 // CoreCreateExternalApp is the resolver for the core_createExternalApp field.
@@ -290,6 +319,42 @@ func (r *mutationResolver) CoreDeleteRouter(ctx context.Context, envName string,
 	return true, nil
 }
 
+// InfraCreateClusterManagedService is the resolver for the infra_createClusterManagedService field.
+func (r *mutationResolver) InfraCreateClusterManagedService(ctx context.Context, service entities.ClusterManagedService) (*entities.ClusterManagedService, error) {
+	ictx, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	return r.Domain.CreateClusterManagedService(ictx, service)
+}
+
+// InfraUpdateClusterManagedService is the resolver for the infra_updateClusterManagedService field.
+func (r *mutationResolver) InfraUpdateClusterManagedService(ctx context.Context, service entities.ClusterManagedService) (*entities.ClusterManagedService, error) {
+	ictx, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.UpdateClusterManagedService(ictx, service)
+}
+
+// InfraDeleteClusterManagedService is the resolver for the infra_deleteClusterManagedService field.
+func (r *mutationResolver) InfraDeleteClusterManagedService(ctx context.Context, name string) (bool, error) {
+	ictx, err := toConsoleContext(ctx)
+	if err != nil {
+		return false, errors.NewE(err)
+	}
+	if err := r.Domain.DeleteClusterManagedService(ictx, name); err != nil {
+		return false, errors.NewE(err)
+	}
+	return true, nil
+}
+
+// InfraCloneClusterManagedService is the resolver for the infra_cloneClusterManagedService field.
+func (r *mutationResolver) InfraCloneClusterManagedService(ctx context.Context, clusterName string, sourceMsvcName string, destinationMsvcName string, displayName string) (*entities.ClusterManagedService, error) {
+	panic(fmt.Errorf("not implemented: InfraCloneClusterManagedService - infra_cloneClusterManagedService"))
+}
+
 // CoreCreateManagedResource is the resolver for the core_createManagedResource field.
 func (r *mutationResolver) CoreCreateManagedResource(ctx context.Context, msvcName string, mres entities.ManagedResource) (*entities.ManagedResource, error) {
 	cc, err := toConsoleContext(ctx)
@@ -321,128 +386,34 @@ func (r *mutationResolver) CoreDeleteManagedResource(ctx context.Context, msvcNa
 }
 
 // CoreImportManagedResource is the resolver for the core_importManagedResource field.
-func (r *mutationResolver) CoreImportManagedResource(ctx context.Context, envName string, msvcName string, mresName string) (*entities.ManagedResource, error) {
+func (r *mutationResolver) CoreImportManagedResource(ctx context.Context, envName string, msvcName string, mresName string, importName string) (*entities.ImportedManagedResource, error) {
 	cc, err := toConsoleContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.ImportManagedResource(newMresContext(cc, &msvcName, &envName), mresName)
+	return r.Domain.ImportManagedResource(newMresContext(cc, &msvcName, &envName), mresName, importName)
 }
 
 // CoreDeleteImportedManagedResource is the resolver for the core_deleteImportedManagedResource field.
-func (r *mutationResolver) CoreDeleteImportedManagedResource(ctx context.Context, envName string, mresName string) (bool, error) {
+func (r *mutationResolver) CoreDeleteImportedManagedResource(ctx context.Context, envName string, importName string) (bool, error) {
 	cc, err := toConsoleContext(ctx)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
-	if err := r.Domain.DeleteImportedManagedResource(newResourceContext(cc, envName), mresName); err != nil {
+	if err := r.Domain.DeleteImportedManagedResource(newResourceContext(cc, envName), importName); err != nil {
 		return false, errors.NewE(err)
 	}
-	return true, nil
-}
-
-// CoreCreateVPNDevice is the resolver for the core_createVPNDevice field.
-func (r *mutationResolver) CoreCreateVPNDevice(ctx context.Context, vpnDevice entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	return r.Domain.CreateVPNDevice(cc, vpnDevice)
-}
-
-// CoreUpdateVPNDevice is the resolver for the core_updateVPNDevice field.
-func (r *mutationResolver) CoreUpdateVPNDevice(ctx context.Context, vpnDevice entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	return r.Domain.UpdateVPNDevice(cc, vpnDevice)
-}
-
-// CoreUpdateVPNDevicePorts is the resolver for the core_updateVPNDevicePorts field.
-func (r *mutationResolver) CoreUpdateVPNDevicePorts(ctx context.Context, deviceName string, ports []*v1.Port) (bool, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-
-	if err := r.Domain.UpdateVpnDevicePorts(cc, deviceName, ports); err != nil {
-		return false, errors.NewE(err)
-	}
-
-	return true, nil
-}
-
-// CoreUpdateVPNDeviceEnv is the resolver for the core_updateVPNDeviceEnv field.
-func (r *mutationResolver) CoreUpdateVPNDeviceEnv(ctx context.Context, deviceName string, envName string) (bool, error) {
-	if envName == "" {
-		return false, fmt.Errorf("envName cannot be empty")
-	}
-
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-
-	if err := r.Domain.ActivateVpnDeviceOnEnvironment(cc, deviceName, envName); err != nil {
-		return false, errors.NewE(err)
-	}
-
-	return true, nil
-}
-
-// CoreUpdateVpnDeviceNs is the resolver for the core_updateVpnDeviceNs field.
-func (r *mutationResolver) CoreUpdateVpnDeviceNs(ctx context.Context, deviceName string, ns string) (bool, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-
-	if err := r.Domain.ActivateVPNDeviceOnNamespace(cc, deviceName, ns); err != nil {
-		return false, errors.NewE(err)
-	}
-
-	return true, nil
-}
-
-// CoreUpdateVpnClusterName is the resolver for the core_updateVpnClusterName field.
-func (r *mutationResolver) CoreUpdateVpnClusterName(ctx context.Context, deviceName string, clusterName string) (bool, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-
-	if err := r.Domain.ActivateVpnDeviceOnCluster(cc, deviceName, clusterName); err != nil {
-		return false, errors.NewE(err)
-	}
-
-	return true, nil
-}
-
-// CoreDeleteVPNDevice is the resolver for the core_deleteVPNDevice field.
-func (r *mutationResolver) CoreDeleteVPNDevice(ctx context.Context, deviceName string) (bool, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-
-	if err := r.Domain.DeleteVPNDevice(cc, deviceName); err != nil {
-		return false, errors.NewE(err)
-	}
-
 	return true, nil
 }
 
 // CoreCheckNameAvailability is the resolver for the core_checkNameAvailability field.
-func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, envName *string, resType entities.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error) {
+func (r *queryResolver) CoreCheckNameAvailability(ctx context.Context, envName *string, msvcName *string, resType entities.ResourceType, name string) (*domain.CheckNameAvailabilityOutput, error) {
 	cc, err := toConsoleContext(ctx)
 	if err != nil {
 		return nil, err
 	}
-	return r.Domain.CheckNameAvailability(ctx, cc.AccountName, envName, resType, name)
+	return r.Domain.CheckNameAvailability(ctx, cc.AccountName, envName, msvcName, resType, name)
 }
 
 // CoreListEnvironments is the resolver for the core_listEnvironments field.
@@ -837,6 +808,10 @@ func (r *queryResolver) CoreGetManagedResouceOutputKeys(ctx context.Context, msv
 		return nil, errors.New("must specify either msvcName or envName")
 	}
 
+	if envName != nil {
+		return r.Domain.GetImportedManagedResourceOutputKeys(newResourceContext(cc, *envName), name)
+	}
+
 	return r.Domain.GetManagedResourceOutputKeys(newMresContext(cc, msvcName, envName), name)
 }
 
@@ -856,7 +831,52 @@ func (r *queryResolver) CoreGetManagedResouceOutputKeyValues(ctx context.Context
 		return nil, errors.New("must specify either msvcName or envName")
 	}
 
+	if envName != nil {
+		return r.Domain.GetImportedManagedResourceOutputKVs(newResourceContext(cc, *envName), m)
+	}
+
 	return r.Domain.GetManagedResourceOutputKVs(newMresContext(cc, msvcName, envName), m)
+}
+
+// InfraListClusterManagedServices is the resolver for the infra_listClusterManagedServices field.
+func (r *queryResolver) InfraListClusterManagedServices(ctx context.Context, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) (*model.ClusterManagedServicePaginatedRecords, error) {
+	ictx, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	if pagination == nil {
+		pagination = &repos.DefaultCursorPagination
+	}
+
+	filter := map[string]repos.MatchFilter{}
+
+	if search != nil {
+		if search.IsReady != nil {
+			filter["status.isReady"] = *search.IsReady
+		}
+
+		if search.Text != nil {
+			filter["metadata.name"] = *search.Text
+		}
+	}
+
+	pClusters, err := r.Domain.ListClusterManagedServices(ictx, filter, *pagination)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return fn.JsonConvertP[model.ClusterManagedServicePaginatedRecords](pClusters)
+}
+
+// InfraGetClusterManagedService is the resolver for the infra_getClusterManagedService field.
+func (r *queryResolver) InfraGetClusterManagedService(ctx context.Context, name string) (*entities.ClusterManagedService, error) {
+	ictx, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.GetClusterManagedService(ictx, name)
 }
 
 // CoreListManagedResources is the resolver for the core_listManagedResources field.
@@ -871,34 +891,35 @@ func (r *queryResolver) CoreListManagedResources(ctx context.Context, search *mo
 		return nil, errors.New("must specify search")
 	}
 
-	if search != nil {
-		if search.Text != nil {
-			filter["metadata.name"] = *search.Text
-			filter[fc.MetadataName] = *search.Text
-		}
-		if search.IsReady != nil {
-			filter["status.isReady"] = *search.IsReady
-		}
-		if search.MarkedForDeletion != nil {
-			filter["markedForDeletion"] = *search.MarkedForDeletion
-		}
+	if search.Text != nil {
+		filter["metadata.name"] = *search.Text
+		filter[fc.MetadataName] = *search.Text
+	}
+	if search.IsReady != nil {
+		filter["status.isReady"] = *search.IsReady
+	}
+	if search.MarkedForDeletion != nil {
+		filter["markedForDeletion"] = *search.MarkedForDeletion
+	}
 
-		if search.ManagedServiceName != nil {
-			filter[fc.ManagedResourceManagedServiceName] = *search.ManagedServiceName
-		}
+	if search.ManagedServiceName != nil {
+		filter[fc.ManagedResourceManagedServiceName] = *search.ManagedServiceName
+	}
 
-		if search.EnvName != nil {
-			filter["environmentName"] = *search.EnvName
-		}
-
-		filter[fc.ManagedResourceIsImported] = repos.MatchFilter{
-			MatchType: repos.MatchTypeExact,
-			Exact:     search.EnvName != nil,
-		}
+	if search.EnvName != nil {
+		filter["environmentName"] = *search.EnvName
 	}
 
 	if search.EnvName == nil && search.ManagedServiceName == nil {
 		return nil, errors.New("either envName or managedServiceName must be specified")
+	}
+
+	if search.EnvName != nil {
+		pr, err := r.Domain.ListImportedManagedResources(cc, search.EnvName.Exact.(string), filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+		if err != nil {
+			return nil, errors.NewE(err)
+		}
+		return fn.JsonConvertP[model.ManagedResourcePaginatedRecords](pr)
 	}
 
 	pmsvcs, err := r.Domain.ListManagedResources(cc, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
@@ -930,50 +951,33 @@ func (r *queryResolver) CoreResyncManagedResource(ctx context.Context, msvcName 
 	return true, nil
 }
 
-// CoreListVPNDevices is the resolver for the core_listVPNDevices field.
-func (r *queryResolver) CoreListVPNDevices(ctx context.Context, search *model.CoreSearchVPNDevices, pq *repos.CursorPagination) (*model.ConsoleVPNDevicePaginatedRecords, error) {
+// CoreListImportedManagedResources is the resolver for the core_listImportedManagedResources field.
+func (r *queryResolver) CoreListImportedManagedResources(ctx context.Context, envName string, search *model.SearchImportedManagedResources, pq *repos.CursorPagination) (*model.ImportedManagedResourcePaginatedRecords, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
 	filter := map[string]repos.MatchFilter{}
+
 	if search != nil {
 		if search.Text != nil {
-			filter["metadata.name"] = *search.Text
+			filter[fc.ImportedManagedResourceName] = *search.Text
 		}
+
 		if search.IsReady != nil {
 			filter["status.isReady"] = *search.IsReady
 		}
+
 		if search.MarkedForDeletion != nil {
-			filter["markedForDeletion"] = *search.MarkedForDeletion
+			filter[fc.MarkedForDeletion] = *search.MarkedForDeletion
 		}
 	}
 
-	cc, err := toConsoleContext(ctx)
+	pr, err := r.Domain.ListImportedManagedResources(cc, envName, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-
-	p, err := r.Domain.ListVPNDevices(cc, filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	return fn.JsonConvertP[model.ConsoleVPNDevicePaginatedRecords](p)
-}
-
-// CoreListVPNDevicesForUser is the resolver for the core_listVPNDevicesForUser field.
-func (r *queryResolver) CoreListVPNDevicesForUser(ctx context.Context) ([]*entities.ConsoleVPNDevice, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return nil, err
-	}
-	return r.Domain.ListVPNDevicesForUser(cc)
-}
-
-// CoreGetVPNDevice is the resolver for the core_getVPNDevice field.
-func (r *queryResolver) CoreGetVPNDevice(ctx context.Context, name string) (*entities.ConsoleVPNDevice, error) {
-	cc, err := toConsoleContext(ctx)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-	return r.Domain.GetVPNDevice(cc, name)
+	return fn.JsonConvertP[model.ImportedManagedResourcePaginatedRecords](pr)
 }
 
 // Mutation returns generated.MutationResolver implementation.
@@ -982,5 +986,7 @@ func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResol
 // Query returns generated.QueryResolver implementation.
 func (r *Resolver) Query() generated.QueryResolver { return &queryResolver{r} }
 
-type mutationResolver struct{ *Resolver }
-type queryResolver struct{ *Resolver }
+type (
+	mutationResolver struct{ *Resolver }
+	queryResolver    struct{ *Resolver }
+)

@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"strings"
+
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	fc "github.com/kloudlite/api/apps/console/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
@@ -10,6 +12,7 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 	t "github.com/kloudlite/api/pkg/types"
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
+	corev1 "k8s.io/api/core/v1"
 )
 
 func (d *domain) ListSecrets(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.Secret], error) {
@@ -18,7 +21,41 @@ func (d *domain) ListSecrets(ctx ResourceContext, search map[string]repos.MatchF
 	}
 
 	filters := ctx.DBFilters()
-	return d.secretRepo.FindPaginated(ctx, d.secretRepo.MergeMatchFilters(filters, search), pq)
+	pr, err := d.secretRepo.FindPaginated(ctx, d.secretRepo.MergeMatchFilters(filters, search), pq)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	for i := range pr.Edges {
+		fromDataToStringData(&pr.Edges[i].Node.Secret)
+		pr.Edges[i].Node.StringData = filterOutHiddenKeysFromSecret(pr.Edges[i].Node)
+	}
+
+	return pr, nil
+}
+
+func filterOutHiddenKeysFromSecret(secret *entities.Secret) map[string]string {
+	if secret.For != nil {
+		// means, this is a secret created by something other than a secret
+		fdata := make(map[string]string, len(secret.StringData))
+		for k, v := range secret.StringData {
+			if !strings.HasPrefix(k, ".") {
+				fdata[k] = v
+			}
+		}
+		return fdata
+	}
+	return secret.StringData
+}
+
+func fromDataToStringData(secret *corev1.Secret) {
+	if secret.StringData == nil {
+		secret.StringData = make(map[string]string, len(secret.Data))
+	}
+
+	for k, v := range secret.Data {
+		secret.StringData[k] = string(v)
+	}
 }
 
 func (d *domain) findSecret(ctx ResourceContext, name string) (*entities.Secret, error) {
@@ -32,6 +69,9 @@ func (d *domain) findSecret(ctx ResourceContext, name string) (*entities.Secret,
 	if xSecret == nil {
 		return nil, errors.Newf("no secret with name (%s) found", name)
 	}
+
+	fromDataToStringData(&xSecret.Secret)
+	xSecret.StringData = filterOutHiddenKeysFromSecret(xSecret)
 	return xSecret, nil
 }
 
@@ -68,11 +108,11 @@ func (d *domain) GetSecretEntries(ctx ResourceContext, keyrefs []SecretKeyRef) (
 	data := make(map[string]map[string]string)
 
 	for i := range secrets {
-		m := make(map[string]string, len(secrets[i].Data))
-		for k, v := range secrets[i].Data {
-			m[k] = string(v)
+		fromDataToStringData(&secrets[i].Secret)
+		if secrets[i].For != nil {
+			secrets[i].StringData = filterOutHiddenKeysFromSecret(secrets[i])
 		}
-
+		m := make(map[string]string, len(secrets[i].StringData))
 		for k, v := range secrets[i].StringData {
 			m[k] = v
 		}
@@ -92,6 +132,10 @@ func (d *domain) GetSecretEntries(ctx ResourceContext, keyrefs []SecretKeyRef) (
 }
 
 func (d *domain) CreateSecret(ctx ResourceContext, secret entities.Secret) (*entities.Secret, error) {
+	return d.createSecret(ctx, secret)
+}
+
+func (d *domain) createSecret(ctx ResourceContext, secret entities.Secret) (*entities.Secret, error) {
 	if err := d.canMutateResourcesInEnvironment(ctx); err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -198,22 +242,29 @@ func (d *domain) UpdateSecret(ctx ResourceContext, secret entities.Secret) (*ent
 }
 
 func (d *domain) DeleteSecret(ctx ResourceContext, name string) error {
+	return d.deleteSecret(ctx, name)
+}
+
+func (d *domain) deleteSecret(ctx ResourceContext, name string) error {
 	if err := d.canMutateResourcesInEnvironment(ctx); err != nil {
 		return errors.NewE(err)
 	}
 
-	usecret, err := d.secretRepo.Patch(
-		ctx,
-		ctx.DBFilters().Add(fields.MetadataName, name),
-		common.PatchForMarkDeletion(),
-	)
+	defer func() {
+		d.resourceEventPublisher.PublishResourceEvent(ctx, entities.ResourceTypeSecret, name, PublishUpdate)
+	}()
+
+	filters := ctx.DBFilters().Add(fields.MetadataName, name)
+
+	usecret, err := d.secretRepo.Patch(ctx, filters, common.PatchForMarkDeletion())
 	if err != nil {
+		if errors.Is(err, repos.ErrNoDocuments) {
+			return nil
+		}
 		return errors.NewE(err)
 	}
 
-	d.resourceEventPublisher.PublishResourceEvent(ctx, entities.ResourceTypeSecret, usecret.Name, PublishUpdate)
-
-	if err := d.deleteK8sResource(ctx, "", &usecret.Secret); err != nil {
+	if err := d.deleteK8sResource(ctx, usecret.EnvironmentName, &usecret.Secret); err != nil {
 		if errors.Is(err, ErrNoClusterAttached) {
 			return d.secretRepo.DeleteById(ctx, usecret.Id)
 		}
@@ -223,11 +274,31 @@ func (d *domain) DeleteSecret(ctx ResourceContext, name string) error {
 }
 
 func (d *domain) OnSecretDeleteMessage(ctx ResourceContext, secret entities.Secret) error {
-	err := d.secretRepo.DeleteOne(
-		ctx,
-		ctx.DBFilters().Add(fields.MetadataName, secret.Name),
-	)
+	s, err := d.findSecret(ctx, secret.Name)
 	if err != nil {
+		return errors.NewE(err)
+	}
+
+	// if _, err := d.MatchRecordVersion(secret.Annotations, s.RecordVersion); err != nil {
+	// 	return d.resyncK8sResource(ctx, s.EnvironmentName, s.SyncStatus.Action, &s.Secret, s.RecordVersion)
+	// }
+
+	if s.For != nil {
+		switch s.For.ResourceType {
+		case entities.ResourceTypeImportedManagedResource:
+			{
+				if err := d.OnImportedManagedResourceDeleteMessage(ctx.ConsoleContext, s.For.RefId); err != nil {
+					return errors.NewE(err)
+				}
+			}
+		default:
+			{
+				d.logger.Warnf("unknown resource type %s", s.For.ResourceType)
+			}
+		}
+	}
+
+	if err := d.secretRepo.DeleteOne(ctx, ctx.DBFilters().Add(fields.MetadataName, secret.Name)); err != nil {
 		return errors.NewE(err)
 	}
 
@@ -247,12 +318,24 @@ func (d *domain) OnSecretUpdateMessage(ctx ResourceContext, secretIn entities.Se
 		return d.resyncK8sResource(ctx, xSecret.EnvironmentName, xSecret.SyncStatus.Action, &xSecret.Secret, xSecret.RecordVersion)
 	}
 
-	usecret, err := d.secretRepo.PatchById(
-		ctx,
-		xSecret.Id,
-		common.PatchForSyncFromAgent(&secretIn, recordVersion, status, common.PatchOpts{
-			MessageTimestamp: opts.MessageTimestamp,
-		}))
+	if xSecret.For != nil {
+		switch xSecret.For.ResourceType {
+		case entities.ResourceTypeImportedManagedResource:
+			{
+				if err := d.OnImportedManagedResourceUpdateMessage(ctx.ConsoleContext, xSecret.For.RefId, status, opts); err != nil {
+					return errors.NewE(err)
+				}
+			}
+		default:
+			{
+				d.logger.Warnf("unknown resource type %s", xSecret.For.ResourceType)
+			}
+		}
+	}
+
+	usecret, err := d.secretRepo.PatchById(ctx, xSecret.Id, common.PatchForSyncFromAgent(&secretIn, recordVersion, status, common.PatchOpts{
+		MessageTimestamp: opts.MessageTimestamp,
+	}))
 
 	d.resourceEventPublisher.PublishResourceEvent(ctx, usecret.GetResourceType(), usecret.GetName(), PublishUpdate)
 

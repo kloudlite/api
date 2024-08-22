@@ -250,6 +250,37 @@ func (d *domain) RestartApp(ctx ResourceContext, appName string) error {
 	return nil
 }
 
+func (d *domain) RemoveDeviceIntercepts(ctx ResourceContext, deviceName string) error {
+	apps, err := d.appRepo.Find(ctx, repos.Query{
+		Filter: repos.Filter{
+			fields.AccountName:          ctx.AccountName,
+			fields.EnvironmentName:      ctx.EnvironmentName,
+			fc.AppSpecInterceptToDevice: deviceName,
+		},
+		Sort: nil,
+	})
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	for i := range apps {
+		patchForUpdate := repos.Document{
+			fc.AppSpecInterceptEnabled: false,
+		}
+
+		up, err := d.appRepo.PatchById(ctx, apps[i].Id, patchForUpdate)
+		if err != nil {
+			return errors.NewE(err)
+		}
+
+		if err := d.applyApp(ctx, up); err != nil {
+			return errors.NewE(err)
+		}
+	}
+
+	return nil
+}
+
 func (d *domain) OnAppUpdateMessage(ctx ResourceContext, app entities.App, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
 	xApp, err := d.findApp(ctx, app.Name)
 	if err != nil {
@@ -259,14 +290,13 @@ func (d *domain) OnAppUpdateMessage(ctx ResourceContext, app entities.App, statu
 	if xApp == nil {
 		return errors.Newf("no apps found")
 	}
+
 	recordVersion, err := d.MatchRecordVersion(app.Annotations, xApp.RecordVersion)
 	if err != nil {
 		return errors.NewE(err)
 	}
 
-	uapp, err := d.appRepo.PatchById(
-		ctx,
-		xApp.Id,
+	uapp, err := d.appRepo.PatchById(ctx, xApp.Id,
 		common.PatchForSyncFromAgent(&app, recordVersion, status, common.PatchOpts{
 			MessageTimestamp: opts.MessageTimestamp,
 		}))

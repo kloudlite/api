@@ -9,13 +9,14 @@ import (
 	"github.com/kloudlite/api/common/fields"
 
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
-	wgv1 "github.com/kloudlite/operator/apis/wireguard/v1"
 
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
 
 	"github.com/kloudlite/api/apps/console/internal/entities"
-	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+
+	networkingv1 "github.com/kloudlite/operator/apis/networking/v1"
+	corev1 "k8s.io/api/core/v1"
 )
 
 type ConsoleContext struct {
@@ -55,21 +56,10 @@ type ManagedResourceContext struct {
 }
 
 func (m ManagedResourceContext) MresDBFilters() (*repos.Filter, error) {
-	if m.EnvironmentName != nil {
-		return &repos.Filter{
-			fields.AccountName:     m.AccountName,
-			fields.EnvironmentName: m.EnvironmentName,
-		}, nil
-	}
-
-	if m.ManagedServiceName != nil {
-		return &repos.Filter{
-			fields.AccountName:                   m.AccountName,
-			fc.ManagedResourceManagedServiceName: m.ManagedServiceName,
-		}, nil
-	}
-
-	return nil, errors.New("environment or managed service name is required")
+	return &repos.Filter{
+		fields.AccountName:                   m.AccountName,
+		fc.ManagedResourceManagedServiceName: m.ManagedServiceName,
+	}, nil
 }
 
 func (r ResourceContext) DBFilters() repos.Filter {
@@ -143,10 +133,11 @@ type ResType string
 
 type UpdateAndDeleteOpts struct {
 	MessageTimestamp time.Time
+	ClusterName      string
 }
 
 type Domain interface {
-	CheckNameAvailability(ctx context.Context, accountName string, environmentName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error)
+	CheckNameAvailability(ctx context.Context, accountName string, environmentName *string, msvcName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error)
 
 	// INFO: project have been disabled
 	// ListProjects(ctx context.Context, userId repos.ID, accountName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Project], error)
@@ -186,6 +177,7 @@ type Domain interface {
 
 	InterceptApp(ctx ResourceContext, appName string, deviceName string, intercept bool, portMappings []crdsv1.AppInterceptPortMappings) (bool, error)
 	RestartApp(ctx ResourceContext, appName string) error
+	RemoveDeviceIntercepts(ctx ResourceContext, deviceName string) error
 
 	OnAppApplyError(ctx ResourceContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
 	OnAppDeleteMessage(ctx ResourceContext, app entities.App) error
@@ -236,23 +228,35 @@ type Domain interface {
 
 	ListManagedResources(ctx ConsoleContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
 	GetManagedResource(ctx ManagedResourceContext, name string) (*entities.ManagedResource, error)
+	GetManagedResourceByID(ctx ConsoleContext, id repos.ID) (*entities.ManagedResource, error)
 
 	// ListImportedManagedResources(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
 	// GetImportedManagedResource(ctx ResourceContext, name string) (*entities.ManagedResource, error)
 
 	GetManagedResourceOutputKeys(ctx ManagedResourceContext, name string) ([]string, error)
+	GetImportedManagedResourceOutputKeys(ctx ResourceContext, name string) ([]string, error)
 	GetManagedResourceOutputKVs(ctx ManagedResourceContext, keyrefs []ManagedResourceKeyRef) ([]*ManagedResourceKeyValueRef, error)
+	GetImportedManagedResourceOutputKVs(ctx ResourceContext, keyrefs []ManagedResourceKeyRef) ([]*ManagedResourceKeyValueRef, error)
 
 	CreateManagedResource(ctx ManagedResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	UpdateManagedResource(ctx ManagedResourceContext, mres entities.ManagedResource) (*entities.ManagedResource, error)
 	DeleteManagedResource(ctx ManagedResourceContext, name string) error
 
-	ImportManagedResource(ctx ManagedResourceContext, mresName string) (*entities.ManagedResource, error)
-	DeleteImportedManagedResource(ctx ResourceContext, mresName string) error
+	// ImportManagedResource(ctx ManagedResourceContext, mresName string, importName string) (*entities.ManagedResource, error)
+	ImportManagedResource(ctx ManagedResourceContext, mresName string, importName string) (*entities.ImportedManagedResource, error)
+	// ListImportedManagedResources(ctx ConsoleContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ManagedResource], error)
+	ListImportedManagedResources(ctx ConsoleContext, envName string, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.ImportedManagedResource], error)
+	DeleteImportedManagedResource(ctx ResourceContext, importName string) error
+
+	// ImportManagedResource(ctx ConsoleContext, imr entities.ImportedManagedResource) (*entities.ImportedManagedResource, error)
+	// DeleteImportedManagedResource(ctx ConsoleContext, name string) error
+
+	// OnImportedManagedResourceDeleteMessage(ctx ConsoleContext, secret *corev1.Secret) error
+	// OnImportedManagedResourceUpdateMessage(ctx ConsoleContext, secret *corev1.Secret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	OnManagedResourceApplyError(ctx ConsoleContext, errMsg string, msvcName string, name string, opts UpdateAndDeleteOpts) error
-	OnManagedResourceDeleteMessage(ctx ConsoleContext, msvcName string, mres entities.ManagedResource) error
-	OnManagedResourceUpdateMessage(ctx ConsoleContext, msvcName string, mres entities.ManagedResource, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnManagedResourceDeleteMessage(ctx ConsoleContext, msvcName string, mres crdsv1.ManagedResource) error
+	OnManagedResourceUpdateMessage(ctx ConsoleContext, msvcName string, mres crdsv1.ManagedResource, outputSecret *corev1.Secret, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 
 	ResyncManagedResource(ctx ConsoleContext, msvcName string, name string) error
 
@@ -286,36 +290,30 @@ type Domain interface {
 	ResyncImagePullSecret(ctx ConsoleContext, name string) error
 
 	GetEnvironmentResourceMapping(ctx ConsoleContext, resType entities.ResourceType, clusterName string, namespace string, name string) (*entities.ResourceMapping, error)
-	// GetProjectResourceMapping(ctx ConsoleContext, resType entities.ResourceType, clusterName string, namespace string, name string) (*entities.ResourceMapping, error)
 
-	// ListProjectManagedServices(ctx ConsoleContext, projectName string, mf map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ProjectManagedService], error)
-	// GetProjectManagedService(ctx ConsoleContext, projectName string, serviceName string) (*entities.ProjectManagedService, error)
-	// CreateProjectManagedService(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) (*entities.ProjectManagedService, error)
-	// UpdateProjectManagedService(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) (*entities.ProjectManagedService, error)
-	// DeleteProjectManagedService(ctx ConsoleContext, projectName string, name string) error
+	ServiceBinding
+	ClusterManagedService
+}
 
-	//RestartProjectManagedService(ctx ConsoleContext, projectName string, name string) error
-	//
-	//OnProjectManagedServiceApplyError(ctx ConsoleContext, projectName, name, errMsg string, opts UpdateAndDeleteOpts) error
-	//OnProjectManagedServiceDeleteMessage(ctx ConsoleContext, projectName string, service entities.ProjectManagedService) error
-	//OnProjectManagedServiceUpdateMessage(ctx ConsoleContext, projectName string, service entities.ProjectManagedService, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
-	//ResyncProjectManagedService(ctx ConsoleContext, projectName, name string) error
+type ServiceBinding interface {
+	OnServiceBindingUpdateMessage(ctx ConsoleContext, svcb *networkingv1.ServiceBinding, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnServiceBindingDeleteMessage(ctx ConsoleContext, svcb *networkingv1.ServiceBinding) error
+}
 
-	ListVPNDevices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ConsoleVPNDevice], error)
-	ListVPNDevicesForUser(ctx ConsoleContext) ([]*entities.ConsoleVPNDevice, error)
-	GetVPNDevice(ctx ConsoleContext, name string) (*entities.ConsoleVPNDevice, error)
-	CreateVPNDevice(ctx ConsoleContext, device entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
-	UpdateVPNDevice(ctx ConsoleContext, device entities.ConsoleVPNDevice) (*entities.ConsoleVPNDevice, error)
-	DeleteVPNDevice(ctx ConsoleContext, name string) error
-	UpdateVpnDevicePorts(ctx ConsoleContext, devName string, ports []*wgv1.Port) error
-	ActivateVpnDeviceOnEnvironment(ctx ConsoleContext, devName string, envName string) error
+type ClusterManagedService interface {
+	ListClusterManagedServices(ctx ConsoleContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ClusterManagedService], error)
 
-	OnVPNDeviceApplyError(ctx ConsoleContext, errMsg string, name string, opts UpdateAndDeleteOpts) error
-	OnVPNDeviceDeleteMessage(ctx ConsoleContext, device entities.ConsoleVPNDevice) error
-	OnVPNDeviceUpdateMessage(ctx ConsoleContext, device entities.ConsoleVPNDevice, status types.ResourceStatus, opts UpdateAndDeleteOpts, clusterName string) error
+	GetClusterManagedService(ctx ConsoleContext, serviceName string) (*entities.ClusterManagedService, error)
 
-	ActivateVpnDeviceOnCluster(ctx ConsoleContext, devName string, clusterName string) error
-	ActivateVPNDeviceOnNamespace(ctx ConsoleContext, devName string, namespace string) error
+	CreateClusterManagedService(ctx ConsoleContext, cmsvc entities.ClusterManagedService) (*entities.ClusterManagedService, error)
+	// CloneClusterManagedService(ctx ConsoleContext, args CloneManagedServiceArgs) (*entities.ClusterManagedService, error)
+	UpdateClusterManagedService(ctx ConsoleContext, cmsvc entities.ClusterManagedService) (*entities.ClusterManagedService, error)
+	DeleteClusterManagedService(ctx ConsoleContext, name string) error
+	ArchiveClusterManagedServicesForCluster(ctx ConsoleContext, clusterName string) (bool, error)
+
+	OnClusterManagedServiceApplyError(ctx ConsoleContext, clusterName, name, errMsg string, opts UpdateAndDeleteOpts) error
+	OnClusterManagedServiceDeleteMessage(ctx ConsoleContext, clusterName string, service entities.ClusterManagedService) error
+	OnClusterManagedServiceUpdateMessage(ctx ConsoleContext, clusterName string, service entities.ClusterManagedService, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 }
 
 type PublishMsg string
@@ -330,4 +328,5 @@ type ResourceEventPublisher interface {
 	PublishConsoleEvent(ctx ConsoleContext, resourceType entities.ResourceType, name string, update PublishMsg)
 	PublishEnvironmentResourceEvent(ctx ConsoleContext, envName string, resourceType entities.ResourceType, name string, update PublishMsg)
 	PublishResourceEvent(ctx ResourceContext, resourceType entities.ResourceType, name string, update PublishMsg)
+	PublishClusterManagedServiceEvent(ctx ConsoleContext, msvcName string, resourceType entities.ResourceType, name string, update PublishMsg)
 }

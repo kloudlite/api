@@ -2,6 +2,7 @@ package domain
 
 import (
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
 
 	iamT "github.com/kloudlite/api/apps/iam/types"
@@ -79,7 +80,7 @@ func (d *domain) CreateBYOKCluster(ctx InfraContext, cluster entities.BYOKCluste
 
 	cluster.ClusterToken = ctoken
 
-	cluster.MessageQueueTopicName = common.GetTenantClusterMessagingTopic(ctx.AccountName, cluster.Name)
+	cluster.MessageQueueTopicName = common.SendToAgentSubjectPrefix(ctx.AccountName, cluster.Name)
 
 	gvpnConn, err := d.ensureGlobalVPNConnection(ctx, cluster.Name, cluster.GlobalVPN)
 	if err != nil {
@@ -172,27 +173,45 @@ type BYOKSetupInstruction struct {
 	Command string `json:"command"`
 }
 
-func (d *domain) GetBYOKClusterSetupInstructions(ctx InfraContext, name string) ([]BYOKSetupInstruction, error) {
+func (d *domain) GetBYOKClusterSetupInstructions(ctx InfraContext, name string, onlyHelmValues bool) ([]BYOKSetupInstruction, error) {
 	cluster, err := d.findBYOKCluster(ctx, name)
 	if err != nil {
 		return nil, err
+	}
+
+	if onlyHelmValues {
+		b, err := json.Marshal(map[string]any{
+			"crds-url": fmt.Sprintf("https://github.com/kloudlite/helm-charts/releases/download/%s/crds-all.yml", d.env.KloudliteRelease),
+
+			"chart-repo":    "https://kloudlite.github.io/helm-charts",
+			"chart-version": d.env.KloudliteRelease,
+
+			"helm-values": map[string]any{
+				"accountName":           ctx.AccountName,
+				"clusterName":           name,
+				"clusterToken":          cluster.ClusterToken,
+				"messageOfficeGRPCAddr": d.env.MessageOfficeExternalGrpcAddr,
+				"kloudliteDNSSuffix":    fmt.Sprintf("%s.%s", ctx.AccountName, d.env.KloudliteDNSSuffix),
+			},
+		})
+		if err != nil {
+			return nil, err
+		}
+
+		return []BYOKSetupInstruction{
+			{
+				Title:   "Helm Values",
+				Command: string(b),
+			},
+		}, nil
 	}
 
 	return []BYOKSetupInstruction{
 		{Title: "Add Helm Repo", Command: "helm repo add kloudlite https://kloudlite.github.io/helm-charts"},
 		{Title: "Update Kloudlite Repo", Command: "helm repo update kloudlite"},
 		{Title: "Install kloudlite CRDs", Command: fmt.Sprintf("kubectl apply -f https://github.com/kloudlite/helm-charts/releases/download/%s/crds-all.yml --server-side", d.env.KloudliteRelease)},
-		{Title: "Install Kloudlite Agent", Command: fmt.Sprintf(`helm upgrade --install kloudlite --namespace kloudlite --create-namespace kloudlite/kloudlite-agent --version %s --set accountName="%s" --set clusterName="%s" --set clusterToken="%s" --set messageOfficeGRPCAddr="%s" --set byok.enabled=true`, d.env.KloudliteRelease, ctx.AccountName, name, cluster.ClusterToken, d.env.MessageOfficeExternalGrpcAddr)},
+		{Title: "Install Kloudlite Agent", Command: fmt.Sprintf(`helm upgrade --install kloudlite --namespace kloudlite --create-namespace kloudlite/kloudlite-agent --version %s --set accountName="%s" --set clusterName="%s" --set clusterToken="%s" --set messageOfficeGRPCAddr="%s" --set kloudliteDNSSuffix="%s"`, d.env.KloudliteRelease, ctx.AccountName, name, cluster.ClusterToken, d.env.MessageOfficeExternalGrpcAddr, fmt.Sprintf("%s.%s", ctx.AccountName, d.env.KloudliteDNSSuffix))},
 	}, nil
-}
-
-func (d *domain) GetBYOKClusterSetupInstructions2(ctx InfraContext, name string) (*string, error) {
-	cluster, err := d.findBYOKCluster(ctx, name)
-	if err != nil {
-		return nil, err
-	}
-
-	return fn.New(fmt.Sprintf(`helm upgrade --install kloudlite --namespace kloudlite --create-namespace kloudlite/kloudlite-agent --version %s --set accountName="%s" --set clusterName="%s" --set clusterToken="%s" --set messageOfficeGRPCAddr="%s" --set byok.enabled=true --set helmCharts.ingressNginx.enabled=true --set helmCharts.certManager.enabled=true`, d.env.KloudliteRelease, ctx.AccountName, name, cluster.ClusterToken, d.env.MessageOfficeExternalGrpcAddr)), nil
 }
 
 func (d *domain) DeleteBYOKCluster(ctx InfraContext, name string) error {
@@ -211,17 +230,13 @@ func (d *domain) DeleteBYOKCluster(ctx InfraContext, name string) error {
 		}
 	}
 
-	if _, err := d.consoleClient.ArchiveEnvironmentsForCluster(ctx, &console.ArchiveEnvironmentsForClusterIn{
+	if _, err := d.consoleClient.ArchiveResourcesForCluster(ctx, &console.ArchiveResourcesForClusterIn{
 		UserId:      string(ctx.UserId),
 		UserName:    ctx.UserName,
 		UserEmail:   ctx.UserEmail,
 		AccountName: ctx.AccountName,
 		ClusterName: name,
 	}); err != nil {
-		return errors.NewE(err)
-	}
-
-	if err := d.ArchiveClusterManagedService(ctx, name); err != nil {
 		return errors.NewE(err)
 	}
 

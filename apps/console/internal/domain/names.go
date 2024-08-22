@@ -2,6 +2,7 @@ package domain
 
 import (
 	"context"
+	fc "github.com/kloudlite/api/apps/console/internal/entities/field-constants"
 
 	"github.com/kloudlite/api/common/fields"
 
@@ -27,9 +28,13 @@ func checkResourceName[T repos.Entity](ctx context.Context, filters repos.Filter
 	}, nil
 }
 
-func (d *domain) CheckNameAvailability(ctx context.Context, accountName string, environmentName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error) {
+func (d *domain) CheckNameAvailability(ctx context.Context, accountName string, environmentName *string, msvcName *string, resType entities.ResourceType, name string) (*CheckNameAvailabilityOutput, error) {
 	errEnvironmentRequired := func() error {
 		return errors.Newf("param environmentName is required for resource type %q", resType)
+	}
+
+	errMsvcNameRequired := func() error {
+		return errors.Newf("param msvcName is required for resource type %q", resType)
 	}
 
 	if !fn.IsValidK8sResourceName(name) {
@@ -40,29 +45,19 @@ func (d *domain) CheckNameAvailability(ctx context.Context, accountName string, 
 	}
 
 	switch resType {
-
-	case entities.ResourceTypeVPNDevice:
-		{
-			return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fields.MetadataName: name}, d.vpnDeviceRepo)
-		}
-
-	//case entities.ResourceTypeProject:
-	//	{
-	//		return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fields.MetadataName: name}, d.projectRepo)
-	//	}
-
-	//case entities.ResourceTypeProjectManagedService:
-	//	{
-	//		if projectName == nil {
-	//			return nil, errProjectRequired()
-	//		}
-	//		return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fields.ProjectName: projectName, fields.MetadataName: name}, d.pmsRepo)
-	//	}
-	//
 	case entities.ResourceTypeEnvironment:
 		{
 			return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fields.MetadataName: name}, d.environmentRepo)
 		}
+
+	case entities.ResourceTypeManagedResource:
+		{
+			if msvcName == nil {
+				return nil, errMsvcNameRequired()
+			}
+			return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fields.MetadataName: name, fc.ManagedResourceManagedServiceName: msvcName}, d.mresRepo)
+		}
+
 	default:
 		{
 			if environmentName == nil {
@@ -86,8 +81,8 @@ func (d *domain) CheckNameAvailability(ctx context.Context, accountName string, 
 				return checkResourceName(ctx, filter, d.secretRepo)
 			case entities.ResourceTypeRouter:
 				return checkResourceName(ctx, filter, d.routerRepo)
-			case entities.ResourceTypeManagedResource:
-				return checkResourceName(ctx, filter, d.mresRepo)
+			case entities.ResourceTypeImportedManagedResource:
+				return checkResourceName(ctx, filter, d.importedMresRepo)
 			case entities.ResourceTypeImagePullSecret:
 				return checkResourceName(ctx, filter, d.pullSecretsRepo)
 			default:

@@ -2,6 +2,8 @@ package app
 
 import (
 	"context"
+	"log/slog"
+
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
 
 	"github.com/kloudlite/api/apps/infra/internal/entities"
@@ -57,7 +59,6 @@ var Module = fx.Module(
 
 	// repos.NewFxMongoRepo[*entities.BYOKCluster]("byok_clusters", "byok", entities.BYOKClusterIndices),
 	repos.NewFxMongoRepo[*entities.BYOKCluster]("byok_cluster", "byok", entities.BYOKClusterIndices),
-	repos.NewFxMongoRepo[*entities.ClusterManagedService]("cmsvcs", "cmsvc", entities.ClusterManagedServiceIndices),
 	repos.NewFxMongoRepo[*entities.DomainEntry]("domain_entries", "de", entities.DomainEntryIndices),
 	repos.NewFxMongoRepo[*entities.NodePool]("node_pools", "npool", entities.NodePoolIndices),
 	repos.NewFxMongoRepo[*entities.Node]("node", "node", entities.NodePoolIndices),
@@ -122,11 +123,11 @@ var Module = fx.Module(
 	}),
 
 	fx.Provide(func(jsc *nats.JetstreamClient, ev *env.Env) (ReceiveResourceUpdatesConsumer, error) {
-		topic := common.GetPlatformClusterMessagingTopic("*", "*", common.InfraReceiver, common.EventResourceUpdate)
+		topic := common.ReceiveFromAgentSubjectName(common.ReceiveFromAgentArgs{AccountName: "*", ClusterName: "*"}, common.InfraReceiver, common.EventResourceUpdate)
 
 		consumerName := "infra:resource-updates"
 		return msg_nats.NewJetstreamConsumer(context.TODO(), jsc, msg_nats.JetstreamConsumerArgs{
-			Stream: ev.NatsStream,
+			Stream: ev.NatsReceiveFromAgentStream,
 			ConsumerConfig: msg_nats.ConsumerConfig{
 				Name:           consumerName,
 				Durable:        consumerName,
@@ -136,7 +137,7 @@ var Module = fx.Module(
 		})
 	}),
 
-	fx.Invoke(func(lf fx.Lifecycle, consumer ReceiveResourceUpdatesConsumer, d domain.Domain, logger logging.Logger) {
+	fx.Invoke(func(lf fx.Lifecycle, consumer ReceiveResourceUpdatesConsumer, d domain.Domain, logger *slog.Logger) {
 		lf.Append(fx.Hook{
 			OnStart: func(context.Context) error {
 				go processResourceUpdates(consumer, d, logger)
@@ -149,12 +150,12 @@ var Module = fx.Module(
 	}),
 
 	fx.Provide(func(jsc *nats.JetstreamClient, ev *env.Env) (ErrorOnApplyConsumer, error) {
-		topic := common.GetPlatformClusterMessagingTopic("*", "*", common.ConsoleReceiver, common.EventErrorOnApply)
+		topic := common.ReceiveFromAgentSubjectName(common.ReceiveFromAgentArgs{AccountName: "*", ClusterName: "*"}, common.InfraReceiver, common.EventErrorOnApply)
 
 		consumerName := "infra:error-on-apply"
 
 		return msg_nats.NewJetstreamConsumer(context.TODO(), jsc, msg_nats.JetstreamConsumerArgs{
-			Stream: ev.NatsStream,
+			Stream: ev.NatsReceiveFromAgentStream,
 			ConsumerConfig: msg_nats.ConsumerConfig{
 				Name:           consumerName,
 				Durable:        consumerName,
@@ -164,7 +165,7 @@ var Module = fx.Module(
 		})
 	}),
 
-	fx.Invoke(func(lf fx.Lifecycle, consumer ErrorOnApplyConsumer, d domain.Domain, logger logging.Logger) {
+	fx.Invoke(func(lf fx.Lifecycle, consumer ErrorOnApplyConsumer, d domain.Domain, logger *slog.Logger) {
 		lf.Append(fx.Hook{
 			OnStart: func(context.Context) error {
 				go ProcessErrorOnApply(consumer, logger, d)

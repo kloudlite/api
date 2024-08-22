@@ -3,7 +3,9 @@ package main
 import (
 	"context"
 	"flag"
+	"log/slog"
 	"os"
+	"strings"
 	"time"
 
 	"github.com/kloudlite/api/pkg/errors"
@@ -21,9 +23,12 @@ import (
 func main() {
 	var isDev bool
 	flag.BoolVar(&isDev, "dev", false, "--dev")
+
+	var debug bool
+	flag.BoolVar(&debug, "debug", false, "--debug")
 	flag.Parse()
 
-	logger, err := logging.New(&logging.Options{Name: "console", Dev: isDev})
+	logger, err := logging.New(&logging.Options{Name: "console", ShowDebugLog: isDev || strings.ToLower(os.Getenv("LOG_LEVEL")) == "debug"})
 	if err != nil {
 		panic(err)
 	}
@@ -33,6 +38,10 @@ func main() {
 
 		fx.Provide(func() logging.Logger {
 			return logger
+		}),
+
+		fx.Provide(func() *slog.Logger {
+			return logging.NewSlogLogger(logging.SlogOptions{ShowCaller: true, ShowDebugLogs: debug, SetAsDefaultLogger: true})
 		}),
 
 		fx.Provide(func() (*env.Env, error) {

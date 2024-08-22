@@ -24,6 +24,39 @@ import (
 	t "github.com/kloudlite/api/pkg/types"
 )
 
+func (d *domain) cleanupEnvironment(ctx ConsoleContext, envName string) error {
+	filter := repos.Filter{
+		fields.AccountName:     ctx.AccountName,
+		fields.EnvironmentName: envName,
+	}
+
+	if err := d.appRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
+	if err := d.externalAppRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
+	if err := d.secretRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
+	if err := d.configRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
+	if err := d.routerRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
+	if err := d.importedMresRepo.DeleteMany(ctx, filter); err != nil {
+		return errors.NewE(err)
+	}
+
+	return nil
+}
+
 func (d *domain) findEnvironment(ctx ConsoleContext, name string) (*entities.Environment, error) {
 	env, err := d.environmentRepo.FindOne(ctx, repos.Filter{
 		fields.AccountName:  ctx.AccountName,
@@ -145,7 +178,7 @@ func (d *domain) CreateEnvironment(ctx ConsoleContext, env entities.Environment)
 		return nil, errors.NewE(err)
 	}
 
-	d.resourceEventPublisher.PublishEnvironmentResourceEvent(ctx, nenv.Name, entities.ResourceTypeEnvironment, nenv.Name, PublishAdd)
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, nenv.Name, PublishAdd)
 
 	if _, err := d.iamClient.AddMembership(ctx, &iam.AddMembershipIn{
 		UserId:       string(ctx.UserId),
@@ -286,8 +319,13 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, args CloneEnvironmentArgs)
 	}
 
 	secrets, err := d.secretRepo.Find(ctx, repos.Query{
-		Filter: filters,
-		Sort:   nil,
+		Filter: d.secretRepo.MergeMatchFilters(filters, map[string]repos.MatchFilter{
+			fc.SecretFor: {
+				MatchType: repos.MatchTypeExact,
+				Exact:     nil,
+			},
+		}),
+		Sort: nil,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -300,7 +338,16 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, args CloneEnvironmentArgs)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
+
 	routers, err := d.routerRepo.Find(ctx, repos.Query{
+		Filter: filters,
+		Sort:   nil,
+	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	mresources, err := d.importedMresRepo.Find(ctx, repos.Query{
 		Filter: filters,
 		Sort:   nil,
 	})
@@ -416,6 +463,15 @@ func (d *domain) CloneEnvironment(ctx ConsoleContext, args CloneEnvironmentArgs)
 		}
 	}
 
+	for i := range mresources {
+		if _, err := d.createAndApplyImportedManagedResource(resCtx, CreateAndApplyImportedManagedResourceArgs{
+			ImportedManagedResourceName: mresources[i].Name,
+			ManagedResourceRefID:        mresources[i].ManagedResourceRef.ID,
+		}); err != nil {
+			return nil, err
+		}
+	}
+
 	if err := d.syncImagePullSecretsToEnvironment(ctx, args.DestinationEnvName); err != nil {
 		return nil, err
 	}
@@ -493,7 +549,7 @@ func (d *domain) UpdateEnvironment(ctx ConsoleContext, env entities.Environment)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	d.resourceEventPublisher.PublishEnvironmentResourceEvent(ctx, upEnv.Name, entities.ResourceTypeEnvironment, upEnv.Name, PublishUpdate)
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, upEnv.Name, PublishUpdate)
 
 	if err := d.applyK8sResource(ctx, upEnv.Name, &upEnv.Environment, upEnv.RecordVersion); err != nil {
 		return nil, errors.NewE(err)
@@ -512,9 +568,13 @@ func (d *domain) DeleteEnvironment(ctx ConsoleContext, name string) error {
 		return errors.NewE(err)
 	}
 
-	d.resourceEventPublisher.PublishEnvironmentResourceEvent(ctx, uenv.Name, entities.ResourceTypeEnvironment, uenv.Name, PublishUpdate)
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, uenv.Name, PublishUpdate)
 
 	if uenv.IsArchived != nil && *uenv.IsArchived {
+		if err := d.cleanupEnvironment(ctx, name); err != nil {
+			return errors.NewE(err)
+		}
+
 		return d.environmentRepo.DeleteById(ctx, uenv.Id)
 	}
 
@@ -547,30 +607,33 @@ func (d *domain) OnEnvironmentApplyError(ctx ConsoleContext, errMsg, namespace, 
 		return errors.NewE(err)
 	}
 
-	d.resourceEventPublisher.PublishEnvironmentResourceEvent(ctx, uenv.Name, entities.ResourceTypeEnvironment, uenv.Name, PublishDelete)
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, uenv.Name, PublishDelete)
 
 	return errors.NewE(err)
 }
 
 func (d *domain) OnEnvironmentDeleteMessage(ctx ConsoleContext, env entities.Environment) error {
-	err := d.environmentRepo.DeleteOne(
+	if err := d.cleanupEnvironment(ctx, env.Name); err != nil {
+		return errors.NewE(err)
+	}
+
+	if err := d.environmentRepo.DeleteOne(
 		ctx,
 		repos.Filter{
 			fields.AccountName:  ctx.AccountName,
 			fields.MetadataName: env.Name,
 		},
-	)
-	if err != nil {
+	); err != nil {
 		return errors.NewE(err)
 	}
 
-	if _, err = d.iamClient.RemoveResource(ctx, &iam.RemoveResourceIn{
+	if _, err := d.iamClient.RemoveResource(ctx, &iam.RemoveResourceIn{
 		ResourceRef: iamT.NewResourceRef(ctx.AccountName, iamT.ResourceEnvironment, env.Name),
 	}); err != nil {
 		return errors.NewE(err)
 	}
 
-	d.resourceEventPublisher.PublishEnvironmentResourceEvent(ctx, env.Name, entities.ResourceTypeEnvironment, env.Name, PublishDelete)
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, env.Name, PublishDelete)
 	return nil
 }
 
@@ -603,7 +666,7 @@ func (d *domain) OnEnvironmentUpdateMessage(ctx ConsoleContext, env entities.Env
 		return err
 	}
 
-	d.resourceEventPublisher.PublishEnvironmentResourceEvent(ctx, uenv.Name, entities.ResourceTypeEnvironment, uenv.Name, PublishUpdate)
+	d.resourceEventPublisher.PublishConsoleEvent(ctx, entities.ResourceTypeEnvironment, uenv.Name, PublishUpdate)
 	return nil
 }
 

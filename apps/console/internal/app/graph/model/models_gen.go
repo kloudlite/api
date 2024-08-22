@@ -9,6 +9,7 @@ import (
 
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/api/pkg/types"
 	"github.com/kloudlite/operator/apis/crds/v1"
 )
 
@@ -28,6 +29,17 @@ type Build struct {
 }
 
 func (Build) IsEntity() {}
+
+type ClusterManagedServiceEdge struct {
+	Cursor string                          `json:"cursor"`
+	Node   *entities.ClusterManagedService `json:"node"`
+}
+
+type ClusterManagedServicePaginatedRecords struct {
+	Edges      []*ClusterManagedServiceEdge `json:"edges"`
+	PageInfo   *PageInfo                    `json:"pageInfo"`
+	TotalCount int                          `json:"totalCount"`
+}
 
 type ConfigEdge struct {
 	Cursor string           `json:"cursor"`
@@ -49,17 +61,6 @@ type ConfigPaginatedRecords struct {
 	Edges      []*ConfigEdge `json:"edges"`
 	PageInfo   *PageInfo     `json:"pageInfo"`
 	TotalCount int           `json:"totalCount"`
-}
-
-type ConsoleVPNDeviceEdge struct {
-	Cursor string                     `json:"cursor"`
-	Node   *entities.ConsoleVPNDevice `json:"node"`
-}
-
-type ConsoleVPNDevicePaginatedRecords struct {
-	Edges      []*ConsoleVPNDeviceEdge `json:"edges"`
-	PageInfo   *PageInfo               `json:"pageInfo"`
-	TotalCount int                     `json:"totalCount"`
 }
 
 type CoreSearchVPNDevices struct {
@@ -90,25 +91,47 @@ type ExternalAppPaginatedRecords struct {
 	TotalCount int                `json:"totalCount"`
 }
 
-type GithubComKloudliteAPIPkgTypesEncodedString struct {
-	Encoding string `json:"encoding"`
-	Value    string `json:"value"`
+type GithubComKloudliteAPIAppsConsoleInternalEntitiesManagedResourceRef struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
+type GithubComKloudliteAPIAppsConsoleInternalEntitiesManagedResourceRefIn struct {
+	ID        string `json:"id"`
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
+type GithubComKloudliteAPIAppsConsoleInternalEntitiesSecretCreatedFor struct {
+	Name         string                                                       `json:"name"`
+	Namespace    string                                                       `json:"namespace"`
+	RefID        string                                                       `json:"refId"`
+	ResourceType GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType `json:"resourceType"`
 }
 
 type GithubComKloudliteOperatorApisCommonTypesMsvcRef struct {
-	APIVersion  *string `json:"apiVersion,omitempty"`
-	ClusterName *string `json:"clusterName,omitempty"`
-	Kind        *string `json:"kind,omitempty"`
-	Name        string  `json:"name"`
-	Namespace   string  `json:"namespace"`
+	APIVersion *string `json:"apiVersion,omitempty"`
+	Kind       *string `json:"kind,omitempty"`
+	Name       string  `json:"name"`
+	Namespace  string  `json:"namespace"`
 }
 
 type GithubComKloudliteOperatorApisCommonTypesMsvcRefIn struct {
-	APIVersion  *string `json:"apiVersion,omitempty"`
-	ClusterName *string `json:"clusterName,omitempty"`
-	Kind        *string `json:"kind,omitempty"`
-	Name        string  `json:"name"`
-	Namespace   string  `json:"namespace"`
+	APIVersion *string `json:"apiVersion,omitempty"`
+	Kind       *string `json:"kind,omitempty"`
+	Name       string  `json:"name"`
+	Namespace  string  `json:"namespace"`
+}
+
+type GithubComKloudliteOperatorApisCommonTypesSecretRef struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCommonTypesSecretRefIn struct {
+	Name      string  `json:"name"`
+	Namespace *string `json:"namespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AppContainer struct {
@@ -222,6 +245,15 @@ type GithubComKloudliteOperatorApisCrdsV1BasicAuthIn struct {
 	Enabled    bool    `json:"enabled"`
 	SecretName *string `json:"secretName,omitempty"`
 	Username   *string `json:"username,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1ClusterManagedServiceSpec struct {
+	MsvcSpec        *GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpec `json:"msvcSpec"`
+	TargetNamespace string                                                  `json:"targetNamespace"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1ClusterManagedServiceSpecIn struct {
+	MsvcSpec *GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecIn `json:"msvcSpec"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1ContainerEnv struct {
@@ -392,18 +424,30 @@ type GithubComKloudliteOperatorApisCrdsV1ManagedResourceSpecIn struct {
 	ResourceTemplate   *GithubComKloudliteOperatorApisCrdsV1MresResourceTemplateIn `json:"resourceTemplate"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpec struct {
+	NodeSelector    map[string]interface{}                               `json:"nodeSelector,omitempty"`
+	ServiceTemplate *GithubComKloudliteOperatorApisCrdsV1ServiceTemplate `json:"serviceTemplate"`
+	Tolerations     []*K8sIoAPICoreV1Toleration                          `json:"tolerations,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1ManagedServiceSpecIn struct {
+	NodeSelector    map[string]interface{}                                 `json:"nodeSelector,omitempty"`
+	ServiceTemplate *GithubComKloudliteOperatorApisCrdsV1ServiceTemplateIn `json:"serviceTemplate"`
+	Tolerations     []*K8sIoAPICoreV1TolerationIn                          `json:"tolerations,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1MresResourceTemplate struct {
 	APIVersion string                                            `json:"apiVersion"`
 	Kind       string                                            `json:"kind"`
 	MsvcRef    *GithubComKloudliteOperatorApisCommonTypesMsvcRef `json:"msvcRef"`
-	Spec       map[string]interface{}                            `json:"spec"`
+	Spec       map[string]interface{}                            `json:"spec,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1MresResourceTemplateIn struct {
 	APIVersion string                                              `json:"apiVersion"`
 	Kind       string                                              `json:"kind"`
 	MsvcRef    *GithubComKloudliteOperatorApisCommonTypesMsvcRefIn `json:"msvcRef"`
-	Spec       map[string]interface{}                              `json:"spec"`
+	Spec       map[string]interface{}                              `json:"spec,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1Probe struct {
@@ -478,6 +522,18 @@ type GithubComKloudliteOperatorApisCrdsV1RouterSpecIn struct {
 	Routes          []*GithubComKloudliteOperatorApisCrdsV1RouteIn   `json:"routes,omitempty"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1ServiceTemplate struct {
+	APIVersion string                 `json:"apiVersion"`
+	Kind       string                 `json:"kind"`
+	Spec       map[string]interface{} `json:"spec,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1ServiceTemplateIn struct {
+	APIVersion string                 `json:"apiVersion"`
+	Kind       string                 `json:"kind"`
+	Spec       map[string]interface{} `json:"spec,omitempty"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1ShellProbe struct {
 	Command []string `json:"command,omitempty"`
 }
@@ -492,41 +548,6 @@ type GithubComKloudliteOperatorApisCrdsV1TCPProbe struct {
 
 type GithubComKloudliteOperatorApisCrdsV1TCPProbeIn struct {
 	Port int `json:"port"`
-}
-
-type GithubComKloudliteOperatorApisWireguardV1CNameRecord struct {
-	Host   *string `json:"host,omitempty"`
-	Target *string `json:"target,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisWireguardV1CNameRecordIn struct {
-	Host   *string `json:"host,omitempty"`
-	Target *string `json:"target,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisWireguardV1DeviceSpec struct {
-	ActiveNamespace   *string                                                 `json:"activeNamespace,omitempty"`
-	CnameRecords      []*GithubComKloudliteOperatorApisWireguardV1CNameRecord `json:"cnameRecords,omitempty"`
-	Disabled          *bool                                                   `json:"disabled,omitempty"`
-	NodeSelector      map[string]interface{}                                  `json:"nodeSelector,omitempty"`
-	NoExternalService *bool                                                   `json:"noExternalService,omitempty"`
-	Ports             []*GithubComKloudliteOperatorApisWireguardV1Port        `json:"ports,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisWireguardV1DeviceSpecIn struct {
-	ActiveNamespace *string                                                   `json:"activeNamespace,omitempty"`
-	CnameRecords    []*GithubComKloudliteOperatorApisWireguardV1CNameRecordIn `json:"cnameRecords,omitempty"`
-	Ports           []*GithubComKloudliteOperatorApisWireguardV1PortIn        `json:"ports,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisWireguardV1Port struct {
-	Port       *int `json:"port,omitempty"`
-	TargetPort *int `json:"targetPort,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisWireguardV1PortIn struct {
-	Port       *int `json:"port,omitempty"`
-	TargetPort *int `json:"targetPort,omitempty"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheck struct {
@@ -608,6 +629,26 @@ type ImagePullSecretPaginatedRecords struct {
 	Edges      []*ImagePullSecretEdge `json:"edges"`
 	PageInfo   *PageInfo              `json:"pageInfo"`
 	TotalCount int                    `json:"totalCount"`
+}
+
+type ImportedManagedResourceEdge struct {
+	Cursor string                            `json:"cursor"`
+	Node   *entities.ImportedManagedResource `json:"node"`
+}
+
+type ImportedManagedResourceIn struct {
+	DisplayName        string                                                                `json:"displayName"`
+	EnvironmentName    string                                                                `json:"environmentName"`
+	ManagedResourceRef *GithubComKloudliteAPIAppsConsoleInternalEntitiesManagedResourceRefIn `json:"managedResourceRef"`
+	Name               string                                                                `json:"name"`
+	SecretRef          *GithubComKloudliteOperatorApisCommonTypesSecretRefIn                 `json:"secretRef"`
+	SyncStatus         *types.SyncStatus                                                     `json:"syncStatus"`
+}
+
+type ImportedManagedResourcePaginatedRecords struct {
+	Edges      []*ImportedManagedResourceEdge `json:"edges"`
+	PageInfo   *PageInfo                      `json:"pageInfo"`
+	TotalCount int                            `json:"totalCount"`
 }
 
 type K8sIoAPICoreV1Toleration struct {
@@ -696,10 +737,10 @@ type Mutation struct {
 }
 
 type PageInfo struct {
-	EndCursor       *string `json:"endCursor,omitempty"`
-	HasNextPage     *bool   `json:"hasNextPage,omitempty"`
-	HasPreviousPage *bool   `json:"hasPreviousPage,omitempty"`
-	StartCursor     *string `json:"startCursor,omitempty"`
+	EndCursor   *string `json:"endCursor,omitempty"`
+	HasNextPage *bool   `json:"hasNextPage,omitempty"`
+	HasPrevPage *bool   `json:"hasPrevPage,omitempty"`
+	StartCursor *string `json:"startCursor,omitempty"`
 }
 
 type Port struct {
@@ -727,6 +768,11 @@ type SearchApps struct {
 	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
 }
 
+type SearchClusterManagedService struct {
+	IsReady *repos.MatchFilter `json:"isReady,omitempty"`
+	Text    *repos.MatchFilter `json:"text,omitempty"`
+}
+
 type SearchConfigs struct {
 	Text              *repos.MatchFilter `json:"text,omitempty"`
 	IsReady           *repos.MatchFilter `json:"isReady,omitempty"`
@@ -746,6 +792,12 @@ type SearchExternalApps struct {
 }
 
 type SearchImagePullSecrets struct {
+	Text              *repos.MatchFilter `json:"text,omitempty"`
+	IsReady           *repos.MatchFilter `json:"isReady,omitempty"`
+	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
+}
+
+type SearchImportedManagedResources struct {
 	Text              *repos.MatchFilter `json:"text,omitempty"`
 	IsReady           *repos.MatchFilter `json:"isReady,omitempty"`
 	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
@@ -844,6 +896,65 @@ func (e *GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat) Unmar
 }
 
 func (e GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType string
+
+const (
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeApp                     GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "app"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeClusterManagedService   GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "cluster_managed_service"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeConfig                  GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "config"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeEnvironment             GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "environment"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeExternalApp             GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "external_app"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeImagePullSecret         GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "image_pull_secret"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeImportedManagedResource GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "imported_managed_resource"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeManagedResource         GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "managed_resource"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeRouter                  GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "router"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeSecret                  GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "secret"
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeServiceBinding          GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = "service_binding"
+)
+
+var AllGithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType = []GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType{
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeApp,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeClusterManagedService,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeConfig,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeEnvironment,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeExternalApp,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeImagePullSecret,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeImportedManagedResource,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeManagedResource,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeRouter,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeSecret,
+	GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeServiceBinding,
+}
+
+func (e GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) IsValid() bool {
+	switch e {
+	case GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeApp, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeClusterManagedService, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeConfig, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeEnvironment, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeExternalApp, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeImagePullSecret, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeImportedManagedResource, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeManagedResource, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeRouter, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeSecret, GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceTypeServiceBinding:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___apps___console___internal___entities__ResourceType", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteAPIAppsConsoleInternalEntitiesResourceType) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 
