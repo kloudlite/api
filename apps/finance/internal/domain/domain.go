@@ -3,7 +3,6 @@ package domain
 import (
 	"github.com/kloudlite/api/apps/finance/internal/entities"
 	"github.com/kloudlite/api/apps/finance/internal/env"
-	iamT "github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/grpc-interfaces/container_registry"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/comms"
@@ -13,63 +12,13 @@ import (
 	"github.com/kloudlite/api/pkg/logging"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
-	"golang.org/x/net/context"
 )
 
-type CheckNameAvailabilityOutput struct {
-	Result         bool     `json:"result"`
-	SuggestedNames []string `json:"suggestedNames,omitempty"`
-}
-
-type AccountService interface {
-	CheckNameAvailability(ctx context.Context, name string) (*CheckNameAvailabilityOutput, error)
-
-	ListAccounts(ctx UserContext) ([]*entities.Account, error)
-	GetAccount(ctx UserContext, name string) (*entities.Account, error)
-
-	CreateAccount(ctx UserContext, account entities.Account) (*entities.Account, error)
-	UpdateAccount(ctx UserContext, account entities.Account) (*entities.Account, error)
-	DeleteAccount(ctx UserContext, name string) (bool, error)
-
-	ResyncAccount(ctx UserContext, name string) error
-
-	ActivateAccount(ctx UserContext, name string) (bool, error)
-	DeactivateAccount(ctx UserContext, name string) (bool, error)
-
-	EnsureKloudliteRegistryCredentials(ctx UserContext, accountName string) error
-
-	AvailableKloudliteRegions(ctx UserContext) ([]*AvailableKloudliteRegion, error)
-}
-
-type InvitationService interface {
-	InviteMembers(ctx UserContext, accountName string, invitations []*entities.Invitation) ([]*entities.Invitation, error)
-	ResendInviteEmail(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
-
-	ListInvitations(ctx UserContext, accountName string) ([]*entities.Invitation, error)
-	GetInvitation(ctx UserContext, accountName string, invitationId repos.ID) (*entities.Invitation, error)
-
-	ListInvitationsForUser(ctx UserContext, onlyPending bool) ([]*entities.Invitation, error)
-
-	DeleteInvitation(ctx UserContext, accountName string, invitationId repos.ID) (bool, error)
-
-	AcceptInvitation(ctx UserContext, accountName string, inviteToken string) (bool, error)
-	RejectInvitation(ctx UserContext, accountName string, inviteToken string) (bool, error)
-}
-
-type MembershipService interface {
-	ListMembershipsForUser(ctx UserContext) ([]*entities.AccountMembership, error)
-	ListMembershipsForAccount(ctx UserContext, accountName string, role *iamT.Role) ([]*entities.AccountMembership, error)
-
-	GetAccountMembership(ctx UserContext, accountName string) (*entities.AccountMembership, error)
-
-	RemoveAccountMembership(ctx UserContext, accountName string, memberId repos.ID) (bool, error)
-	UpdateAccountMembership(ctx UserContext, accountName string, memberId repos.ID, role iamT.Role) (bool, error)
+type PaymentService interface {
 }
 
 type Domain interface {
-	AccountService
-	InvitationService
-	MembershipService
+	PaymentService
 }
 
 type domain struct {
@@ -79,11 +28,13 @@ type domain struct {
 	containerRegistryClient container_registry.ContainerRegistryClient
 	commsClient             comms.CommsClient
 
-	accountRepo    repos.DbRepo[*entities.Account]
-	invitationRepo repos.DbRepo[*entities.Invitation]
-	// accountInviteTokenRepo cache.Repo[*entities.Invitation]
+	paymentRepo      repos.DbRepo[*entities.Payment]
+	invoiceRepo      repos.DbRepo[*entities.Invoice]
+	walletRepo       repos.DbRepo[*entities.Wallet]
+	transactionRepo  repos.DbRepo[*entities.Transaction]
+	subscriptionRepo repos.DbRepo[*entities.Subscription]
 
-	k8sClient k8s.Client
+	// k8sClient k8s.Client
 
 	Env *env.Env
 
@@ -99,9 +50,11 @@ func NewDomain(
 
 	k8sClient k8s.Client,
 
-	accountRepo repos.DbRepo[*entities.Account],
-	invitationRepo repos.DbRepo[*entities.Invitation],
-	// accountInviteTokenRepo cache.Repo[*entities.Invitation],
+	paymentRepo repos.DbRepo[*entities.Payment],
+	invoiceRepo repos.DbRepo[*entities.Invoice],
+	walletRepo repos.DbRepo[*entities.Wallet],
+	transactionRepo repos.DbRepo[*entities.Transaction],
+	subscriptionRepo repos.DbRepo[*entities.Subscription],
 
 	ev *env.Env,
 
@@ -114,10 +67,11 @@ func NewDomain(
 		commsClient:             commsClient,
 		containerRegistryClient: containerRegistryClient,
 
-		k8sClient: k8sClient,
-
-		accountRepo:    accountRepo,
-		invitationRepo: invitationRepo,
+		paymentRepo:      paymentRepo,
+		invoiceRepo:      invoiceRepo,
+		walletRepo:       walletRepo,
+		transactionRepo:  transactionRepo,
+		subscriptionRepo: subscriptionRepo,
 
 		Env: ev,
 

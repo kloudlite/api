@@ -61,47 +61,42 @@ models:
   Json:
     model:
       - github.com/99designs/gqlgen/graphql.Map
-  User:
-    fields:
-      accounts:
-        resolver: true
-      accountInvitations:
-        resolver: true
-  Account: &account-model
-    model: github.com/kloudlite/api/apps/accounts/internal/entities.Account
-    fields:
-      # accountMemberships:
-      memberships:
-        resolver: true
-      # outstandingAmount:
-      #   resolver: true
-  AccountIn: *account-model
-  AccountMembership:
-    model: github.com/kloudlite/api/apps/accounts/internal/entities.AccountMembership
-    fields:
-      user:
-        resolver: true
+  # User:
+  #   fields:
+  #     accounts:
+  #       resolver: true
+  #     accountInvitations:
+  #       resolver: true
 
-  AvailableKloudliteRegion:
-    model: github.com/kloudlite/api/apps/accounts/internal/domain.AvailableKloudliteRegion
+  Payment: &payment-model
+    model: github.com/kloudlite/api/apps/finance/internal/entities.Payment
+  PaymentIn: *payment-model
 
-  Invitation: &invitation-model
-    model: github.com/kloudlite/api/apps/accounts/internal/entities.Invitation
-  InvitationIn: *invitation-model
+  Invoice: &invoice-model
+    model: github.com/kloudlite/api/apps/finance/internal/entities.Invoice
+  InvoiceIn: *invoice-model
+
+  Transaction: &transaction-model
+    model: github.com/kloudlite/api/apps/finance/internal/entities.Transaction
+  TransactionIn: *transaction-model
+
+  Wallet: &wallet-model
+    model: github.com/kloudlite/api/apps/finance/internal/entities.Wallet
+  WalletIn: *wallet-model
 
   Metadata: &metadata-model
     model: k8s.io/apimachinery/pkg/apis/meta/v1.ObjectMeta
   MetadataIn: *metadata-model
 
-  Github__com___kloudlite___operator___pkg___operator__Status:
-    model: github.com/kloudlite/operator/pkg/operator.Status
-
-  AccountsCheckNameAvailabilityOutput:
-    model: github.com/kloudlite/api/apps/accounts/internal/domain.CheckNameAvailabilityOutput
-
-  Github__com___kloudlite___api___apps___iam___types__Role:
-    model: github.com/kloudlite/api/apps/iam/types.Role
-  
-  Github__com___kloudlite___api___common__CreatedOrUpdatedBy:
-    model: github.com/kloudlite/api/common.CreatedOrUpdatedBy
-
+  # Github__com___kloudlite___operator___pkg___operator__Status:
+  #   model: github.com/kloudlite/operator/pkg/operator.Status
+  #
+  # AccountsCheckNameAvailabilityOutput:
+  #   model: github.com/kloudlite/api/apps/accounts/internal/domain.CheckNameAvailabilityOutput
+  #
+  # Github__com___kloudlite___api___apps___iam___types__Role:
+  #   model: github.com/kloudlite/api/apps/iam/types.Role
+  #
+  # Github__com___kloudlite___api___common__CreatedOrUpdatedBy:
+  #   model: github.com/kloudlite/api/common.CreatedOrUpdatedBy
+  #

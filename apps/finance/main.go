@@ -79,7 +79,7 @@ func main() {
 	defer cancelFunc()
 
 	if err := app.Start(ctx); err != nil {
-		logger.Errorf(err, "error starting accounts app")
+		logger.Errorf(err, "error starting finance app")
 		os.Exit(1)
 	}
 

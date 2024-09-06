@@ -3,20 +3,13 @@
 package model
 
 import (
-	"github.com/kloudlite/api/apps/accounts/internal/entities"
-	"github.com/kloudlite/api/apps/iam/types"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-type AccountMembershipIn struct {
-	AccountName string     `json:"accountName"`
-	Role        types.Role `json:"role"`
-	UserID      string     `json:"userId"`
-}
-
-type AvailableKloudliteRegionIn struct {
-	DisplayName string `json:"displayName"`
-	ID          string `json:"id"`
+type GithubComKloudliteAPICommonCreatedOrUpdatedBy struct {
+	UserEmail string `json:"userEmail"`
+	UserID    string `json:"userId"`
+	UserName  string `json:"userName"`
 }
 
 type Mutation struct {
@@ -32,10 +25,10 @@ type PageInfo struct {
 type Query struct {
 }
 
-type User struct {
-	ID                 repos.ID                      `json:"id"`
-	Accounts           []*entities.AccountMembership `json:"accounts,omitempty"`
-	AccountInvitations []*entities.Invitation        `json:"accountInvitations,omitempty"`
+type Uses struct {
+	CreationTime      string   `json:"creationTime"`
+	ID                repos.ID `json:"id"`
+	MarkedForDeletion *bool    `json:"markedForDeletion,omitempty"`
+	RecordVersion     int      `json:"recordVersion"`
+	UpdateTime        string   `json:"updateTime"`
 }
-
-func (User) IsEntity() {}

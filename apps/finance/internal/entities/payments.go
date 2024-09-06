@@ -1,23 +1,19 @@
 package entities
 
 import (
-	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/repos"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Payment struct {
-	repos.BaseEntity  `json:",inline" graphql:"noinput"`
-	metav1.ObjectMeta `json:"metadata,omitempty"`
-	TargetNamespace   string `json:"targetNamespace,omitempty" graphql:"noinput"`
+	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
-	common.ResourceMetadata `json:",inline"`
-
-	Logo         *string `json:"logo"`
-	IsActive     *bool   `json:"isActive,omitempty"`
-	ContactEmail string  `json:"contactEmail,omitempty"`
-
-	KloudliteGatewayRegion string `json:"kloudliteGatewayRegion"`
+	TeamId        string `json:"teamId"`
+	Amount        int    `json:"amount"`
+	Currency      string `json:"currency"`
+	Status        string `json:"status"`
+	Method        string `json:"method"`
+	TransactionId string `json:"transactionId"`
+	CreatedAt     string `json:"createdAt"`
 }
 
 var PaymentIndices = []repos.IndexField{

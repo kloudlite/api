@@ -1,21 +1,17 @@
 package entities
 
 import (
+	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-type Subscription struct {
+type Transaction struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
-	Seats  int    `json:"seats" graphql:"seats"`
-	TeamId string `json:"teamId" graphql:"teamId"`
-	Status string `json:"status" graphql:"status"`
-
-	UpdatedAt string `json:"updatedAt" graphql:"updatedAt"`
-	CreatedAt string `json:"createdAt" graphql:"createdAt"`
+	common.ResourceMetadata `json:",inline"`
 }
 
-var SubscriptionIndices = []repos.IndexField{
+var TransactionIndices = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
 			{Key: "id", Value: repos.IndexAsc},

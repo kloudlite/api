@@ -1,0 +1,8 @@
+type Uses @shareable {
+  creationTime: Date!
+  id: ID!
+  markedForDeletion: Boolean
+  recordVersion: Int!
+  updateTime: Date!
+}
+

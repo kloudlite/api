@@ -13,7 +13,6 @@ import (
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/constants"
 	"github.com/kloudlite/api/grpc-interfaces/container_registry"
-	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/comms"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
@@ -38,12 +37,12 @@ type (
 )
 
 var Module = fx.Module("app",
-	repos.NewFxMongoRepo[*entities.Account]("accounts", "acc", entities.AccountIndices),
-	repos.NewFxMongoRepo[*entities.Invitation]("invitations", "invite", entities.InvitationIndices),
+	repos.NewFxMongoRepo[*entities.Payment]("accounts", "acc", entities.PaymentIndices),
+	repos.NewFxMongoRepo[*entities.Invoice]("invitations", "invite", entities.InvoiceIndices),
 
-	fx.Provide(func(client AuthCacheClient) kv.Repo[*entities.Invitation] {
-		return kv.NewRepo[*entities.Invitation](client)
-	}),
+	// fx.Provide(func(client AuthCacheClient) kv.Repo[*entities.Invitation] {
+	// 	return kv.NewRepo[*entities.Invitation](client)
+	// }),
 
 	// grpc clients
 	fx.Provide(func(conn ConsoleClient) console.ConsoleClient {
@@ -64,14 +63,6 @@ var Module = fx.Module("app",
 
 	fx.Provide(func(conn ContainerRegistryClient) container_registry.ContainerRegistryClient {
 		return container_registry.NewContainerRegistryClient(conn)
-	}),
-
-	fx.Provide(func(d domain.Domain) accounts.AccountsServer {
-		return &financeGrpcServer{d: d}
-	}),
-
-	fx.Invoke(func(d domain.Domain, gserver FinanceGrpcServer) {
-		registerAccountsGRPCServer(gserver, d)
 	}),
 
 	domain.Module,

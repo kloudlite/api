@@ -1,0 +1,25 @@
+type Payment @shareable {
+  amount: Int!
+  createdAt: String!
+  creationTime: Date!
+  currency: String!
+  id: ID!
+  markedForDeletion: Boolean
+  method: String!
+  recordVersion: Int!
+  status: String!
+  teamId: String!
+  transactionId: String!
+  updateTime: Date!
+}
+
+input PaymentIn {
+  amount: Int!
+  createdAt: String!
+  currency: String!
+  method: String!
+  status: String!
+  teamId: String!
+  transactionId: String!
+}
+
