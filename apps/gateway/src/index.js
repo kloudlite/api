@@ -26,7 +26,7 @@ class CustomDataSource extends RemoteGraphQLDataSource {
     return request;
   }
 
-}
+  // eslint-disable-next-line class-methods-use-this
   didReceiveResponse({ response, context }) {
     const x = response.http.headers.get('set-cookie');
     if (!x) return response;
@@ -58,10 +58,10 @@ const server = new ApolloServer({
     credentials: true,
   },
   gateway,
-// plugins: [graphqlExecutionLogger],
-// context: async ({ req, res }) => {
-//   return { req, res };
-// },
+  // plugins: [graphqlExecutionLogger],
+  // context: async ({ req, res }) => {
+  //   return { req, res };
+  // },
 });
 
 const app = express()
@@ -87,8 +87,6 @@ app.listen(port, (err) => {
 
 console.log(String.raw`
                     ,                       
-
-`)
                   #####                 
                ########                 
              ########                   
