@@ -25,11 +25,8 @@ tasks:
     cmds:
       - mkdir -p "./internal/app/_struct-to-graphql"
       - go run ../../cmd/struct-to-graphql
-          --struct github.com/kloudlite/api/apps/finance/internal/entities.Invoice
           --struct github.com/kloudlite/api/apps/finance/internal/entities.Payment
-          --struct github.com/kloudlite/api/apps/finance/internal/entities.Subscription
-          --struct github.com/kloudlite/api/apps/finance/internal/entities.Transaction
-          --struct github.com/kloudlite/api/apps/finance/internal/entities.Uses
+          --struct github.com/kloudlite/api/apps/finance/internal/entities.Charge
           --struct github.com/kloudlite/api/apps/finance/internal/entities.Wallet
         > ./internal/app/_struct-to-graphql/main.go
       - |+

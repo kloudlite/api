@@ -1,13 +1,19 @@
-type Github__com___kloudlite___api___common__CreatedOrUpdatedBy @shareable {
-  userEmail: String!
-  userId: String!
-  userName: String!
-}
-
 type PageInfo @shareable {
   endCursor: String
   hasNextPage: Boolean
   hasPrevPage: Boolean
   startCursor: String
+}
+
+enum Github__com___kloudlite___api___apps___finance___internal___entities__ChargeStatus {
+  failed
+  pending
+  success
+}
+
+enum Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus {
+  failed
+  pending
+  success
 }
 

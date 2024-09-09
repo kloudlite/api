@@ -14,45 +14,45 @@ import (
 )
 
 // CreatedAt is the resolver for the createdAt field.
-func (r *paymentResolver) CreatedAt(ctx context.Context, obj *entities.Payment) (string, error) {
+func (r *chargeResolver) CreatedAt(ctx context.Context, obj *entities.Charge) (string, error) {
 	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
 }
 
 // CreationTime is the resolver for the creationTime field.
-func (r *paymentResolver) CreationTime(ctx context.Context, obj *entities.Payment) (string, error) {
+func (r *chargeResolver) CreationTime(ctx context.Context, obj *entities.Charge) (string, error) {
 	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
 }
 
 // Status is the resolver for the status field.
-func (r *paymentResolver) Status(ctx context.Context, obj *entities.Payment) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus, error) {
+func (r *chargeResolver) Status(ctx context.Context, obj *entities.Charge) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesChargeStatus, error) {
 	panic(fmt.Errorf("not implemented: Status - status"))
 }
 
 // UpdatedAt is the resolver for the updatedAt field.
-func (r *paymentResolver) UpdatedAt(ctx context.Context, obj *entities.Payment) (string, error) {
+func (r *chargeResolver) UpdatedAt(ctx context.Context, obj *entities.Charge) (string, error) {
 	panic(fmt.Errorf("not implemented: UpdatedAt - updatedAt"))
 }
 
 // UpdateTime is the resolver for the updateTime field.
-func (r *paymentResolver) UpdateTime(ctx context.Context, obj *entities.Payment) (string, error) {
+func (r *chargeResolver) UpdateTime(ctx context.Context, obj *entities.Charge) (string, error) {
 	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
 }
 
 // WalletID is the resolver for the walletId field.
-func (r *paymentResolver) WalletID(ctx context.Context, obj *entities.Payment) (string, error) {
+func (r *chargeResolver) WalletID(ctx context.Context, obj *entities.Charge) (string, error) {
 	panic(fmt.Errorf("not implemented: WalletID - walletId"))
 }
 
 // WalletID is the resolver for the walletId field.
-func (r *paymentInResolver) WalletID(ctx context.Context, obj *entities.Payment, data string) error {
+func (r *chargeInResolver) WalletID(ctx context.Context, obj *entities.Charge, data string) error {
 	panic(fmt.Errorf("not implemented: WalletID - walletId"))
 }
 
-// Payment returns generated.PaymentResolver implementation.
-func (r *Resolver) Payment() generated.PaymentResolver { return &paymentResolver{r} }
+// Charge returns generated.ChargeResolver implementation.
+func (r *Resolver) Charge() generated.ChargeResolver { return &chargeResolver{r} }
 
-// PaymentIn returns generated.PaymentInResolver implementation.
-func (r *Resolver) PaymentIn() generated.PaymentInResolver { return &paymentInResolver{r} }
+// ChargeIn returns generated.ChargeInResolver implementation.
+func (r *Resolver) ChargeIn() generated.ChargeInResolver { return &chargeInResolver{r} }
 
-type paymentResolver struct{ *Resolver }
-type paymentInResolver struct{ *Resolver }
+type chargeResolver struct{ *Resolver }
+type chargeInResolver struct{ *Resolver }

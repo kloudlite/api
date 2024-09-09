@@ -7,11 +7,11 @@ import (
 type Wallet struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
-	TeamId    string `json:"teamId" graphql:"teamId"`
-	Balance   int    `json:"balance" graphql:"balance"`
-	Currency  string `json:"currency" graphql:"currency"`
-	CreatedAt string `json:"createdAt" graphql:"createdAt"`
-	UpdatedAt string `json:"updatedAt" graphql:"updatedAt"`
+	TeamId    string  `json:"teamId"`
+	Balance   float64 `json:"balance"` 
+	Currency  string  `json:"currency"`
+	CreatedAt string  `json:"createdAt"`
+	UpdatedAt string  `json:"updatedAt"`
 }
 
 var WalletIndices = []repos.IndexField{
@@ -23,13 +23,7 @@ var WalletIndices = []repos.IndexField{
 	},
 	{
 		Field: []repos.IndexKey{
-			{Key: "metadata.name", Value: repos.IndexAsc},
-		},
-		Unique: true,
-	},
-	{
-		Field: []repos.IndexKey{
-			{Key: "targetNamespace", Value: repos.IndexAsc},
+			{Key: "teamId", Value: repos.IndexAsc},
 		},
 		Unique: true,
 	},

@@ -31,7 +31,7 @@ type domain struct {
 	paymentRepo      repos.DbRepo[*entities.Payment]
 	invoiceRepo      repos.DbRepo[*entities.Invoice]
 	walletRepo       repos.DbRepo[*entities.Wallet]
-	transactionRepo  repos.DbRepo[*entities.Transaction]
+	chargeRepo       repos.DbRepo[*entities.Charge]
 	subscriptionRepo repos.DbRepo[*entities.Subscription]
 
 	// k8sClient k8s.Client
@@ -53,7 +53,7 @@ func NewDomain(
 	paymentRepo repos.DbRepo[*entities.Payment],
 	invoiceRepo repos.DbRepo[*entities.Invoice],
 	walletRepo repos.DbRepo[*entities.Wallet],
-	transactionRepo repos.DbRepo[*entities.Transaction],
+	chargeRepo repos.DbRepo[*entities.Charge],
 	subscriptionRepo repos.DbRepo[*entities.Subscription],
 
 	ev *env.Env,
@@ -70,7 +70,7 @@ func NewDomain(
 		paymentRepo:      paymentRepo,
 		invoiceRepo:      invoiceRepo,
 		walletRepo:       walletRepo,
-		transactionRepo:  transactionRepo,
+		chargeRepo:       chargeRepo,
 		subscriptionRepo: subscriptionRepo,
 
 		Env: ev,

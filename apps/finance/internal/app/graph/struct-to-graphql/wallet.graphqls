@@ -1,0 +1,21 @@
+type Wallet @shareable {
+  balance: Float!
+  createdAt: String!
+  creationTime: Date!
+  currency: String!
+  id: ID!
+  markedForDeletion: Boolean
+  recordVersion: Int!
+  teamId: String!
+  updatedAt: String!
+  updateTime: Date!
+}
+
+input WalletIn {
+  balance: Float!
+  createdAt: String!
+  currency: String!
+  teamId: String!
+  updatedAt: String!
+}
+

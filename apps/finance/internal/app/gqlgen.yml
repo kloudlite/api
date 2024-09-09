@@ -68,17 +68,22 @@ models:
   #     accountInvitations:
   #       resolver: true
 
+  Charge:
+    model: github.com/kloudlite/api/apps/finance/internal/entities.Charge
+  ChargeIn:
+    model: github.com/kloudlite/api/apps/finance/internal/entities.Charge
+
   Payment: &payment-model
     model: github.com/kloudlite/api/apps/finance/internal/entities.Payment
   PaymentIn: *payment-model
 
-  Invoice: &invoice-model
-    model: github.com/kloudlite/api/apps/finance/internal/entities.Invoice
-  InvoiceIn: *invoice-model
+  # Invoice: &invoice-model
+  #   model: github.com/kloudlite/api/apps/finance/internal/entities.Invoice
+  # InvoiceIn: *invoice-model
 
-  Transaction: &transaction-model
-    model: github.com/kloudlite/api/apps/finance/internal/entities.Transaction
-  TransactionIn: *transaction-model
+  # Transaction: &transaction-model
+  #   model: github.com/kloudlite/api/apps/finance/internal/entities.Transaction
+  # TransactionIn: *transaction-model
 
   Wallet: &wallet-model
     model: github.com/kloudlite/api/apps/finance/internal/entities.Wallet

@@ -6,15 +6,15 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-type ChargeStatus string
+type PaymentStatus string
 
 const (
-	ChargeStatusPending ChargeStatus = "pending"
-	ChargeStatusFailed  ChargeStatus = "failed"
-	ChargeStatusSuccess ChargeStatus = "success"
+	PaymentStatusPending PaymentStatus = "pending"
+	PaymentStatusFailed  PaymentStatus = "failed"
+	PaymentStatusSuccess PaymentStatus = "success"
 )
 
-type Charge struct {
+type Payment struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 	CreatedAt        time.Time `json:"createdAt" graphql:"noinput"`
 	UpdatedAt        time.Time `json:"updatedAt" graphql:"noinput"`
@@ -24,13 +24,13 @@ type Charge struct {
 
 	Amount   int    `json:"amount"`
 	Currency string `json:"currency"`
+	// Method        string `json:"method"`
+	// TransactionId string `json:"transactionId"`
 
-	Description string `json:"description"`
-
-	Status ChargeStatus `json:"status" graphql:"noinput"`
+	Status PaymentStatus `json:"status" graphql:"noinput"`
 }
 
-var ChargeIndices = []repos.IndexField{
+var PaymentIndices = []repos.IndexField{
 	{
 		Field: []repos.IndexKey{
 			{Key: "id", Value: repos.IndexAsc},

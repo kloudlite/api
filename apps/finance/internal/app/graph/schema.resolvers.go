@@ -10,6 +10,7 @@ import (
 
 	"github.com/kloudlite/api/apps/finance/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/finance/internal/entities"
+	"github.com/kloudlite/api/pkg/repos"
 )
 
 // FinanceCreatePayment is the resolver for the finance_createPayment field.
@@ -17,9 +18,29 @@ func (r *mutationResolver) FinanceCreatePayment(ctx context.Context, payment ent
 	panic(fmt.Errorf("not implemented: FinanceCreatePayment - finance_createPayment"))
 }
 
+// FinanceValidatePayment is the resolver for the finance_validatePayment field.
+func (r *mutationResolver) FinanceValidatePayment(ctx context.Context, paymentID repos.ID) (*entities.Payment, error) {
+	panic(fmt.Errorf("not implemented: FinanceValidatePayment - finance_validatePayment"))
+}
+
+// FinanceGetWallet is the resolver for the finance_getWallet field.
+func (r *queryResolver) FinanceGetWallet(ctx context.Context) (*entities.Wallet, error) {
+	panic(fmt.Errorf("not implemented: FinanceGetWallet - finance_getWallet"))
+}
+
+// FinanceGetPayments is the resolver for the finance_getPayments field.
+func (r *queryResolver) FinanceGetPayments(ctx context.Context, walletID repos.ID) ([]*entities.Payment, error) {
+	panic(fmt.Errorf("not implemented: FinanceGetPayments - finance_getPayments"))
+}
+
 // FinanceListPayments is the resolver for the finance_listPayments field.
 func (r *queryResolver) FinanceListPayments(ctx context.Context) ([]*entities.Payment, error) {
 	panic(fmt.Errorf("not implemented: FinanceListPayments - finance_listPayments"))
+}
+
+// FinanceListCharges is the resolver for the finance_listCharges field.
+func (r *queryResolver) FinanceListCharges(ctx context.Context) ([]*entities.Charge, error) {
+	panic(fmt.Errorf("not implemented: FinanceListCharges - finance_listCharges"))
 }
 
 // Mutation returns generated.MutationResolver implementation.

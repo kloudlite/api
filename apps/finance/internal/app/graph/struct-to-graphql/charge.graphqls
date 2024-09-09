@@ -1,21 +1,23 @@
-type Payment @shareable {
+type Charge @shareable {
   amount: Int!
   createdAt: Date!
   creationTime: Date!
   currency: String!
+  description: String!
   id: ID!
   markedForDeletion: Boolean
   recordVersion: Int!
-  status: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus!
+  status: Github__com___kloudlite___api___apps___finance___internal___entities__ChargeStatus!
   teamId: String!
   updatedAt: Date!
   updateTime: Date!
   walletId: String!
 }
 
-input PaymentIn {
+input ChargeIn {
   amount: Int!
   currency: String!
+  description: String!
   teamId: String!
   walletId: String!
 }
