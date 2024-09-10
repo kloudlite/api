@@ -1,58 +1,65 @@
 package domain
 
+import (
+	"fmt"
+
+	"github.com/kloudlite/api/apps/finance/internal/entities"
+	"github.com/kloudlite/api/pkg/repos"
+)
+
 func (d *domain) GetWallet(ctx UserContext) (*entities.Wallet, error) {
-	return d.walletRepo.Get(ctx.UserID)
+	return d.walletRepo.FindOne(ctx.Context, repos.Filter{
+		"team_id": ctx.AccountName,
+	})
 }
 
 func (d *domain) GetPayments(ctx UserContext, walletID repos.ID) ([]*entities.Payment, error) {
-	return d.paymentRepo.GetByWallet(ctx.UserID, walletID)
+	return d.paymentRepo.Find(ctx.Context, repos.Query{
+		Filter: repos.Filter{
+			"wallet_id": walletID,
+			"team_id":   ctx.AccountName,
+		},
+	})
 }
 
 func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entities.Payment, error) {
-	if err := d.validatePayment(ctx, req); err != nil {
-		return nil, err
-	}
-
-	payment, err := d.paymentRepo.Create(ctx.UserID, req)
+	p, err := d.paymentRepo.Create(ctx.Context, req)
 	if err != nil {
 		return nil, err
 	}
 
-	return payment, nil
+	// use p.Id as payment id and initiate payment from payment gateway
+
+	return p, nil
 }
 
-func (d *domain) validatePayment(ctx UserContext, req *entities.Payment) error {
-	if req.Amount <= 0 {
-		return ErrInvalidAmount
+func (d *domain) validatePayment(ctx UserContext, paymentId repos.ID) error {
+	p, err := d.paymentRepo.FindById(ctx.Context, paymentId)
+	if err != nil {
+		return err
 	}
-	if req.Currency == "" {
-		return ErrInvalidCurrency
-	}
-	if req.Description == "" {
-		return ErrInvalidDescription
-	}
-	if req.PaymentType == "" {
-		return ErrInvalidPaymentType
-	}
-
-	// TODO: validate payment type
+	// validate payment with p.id on payment gateway
+	fmt.Println(p)
 
 	return nil
-} 
+}
 
-func (d *domain) ListCharges(ctx UserContext) ([]*entities.Charge, error) {
-	return d.chargeRepo.GetByUser(ctx.UserID)
-}     
+func (d *domain) ListCharges(ctx UserContext, walletID repos.ID) ([]*entities.Charge, error) {
+	c, err := d.chargeRepo.Find(ctx.Context, repos.Query{
+		Filter: repos.Filter{
+			"team_id":   ctx.AccountName,
+			"wallet_id": walletID,
+		},
+	})
 
-func (d *domain) CreateCharge(ctx UserContext, req *entities.Charge) (*entities.Charge, error) {
-	if err := d.validateCharge(ctx, req); err != nil {
-		return nil, err
-	}
-
-	charge, err := d.chargeRepo.Create(ctx.UserID, req)
 	if err != nil {
 		return nil, err
 	}
 
-	return charge, nil
+	return c, nil
+}
+
+// internal method
+func (d *domain) CreateCharge(ctx UserContext, req *entities.Charge) (*entities.Charge, error) {
+	return d.chargeRepo.Create(ctx.Context, req)
 }

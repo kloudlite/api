@@ -13,6 +13,8 @@ type UserContext struct {
 	UserId    repos.ID
 	UserName  string
 	UserEmail string
+
+	AccountName string
 }
 
 func (d *domain) checkAccountAccess(ctx context.Context, accountName string, userId repos.ID, action iamT.Action) error {
