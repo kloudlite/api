@@ -24,8 +24,6 @@ type Payment struct {
 
 	Amount   int    `json:"amount"`
 	Currency string `json:"currency"`
-	// Method        string `json:"method"`
-	// TransactionId string `json:"transactionId"`
 
 	Status PaymentStatus `json:"status" graphql:"noinput"`
 }

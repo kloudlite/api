@@ -3,9 +3,8 @@ directive @hasAccount on FIELD_DEFINITION
 
 type Query {
   finance_getWallet: Wallet! @isLoggedInAndVerified
-  finance_getPayments(walletId: ID!): [Payment!] @isLoggedInAndVerified
+  finance_listPayments(walletId: ID!): [Payment!] @isLoggedInAndVerified
 
-  finance_listPayments: [Payment!] @isLoggedInAndVerified
   finance_listCharges: [Charge!] @isLoggedInAndVerified
 }
 

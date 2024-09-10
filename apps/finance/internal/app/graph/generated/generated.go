@@ -100,10 +100,9 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		FinanceGetPayments  func(childComplexity int, walletID repos.ID) int
 		FinanceGetWallet    func(childComplexity int) int
 		FinanceListCharges  func(childComplexity int) int
-		FinanceListPayments func(childComplexity int) int
+		FinanceListPayments func(childComplexity int, walletID repos.ID) int
 		__resolve__service  func(childComplexity int) int
 	}
 
@@ -151,8 +150,7 @@ type PaymentResolver interface {
 }
 type QueryResolver interface {
 	FinanceGetWallet(ctx context.Context) (*entities.Wallet, error)
-	FinanceGetPayments(ctx context.Context, walletID repos.ID) ([]*entities.Payment, error)
-	FinanceListPayments(ctx context.Context) ([]*entities.Payment, error)
+	FinanceListPayments(ctx context.Context, walletID repos.ID) ([]*entities.Payment, error)
 	FinanceListCharges(ctx context.Context) ([]*entities.Charge, error)
 }
 type WalletResolver interface {
@@ -414,18 +412,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.WalletID(childComplexity), true
 
-	case "Query.finance_getPayments":
-		if e.complexity.Query.FinanceGetPayments == nil {
-			break
-		}
-
-		args, err := ec.field_Query_finance_getPayments_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.FinanceGetPayments(childComplexity, args["walletId"].(repos.ID)), true
-
 	case "Query.finance_getWallet":
 		if e.complexity.Query.FinanceGetWallet == nil {
 			break
@@ -445,7 +431,12 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		return e.complexity.Query.FinanceListPayments(childComplexity), true
+		args, err := ec.field_Query_finance_listPayments_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.FinanceListPayments(childComplexity, args["walletId"].(repos.ID)), true
 
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
@@ -644,9 +635,8 @@ directive @hasAccount on FIELD_DEFINITION
 
 type Query {
   finance_getWallet: Wallet! @isLoggedInAndVerified
-  finance_getPayments(walletId: ID!): [Payment!] @isLoggedInAndVerified
+  finance_listPayments(walletId: ID!): [Payment!] @isLoggedInAndVerified
 
-  finance_listPayments: [Payment!] @isLoggedInAndVerified
   finance_listCharges: [Charge!] @isLoggedInAndVerified
 }
 
@@ -869,7 +859,7 @@ func (ec *executionContext) field_Query___type_args(ctx context.Context, rawArgs
 	return args, nil
 }
 
-func (ec *executionContext) field_Query_finance_getPayments_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+func (ec *executionContext) field_Query_finance_listPayments_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
 	var arg0 repos.ID
@@ -2468,8 +2458,8 @@ func (ec *executionContext) fieldContext_Query_finance_getWallet(_ context.Conte
 	return fc, nil
 }
 
-func (ec *executionContext) _Query_finance_getPayments(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_finance_getPayments(ctx, field)
+func (ec *executionContext) _Query_finance_listPayments(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_finance_listPayments(ctx, field)
 	if err != nil {
 		return graphql.Null
 	}
@@ -2483,7 +2473,7 @@ func (ec *executionContext) _Query_finance_getPayments(ctx context.Context, fiel
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().FinanceGetPayments(rctx, fc.Args["walletId"].(repos.ID))
+			return ec.resolvers.Query().FinanceListPayments(rctx, fc.Args["walletId"].(repos.ID))
 		}
 		directive1 := func(ctx context.Context) (interface{}, error) {
 			if ec.directives.IsLoggedInAndVerified == nil {
@@ -2516,7 +2506,7 @@ func (ec *executionContext) _Query_finance_getPayments(ctx context.Context, fiel
 	return ec.marshalOPayment2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋentitiesᚐPaymentᚄ(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_finance_getPayments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_finance_listPayments(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -2559,96 +2549,9 @@ func (ec *executionContext) fieldContext_Query_finance_getPayments(ctx context.C
 		}
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_finance_getPayments_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+	if fc.Args, err = ec.field_Query_finance_listPayments_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Query_finance_listPayments(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Query_finance_listPayments(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().FinanceListPayments(rctx)
-		}
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				return nil, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-
-		tmp, err := directive1(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.([]*entities.Payment); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be []*github.com/kloudlite/api/apps/finance/internal/entities.Payment`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.([]*entities.Payment)
-	fc.Result = res
-	return ec.marshalOPayment2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋentitiesᚐPaymentᚄ(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Query_finance_listPayments(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Query",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "amount":
-				return ec.fieldContext_Payment_amount(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Payment_createdAt(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_Payment_creationTime(ctx, field)
-			case "currency":
-				return ec.fieldContext_Payment_currency(ctx, field)
-			case "id":
-				return ec.fieldContext_Payment_id(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_Payment_markedForDeletion(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_Payment_recordVersion(ctx, field)
-			case "status":
-				return ec.fieldContext_Payment_status(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Payment_teamId(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Payment_updatedAt(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Payment_updateTime(ctx, field)
-			case "walletId":
-				return ec.fieldContext_Payment_walletId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
-		},
 	}
 	return fc, nil
 }
@@ -6029,25 +5932,6 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
-				return res
-			}
-
-			rrm := func(ctx context.Context) graphql.Marshaler {
-				return ec.OperationContext.RootResolverMiddleware(ctx,
-					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
-		case "finance_getPayments":
-			field := field
-
-			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Query_finance_getPayments(ctx, field)
 				return res
 			}
 

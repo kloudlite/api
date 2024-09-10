@@ -28,13 +28,8 @@ func (r *queryResolver) FinanceGetWallet(ctx context.Context) (*entities.Wallet,
 	panic(fmt.Errorf("not implemented: FinanceGetWallet - finance_getWallet"))
 }
 
-// FinanceGetPayments is the resolver for the finance_getPayments field.
-func (r *queryResolver) FinanceGetPayments(ctx context.Context, walletID repos.ID) ([]*entities.Payment, error) {
-	panic(fmt.Errorf("not implemented: FinanceGetPayments - finance_getPayments"))
-}
-
 // FinanceListPayments is the resolver for the finance_listPayments field.
-func (r *queryResolver) FinanceListPayments(ctx context.Context) ([]*entities.Payment, error) {
+func (r *queryResolver) FinanceListPayments(ctx context.Context, walletID repos.ID) ([]*entities.Payment, error) {
 	panic(fmt.Errorf("not implemented: FinanceListPayments - finance_listPayments"))
 }
 

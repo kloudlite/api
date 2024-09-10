@@ -8,7 +8,7 @@ type Wallet struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
 	TeamId    string  `json:"teamId"`
-	Balance   float64 `json:"balance"` 
+	Balance   float64 `json:"balance"`
 	Currency  string  `json:"currency"`
 	CreatedAt string  `json:"createdAt"`
 	UpdatedAt string  `json:"updatedAt"`
