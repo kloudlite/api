@@ -4,12 +4,20 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
+type SubscriptionStatus string
+
+const (
+	SubscriptionStatusActive    SubscriptionStatus = "active"
+	SubscriptionStatusPending   SubscriptionStatus = "pending"
+	SubscriptionStatusSuspended SubscriptionStatus = "suspended"
+)
+
 type Subscription struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 
-	Seats  int    `json:"seats" graphql:"seats"`
-	TeamId string `json:"teamId" graphql:"teamId"`
-	Status string `json:"status" graphql:"status"`
+	Seats  int                `json:"seats"`
+	TeamId string             `json:"teamId"`
+	Status SubscriptionStatus `json:"status"`
 
 	UpdatedAt string `json:"updatedAt" graphql:"updatedAt"`
 	CreatedAt string `json:"createdAt" graphql:"createdAt"`

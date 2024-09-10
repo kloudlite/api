@@ -13,7 +13,7 @@ func (d *domain) GetWallet(ctx UserContext) (*entities.Wallet, error) {
 	})
 }
 
-func (d *domain) GetPayments(ctx UserContext, walletID repos.ID) ([]*entities.Payment, error) {
+func (d *domain) ListPayments(ctx UserContext, walletID repos.ID) ([]*entities.Payment, error) {
 	return d.paymentRepo.Find(ctx.Context, repos.Query{
 		Filter: repos.Filter{
 			"wallet_id": walletID,
@@ -33,7 +33,7 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 	return p, nil
 }
 
-func (d *domain) validatePayment(ctx UserContext, paymentId repos.ID) error {
+func (d *domain) ValidatePayment(ctx UserContext, paymentId repos.ID) error {
 	p, err := d.paymentRepo.FindById(ctx.Context, paymentId)
 	if err != nil {
 		return err

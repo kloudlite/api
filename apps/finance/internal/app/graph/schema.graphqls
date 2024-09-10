@@ -2,13 +2,16 @@ directive @isLoggedInAndVerified on FIELD_DEFINITION
 directive @hasAccount on FIELD_DEFINITION
 
 type Query {
-  finance_getWallet: Wallet! @isLoggedInAndVerified
-  finance_listPayments(walletId: ID!): [Payment!] @isLoggedInAndVerified
+  finance_getWallet: Wallet! @isLoggedInAndVerified @hasAccount
+  finance_listPayments: [Payment!] @isLoggedInAndVerified @hasAccount
 
   finance_listCharges: [Charge!] @isLoggedInAndVerified
+
+  # subscription
+  # invoice
 }
 
 type Mutation {
   finance_createPayment(payment: PaymentIn!): Payment! @isLoggedInAndVerified
-  finance_validatePayment(paymentId: ID!): Payment! @isLoggedInAndVerified
+  finance_validatePayment(paymentId: ID!): Boolean! @isLoggedInAndVerified
 }

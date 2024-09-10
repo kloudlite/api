@@ -136,7 +136,7 @@ type ChargeResolver interface {
 }
 type MutationResolver interface {
 	FinanceCreatePayment(ctx context.Context, payment entities.Payment) (*entities.Payment, error)
-	FinanceValidatePayment(ctx context.Context, paymentID repos.ID) (*entities.Payment, error)
+	FinanceValidatePayment(ctx context.Context, paymentID repos.ID) (bool, error)
 }
 type PaymentResolver interface {
 	CreatedAt(ctx context.Context, obj *entities.Payment) (string, error)
@@ -642,7 +642,7 @@ type Query {
 
 type Mutation {
   finance_createPayment(payment: PaymentIn!): Payment! @isLoggedInAndVerified
-  finance_validatePayment(paymentId: ID!): Payment! @isLoggedInAndVerified
+  finance_validatePayment(paymentId: ID!): Boolean! @isLoggedInAndVerified
 }
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/charge.graphqls", Input: `type Charge @shareable {
@@ -1613,10 +1613,10 @@ func (ec *executionContext) _Mutation_finance_validatePayment(ctx context.Contex
 		if tmp == nil {
 			return nil, nil
 		}
-		if data, ok := tmp.(*entities.Payment); ok {
+		if data, ok := tmp.(bool); ok {
 			return data, nil
 		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/finance/internal/entities.Payment`, tmp)
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -1628,9 +1628,9 @@ func (ec *executionContext) _Mutation_finance_validatePayment(ctx context.Contex
 		}
 		return graphql.Null
 	}
-	res := resTmp.(*entities.Payment)
+	res := resTmp.(bool)
 	fc.Result = res
-	return ec.marshalNPayment2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋentitiesᚐPayment(ctx, field.Selections, res)
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Mutation_finance_validatePayment(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -1640,33 +1640,7 @@ func (ec *executionContext) fieldContext_Mutation_finance_validatePayment(ctx co
 		IsMethod:   true,
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "amount":
-				return ec.fieldContext_Payment_amount(ctx, field)
-			case "createdAt":
-				return ec.fieldContext_Payment_createdAt(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_Payment_creationTime(ctx, field)
-			case "currency":
-				return ec.fieldContext_Payment_currency(ctx, field)
-			case "id":
-				return ec.fieldContext_Payment_id(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_Payment_markedForDeletion(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_Payment_recordVersion(ctx, field)
-			case "status":
-				return ec.fieldContext_Payment_status(ctx, field)
-			case "teamId":
-				return ec.fieldContext_Payment_teamId(ctx, field)
-			case "updatedAt":
-				return ec.fieldContext_Payment_updatedAt(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Payment_updateTime(ctx, field)
-			case "walletId":
-				return ec.fieldContext_Payment_walletId(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
+			return nil, errors.New("field of type Boolean does not have child fields")
 		},
 	}
 	defer func() {

@@ -50,6 +50,7 @@ require (
 	github.com/nats-io/nats.go v1.31.0
 	github.com/onsi/ginkgo/v2 v2.13.0
 	github.com/onsi/gomega v1.29.0
+	github.com/razorpay/razorpay-go v1.3.2
 	github.com/seancfoley/ipaddress-go v1.5.4
 	github.com/shamaton/msgpack/v2 v2.2.0
 	github.com/stretchr/testify v1.9.0

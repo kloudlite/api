@@ -17,10 +17,10 @@ import (
 type PaymentService interface {
 	CreatePayment(ctx UserContext, req *entities.Payment) (*entities.Payment, error)
 
-	ValidatePayment(ctx UserContext, paymentID repos.ID) (*entities.Payment, error)
+	ValidatePayment(ctx UserContext, paymentID repos.ID) error
 
 	GetWallet(ctx UserContext) (*entities.Wallet, error)
-	GetPayments(ctx UserContext, walletID repos.ID) ([]*entities.Payment, error)
+	ListPayments(ctx UserContext) ([]*entities.Payment, error)
 
 	ListCharges(ctx UserContext) ([]*entities.Charge, error)
 }

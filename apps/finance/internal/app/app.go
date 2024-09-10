@@ -25,9 +25,7 @@ import (
 )
 
 type AuthCacheClient kv.Client
-
 type AuthClient grpc.Client
-
 type ConsoleClient grpc.Client
 
 type (
