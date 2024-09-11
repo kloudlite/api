@@ -23,6 +23,7 @@ type Env struct {
 	EventsNatsStream           string `env:"EVENTS_NATS_STREAM" required:"true"`
 	WebhookTokenHashingSecret  string `env:"WEBHOOK_TOKEN_HASHING_SECRET" required:"true"`
 	WebhookURL                 string `env:"WEBHOOK_URL" required:"true"`
+	WebhookScriptURL           string `env:"WEBHOOK_SCRIPT_URL" required:"true"`
 
 	IAMGrpcAddr   string `env:"IAM_GRPC_ADDR" required:"true"`
 	InfraGrpcAddr string `env:"INFRA_GRPC_ADDR" required:"true"`
