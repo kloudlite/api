@@ -50,7 +50,7 @@ func (d *domain) GetRegistryImageURL(ctx ConsoleContext) (*entities.RegistryImag
 
 	return &entities.RegistryImageURL{
 		URL:       fmt.Sprintf(`curl -X POST "%s" -H "Authorization: %s" -H "Content-Type: application/json" -d '{"image": "imageName:imageTag", "meta": {"repository": "github", "registry": "docker", "author":"kloudlite"}}'`, d.envVars.WebhookURL, encodedToken),
-		ScriptURL: fmt.Sprintf(`curl "%s" | authorization=%s image=imageName:imageTag meta="repository=github,registry=docker,author=kloudlite" sh`, d.envVars.WebhookScriptURL, encodedToken),
+		ScriptURL: fmt.Sprintf(`curl "%s" | authorization=%s image=imageName:imageTag meta="repository=github,registry=docker,author=kloudlite" sh`, d.envVars.WebhookURL, encodedToken),
 	}, nil
 }
 

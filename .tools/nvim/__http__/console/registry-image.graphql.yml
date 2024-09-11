@@ -1,6 +1,6 @@
 ---
 global:
-  image: "moh:0.0.2"
+  image: "imageName1:imageTag1"
 ---
 
 label: List Registry Images
