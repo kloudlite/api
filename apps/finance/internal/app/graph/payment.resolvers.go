@@ -7,40 +7,72 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/kloudlite/api/apps/finance/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/finance/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/finance/internal/entities"
+	"github.com/kloudlite/api/pkg/functions"
 )
 
 // CreatedAt is the resolver for the createdAt field.
 func (r *paymentResolver) CreatedAt(ctx context.Context, obj *entities.Payment) (string, error) {
-	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.CreatedAt.Format(time.RFC3339), nil
 }
 
 // CreationTime is the resolver for the creationTime field.
 func (r *paymentResolver) CreationTime(ctx context.Context, obj *entities.Payment) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
 // PaymentLink is the resolver for the payment_link field.
 func (r *paymentResolver) PaymentLink(ctx context.Context, obj *entities.Payment) (*model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink, error) {
-	panic(fmt.Errorf("not implemented: PaymentLink - payment_link"))
+	if obj == nil {
+		return nil, fmt.Errorf("object is nil")
+	}
+
+	return functions.JsonConvertP[model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink](obj.Link)
 }
 
 // UpdatedAt is the resolver for the updatedAt field.
 func (r *paymentResolver) UpdatedAt(ctx context.Context, obj *entities.Payment) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdatedAt - updatedAt"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.UpdatedAt.Format(time.RFC3339), nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *paymentResolver) UpdateTime(ctx context.Context, obj *entities.Payment) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
 // PaymentLink is the resolver for the payment_link field.
 func (r *paymentInResolver) PaymentLink(ctx context.Context, obj *entities.Payment, data *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn) error {
-	panic(fmt.Errorf("not implemented: PaymentLink - payment_link"))
+	if obj == nil {
+		return fmt.Errorf("object is nil")
+	}
+
+	pl, err := functions.JsonConvertP[entities.PaymentLink](data)
+	if err != nil {
+		return err
+	}
+
+	obj.Link = pl
+	return nil
 }
 
 // Payment returns generated.PaymentResolver implementation.
@@ -51,19 +83,3 @@ func (r *Resolver) PaymentIn() generated.PaymentInResolver { return &paymentInRe
 
 type paymentResolver struct{ *Resolver }
 type paymentInResolver struct{ *Resolver }
-
-// !!! WARNING !!!
-// The code below was going to be deleted when updating resolvers. It has been copied here so you have
-// one last chance to move it out of harms way if you want. There are two reasons this happens:
-//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
-//     it when you're done.
-//   - You have helper methods in this file. Move them out to keep these resolver files clean.
-func (r *paymentResolver) Status(ctx context.Context, obj *entities.Payment) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
-}
-func (r *paymentResolver) WalletID(ctx context.Context, obj *entities.Payment) (string, error) {
-	panic(fmt.Errorf("not implemented: WalletID - walletId"))
-}
-func (r *paymentInResolver) WalletID(ctx context.Context, obj *entities.Payment, data string) error {
-	panic(fmt.Errorf("not implemented: WalletID - walletId"))
-}

@@ -7,45 +7,76 @@ package graph
 import (
 	"context"
 	"fmt"
+	"time"
 
 	"github.com/kloudlite/api/apps/finance/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/finance/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/finance/internal/entities"
+	"github.com/kloudlite/api/pkg/repos"
 )
 
 // CreatedAt is the resolver for the createdAt field.
 func (r *chargeResolver) CreatedAt(ctx context.Context, obj *entities.Charge) (string, error) {
-	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.CreatedAt.Format(time.RFC3339), nil
 }
 
 // CreationTime is the resolver for the creationTime field.
 func (r *chargeResolver) CreationTime(ctx context.Context, obj *entities.Charge) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.CreationTime.Format(time.RFC3339), nil
 }
 
 // Status is the resolver for the status field.
 func (r *chargeResolver) Status(ctx context.Context, obj *entities.Charge) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesChargeStatus, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return model.GithubComKloudliteAPIAppsFinanceInternalEntitiesChargeStatus(""), fmt.Errorf("object is nil")
+	}
+
+	return model.GithubComKloudliteAPIAppsFinanceInternalEntitiesChargeStatus(obj.Status), nil
 }
 
 // UpdatedAt is the resolver for the updatedAt field.
 func (r *chargeResolver) UpdatedAt(ctx context.Context, obj *entities.Charge) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdatedAt - updatedAt"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.UpdatedAt.Format(time.RFC3339), nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *chargeResolver) UpdateTime(ctx context.Context, obj *entities.Charge) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
 // WalletID is the resolver for the walletId field.
 func (r *chargeResolver) WalletID(ctx context.Context, obj *entities.Charge) (string, error) {
-	panic(fmt.Errorf("not implemented: WalletID - walletId"))
+	if obj == nil {
+		return "", fmt.Errorf("object is nil")
+	}
+
+	return string(obj.WalletId), nil
 }
 
 // WalletID is the resolver for the walletId field.
 func (r *chargeInResolver) WalletID(ctx context.Context, obj *entities.Charge, data string) error {
-	panic(fmt.Errorf("not implemented: WalletID - walletId"))
+	if obj == nil {
+		return fmt.Errorf("object is nil")
+	}
+
+	obj.WalletId = repos.ID(data)
+	return nil
 }
 
 // Charge returns generated.ChargeResolver implementation.
