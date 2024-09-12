@@ -23,9 +23,9 @@ func (r *paymentResolver) CreationTime(ctx context.Context, obj *entities.Paymen
 	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
 }
 
-// Status is the resolver for the status field.
-func (r *paymentResolver) Status(ctx context.Context, obj *entities.Payment) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+// PaymentLink is the resolver for the payment_link field.
+func (r *paymentResolver) PaymentLink(ctx context.Context, obj *entities.Payment) (*model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink, error) {
+	panic(fmt.Errorf("not implemented: PaymentLink - payment_link"))
 }
 
 // UpdatedAt is the resolver for the updatedAt field.
@@ -38,14 +38,9 @@ func (r *paymentResolver) UpdateTime(ctx context.Context, obj *entities.Payment)
 	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
 }
 
-// WalletID is the resolver for the walletId field.
-func (r *paymentResolver) WalletID(ctx context.Context, obj *entities.Payment) (string, error) {
-	panic(fmt.Errorf("not implemented: WalletID - walletId"))
-}
-
-// WalletID is the resolver for the walletId field.
-func (r *paymentInResolver) WalletID(ctx context.Context, obj *entities.Payment, data string) error {
-	panic(fmt.Errorf("not implemented: WalletID - walletId"))
+// PaymentLink is the resolver for the payment_link field.
+func (r *paymentInResolver) PaymentLink(ctx context.Context, obj *entities.Payment, data *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn) error {
+	panic(fmt.Errorf("not implemented: PaymentLink - payment_link"))
 }
 
 // Payment returns generated.PaymentResolver implementation.
@@ -56,3 +51,19 @@ func (r *Resolver) PaymentIn() generated.PaymentInResolver { return &paymentInRe
 
 type paymentResolver struct{ *Resolver }
 type paymentInResolver struct{ *Resolver }
+
+// !!! WARNING !!!
+// The code below was going to be deleted when updating resolvers. It has been copied here so you have
+// one last chance to move it out of harms way if you want. There are two reasons this happens:
+//   - When renaming or deleting a resolver the old code will be put in here. You can safely delete
+//     it when you're done.
+//   - You have helper methods in this file. Move them out to keep these resolver files clean.
+func (r *paymentResolver) Status(ctx context.Context, obj *entities.Payment) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus, error) {
+	panic(fmt.Errorf("not implemented: Status - status"))
+}
+func (r *paymentResolver) WalletID(ctx context.Context, obj *entities.Payment) (string, error) {
+	panic(fmt.Errorf("not implemented: WalletID - walletId"))
+}
+func (r *paymentInResolver) WalletID(ctx context.Context, obj *entities.Payment, data string) error {
+	panic(fmt.Errorf("not implemented: WalletID - walletId"))
+}

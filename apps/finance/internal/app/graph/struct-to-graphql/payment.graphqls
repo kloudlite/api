@@ -5,18 +5,15 @@ type Payment @shareable {
   currency: String!
   id: ID!
   markedForDeletion: Boolean
+  payment_link: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink
   recordVersion: Int!
-  status: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus!
   teamId: String!
   updatedAt: Date!
   updateTime: Date!
-  walletId: String!
 }
 
 input PaymentIn {
   amount: Int!
-  currency: String!
-  teamId: String!
-  walletId: String!
+  payment_link: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn
 }
 

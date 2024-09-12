@@ -72,6 +72,13 @@ type ComplexityRoot struct {
 		WalletID          func(childComplexity int) int
 	}
 
+	Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink struct {
+		ID          func(childComplexity int) int
+		ReferenceID func(childComplexity int) int
+		ShortURL    func(childComplexity int) int
+		Status      func(childComplexity int) int
+	}
+
 	Mutation struct {
 		FinanceCreatePayment   func(childComplexity int, payment entities.Payment) int
 		FinanceValidatePayment func(childComplexity int, paymentID repos.ID) int
@@ -91,12 +98,11 @@ type ComplexityRoot struct {
 		Currency          func(childComplexity int) int
 		Id                func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
+		PaymentLink       func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
-		Status            func(childComplexity int) int
 		TeamId            func(childComplexity int) int
 		UpdateTime        func(childComplexity int) int
 		UpdatedAt         func(childComplexity int) int
-		WalletID          func(childComplexity int) int
 	}
 
 	Query struct {
@@ -142,11 +148,10 @@ type PaymentResolver interface {
 	CreatedAt(ctx context.Context, obj *entities.Payment) (string, error)
 	CreationTime(ctx context.Context, obj *entities.Payment) (string, error)
 
-	Status(ctx context.Context, obj *entities.Payment) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus, error)
+	PaymentLink(ctx context.Context, obj *entities.Payment) (*model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink, error)
 
 	UpdatedAt(ctx context.Context, obj *entities.Payment) (string, error)
 	UpdateTime(ctx context.Context, obj *entities.Payment) (string, error)
-	WalletID(ctx context.Context, obj *entities.Payment) (string, error)
 }
 type QueryResolver interface {
 	FinanceGetWallet(ctx context.Context) (*entities.Wallet, error)
@@ -163,7 +168,7 @@ type ChargeInResolver interface {
 	WalletID(ctx context.Context, obj *entities.Charge, data string) error
 }
 type PaymentInResolver interface {
-	WalletID(ctx context.Context, obj *entities.Payment, data string) error
+	PaymentLink(ctx context.Context, obj *entities.Payment, data *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn) error
 }
 
 type executableSchema struct {
@@ -276,6 +281,34 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Charge.WalletID(childComplexity), true
 
+	case "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.id":
+		if e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.ID == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.ID(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.reference_id":
+		if e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.ReferenceID == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.ReferenceID(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.short_url":
+		if e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.ShortURL == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.ShortURL(childComplexity), true
+
+	case "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.status":
+		if e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.Status == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink.Status(childComplexity), true
+
 	case "Mutation.finance_createPayment":
 		if e.complexity.Mutation.FinanceCreatePayment == nil {
 			break
@@ -370,19 +403,19 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Payment.MarkedForDeletion(childComplexity), true
 
+	case "Payment.payment_link":
+		if e.complexity.Payment.PaymentLink == nil {
+			break
+		}
+
+		return e.complexity.Payment.PaymentLink(childComplexity), true
+
 	case "Payment.recordVersion":
 		if e.complexity.Payment.RecordVersion == nil {
 			break
 		}
 
 		return e.complexity.Payment.RecordVersion(childComplexity), true
-
-	case "Payment.status":
-		if e.complexity.Payment.Status == nil {
-			break
-		}
-
-		return e.complexity.Payment.Status(childComplexity), true
 
 	case "Payment.teamId":
 		if e.complexity.Payment.TeamId == nil {
@@ -404,13 +437,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Payment.UpdatedAt(childComplexity), true
-
-	case "Payment.walletId":
-		if e.complexity.Payment.WalletID == nil {
-			break
-		}
-
-		return e.complexity.Payment.WalletID(childComplexity), true
 
 	case "Query.finance_getWallet":
 		if e.complexity.Query.FinanceGetWallet == nil {
@@ -526,6 +552,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 	ec := executionContext{rc, e, 0, 0, make(chan graphql.DeferredResult)}
 	inputUnmarshalMap := graphql.BuildUnmarshalerMap(
 		ec.unmarshalInputChargeIn,
+		ec.unmarshalInputGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn,
 		ec.unmarshalInputPaymentIn,
 		ec.unmarshalInputWalletIn,
 	)
@@ -665,20 +692,28 @@ input ChargeIn {
 }
 
 `, BuiltIn: false},
-	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type PageInfo @shareable {
+	{Name: "../struct-to-graphql/common-types.graphqls", Input: `type Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink @shareable {
+  id: String!
+  reference_id: String!
+  short_url: String!
+  status: String!
+}
+
+type PageInfo @shareable {
   endCursor: String
   hasNextPage: Boolean
   hasPrevPage: Boolean
   startCursor: String
 }
 
-enum Github__com___kloudlite___api___apps___finance___internal___entities__ChargeStatus {
-  failed
-  pending
-  success
+input Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn {
+  id: String!
+  reference_id: String!
+  short_url: String!
+  status: String!
 }
 
-enum Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus {
+enum Github__com___kloudlite___api___apps___finance___internal___entities__ChargeStatus {
   failed
   pending
   success
@@ -699,19 +734,16 @@ directive @goField(
   currency: String!
   id: ID!
   markedForDeletion: Boolean
+  payment_link: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink
   recordVersion: Int!
-  status: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus!
   teamId: String!
   updatedAt: Date!
   updateTime: Date!
-  walletId: String!
 }
 
 input PaymentIn {
   amount: Int!
-  currency: String!
-  teamId: String!
-  walletId: String!
+  payment_link: Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn
 }
 
 `, BuiltIn: false},
@@ -1461,6 +1493,182 @@ func (ec *executionContext) fieldContext_Charge_walletId(_ context.Context, fiel
 	return fc, nil
 }
 
+func (ec *executionContext) _Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_id(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_reference_id(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_reference_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ReferenceID, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_reference_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_short_url(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_short_url(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ShortURL, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_short_url(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_status(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Mutation_finance_createPayment(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Mutation_finance_createPayment(ctx, field)
 	if err != nil {
@@ -1538,18 +1746,16 @@ func (ec *executionContext) fieldContext_Mutation_finance_createPayment(ctx cont
 				return ec.fieldContext_Payment_id(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Payment_markedForDeletion(ctx, field)
+			case "payment_link":
+				return ec.fieldContext_Payment_payment_link(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Payment_recordVersion(ctx, field)
-			case "status":
-				return ec.fieldContext_Payment_status(ctx, field)
 			case "teamId":
 				return ec.fieldContext_Payment_teamId(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Payment_updatedAt(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Payment_updateTime(ctx, field)
-			case "walletId":
-				return ec.fieldContext_Payment_walletId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -1645,18 +1851,16 @@ func (ec *executionContext) fieldContext_Mutation_finance_validatePayment(ctx co
 				return ec.fieldContext_Payment_id(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Payment_markedForDeletion(ctx, field)
+			case "payment_link":
+				return ec.fieldContext_Payment_payment_link(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Payment_recordVersion(ctx, field)
-			case "status":
-				return ec.fieldContext_Payment_status(ctx, field)
 			case "teamId":
 				return ec.fieldContext_Payment_teamId(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Payment_updatedAt(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Payment_updateTime(ctx, field)
-			case "walletId":
-				return ec.fieldContext_Payment_walletId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -2100,6 +2304,57 @@ func (ec *executionContext) fieldContext_Payment_markedForDeletion(_ context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Payment_payment_link(ctx context.Context, field graphql.CollectedField, obj *entities.Payment) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Payment_payment_link(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.Payment().PaymentLink(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLink2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Payment_payment_link(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Payment",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "id":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_id(ctx, field)
+			case "reference_id":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_reference_id(ctx, field)
+			case "short_url":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_short_url(ctx, field)
+			case "status":
+				return ec.fieldContext_Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_status(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Payment_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.Payment) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Payment_recordVersion(ctx, field)
 	if err != nil {
@@ -2139,50 +2394,6 @@ func (ec *executionContext) fieldContext_Payment_recordVersion(_ context.Context
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Int does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Payment_status(ctx context.Context, field graphql.CollectedField, obj *entities.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_status(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Payment().Status(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus)
-	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus2githubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Payment_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Payment",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2315,50 +2526,6 @@ func (ec *executionContext) fieldContext_Payment_updateTime(_ context.Context, f
 		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type Date does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Payment_walletId(ctx context.Context, field graphql.CollectedField, obj *entities.Payment) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Payment_walletId(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return ec.resolvers.Payment().WalletID(rctx, obj)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Payment_walletId(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Payment",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -2530,18 +2697,16 @@ func (ec *executionContext) fieldContext_Query_finance_listPayments(_ context.Co
 				return ec.fieldContext_Payment_id(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Payment_markedForDeletion(ctx, field)
+			case "payment_link":
+				return ec.fieldContext_Payment_payment_link(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Payment_recordVersion(ctx, field)
-			case "status":
-				return ec.fieldContext_Payment_status(ctx, field)
 			case "teamId":
 				return ec.fieldContext_Payment_teamId(ctx, field)
 			case "updatedAt":
 				return ec.fieldContext_Payment_updatedAt(ctx, field)
 			case "updateTime":
 				return ec.fieldContext_Payment_updateTime(ctx, field)
-			case "walletId":
-				return ec.fieldContext_Payment_walletId(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Payment", field.Name)
 		},
@@ -5129,6 +5294,54 @@ func (ec *executionContext) unmarshalInputChargeIn(ctx context.Context, obj inte
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn, error) {
+	var it model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"id", "reference_id", "short_url", "status"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ID = data
+		case "reference_id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("reference_id"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ReferenceID = data
+		case "short_url":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("short_url"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ShortURL = data
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Status = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputPaymentIn(ctx context.Context, obj interface{}) (entities.Payment, error) {
 	var it entities.Payment
 	asMap := map[string]interface{}{}
@@ -5136,7 +5349,7 @@ func (ec *executionContext) unmarshalInputPaymentIn(ctx context.Context, obj int
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"amount", "currency", "teamId", "walletId"}
+	fieldsInOrder := [...]string{"amount", "payment_link"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -5150,27 +5363,13 @@ func (ec *executionContext) unmarshalInputPaymentIn(ctx context.Context, obj int
 				return it, err
 			}
 			it.Amount = data
-		case "currency":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+		case "payment_link":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("payment_link"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.Currency = data
-		case "teamId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("teamId"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.TeamId = data
-		case "walletId":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("walletId"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			if err = ec.resolvers.PaymentIn().WalletID(ctx, &it, data); err != nil {
+			if err = ec.resolvers.PaymentIn().PaymentLink(ctx, &it, data); err != nil {
 				return it, err
 			}
 		}
@@ -5524,6 +5723,60 @@ func (ec *executionContext) _Charge(ctx context.Context, sel ast.SelectionSet, o
 	return out
 }
 
+var github__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkImplementors = []string{"Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink"}
+
+func (ec *executionContext) _Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink")
+		case "id":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "reference_id":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_reference_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "short_url":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_short_url(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "status":
+			out.Values[i] = ec._Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink_status(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var mutationImplementors = []string{"Mutation"}
 
 func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet) graphql.Marshaler {
@@ -5722,24 +5975,16 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			}
 		case "markedForDeletion":
 			out.Values[i] = ec._Payment_markedForDeletion(ctx, field, obj)
-		case "recordVersion":
-			out.Values[i] = ec._Payment_recordVersion(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
-			}
-		case "status":
+		case "payment_link":
 			field := field
 
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
 				defer func() {
 					if r := recover(); r != nil {
 						ec.Error(ctx, ec.Recover(ctx, r))
 					}
 				}()
-				res = ec._Payment_status(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
+				res = ec._Payment_payment_link(ctx, field, obj)
 				return res
 			}
 
@@ -5763,6 +6008,11 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "recordVersion":
+			out.Values[i] = ec._Payment_recordVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "teamId":
 			out.Values[i] = ec._Payment_teamId(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -5814,42 +6064,6 @@ func (ec *executionContext) _Payment(ctx context.Context, sel ast.SelectionSet, 
 					}
 				}()
 				res = ec._Payment_updateTime(ctx, field, obj)
-				if res == graphql.Null {
-					atomic.AddUint32(&fs.Invalids, 1)
-				}
-				return res
-			}
-
-			if field.Deferrable != nil {
-				dfs, ok := deferred[field.Deferrable.Label]
-				di := 0
-				if ok {
-					dfs.AddField(field)
-					di = len(dfs.Values) - 1
-				} else {
-					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
-					deferred[field.Deferrable.Label] = dfs
-				}
-				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
-					return innerFunc(ctx, dfs)
-				})
-
-				// don't run the out.Concurrently() call below
-				out.Values[i] = graphql.Null
-				continue
-			}
-
-			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
-		case "walletId":
-			field := field
-
-			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
-				defer func() {
-					if r := recover(); r != nil {
-						ec.Error(ctx, ec.Recover(ctx, r))
-					}
-				}()
-				res = ec._Payment_walletId(ctx, field, obj)
 				if res == graphql.Null {
 					atomic.AddUint32(&fs.Invalids, 1)
 				}
@@ -6616,16 +6830,6 @@ func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___finan
 	return v
 }
 
-func (ec *executionContext) unmarshalNGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus2githubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus(ctx context.Context, v interface{}) (model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus, error) {
-	var res model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus
-	err := res.UnmarshalGQL(v)
-	return res, graphql.ErrorOnPath(ctx, err)
-}
-
-func (ec *executionContext) marshalNGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus2githubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus(ctx context.Context, sel ast.SelectionSet, v model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus) graphql.Marshaler {
-	return v
-}
-
 func (ec *executionContext) unmarshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx context.Context, v interface{}) (repos.ID, error) {
 	tmp, err := graphql.UnmarshalString(v)
 	res := repos.ID(tmp)
@@ -7191,6 +7395,21 @@ func (ec *executionContext) marshalOCharge2ᚕᚖgithubᚗcomᚋkloudliteᚋapi�
 	}
 
 	return ret
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLink2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGithub__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalOPayment2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋfinanceᚋinternalᚋentitiesᚐPaymentᚄ(ctx context.Context, sel ast.SelectionSet, v []*entities.Payment) graphql.Marshaler {

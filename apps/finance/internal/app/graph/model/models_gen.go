@@ -8,6 +8,20 @@ import (
 	"strconv"
 )
 
+type GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLink struct {
+	ID          string `json:"id"`
+	ReferenceID string `json:"reference_id"`
+	ShortURL    string `json:"short_url"`
+	Status      string `json:"status"`
+}
+
+type GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn struct {
+	ID          string `json:"id"`
+	ReferenceID string `json:"reference_id"`
+	ShortURL    string `json:"short_url"`
+	Status      string `json:"status"`
+}
+
 type Mutation struct {
 }
 
@@ -61,48 +75,5 @@ func (e *GithubComKloudliteAPIAppsFinanceInternalEntitiesChargeStatus) Unmarshal
 }
 
 func (e GithubComKloudliteAPIAppsFinanceInternalEntitiesChargeStatus) MarshalGQL(w io.Writer) {
-	fmt.Fprint(w, strconv.Quote(e.String()))
-}
-
-type GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus string
-
-const (
-	GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusFailed  GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus = "failed"
-	GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusPending GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus = "pending"
-	GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusSuccess GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus = "success"
-)
-
-var AllGithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus = []GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus{
-	GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusFailed,
-	GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusPending,
-	GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusSuccess,
-}
-
-func (e GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus) IsValid() bool {
-	switch e {
-	case GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusFailed, GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusPending, GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatusSuccess:
-		return true
-	}
-	return false
-}
-
-func (e GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus) String() string {
-	return string(e)
-}
-
-func (e *GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus) UnmarshalGQL(v interface{}) error {
-	str, ok := v.(string)
-	if !ok {
-		return fmt.Errorf("enums must be strings")
-	}
-
-	*e = GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus(str)
-	if !e.IsValid() {
-		return fmt.Errorf("%s is not a valid Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus", str)
-	}
-	return nil
-}
-
-func (e GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentStatus) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }

@@ -1,3 +1,10 @@
+type Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLink @shareable {
+  id: String!
+  reference_id: String!
+  short_url: String!
+  status: String!
+}
+
 type PageInfo @shareable {
   endCursor: String
   hasNextPage: Boolean
@@ -5,13 +12,14 @@ type PageInfo @shareable {
   startCursor: String
 }
 
-enum Github__com___kloudlite___api___apps___finance___internal___entities__ChargeStatus {
-  failed
-  pending
-  success
+input Github__com___kloudlite___api___apps___finance___internal___entities__PaymentLinkIn {
+  id: String!
+  reference_id: String!
+  short_url: String!
+  status: String!
 }
 
-enum Github__com___kloudlite___api___apps___finance___internal___entities__PaymentStatus {
+enum Github__com___kloudlite___api___apps___finance___internal___entities__ChargeStatus {
   failed
   pending
   success
