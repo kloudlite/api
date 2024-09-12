@@ -53,16 +53,6 @@ func main() {
 			}
 		}),
 
-		fx.Provide(func(e *env.Env) (*rest.Config, error) {
-			if e.KubernetesApiProxy != "" {
-				return &rest.Config{
-					Host: e.KubernetesApiProxy,
-				}, nil
-			}
-
-			return k8s.RestInclusterConfig()
-		}),
-
 		fx.Provide(func(cfg *rest.Config) (k8s.Client, error) {
 			return k8s.NewClient(cfg, nil)
 		}),

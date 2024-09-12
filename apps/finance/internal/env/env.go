@@ -12,27 +12,30 @@ import (
 type Env struct {
 	HttpPort uint16 `env:"HTTP_PORT" required:"true"`
 	HttpCors string `env:"CORS_ORIGINS" required:"false"`
-	GrpcPort uint16 `env:"GRPC_PORT" required:"true"`
+	// GrpcPort uint16 `env:"GRPC_PORT" required:"true"`
 
 	DBName string `env:"MONGO_DB_NAME" required:"true"`
 	DBUrl  string `env:"MONGO_URI" required:"true"`
 
 	CookieDomain string `env:"COOKIE_DOMAIN" required:"true"`
 
-	IamGrpcAddr               string `env:"IAM_GRPC_ADDR" required:"true"`
-	CommsGrpcAddr             string `env:"COMMS_GRPC_ADDR" required:"true"`
-	ContainerRegistryGrpcAddr string `env:"CONTAINER_REGISTRY_GRPC_ADDR" required:"true"`
-	ConsoleGrpcAddr           string `env:"CONSOLE_GRPC_ADDR" required:"true"`
-	AuthGrpcAddr              string `env:"AUTH_GRPC_ADDR" required:"true"`
+	IamGrpcAddr   string `env:"IAM_GRPC_ADDR" required:"true"`
+	CommsGrpcAddr string `env:"COMMS_GRPC_ADDR" required:"true"`
+	AuthGrpcAddr  string `env:"AUTH_GRPC_ADDR" required:"true"`
 
 	SessionKVBucket string `env:"SESSION_KV_BUCKET" required:"true"`
 	NatsURL         string `env:"NATS_URL" required:"true"`
 
-	IsDev              bool
-	KubernetesApiProxy string `env:"KUBERNETES_API_PROXY"`
+	IsDev bool
 
 	AvailableKloudliteRegionsConfig string `env:"AVAILABLE_KLOUDLITE_REGIONS_CONFIG" required:"false"`
 	AvailableKloudliteRegions       []AvailableKloudliteRegion
+
+	AccountCookieName string `env:"ACCOUNT_COOKIE_NAME" required:"true"`
+
+	RP_KEY                  string `env:"RP_KEY" required:"true"`
+	RP_SECRET               string `env:"RP_SECRET" required:"true"`
+	RP_PAYMENT_CALLBACK_URL string `env:"RP_PAYMENT_CALLBACK_URL" required:"true"`
 }
 
 type AvailableKloudliteRegion struct {

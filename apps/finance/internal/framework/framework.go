@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 	"log/slog"
-	"time"
 
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/pkg/errors"
@@ -68,17 +67,9 @@ var Module = fx.Module("framework",
 		return grpc.NewGrpcClient(ev.CommsGrpcAddr)
 	}),
 
-	fx.Provide(func(ev *env.Env) (app.ContainerRegistryClient, error) {
-		return grpc.NewGrpcClient(ev.ContainerRegistryGrpcAddr)
-	}),
-
-	fx.Provide(func(ev *env.Env) (app.ConsoleClient, error) {
-		return grpc.NewGrpcClient(ev.ConsoleGrpcAddr)
-	}),
-
 	app.Module,
 
-	fx.Invoke(func(c1 app.AuthClient, c2 app.IAMClient, c3 app.CommsClient, c4 app.ContainerRegistryClient, c5 app.ConsoleClient, lf fx.Lifecycle) {
+	fx.Invoke(func(c1 app.AuthClient, c2 app.IAMClient, c3 app.CommsClient, lf fx.Lifecycle) {
 		lf.Append(fx.Hook{
 			OnStop: func(context.Context) error {
 				if err := c1.Close(); err != nil {
@@ -90,49 +81,6 @@ var Module = fx.Module("framework",
 				if err := c3.Close(); err != nil {
 					return errors.NewE(err)
 				}
-				if err := c4.Close(); err != nil {
-					return errors.NewE(err)
-				}
-				if err := c5.Close(); err != nil {
-					return errors.NewE(err)
-				}
-				return nil
-			},
-		})
-	}),
-
-	fx.Provide(func(logger logging.Logger) (app.AccountsGrpcServer, error) {
-		return grpc.NewGrpcServer(grpc.ServerOpts{
-			Logger: logger.WithKV("component", "grpc-server"),
-		})
-	}),
-
-	fx.Invoke(func(lf fx.Lifecycle, server app.AccountsGrpcServer, ev *env.Env, logger logging.Logger) {
-		lf.Append(fx.Hook{
-			OnStart: func(ctx context.Context) error {
-				errCh := make(chan error, 1)
-
-				tctx, cf := context.WithTimeout(ctx, 2*time.Second)
-				defer cf()
-
-				go func() {
-					err := server.Listen(fmt.Sprintf(":%d", ev.GrpcPort))
-					if err != nil {
-						errCh <- err
-						logger.Errorf(err, "failed to start grpc server")
-					}
-				}()
-
-				select {
-				case <-tctx.Done():
-				case err := <-errCh:
-					return err
-				}
-
-				return nil
-			},
-			OnStop: func(context.Context) error {
-				server.Stop()
 				return nil
 			},
 		})

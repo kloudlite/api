@@ -23,17 +23,18 @@ func (r *mutationResolver) FinanceCreatePayment(ctx context.Context, payment ent
 }
 
 // FinanceValidatePayment is the resolver for the finance_validatePayment field.
-func (r *mutationResolver) FinanceValidatePayment(ctx context.Context, paymentID repos.ID) (bool, error) {
+func (r *mutationResolver) FinanceValidatePayment(ctx context.Context, paymentID repos.ID) (*entities.Payment, error) {
 	uc, err := toUserContext(ctx)
 	if err != nil {
-		return false, err
+		return nil, err
 	}
 
-	if err := r.domain.ValidatePayment(uc, paymentID); err != nil {
-		return false, err
+	p, err := r.domain.ValidatePayment(uc, paymentID)
+	if err != nil {
+		return nil, err
 	}
 
-	return true, nil
+	return p, nil
 }
 
 // FinanceGetWallet is the resolver for the finance_getWallet field.
@@ -47,7 +48,7 @@ func (r *queryResolver) FinanceGetWallet(ctx context.Context) (*entities.Wallet,
 }
 
 // FinanceListPayments is the resolver for the finance_listPayments field.
-func (r *queryResolver) FinanceListPayments(ctx context.Context, walletID repos.ID) ([]*entities.Payment, error) {
+func (r *queryResolver) FinanceListPayments(ctx context.Context) ([]*entities.Payment, error) {
 	uc, err := toUserContext(ctx)
 	if err != nil {
 		return nil, err

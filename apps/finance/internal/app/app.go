@@ -12,11 +12,10 @@ import (
 	"github.com/kloudlite/api/apps/finance/internal/env"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/constants"
-	"github.com/kloudlite/api/grpc-interfaces/container_registry"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/comms"
-	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
+	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/grpc"
 	httpServer "github.com/kloudlite/api/pkg/http-server"
 	"github.com/kloudlite/api/pkg/kv"
@@ -26,26 +25,22 @@ import (
 
 type AuthCacheClient kv.Client
 type AuthClient grpc.Client
-type ConsoleClient grpc.Client
 
 type (
-	ContainerRegistryClient grpc.Client
-	CommsClient             grpc.Client
-	IAMClient               grpc.Client
+	CommsClient grpc.Client
+	IAMClient   grpc.Client
 )
 
 var Module = fx.Module("app",
-	repos.NewFxMongoRepo[*entities.Payment]("accounts", "acc", entities.PaymentIndices),
-	repos.NewFxMongoRepo[*entities.Invoice]("invitations", "invite", entities.InvoiceIndices),
+	repos.NewFxMongoRepo[*entities.Payment]("payments", "pmt", entities.PaymentIndices),
+	repos.NewFxMongoRepo[*entities.Invoice]("invoices", "inv", entities.InvoiceIndices),
+	repos.NewFxMongoRepo[*entities.Wallet]("wallets", "wlt", entities.InvoiceIndices),
+	repos.NewFxMongoRepo[*entities.Charge]("charges", "chrg", entities.InvoiceIndices),
+	repos.NewFxMongoRepo[*entities.Subscription]("subscriptions", "sbs", entities.InvoiceIndices),
 
 	// fx.Provide(func(client AuthCacheClient) kv.Repo[*entities.Invitation] {
 	// 	return kv.NewRepo[*entities.Invitation](client)
 	// }),
-
-	// grpc clients
-	fx.Provide(func(conn ConsoleClient) console.ConsoleClient {
-		return console.NewConsoleClient(conn)
-	}),
 
 	fx.Provide(func(conn IAMClient) iam.IAMClient {
 		return iam.NewIAMClient(conn)
@@ -57,10 +52,6 @@ var Module = fx.Module("app",
 
 	fx.Provide(func(conn AuthClient) auth.AuthClient {
 		return auth.NewAuthClient(conn)
-	}),
-
-	fx.Provide(func(conn ContainerRegistryClient) container_registry.ContainerRegistryClient {
-		return container_registry.NewContainerRegistryClient(conn)
 	}),
 
 	domain.Module,
@@ -80,6 +71,22 @@ var Module = fx.Module("app",
 				}
 
 				return next(context.WithValue(ctx, "kloudlite-user-session", *sess))
+			}
+
+			gqlConfig.Directives.HasAccount = func(ctx context.Context, obj interface{}, next graphql.Resolver) (res interface{}, err error) {
+				sess := httpServer.GetSession[*common.AuthSession](ctx)
+				if sess == nil {
+					return nil, fiber.ErrUnauthorized
+				}
+				m := httpServer.GetHttpCookies(ctx)
+				klAccount := m[env.AccountCookieName]
+				if klAccount == "" {
+					return nil, errors.Newf("no cookie named %q present in request", env.AccountCookieName)
+				}
+
+				nctx := context.WithValue(ctx, "user-session", sess)
+				nctx = context.WithValue(nctx, "account-name", klAccount)
+				return next(nctx)
 			}
 
 			schema := generated.NewExecutableSchema(gqlConfig)

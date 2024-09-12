@@ -1,9 +1,10 @@
-package rp
+package domain
 
 import (
 	"encoding/json"
+
+	"github.com/kloudlite/api/apps/finance/internal/entities"
 	"github.com/razorpay/razorpay-go"
-	"os"
 )
 
 type PaymentInput struct {
@@ -16,17 +17,11 @@ type PaymentInput struct {
 	Currency    string
 }
 
-type PaymentLink struct {
-	Id          string `json:"id"`
-	ReferenceId string `json:"reference_id"`
-	Status      string `json:"status"`
-	ShortUrl    string `json:"short_url"`
-}
 
 type RazorPay interface {
-	CreatePaymentLink(in *PaymentInput) (*PaymentLink, error)
+	CreatePaymentLink(in *PaymentInput) (*entities.PaymentLink, error)
 	CancelPaymentLink(linkId string) error
-	GetPaymentLink(linkId string) (*PaymentLink, error)
+	GetPaymentLink(linkId string) (*entities.PaymentLink, error)
 }
 
 type razorPayImpl struct {
@@ -34,7 +29,7 @@ type razorPayImpl struct {
 	callbackUrl string
 }
 
-func (r *razorPayImpl) GetPaymentLink(linkId string) (*PaymentLink, error) {
+func (r *razorPayImpl) GetPaymentLink(linkId string) (*entities.PaymentLink, error) {
 	fetch, err := r.rpClient.PaymentLink.Fetch(linkId, nil, nil)
 	if err != nil {
 		return nil, err
@@ -43,7 +38,7 @@ func (r *razorPayImpl) GetPaymentLink(linkId string) (*PaymentLink, error) {
 	if err != nil {
 		return nil, err
 	}
-	p := &PaymentLink{}
+	p := &entities.PaymentLink{}
 	err = json.Unmarshal(marshal, p)
 	if err != nil {
 		return nil, err
@@ -56,7 +51,7 @@ func (r *razorPayImpl) CancelPaymentLink(linkId string) error {
 	return err
 }
 
-func (r *razorPayImpl) CreatePaymentLink(in *PaymentInput) (*PaymentLink, error) {
+func (r *razorPayImpl) CreatePaymentLink(in *PaymentInput) (*entities.PaymentLink, error) {
 	data := map[string]interface{}{
 		"amount":       in.Amount,
 		"currency":     in.Currency,
@@ -76,25 +71,25 @@ func (r *razorPayImpl) CreatePaymentLink(in *PaymentInput) (*PaymentLink, error)
 		"callback_url":    r.callbackUrl,
 		"callback_method": "get",
 	}
+
 	body, err := r.rpClient.PaymentLink.Create(data, nil)
 	if err != nil {
 		return nil, err
 	}
+
 	marshal, err := json.Marshal(body)
-	p := &PaymentLink{}
-	err = json.Unmarshal(marshal, p)
-	if err != nil {
+	p := &entities.PaymentLink{}
+	if err = json.Unmarshal(marshal, p); err != nil {
 		return nil, err
 	}
+
 	return p, nil
 }
 
-func NewRazorPay() RazorPay {
-	r := razorPayImpl{}
-	rpKey := os.Getenv("RP_KEY")
-	rpSecret := os.Getenv("RP_SECRET")
-	callbackUrl := os.Getenv("RP_PAYMENT_CALLBACK_URL")
-	r.rpClient = razorpay.NewClient(rpKey, rpSecret)
-	r.callbackUrl = callbackUrl
+func (d *domain) newRazorPay() RazorPay {
+	r := razorPayImpl{
+		rpClient:    razorpay.NewClient(d.Env.RP_KEY, d.Env.RP_SECRET),
+		callbackUrl: d.Env.RP_PAYMENT_CALLBACK_URL,
+	}
 	return &r
 }

@@ -5,13 +5,10 @@ type Query {
   finance_getWallet: Wallet! @isLoggedInAndVerified @hasAccount
   finance_listPayments: [Payment!] @isLoggedInAndVerified @hasAccount
 
-  finance_listCharges: [Charge!] @isLoggedInAndVerified
-
-  # subscription
-  # invoice
+  finance_listCharges: [Charge!] @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
-  finance_createPayment(payment: PaymentIn!): Payment! @isLoggedInAndVerified
-  finance_validatePayment(paymentId: ID!): Boolean! @isLoggedInAndVerified
+  finance_createPayment(payment: PaymentIn!): Payment! @isLoggedInAndVerified @hasAccount
+  finance_validatePayment(paymentId: ID!): Payment! @isLoggedInAndVerified @hasAccount
 }
