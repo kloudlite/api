@@ -14,12 +14,18 @@ import (
 
 // CreationTime is the resolver for the creationTime field.
 func (r *walletResolver) CreationTime(ctx context.Context, obj *entities.Wallet) (string, error) {
-	panic(fmt.Errorf("not implemented: CreationTime - creationTime"))
+	if obj == nil {
+		return "", fmt.Errorf("not found: Wallet")
+	}
+	return obj.CreationTime.String(), nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
 func (r *walletResolver) UpdateTime(ctx context.Context, obj *entities.Wallet) (string, error) {
-	panic(fmt.Errorf("not implemented: UpdateTime - updateTime"))
+	if obj == nil {
+		return "", fmt.Errorf("not found: Wallet")
+	}
+	return obj.UpdateTime.String(), nil
 }
 
 // Wallet returns generated.WalletResolver implementation.
