@@ -2,27 +2,73 @@
 
 package field_constants
 
-// constant vars generated for struct Account
+// constant vars generated for struct Charge
 const (
-	AccountContactEmail    = "contactEmail"
-	AccountIsActive        = "isActive"
-	AccountLogo            = "logo"
-	AccountTargetNamespace = "targetNamespace"
+	ChargeAmount      = "amount"
+	ChargeCreatedAt   = "createdAt"
+	ChargeCurrency    = "currency"
+	ChargeDescription = "description"
+	ChargeTeamId      = "teamId"
+	ChargeUpdatedAt   = "updatedAt"
+	ChargeWalletId    = "walletId"
 )
 
-// constant vars generated for struct AccountMembership
+// constant vars generated for struct Invoice
 const (
-	AccountMembershipRole   = "role"
-	AccountMembershipUserId = "userId"
+	InvoiceAmount    = "amount"
+	InvoiceCreatedAt = "createdAt"
+	InvoiceCurrency  = "currency"
+	InvoiceDueDate   = "dueDate"
+	InvoiceTeamId    = "teamId"
+	InvoiceUpdatedAt = "updatedAt"
 )
 
-// constant vars generated for struct Invitation
+// constant vars generated for struct Payment
 const (
-	InvitationAccepted    = "accepted"
-	InvitationInviteToken = "inviteToken"
-	InvitationInvitedBy   = "invitedBy"
-	InvitationRejected    = "rejected"
-	InvitationUserEmail   = "userEmail"
-	InvitationUserName    = "userName"
-	InvitationUserRole    = "userRole"
+	PaymentAmount                 = "amount"
+	PaymentCreatedAt              = "createdAt"
+	PaymentCurrency               = "currency"
+	PaymentPaymentLink            = "payment_link"
+	PaymentPaymentLinkId          = "payment_link.id"
+	PaymentPaymentLinkReferenceId = "payment_link.reference_id"
+	PaymentPaymentLinkShortUrl    = "payment_link.short_url"
+	PaymentPaymentLinkStatus      = "payment_link.status"
+	PaymentTeamId                 = "teamId"
+	PaymentUpdatedAt              = "updatedAt"
+)
+
+// constant vars generated for struct PaymentLink
+const (
+	PaymentLinkReferenceId = "reference_id"
+	PaymentLinkShortUrl    = "short_url"
+)
+
+// constant vars generated for struct Subscription
+const (
+	SubscriptionCreatedAt = "createdAt"
+	SubscriptionSeats     = "seats"
+	SubscriptionTeamId    = "teamId"
+	SubscriptionUpdatedAt = "updatedAt"
+)
+
+// constant vars generated for struct Uses
+const ()
+
+// constant vars generated for struct Wallet
+const (
+	WalletBalance   = "balance"
+	WalletCreatedAt = "createdAt"
+	WalletCurrency  = "currency"
+	WalletTeamId    = "teamId"
+	WalletUpdatedAt = "updatedAt"
+)
+
+// constant vars generated for struct
+const (
+	CreationTime      = "creationTime"
+	Id                = "id"
+	MarkedForDeletion = "markedForDeletion"
+	RecordVersion     = "recordVersion"
+	Status            = "status"
+	UpdateTime        = "updateTime"
 )

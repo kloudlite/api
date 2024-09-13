@@ -5,19 +5,40 @@ import (
 	"time"
 
 	"github.com/kloudlite/api/apps/finance/internal/entities"
+	fc "github.com/kloudlite/api/apps/finance/internal/entities/field-constants"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
+const (
+	CurrencyUSD = "USD"
+)
+
 func (d *domain) GetWallet(ctx UserContext) (*entities.Wallet, error) {
-	return d.walletRepo.FindOne(ctx.Context, repos.Filter{
-		"team_id": ctx.AccountName,
+	resp, err := d.walletRepo.FindOne(ctx.Context, repos.Filter{
+		fc.WalletTeamId: ctx.AccountName,
 	})
+
+	if err != nil {
+		return nil, err
+	}
+
+	if resp == nil {
+		return d.walletRepo.Create(ctx.Context, &entities.Wallet{
+			TeamId:    ctx.AccountName,
+			Balance:   0,
+			Currency:  CurrencyUSD,
+			CreatedAt: time.Now(),
+			UpdatedAt: time.Now(),
+		})
+	}
+
+	return resp, nil
 }
 
 func (d *domain) ListPayments(ctx UserContext) ([]*entities.Payment, error) {
 	return d.paymentRepo.Find(ctx.Context, repos.Query{
 		Filter: repos.Filter{
-			"team_id": ctx.AccountName,
+			fc.WalletTeamId: ctx.AccountName,
 		},
 	})
 }
@@ -29,7 +50,7 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 		Amount:    req.Amount,
 		Link:      req.Link,
 		TeamId:    ctx.AccountName,
-		Currency:  "USD",
+		Currency:  CurrencyUSD,
 		CreatedAt: time.Now(),
 		UpdatedAt: time.Now(),
 	})
@@ -101,7 +122,7 @@ func (d *domain) ValidatePayment(ctx UserContext, paymentId repos.ID) (*entities
 func (d *domain) ListCharges(ctx UserContext) ([]*entities.Charge, error) {
 	c, err := d.chargeRepo.Find(ctx.Context, repos.Query{
 		Filter: repos.Filter{
-			"team_id": ctx.AccountName,
+			fc.WalletTeamId: ctx.AccountName,
 		},
 	})
 

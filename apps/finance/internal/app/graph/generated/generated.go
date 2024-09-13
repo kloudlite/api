@@ -48,6 +48,7 @@ type ResolverRoot interface {
 	Wallet() WalletResolver
 	ChargeIn() ChargeInResolver
 	PaymentIn() PaymentInResolver
+	WalletIn() WalletInResolver
 }
 
 type DirectiveRoot struct {
@@ -159,8 +160,10 @@ type QueryResolver interface {
 	FinanceListCharges(ctx context.Context) ([]*entities.Charge, error)
 }
 type WalletResolver interface {
+	CreatedAt(ctx context.Context, obj *entities.Wallet) (string, error)
 	CreationTime(ctx context.Context, obj *entities.Wallet) (string, error)
 
+	UpdatedAt(ctx context.Context, obj *entities.Wallet) (string, error)
 	UpdateTime(ctx context.Context, obj *entities.Wallet) (string, error)
 }
 
@@ -169,6 +172,11 @@ type ChargeInResolver interface {
 }
 type PaymentInResolver interface {
 	PaymentLink(ctx context.Context, obj *entities.Payment, data *model.GithubComKloudliteAPIAppsFinanceInternalEntitiesPaymentLinkIn) error
+}
+type WalletInResolver interface {
+	CreatedAt(ctx context.Context, obj *entities.Wallet, data string) error
+
+	UpdatedAt(ctx context.Context, obj *entities.Wallet, data string) error
 }
 
 type executableSchema struct {
@@ -754,23 +762,23 @@ scalar Date
 `, BuiltIn: false},
 	{Name: "../struct-to-graphql/wallet.graphqls", Input: `type Wallet @shareable {
   balance: Float!
-  createdAt: String!
+  createdAt: Date!
   creationTime: Date!
   currency: String!
   id: ID!
   markedForDeletion: Boolean
   recordVersion: Int!
   teamId: String!
-  updatedAt: String!
+  updatedAt: Date!
   updateTime: Date!
 }
 
 input WalletIn {
   balance: Float!
-  createdAt: String!
+  createdAt: Date!
   currency: String!
   teamId: String!
-  updatedAt: String!
+  updatedAt: Date!
 }
 
 `, BuiltIn: false},
@@ -3044,7 +3052,7 @@ func (ec *executionContext) _Wallet_createdAt(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.CreatedAt, nil
+		return ec.resolvers.Wallet().CreatedAt(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3058,17 +3066,17 @@ func (ec *executionContext) _Wallet_createdAt(ctx context.Context, field graphql
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Wallet_createdAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Wallet",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Date does not have child fields")
 		},
 	}
 	return fc, nil
@@ -3349,7 +3357,7 @@ func (ec *executionContext) _Wallet_updatedAt(ctx context.Context, field graphql
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.UpdatedAt, nil
+		return ec.resolvers.Wallet().UpdatedAt(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -3363,17 +3371,17 @@ func (ec *executionContext) _Wallet_updatedAt(ctx context.Context, field graphql
 	}
 	res := resTmp.(string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalNDate2string(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Wallet_updatedAt(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Wallet",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
+			return nil, errors.New("field of type Date does not have child fields")
 		},
 	}
 	return fc, nil
@@ -5401,11 +5409,13 @@ func (ec *executionContext) unmarshalInputWalletIn(ctx context.Context, obj inte
 			it.Balance = data
 		case "createdAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("createdAt"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNDate2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.CreatedAt = data
+			if err = ec.resolvers.WalletIn().CreatedAt(ctx, &it, data); err != nil {
+				return it, err
+			}
 		case "currency":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("currency"))
 			data, err := ec.unmarshalNString2string(ctx, v)
@@ -5422,11 +5432,13 @@ func (ec *executionContext) unmarshalInputWalletIn(ctx context.Context, obj inte
 			it.TeamId = data
 		case "updatedAt":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updatedAt"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalNDate2string(ctx, v)
 			if err != nil {
 				return it, err
 			}
-			it.UpdatedAt = data
+			if err = ec.resolvers.WalletIn().UpdatedAt(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -6262,10 +6274,41 @@ func (ec *executionContext) _Wallet(ctx context.Context, sel ast.SelectionSet, o
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "createdAt":
-			out.Values[i] = ec._Wallet_createdAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Wallet_createdAt(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "creationTime":
 			field := field
 
@@ -6325,10 +6368,41 @@ func (ec *executionContext) _Wallet(ctx context.Context, sel ast.SelectionSet, o
 				atomic.AddUint32(&out.Invalids, 1)
 			}
 		case "updatedAt":
-			out.Values[i] = ec._Wallet_updatedAt(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Wallet_updatedAt(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "updateTime":
 			field := field
 

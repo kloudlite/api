@@ -1,21 +1,21 @@
 type Wallet @shareable {
   balance: Float!
-  createdAt: String!
+  createdAt: Date!
   creationTime: Date!
   currency: String!
   id: ID!
   markedForDeletion: Boolean
   recordVersion: Int!
   teamId: String!
-  updatedAt: String!
+  updatedAt: Date!
   updateTime: Date!
 }
 
 input WalletIn {
   balance: Float!
-  createdAt: String!
+  createdAt: Date!
   currency: String!
   teamId: String!
-  updatedAt: String!
+  updatedAt: Date!
 }
 

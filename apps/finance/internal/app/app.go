@@ -34,13 +34,9 @@ type (
 var Module = fx.Module("app",
 	repos.NewFxMongoRepo[*entities.Payment]("payments", "pmt", entities.PaymentIndices),
 	repos.NewFxMongoRepo[*entities.Invoice]("invoices", "inv", entities.InvoiceIndices),
-	repos.NewFxMongoRepo[*entities.Wallet]("wallets", "wlt", entities.InvoiceIndices),
-	repos.NewFxMongoRepo[*entities.Charge]("charges", "chrg", entities.InvoiceIndices),
-	repos.NewFxMongoRepo[*entities.Subscription]("subscriptions", "sbs", entities.InvoiceIndices),
-
-	// fx.Provide(func(client AuthCacheClient) kv.Repo[*entities.Invitation] {
-	// 	return kv.NewRepo[*entities.Invitation](client)
-	// }),
+	repos.NewFxMongoRepo[*entities.Wallet]("wallets", "wlt", entities.WalletIndices),
+	repos.NewFxMongoRepo[*entities.Charge]("charges", "chrg", entities.ChargeIndices),
+	repos.NewFxMongoRepo[*entities.Subscription]("subscriptions", "sbs", entities.SubscriptionIndices),
 
 	fx.Provide(func(conn IAMClient) iam.IAMClient {
 		return iam.NewIAMClient(conn)

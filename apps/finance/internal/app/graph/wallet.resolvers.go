@@ -12,12 +12,22 @@ import (
 	"github.com/kloudlite/api/apps/finance/internal/entities"
 )
 
+// CreatedAt is the resolver for the createdAt field.
+func (r *walletResolver) CreatedAt(ctx context.Context, obj *entities.Wallet) (string, error) {
+	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
+}
+
 // CreationTime is the resolver for the creationTime field.
 func (r *walletResolver) CreationTime(ctx context.Context, obj *entities.Wallet) (string, error) {
 	if obj == nil {
 		return "", fmt.Errorf("not found: Wallet")
 	}
 	return obj.CreationTime.String(), nil
+}
+
+// UpdatedAt is the resolver for the updatedAt field.
+func (r *walletResolver) UpdatedAt(ctx context.Context, obj *entities.Wallet) (string, error) {
+	panic(fmt.Errorf("not implemented: UpdatedAt - updatedAt"))
 }
 
 // UpdateTime is the resolver for the updateTime field.
@@ -28,7 +38,21 @@ func (r *walletResolver) UpdateTime(ctx context.Context, obj *entities.Wallet) (
 	return obj.UpdateTime.String(), nil
 }
 
+// CreatedAt is the resolver for the createdAt field.
+func (r *walletInResolver) CreatedAt(ctx context.Context, obj *entities.Wallet, data string) error {
+	panic(fmt.Errorf("not implemented: CreatedAt - createdAt"))
+}
+
+// UpdatedAt is the resolver for the updatedAt field.
+func (r *walletInResolver) UpdatedAt(ctx context.Context, obj *entities.Wallet, data string) error {
+	panic(fmt.Errorf("not implemented: UpdatedAt - updatedAt"))
+}
+
 // Wallet returns generated.WalletResolver implementation.
 func (r *Resolver) Wallet() generated.WalletResolver { return &walletResolver{r} }
 
+// WalletIn returns generated.WalletInResolver implementation.
+func (r *Resolver) WalletIn() generated.WalletInResolver { return &walletInResolver{r} }
+
 type walletResolver struct{ *Resolver }
+type walletInResolver struct{ *Resolver }

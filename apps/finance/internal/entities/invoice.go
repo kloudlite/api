@@ -23,16 +23,4 @@ var InvoiceIndices = []repos.IndexField{
 		},
 		Unique: true,
 	},
-	{
-		Field: []repos.IndexKey{
-			{Key: "metadata.name", Value: repos.IndexAsc},
-		},
-		Unique: true,
-	},
-	{
-		Field: []repos.IndexKey{
-			{Key: "targetNamespace", Value: repos.IndexAsc},
-		},
-		Unique: true,
-	},
 }

@@ -27,10 +27,16 @@ func toUserContext(ctx context.Context) (domain.UserContext, error) {
 		return domain.UserContext{}, errors.Newf("`kloudlite-user-session` not set in request context")
 	}
 
+	accName := ctx.Value("account-name").(string)
+	if accName == "" {
+		return domain.UserContext{}, errors.Newf("`account-name` not set in request context")
+	}
+
 	return domain.UserContext{
-		Context:   ctx,
-		UserId:    sess.UserId,
-		UserName:  sess.UserName,
-		UserEmail: sess.UserEmail,
+		AccountName: accName,
+		Context:     ctx,
+		UserId:      sess.UserId,
+		UserName:    sess.UserName,
+		UserEmail:   sess.UserEmail,
 	}, nil
 }
