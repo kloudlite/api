@@ -14,7 +14,7 @@ import (
 type PaymentService interface {
 	CreatePayment(ctx UserContext, req *entities.Payment) (*entities.Payment, error)
 
-	ValidatePayment(ctx UserContext, paymentID repos.ID) (*entities.Payment, error)
+	SyncPaymentStatus(ctx UserContext, paymentID repos.ID) (*entities.Payment, error)
 
 	GetWallet(ctx UserContext) (*entities.Wallet, error)
 	ListPayments(ctx UserContext) ([]*entities.Payment, error)

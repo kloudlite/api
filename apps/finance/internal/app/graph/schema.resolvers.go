@@ -29,7 +29,7 @@ func (r *mutationResolver) FinanceValidatePayment(ctx context.Context, paymentID
 		return nil, err
 	}
 
-	p, err := r.domain.ValidatePayment(uc, paymentID)
+	p, err := r.domain.SyncPaymentStatus(uc, paymentID)
 	if err != nil {
 		return nil, err
 	}

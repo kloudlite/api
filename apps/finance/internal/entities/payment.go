@@ -9,15 +9,17 @@ import (
 type PaymentStatus string
 
 const (
-	PaymentStatusPending PaymentStatus = "pending"
-	PaymentStatusFailed  PaymentStatus = "failed"
-	PaymentStatusSuccess PaymentStatus = "success"
+	PaymentStatusCreated PaymentStatus = "created"
+	PaymentStatusPartiallyPaid PaymentStatus = "partially_paid"
+	PaymentStatusExpired PaymentStatus = "expired"
+	PaymentStatusCancelled PaymentStatus = "cancelled"
+	PaymentStatusPaid  PaymentStatus = "paid"
 )
 
 type PaymentLink struct {
 	Id          string `json:"id"`
 	ReferenceId string `json:"reference_id"`
-	Status      string `json:"status"`
+	Status      PaymentStatus `json:"status"`
 	ShortUrl    string `json:"short_url"`
 }
 

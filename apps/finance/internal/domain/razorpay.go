@@ -52,27 +52,26 @@ func (r *razorPayImpl) CancelPaymentLink(linkId string) error {
 }
 
 func (r *razorPayImpl) CreatePaymentLink(in *PaymentLinkInput) (*entities.PaymentLink, error) {
-	data := map[string]interface{}{
+	data := map[string]any{
 		"amount":       in.Amount,
 		"currency":     in.Currency,
 		"reference_id": in.ReferenceId,
 		"description":  in.Description,
-		"customer": map[string]interface{}{
+		"customer": map[string]any{
 			"name":  in.Name,
 			"email": in.Email,
 		},
-		"notify": map[string]interface{}{
+		"notify": map[string]any{
 			"email": true,
 		},
 		"reminder_enable": true,
-		"notes": map[string]interface{}{
+		"notes": map[string]any{
 			"account": in.AccountNo,
 		},
 		"callback_url":    r.callbackUrl,
 		"callback_method": "get",
 	}
 
-	fmt.Printf("data: %#v\n", data)
 	body, err := r.rpClient.PaymentLink.Create(data, nil)
 	if err != nil {
 		return nil, err

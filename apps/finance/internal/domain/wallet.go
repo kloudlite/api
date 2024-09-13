@@ -2,6 +2,7 @@ package domain
 
 import (
 	"fmt"
+	"github.com/kloudlite/api/common/fields"
 	"time"
 
 	"github.com/kloudlite/api/apps/finance/internal/entities"
@@ -61,24 +62,14 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 
 	rp := d.newRazorPay()
 
-	fmt.Println(p.Id)
-
 	link, err := rp.CreatePaymentLink(&PaymentLinkInput{
-		// Amount:      req.Amount,
-		// Currency:    CurrencyUSD,
-		// ReferenceId: string(p.Id),
-		// Name:        fmt.Sprintf("KloudLite Payment %s", p.Id),
-		// Description: "KloudLite Payment",
-		// AccountNo:   "1627364",
-		// Email:       "abdhesh@kloudlite.io",
-
-		Name:        "Karthik Th",
-		Email:       "karthik@kloudlite.io",
-		AccountNo:   "1627364",
-		ReferenceId: "kart378423",
-		Description: "Sample Payment",
-		Amount:      1000,
-		Currency:    "USD",
+		Amount:      req.Amount,
+		Currency:    CurrencyUSD,
+		ReferenceId: string(p.Id),
+		Name:        "Abdhesh",
+		Description: "KloudLite Payment",
+		AccountNo:   ctx.AccountName,
+		Email:       "abdhesh@kloudlite.io",
 	})
 
 	if err != nil {
@@ -91,25 +82,27 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 
 	p.Link = link
 
-	finP, err := d.paymentRepo.UpdateById(ctx.Context, p.Id, &entities.Payment{
-		Link:      link,
-		Amount:    p.Amount,
-		TeamId:    p.TeamId,
-		Currency:  p.Currency,
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: time.Now(),
+	one, err := d.paymentRepo.PatchOne(ctx.Context, repos.Filter{
+		fields.Id: p.Id,
+	}, repos.Document{
+		fc.PaymentPaymentLink: p.Link,
 	})
 	if err != nil {
 		return nil, err
 	}
 
-	return finP, nil
+	return one, nil
 }
 
-func (d *domain) ValidatePayment(ctx UserContext, paymentId repos.ID) (*entities.Payment, error) {
+func (d *domain) SyncPaymentStatus(ctx UserContext, paymentId repos.ID) (*entities.Payment, error) {
 	p, err := d.paymentRepo.FindById(ctx.Context, paymentId)
+
 	if err != nil {
 		return nil, err
+	}
+
+	if p.Link.Status == entities.PaymentStatusExpired || p.Link.Status == entities.PaymentStatusCancelled || p.Link.Status == entities.PaymentStatusPaid {
+		return p, err
 	}
 
 	rp := d.newRazorPay()
@@ -119,20 +112,15 @@ func (d *domain) ValidatePayment(ctx UserContext, paymentId repos.ID) (*entities
 		return nil, err
 	}
 
-	finP, err := d.paymentRepo.UpdateById(ctx.Context, p.Id, &entities.Payment{
-		Link:      pl,
-		Amount:    p.Amount,
-		TeamId:    p.TeamId,
-		Currency:  p.Currency,
-		CreatedAt: p.CreatedAt,
-		UpdatedAt: time.Now(),
+	one, err := d.paymentRepo.PatchOne(ctx.Context, repos.Filter{
+		fields.Id: p.Id,
+	}, repos.Document{
+		fc.PaymentPaymentLink: pl,
 	})
-
 	if err != nil {
 		return nil, err
 	}
-
-	return finP, nil
+	return one, nil
 }
 
 func (d *domain) ListCharges(ctx UserContext) ([]*entities.Charge, error) {
