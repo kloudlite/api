@@ -2,12 +2,13 @@ package domain
 
 import (
 	"encoding/json"
+	"fmt"
 
 	"github.com/kloudlite/api/apps/finance/internal/entities"
 	"github.com/razorpay/razorpay-go"
 )
 
-type PaymentInput struct {
+type PaymentLinkInput struct {
 	Name        string
 	Email       string
 	AccountNo   string
@@ -17,9 +18,8 @@ type PaymentInput struct {
 	Currency    string
 }
 
-
 type RazorPay interface {
-	CreatePaymentLink(in *PaymentInput) (*entities.PaymentLink, error)
+	CreatePaymentLink(in *PaymentLinkInput) (*entities.PaymentLink, error)
 	CancelPaymentLink(linkId string) error
 	GetPaymentLink(linkId string) (*entities.PaymentLink, error)
 }
@@ -51,7 +51,7 @@ func (r *razorPayImpl) CancelPaymentLink(linkId string) error {
 	return err
 }
 
-func (r *razorPayImpl) CreatePaymentLink(in *PaymentInput) (*entities.PaymentLink, error) {
+func (r *razorPayImpl) CreatePaymentLink(in *PaymentLinkInput) (*entities.PaymentLink, error) {
 	data := map[string]interface{}{
 		"amount":       in.Amount,
 		"currency":     in.Currency,
@@ -72,24 +72,30 @@ func (r *razorPayImpl) CreatePaymentLink(in *PaymentInput) (*entities.PaymentLin
 		"callback_method": "get",
 	}
 
+	fmt.Printf("data: %#v\n", data)
 	body, err := r.rpClient.PaymentLink.Create(data, nil)
 	if err != nil {
 		return nil, err
 	}
-
 	marshal, err := json.Marshal(body)
 	p := &entities.PaymentLink{}
-	if err = json.Unmarshal(marshal, p); err != nil {
+	err = json.Unmarshal(marshal, p)
+	if err != nil {
 		return nil, err
 	}
-
 	return p, nil
 }
 
 func (d *domain) newRazorPay() RazorPay {
-	r := razorPayImpl{
-		rpClient:    razorpay.NewClient(d.Env.RP_KEY, d.Env.RP_SECRET),
-		callbackUrl: d.Env.RP_PAYMENT_CALLBACK_URL,
-	}
+
+	r := razorPayImpl{}
+	rpKey := d.Env.RP_KEY
+	rpSecret := d.Env.RP_SECRET
+	callbackUrl := d.Env.RP_PAYMENT_CALLBACK_URL
+	r.rpClient = razorpay.NewClient(rpKey, rpSecret)
+	r.callbackUrl = callbackUrl
+
+	fmt.Printf("%s, %s, %s\n", rpKey, rpSecret, callbackUrl)
 	return &r
 }
+

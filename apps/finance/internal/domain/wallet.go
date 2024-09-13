@@ -61,16 +61,32 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 
 	rp := d.newRazorPay()
 
-	link, err := rp.CreatePaymentLink(&PaymentInput{
-		Amount:      req.Amount,
-		Currency:    req.Currency,
-		ReferenceId: string(p.Id),
-		Name:        fmt.Sprintf("KloudLite Payment %s", p.Id),
-		Description: "KloudLite Payment",
-		AccountNo:   ctx.AccountName,
+	fmt.Println(p.Id)
+
+	link, err := rp.CreatePaymentLink(&PaymentLinkInput{
+		// Amount:      req.Amount,
+		// Currency:    CurrencyUSD,
+		// ReferenceId: string(p.Id),
+		// Name:        fmt.Sprintf("KloudLite Payment %s", p.Id),
+		// Description: "KloudLite Payment",
+		// AccountNo:   "1627364",
+		// Email:       "abdhesh@kloudlite.io",
+
+		Name:        "Karthik Th",
+		Email:       "karthik@kloudlite.io",
+		AccountNo:   "1627364",
+		ReferenceId: "kart378423",
+		Description: "Sample Payment",
+		Amount:      1000,
+		Currency:    "USD",
 	})
+
 	if err != nil {
-		return nil, err
+		if err := d.paymentRepo.DeleteById(ctx, p.Id); err != nil {
+			return nil, err
+		}
+
+		return nil, fmt.Errorf("error creating payment link: %w", err)
 	}
 
 	p.Link = link
