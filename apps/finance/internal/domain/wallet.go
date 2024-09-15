@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"context"
 	"fmt"
 	"time"
 
@@ -87,7 +88,7 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 		AccountName: ctx.AccountName,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	// account email address supposed to come from the gao
@@ -103,7 +104,7 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	rp := d.newRazorPay()
@@ -119,7 +120,7 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 
 	if err != nil {
 		if err := d.paymentRepo.DeleteById(ctx, p.Id); err != nil {
-			return nil, err
+			return nil, errors.NewE(err)
 		}
 
 		return nil, fmt.Errorf("error creating payment link: %w", err)
@@ -131,7 +132,7 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 		fc.PaymentPaymentLink: link,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	return one, nil
@@ -139,13 +140,13 @@ func (d *domain) CreatePayment(ctx UserContext, req *entities.Payment) (*entitie
 
 func (d *domain) SyncPaymentStatus(ctx UserContext, paymentId repos.ID) (*entities.Payment, error) {
 	if err := d.canPerformActionInAccount(ctx, iamT.DeleteAccount); err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	p, err := d.paymentRepo.FindById(ctx.Context, paymentId)
 
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	if p.Link.Status == entities.PaymentStatusExpired || p.Link.Status == entities.PaymentStatusCancelled || p.Link.Status == entities.PaymentStatusPaid {
@@ -156,7 +157,7 @@ func (d *domain) SyncPaymentStatus(ctx UserContext, paymentId repos.ID) (*entiti
 
 	pl, err := rp.GetPaymentLink(p.Link.Id)
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	// handle this block carefully
@@ -167,7 +168,7 @@ func (d *domain) SyncPaymentStatus(ctx UserContext, paymentId repos.ID) (*entiti
 		})
 
 		if err != nil {
-			return nil, err
+			return nil, errors.NewE(err)
 		}
 
 		if _, err = d.walletRepo.PatchOne(ctx, repos.Filter{
@@ -176,7 +177,7 @@ func (d *domain) SyncPaymentStatus(ctx UserContext, paymentId repos.ID) (*entiti
 		}, repos.Document{
 			fc.WalletBalance: wl.Balance + p.Amount,
 		}); err != nil {
-			return nil, err
+			return nil, errors.NewE(err)
 		}
 	}
 
@@ -191,14 +192,14 @@ func (d *domain) SyncPaymentStatus(ctx UserContext, paymentId repos.ID) (*entiti
 		fc.PaymentPaymentLink: pl,
 	})
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 	return one, nil
 }
 
 func (d *domain) ListCharges(ctx UserContext) ([]*entities.Charge, error) {
 	if err := d.canPerformActionInAccount(ctx, iamT.GetAccount); err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	c, err := d.chargeRepo.Find(ctx.Context, repos.Query{
@@ -206,13 +207,13 @@ func (d *domain) ListCharges(ctx UserContext) ([]*entities.Charge, error) {
 	})
 
 	if err != nil {
-		return nil, err
+		return nil, errors.NewE(err)
 	}
 
 	return c, nil
 }
 
 // internal method
-func (d *domain) CreateCharge(ctx UserContext, req *entities.Charge) (*entities.Charge, error) {
-	return d.chargeRepo.Create(ctx.Context, req)
+func (d *domain) CreateCharge(ctx context.Context, req *entities.Charge) (*entities.Charge, error) {
+	return d.chargeRepo.Create(ctx, req)
 }

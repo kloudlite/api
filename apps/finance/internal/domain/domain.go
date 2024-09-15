@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"context"
+
 	"github.com/kloudlite/api/apps/finance/internal/entities"
 	"github.com/kloudlite/api/apps/finance/internal/env"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts"
@@ -20,6 +22,8 @@ type PaymentService interface {
 	GetWallet(ctx UserContext) (*entities.Wallet, error)
 	ListPayments(ctx UserContext) ([]*entities.Payment, error)
 	ListCharges(ctx UserContext) ([]*entities.Charge, error)
+
+	CreateCharge(ctx context.Context, req *entities.Charge) (*entities.Charge, error)
 }
 
 type Domain interface {
