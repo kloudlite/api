@@ -15,7 +15,7 @@ const (
 type Charge struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
 	TeamId           string   `json:"teamId"`
-	WalletId         repos.ID `json:"walletId"`
+	// WalletId         repos.ID `json:"walletId"`
 
 	Amount   int    `json:"amount"`
 	Currency string `json:"currency"`
