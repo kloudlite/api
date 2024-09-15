@@ -2,7 +2,6 @@ package entities
 
 import (
 	"github.com/kloudlite/api/pkg/repos"
-	"time"
 )
 
 type Wallet struct {
@@ -11,8 +10,6 @@ type Wallet struct {
 	TeamId    string    `json:"teamId"`
 	Balance   float64   `json:"balance"`
 	Currency  string    `json:"currency"`
-	CreatedAt time.Time `json:"createdAt"`
-	UpdatedAt time.Time `json:"updatedAt"`
 }
 
 var WalletIndices = []repos.IndexField{

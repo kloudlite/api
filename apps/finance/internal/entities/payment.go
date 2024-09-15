@@ -9,18 +9,18 @@ import (
 type PaymentStatus string
 
 const (
-	PaymentStatusCreated PaymentStatus = "created"
+	PaymentStatusCreated       PaymentStatus = "created"
 	PaymentStatusPartiallyPaid PaymentStatus = "partially_paid"
-	PaymentStatusExpired PaymentStatus = "expired"
-	PaymentStatusCancelled PaymentStatus = "cancelled"
-	PaymentStatusPaid  PaymentStatus = "paid"
+	PaymentStatusExpired       PaymentStatus = "expired"
+	PaymentStatusCancelled     PaymentStatus = "cancelled"
+	PaymentStatusPaid          PaymentStatus = "paid"
 )
 
 type PaymentLink struct {
-	Id          string `json:"id"`
-	ReferenceId string `json:"reference_id"`
+	Id          string        `json:"id"`
+	ReferenceId string        `json:"reference_id"`
 	Status      PaymentStatus `json:"status"`
-	ShortUrl    string `json:"short_url"`
+	ShortUrl    string        `json:"short_url"`
 }
 
 type Payment struct {
@@ -30,12 +30,10 @@ type Payment struct {
 
 	TeamId string `json:"teamId" graphql:"noinput"`
 
-	Amount   int    `json:"amount"`
-	Currency string `json:"currency" graphql:"noinput"`
+	Amount   float64 `json:"amount"`
+	Currency string  `json:"currency" graphql:"noinput"`
 
-	// Status PaymentStatus `json:"status" graphql:"noinput"`
-
-	Link *PaymentLink `json:"payment_link"`
+	Link *PaymentLink `json:"payment_link" graphql:"noinput"`
 }
 
 var PaymentIndices = []repos.IndexField{

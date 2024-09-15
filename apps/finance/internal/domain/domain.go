@@ -3,6 +3,7 @@ package domain
 import (
 	"github.com/kloudlite/api/apps/finance/internal/entities"
 	"github.com/kloudlite/api/apps/finance/internal/env"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/accounts"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/comms"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/iam"
@@ -29,6 +30,7 @@ type domain struct {
 	authClient  auth.AuthClient
 	iamClient   iam.IAMClient
 	commsClient comms.CommsClient
+	accountsCli accounts.AccountsClient
 
 	paymentRepo      repos.DbRepo[*entities.Payment]
 	invoiceRepo      repos.DbRepo[*entities.Invoice]
@@ -44,6 +46,7 @@ func NewDomain(
 	iamCli iam.IAMClient,
 	authClient auth.AuthClient,
 	commsClient comms.CommsClient,
+	accountsCli accounts.AccountsClient,
 
 	paymentRepo repos.DbRepo[*entities.Payment],
 	invoiceRepo repos.DbRepo[*entities.Invoice],
@@ -59,6 +62,7 @@ func NewDomain(
 		authClient:  authClient,
 		iamClient:   iamCli,
 		commsClient: commsClient,
+		accountsCli: accountsCli,
 
 		paymentRepo:      paymentRepo,
 		invoiceRepo:      invoiceRepo,

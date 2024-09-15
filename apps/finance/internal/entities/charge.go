@@ -1,8 +1,6 @@
 package entities
 
 import (
-	"time"
-
 	"github.com/kloudlite/api/pkg/repos"
 )
 
@@ -16,11 +14,8 @@ const (
 
 type Charge struct {
 	repos.BaseEntity `json:",inline" graphql:"noinput"`
-	CreatedAt        time.Time `json:"createdAt" graphql:"noinput"`
-	UpdatedAt        time.Time `json:"updatedAt" graphql:"noinput"`
-
-	TeamId   string   `json:"teamId"`
-	WalletId repos.ID `json:"walletId"`
+	TeamId           string   `json:"teamId"`
+	WalletId         repos.ID `json:"walletId"`
 
 	Amount   int    `json:"amount"`
 	Currency string `json:"currency"`

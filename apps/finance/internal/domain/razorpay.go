@@ -14,7 +14,7 @@ type PaymentLinkInput struct {
 	AccountNo   string
 	ReferenceId string
 	Description string
-	Amount      int
+	Amount      float64
 	Currency    string
 }
 
@@ -82,6 +82,7 @@ func (r *razorPayImpl) CreatePaymentLink(in *PaymentLinkInput) (*entities.Paymen
 	if err != nil {
 		return nil, err
 	}
+
 	return p, nil
 }
 
@@ -97,4 +98,3 @@ func (d *domain) newRazorPay() RazorPay {
 	fmt.Printf("%s, %s, %s\n", rpKey, rpSecret, callbackUrl)
 	return &r
 }
-
