@@ -19,6 +19,7 @@ import (
 	"github.com/kloudlite/api/pkg/grpc"
 	httpServer "github.com/kloudlite/api/pkg/http-server"
 	"github.com/kloudlite/api/pkg/kv"
+	"github.com/kloudlite/api/pkg/logging"
 	"github.com/kloudlite/api/pkg/repos"
 	"go.uber.org/fx"
 )
@@ -51,6 +52,23 @@ var Module = fx.Module("app",
 	}),
 
 	domain.Module,
+
+	fx.Invoke(func(lf fx.Lifecycle, consumer ChargesConsumer, d domain.Domain, logr logging.Logger) {
+		lf.Append(fx.Hook{
+			OnStart: func(ctx context.Context) error {
+				go func() {
+					err := processCharges(ctx, d, consumer, logr)
+					if err != nil {
+						logr.Errorf(err, "could not process git webhooks")
+					}
+				}()
+				return nil
+			},
+			OnStop: func(ctx context.Context) error {
+				return nil
+			},
+		})
+	}),
 
 	fx.Invoke(
 		func(server httpServer.Server, d domain.Domain, env *env.Env, sessionRepo kv.Repo[*common.AuthSession]) {
