@@ -14,6 +14,7 @@ import (
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/common/fields"
+	"github.com/kloudlite/api/constants"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
 	ct "github.com/kloudlite/operator/apis/common-types"
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
@@ -164,6 +165,14 @@ func (d *domain) CreateCluster(ctx InfraContext, cluster entities.Cluster) (*ent
 
 	if existing != nil {
 		return nil, ErrClusterAlreadyExists{ClusterName: cluster.Name, AccountName: ctx.AccountName}
+	}
+
+	if s, ok := cluster.GetLabels()[constants.ClusterLabelOwnedBy]; ok {
+		if s != string(ctx.UserId) {
+			return nil, errors.Newf("provided wrong owner for cluster %q, expected %q", cluster.Name, ctx.UserId)
+		}
+
+		cluster.OwnedBy = &s
 	}
 
 	cluster.AccountName = ctx.AccountName

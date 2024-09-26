@@ -26,7 +26,7 @@ type Cluster struct {
 
 	LastOnlineAt *time.Time `json:"lastOnlineAt,omitempty" graphql:"noinput"`
 
-	OwnedBy *string `json:"ownedBy,omitempty"`
+	OwnedBy *string `json:"ownedBy,omitempty", graphql:"noinput"`
 }
 
 func (c *Cluster) GetDisplayName() string {
