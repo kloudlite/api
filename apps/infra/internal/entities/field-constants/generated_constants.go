@@ -88,6 +88,7 @@ const (
 const (
 	ClusterGlobalVPN                               = "globalVPN"
 	ClusterLastOnlineAt                            = "lastOnlineAt"
+	ClusterOwnedBy                                 = "ownedBy"
 	ClusterSpec                                    = "spec"
 	ClusterSpecAccountId                           = "spec.accountId"
 	ClusterSpecAccountName                         = "spec.accountName"
