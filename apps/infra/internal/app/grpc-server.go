@@ -103,7 +103,12 @@ func (g *grpcServer) GetCluster(ctx context.Context, in *infra.GetClusterIn) (*i
 			}
 			return ""
 		}(),
-		Labels: c.Labels,
+		OwnedBy: func() string {
+			if c.OwnedBy != nil {
+				return *c.OwnedBy
+			}
+			return ""
+		}(),
 	}, nil
 }
 

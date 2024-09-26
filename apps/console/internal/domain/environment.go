@@ -143,7 +143,7 @@ func (d *domain) CreateEnvironment(ctx ConsoleContext, env entities.Environment)
 		return nil, fmt.Errorf("clustername must be set while creating environments")
 	}
 
-	labels, err := d.infraSvc.GetClusterLabels(ctx, ports.IsClusterLabelsIn{
+	ownedBy, err := d.infraSvc.GetClusterOwnedBy(ctx, ports.IsClusterLabelsIn{
 		UserId:      string(ctx.UserId),
 		UserEmail:   ctx.UserEmail,
 		UserName:    ctx.UserName,
@@ -154,14 +154,10 @@ func (d *domain) CreateEnvironment(ctx ConsoleContext, env entities.Environment)
 		return nil, errors.NewE(err)
 	}
 
-	if lUID, ok := labels[constants.ClusterLabelLocalUuidKey]; ok && lUID != "" {
-		if s, ok := labels[constants.ClusterLabelUserIdKey]; ok && s != string(ctx.UserId) {
-			return nil, fmt.Errorf("it's owned cluster, but you are not the owner")
-		}
-
-		env.Labels[constants.ClusterLabelLocalUuidKey] = lUID
-		env.Labels[constants.ClusterLabelUserIdKey] = string(ctx.UserId)
+	if ownedBy != "" && ownedBy != string(ctx.UserId) {
+		return nil, fmt.Errorf("it's owned cluster, but you are not the owner")
 	}
+	env.Labels[constants.ClusterLabelOwnedBy] = string(ctx.UserId)
 
 	env.EnsureGVK()
 	if err := d.k8sClient.ValidateObject(ctx, &env.Environment); err != nil {

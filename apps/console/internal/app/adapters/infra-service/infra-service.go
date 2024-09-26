@@ -30,7 +30,7 @@ func (s *InfraService) EnsureGlobalVPNConnection(ctx context.Context, args ports
 	return nil
 }
 
-func (s *InfraService) GetClusterLabels(ctx context.Context, args ports.IsClusterLabelsIn) (map[string]string, error) {
+func (s *InfraService) GetClusterOwnedBy(ctx context.Context, args ports.IsClusterLabelsIn) (string, error) {
 	cl, err := s.infraClient.GetCluster(ctx, &infra.GetClusterIn{
 		UserId:      args.UserId,
 		UserName:    args.UserName,
@@ -39,10 +39,10 @@ func (s *InfraService) GetClusterLabels(ctx context.Context, args ports.IsCluste
 		ClusterName: args.ClusterName,
 	})
 	if err != nil {
-		return nil, err
+		return "", err
 	}
 
-	return cl.Labels, nil
+	return cl.OwnedBy, nil
 }
 
 var _ ports.InfraService = (*InfraService)(nil)

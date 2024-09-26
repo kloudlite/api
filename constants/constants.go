@@ -3,7 +3,7 @@ package constants
 import "fmt"
 
 const (
-	ClusterLabelUserIdKey    string = "kloudlite.io/userid"
+	ClusterLabelOwnedBy      string = "kloudlite.io/owned-by"
 	ClusterLabelLocalUuidKey string = "kloudlite.io/local-uuid"
 )
 
