@@ -44,6 +44,7 @@ const (
 	BYOKClusterKubeconfigValue          = "kubeconfig.value"
 	BYOKClusterLastOnlineAt             = "lastOnlineAt"
 	BYOKClusterMessageQueueTopicName    = "messageQueueTopicName"
+	BYOKClusterOwnedBy                  = "ownedBy"
 	BYOKClusterVisibility               = "visibility"
 	BYOKClusterVisibilityMode           = "visibility.mode"
 	BYOKClusterVisibilityPublicEndpoint = "visibility.publicEndpoint"

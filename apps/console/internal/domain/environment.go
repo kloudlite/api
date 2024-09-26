@@ -143,7 +143,7 @@ func (d *domain) CreateEnvironment(ctx ConsoleContext, env entities.Environment)
 		return nil, fmt.Errorf("clustername must be set while creating environments")
 	}
 
-	ownedBy, err := d.infraSvc.GetClusterOwnedBy(ctx, ports.IsClusterLabelsIn{
+	ownedBy, err := d.infraSvc.GetByokClusterOwnedBy(ctx, ports.IsClusterLabelsIn{
 		UserId:      string(ctx.UserId),
 		UserEmail:   ctx.UserEmail,
 		UserName:    ctx.UserName,

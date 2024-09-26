@@ -102,6 +102,7 @@ type ComplexityRoot struct {
 		MarkedForDeletion     func(childComplexity int) int
 		MessageQueueTopicName func(childComplexity int) int
 		ObjectMeta            func(childComplexity int) int
+		OwnedBy               func(childComplexity int) int
 		RecordVersion         func(childComplexity int) int
 		SyncStatus            func(childComplexity int) int
 		UpdateTime            func(childComplexity int) int
@@ -1595,6 +1596,7 @@ type VolumeAttachmentResolver interface {
 
 type BYOKClusterInResolver interface {
 	Metadata(ctx context.Context, obj *entities.BYOKCluster, data *v1.ObjectMeta) error
+
 	Visibility(ctx context.Context, obj *entities.BYOKCluster, data *model.GithubComKloudliteAPIAppsInfraInternalEntitiesClusterVisbilityIn) error
 }
 type CloudProviderSecretInResolver interface {
@@ -1759,6 +1761,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.BYOKCluster.ObjectMeta(childComplexity), true
+
+	case "BYOKCluster.ownedBy":
+		if e.complexity.BYOKCluster.OwnedBy == nil {
+			break
+		}
+
+		return e.complexity.BYOKCluster.OwnedBy(childComplexity), true
 
 	case "BYOKCluster.recordVersion":
 		if e.complexity.BYOKCluster.RecordVersion == nil {
@@ -8136,6 +8145,7 @@ extend type GlobalVPNDevice {
   markedForDeletion: Boolean
   messageQueueTopicName: String!
   metadata: Metadata! @goField(name: "objectMeta")
+  ownedBy: String
   recordVersion: Int!
   syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
@@ -8156,6 +8166,7 @@ type BYOKClusterPaginatedRecords @shareable {
 input BYOKClusterIn {
   displayName: String!
   metadata: MetadataIn!
+  ownedBy: String
   visibility: Github__com___kloudlite___api___apps___infra___internal___entities__ClusterVisbilityIn!
 }
 
@@ -12057,6 +12068,47 @@ func (ec *executionContext) fieldContext_BYOKCluster_metadata(_ context.Context,
 	return fc, nil
 }
 
+func (ec *executionContext) _BYOKCluster_ownedBy(ctx context.Context, field graphql.CollectedField, obj *entities.BYOKCluster) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_BYOKCluster_ownedBy(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.OwnedBy, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_BYOKCluster_ownedBy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "BYOKCluster",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _BYOKCluster_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.BYOKCluster) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_BYOKCluster_recordVersion(ctx, field)
 	if err != nil {
@@ -12406,6 +12458,8 @@ func (ec *executionContext) fieldContext_BYOKClusterEdge_node(_ context.Context,
 				return ec.fieldContext_BYOKCluster_messageQueueTopicName(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOKCluster_metadata(ctx, field)
+			case "ownedBy":
+				return ec.fieldContext_BYOKCluster_ownedBy(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_BYOKCluster_recordVersion(ctx, field)
 			case "syncStatus":
@@ -41593,6 +41647,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_createBYOKCluster(ctx co
 				return ec.fieldContext_BYOKCluster_messageQueueTopicName(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOKCluster_metadata(ctx, field)
+			case "ownedBy":
+				return ec.fieldContext_BYOKCluster_ownedBy(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_BYOKCluster_recordVersion(ctx, field)
 			case "syncStatus":
@@ -41709,6 +41765,8 @@ func (ec *executionContext) fieldContext_Mutation_infra_updateBYOKCluster(ctx co
 				return ec.fieldContext_BYOKCluster_messageQueueTopicName(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOKCluster_metadata(ctx, field)
+			case "ownedBy":
+				return ec.fieldContext_BYOKCluster_ownedBy(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_BYOKCluster_recordVersion(ctx, field)
 			case "syncStatus":
@@ -48892,6 +48950,8 @@ func (ec *executionContext) fieldContext_Query_infra_getBYOKCluster(ctx context.
 				return ec.fieldContext_BYOKCluster_messageQueueTopicName(ctx, field)
 			case "metadata":
 				return ec.fieldContext_BYOKCluster_metadata(ctx, field)
+			case "ownedBy":
+				return ec.fieldContext_BYOKCluster_ownedBy(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_BYOKCluster_recordVersion(ctx, field)
 			case "syncStatus":
@@ -54211,7 +54271,7 @@ func (ec *executionContext) unmarshalInputBYOKClusterIn(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"displayName", "metadata", "visibility"}
+	fieldsInOrder := [...]string{"displayName", "metadata", "ownedBy", "visibility"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -54234,6 +54294,13 @@ func (ec *executionContext) unmarshalInputBYOKClusterIn(ctx context.Context, obj
 			if err = ec.resolvers.BYOKClusterIn().Metadata(ctx, &it, data); err != nil {
 				return it, err
 			}
+		case "ownedBy":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ownedBy"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.OwnedBy = data
 		case "visibility":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("visibility"))
 			data, err := ec.unmarshalNGithub__com___kloudlite___api___apps___infra___internal___entities__ClusterVisbilityIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteAPIAppsInfraInternalEntitiesClusterVisbilityIn(ctx, v)
@@ -59401,6 +59468,8 @@ func (ec *executionContext) _BYOKCluster(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "ownedBy":
+			out.Values[i] = ec._BYOKCluster_ownedBy(ctx, field, obj)
 		case "recordVersion":
 			out.Values[i] = ec._BYOKCluster_recordVersion(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

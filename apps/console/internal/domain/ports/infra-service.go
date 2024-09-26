@@ -4,7 +4,7 @@ import "context"
 
 type InfraService interface {
 	EnsureGlobalVPNConnection(ctx context.Context, args EnsureGlobalVPNConnectionIn) error
-	GetClusterOwnedBy(ctx context.Context, args IsClusterLabelsIn) (string, error)
+	GetByokClusterOwnedBy(ctx context.Context, args IsClusterLabelsIn) (string, error)
 }
 
 type IsClusterLabelsIn struct {
