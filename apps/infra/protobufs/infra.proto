@@ -29,6 +29,7 @@ message GetClusterOut {
 
   string IACJobName = 3;
   string IACJobNamespace = 4;
+  map<string, string> labels = 5;
 }
 
 message GetNodepoolIn {

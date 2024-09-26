@@ -103,6 +103,7 @@ func (g *grpcServer) GetCluster(ctx context.Context, in *infra.GetClusterIn) (*i
 			}
 			return ""
 		}(),
+		Labels: c.Labels,
 	}, nil
 }
 

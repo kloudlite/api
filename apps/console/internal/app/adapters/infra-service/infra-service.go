@@ -30,6 +30,21 @@ func (s *InfraService) EnsureGlobalVPNConnection(ctx context.Context, args ports
 	return nil
 }
 
+func (s *InfraService) GetClusterLabels(ctx context.Context, args ports.IsClusterLabelsIn) (map[string]string, error) {
+	cl, err := s.infraClient.GetCluster(ctx, &infra.GetClusterIn{
+		UserId:      args.UserId,
+		UserName:    args.UserName,
+		UserEmail:   args.UserEmail,
+		AccountName: args.AccountName,
+		ClusterName: args.ClusterName,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	return cl.Labels, nil
+}
+
 var _ ports.InfraService = (*InfraService)(nil)
 
 func NewInfraService(infraClient infra.InfraClient) ports.InfraService {

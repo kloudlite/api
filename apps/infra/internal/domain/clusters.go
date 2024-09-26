@@ -14,6 +14,7 @@ import (
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/common/fields"
+	"github.com/kloudlite/api/constants"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
 	ct "github.com/kloudlite/operator/apis/common-types"
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
@@ -894,6 +895,10 @@ func (d *domain) ListClusters(ctx InfraContext, mf map[string]repos.MatchFilter,
 	f := repos.Filter{
 		fields.AccountName:       ctx.AccountName,
 		fields.MetadataNamespace: accNs,
+		"$or": []map[string]any{
+			{fmt.Sprintf("%s.%s", fc.MetadataLabels, constants.ClusterLabelUserIdKey): ctx.UserId},
+			{fmt.Sprintf("%s.%s", fc.MetadataLabels, constants.ClusterLabelLocalUuidKey): nil},
+		},
 	}
 
 	pr, err := d.clusterRepo.FindPaginated(ctx, d.clusterRepo.MergeMatchFilters(f, mf), pagination)
