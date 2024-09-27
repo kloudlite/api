@@ -2,7 +2,6 @@ package domain
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/kloudlite/api/common/fields"
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
@@ -139,9 +138,9 @@ func (d *domain) CreateEnvironment(ctx ConsoleContext, env entities.Environment)
 		return nil, errors.NewE(err)
 	}
 
-	if strings.TrimSpace(env.ClusterName) == "" {
-		return nil, fmt.Errorf("clustername must be set while creating environments")
-	}
+	// if strings.TrimSpace(env.ClusterName) == "" {
+	// 	return nil, fmt.Errorf("clustername must be set while creating environments")
+	// }
 
 	ownedBy, err := d.infraSvc.GetByokClusterOwnedBy(ctx, ports.IsClusterLabelsIn{
 		UserId:      string(ctx.UserId),
