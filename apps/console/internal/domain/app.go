@@ -346,7 +346,7 @@ func (d *domain) ResyncApp(ctx ResourceContext, name string) error {
 	return d.resyncK8sResource(ctx, a.EnvironmentName, a.SyncStatus.Action, &a.App, a.RecordVersion)
 }
 
-func (d *domain) listAppsByImage(ctx ResourceContext, image string) ([]*entities.App, error) {
+func (d *domain) listAppsByImage(ctx ConsoleContext, image string) ([]*entities.App, error) {
 	apps, err := d.appRepo.Find(ctx, repos.Query{
 		Filter: repos.Filter{
 			fields.AccountName: ctx.AccountName,
@@ -361,7 +361,7 @@ func (d *domain) listAppsByImage(ctx ResourceContext, image string) ([]*entities
 	return apps, nil
 }
 
-func (d *domain) RolloutAppsByImage(ctx ResourceContext, imageName string) error {
+func (d *domain) RolloutAppsByImage(ctx ConsoleContext, imageName string) error {
 
 	iName, iTag := getImageNameTag(imageName)
 
