@@ -134,7 +134,7 @@ func (d *domain) findEnvironmentByTargetNs(ctx ConsoleContext, targetNs string) 
 	return w, nil
 }
 
-func (d *domain) setupDefaultEnvTemplate(ctx ConsoleContext, accountName string) error {
+func (d *domain) SetupDefaultEnvTemplate(ctx ConsoleContext) error {
 	if d.envVars.DefaultEnvTemplateAccountName == "" && d.envVars.DefaultEnvTemplateName == "" {
 		return nil
 	}
