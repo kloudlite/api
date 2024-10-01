@@ -204,7 +204,7 @@ func (d *domainI) verifyCaptcha(ctx context.Context, token string) (bool, error)
 
 func (d *domainI) SignUp(ctx context.Context, name string, email string, password string, captchaToken string) (*common.AuthSession, error) {
 
-	if d.envVars.GoogleCloudProjectId != "" && d.envVars.RecaptchaSiteKey != "" && d.envVars.GoogleApplicationCredentials != "" {
+	if d.envVars.GoogleRecaptchaEnabled {
 		isValidCaptcha, err := d.verifyCaptcha(ctx, captchaToken)
 		if err != nil {
 			return nil, errors.Newf("failed to verify CAPTCHA: %v", err)
@@ -346,7 +346,7 @@ func (d *domainI) ResetPassword(ctx context.Context, token string, password stri
 
 func (d *domainI) RequestResetPassword(ctx context.Context, email string, captchaToken string) (bool, error) {
 
-	if d.envVars.GoogleCloudProjectId != "" && d.envVars.RecaptchaSiteKey != "" && d.envVars.GoogleApplicationCredentials != "" {
+	if d.envVars.GoogleRecaptchaEnabled {
 		isValidCaptcha, err := d.verifyCaptcha(ctx, captchaToken)
 		if err != nil {
 			return false, errors.Newf("failed to verify CAPTCHA: %v", err)
