@@ -146,6 +146,10 @@ type ResourceDispatcher interface {
 	RestartResource()
 }
 
+//type AppServices struct {
+//	crdsv1.AppSvc `json:",inline"`
+//}
+
 type Domain interface {
 	AccountsSvc
 
@@ -190,6 +194,7 @@ type Domain interface {
 
 	ListApps(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.App], error)
 	GetApp(ctx ResourceContext, name string) (*entities.App, error)
+	ListAppServices(ctx ResourceContext) ([]*crdsv1.AppSvc, error)
 
 	CreateApp(ctx ResourceContext, app entities.App) (*entities.App, error)
 	UpdateApp(ctx ResourceContext, app entities.App) (*entities.App, error)

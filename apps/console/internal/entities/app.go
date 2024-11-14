@@ -24,6 +24,10 @@ type App struct {
 	SyncStatus              t.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 
+type AppServices struct {
+	crdsv1.AppSvc `json:",inline"`
+}
+
 func (a *App) GetDisplayName() string {
 	return a.ResourceMetadata.DisplayName
 }

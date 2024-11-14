@@ -2,7 +2,6 @@ package domain
 
 import (
 	"fmt"
-
 	"github.com/kloudlite/api/apps/console/internal/entities"
 	fc "github.com/kloudlite/api/apps/console/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
@@ -22,6 +21,35 @@ func (d *domain) ListApps(ctx ResourceContext, search map[string]repos.MatchFilt
 	filters := ctx.DBFilters()
 
 	return d.appRepo.FindPaginated(ctx, d.appRepo.MergeMatchFilters(filters, search), pq)
+}
+
+func (d *domain) ListAppServices(ctx ResourceContext) ([]*crdsv1.AppSvc, error) {
+	if err := d.canReadResourcesInEnvironment(ctx); err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	filters := repos.Filter{
+		fields.AccountName:     ctx.AccountName,
+		fields.EnvironmentName: ctx.EnvironmentName,
+	}
+
+	apps, err := d.appRepo.Find(ctx, repos.Query{
+		Filter: filters,
+		Sort:   nil,
+	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	var appServices []*crdsv1.AppSvc
+
+	for _, app := range apps {
+		for i := range app.Spec.Services {
+			appServices = append(appServices, &app.Spec.Services[i])
+		}
+	}
+
+	return appServices, nil
 }
 
 func (d *domain) findApp(ctx ResourceContext, name string) (*entities.App, error) {
