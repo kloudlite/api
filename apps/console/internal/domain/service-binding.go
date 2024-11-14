@@ -9,6 +9,13 @@ import (
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
+// ListServiceBindings implements Domain.
+func (d *domain) ListServiceBindings(ctx ResourceContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ServiceBinding], error) {
+	filters := ctx.DBFilters()
+
+	return d.serviceBindingRepo.FindPaginated(ctx, d.appRepo.MergeMatchFilters(filters, search), pagination)
+}
+
 // OnServiceBindingDeleteMessage implements Domain.
 func (d *domain) OnServiceBindingDeleteMessage(ctx ConsoleContext, svcb *networkingv1.ServiceBinding) error {
 	if svcb == nil {

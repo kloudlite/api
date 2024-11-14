@@ -125,6 +125,16 @@ type GithubComKloudliteOperatorApisCommonTypesMsvcRefIn struct {
 	Namespace  string  `json:"namespace"`
 }
 
+type GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
+type GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn struct {
+	Name      string `json:"name"`
+	Namespace string `json:"namespace"`
+}
+
 type GithubComKloudliteOperatorApisCommonTypesSecretRef struct {
 	Name      string  `json:"name"`
 	Namespace *string `json:"namespace,omitempty"`
@@ -555,6 +565,22 @@ type GithubComKloudliteOperatorApisCrdsV1TCPProbeIn struct {
 	Port int `json:"port"`
 }
 
+type GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec struct {
+	GlobalIP   string                                                          `json:"globalIP"`
+	Hostname   *string                                                         `json:"hostname,omitempty"`
+	Ports      []*K8sIoAPICoreV1ServicePort                                    `json:"ports,omitempty"`
+	ServiceIP  *string                                                         `json:"serviceIP,omitempty"`
+	ServiceRef *GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef `json:"serviceRef,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn struct {
+	GlobalIP   string                                                            `json:"globalIP"`
+	Hostname   *string                                                           `json:"hostname,omitempty"`
+	Ports      []*K8sIoAPICoreV1ServicePortIn                                    `json:"ports,omitempty"`
+	ServiceIP  *string                                                           `json:"serviceIP,omitempty"`
+	ServiceRef *GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn `json:"serviceRef,omitempty"`
+}
+
 type GithubComKloudliteOperatorPkgOperatorCheck struct {
 	Debug      *string                                     `json:"debug,omitempty"`
 	Error      *string                                     `json:"error,omitempty"`
@@ -656,6 +682,24 @@ type ImportedManagedResourcePaginatedRecords struct {
 	TotalCount int                            `json:"totalCount"`
 }
 
+type K8sIoAPICoreV1ServicePort struct {
+	AppProtocol *string                                    `json:"appProtocol,omitempty"`
+	Name        *string                                    `json:"name,omitempty"`
+	NodePort    *int                                       `json:"nodePort,omitempty"`
+	Port        int                                        `json:"port"`
+	Protocol    *K8sIoAPICoreV1Protocol                    `json:"protocol,omitempty"`
+	TargetPort  *K8sIoApimachineryPkgUtilIntstrIntOrString `json:"targetPort,omitempty"`
+}
+
+type K8sIoAPICoreV1ServicePortIn struct {
+	AppProtocol *string                                      `json:"appProtocol,omitempty"`
+	Name        *string                                      `json:"name,omitempty"`
+	NodePort    *int                                         `json:"nodePort,omitempty"`
+	Port        int                                          `json:"port"`
+	Protocol    *K8sIoAPICoreV1Protocol                      `json:"protocol,omitempty"`
+	TargetPort  *K8sIoApimachineryPkgUtilIntstrIntOrStringIn `json:"targetPort,omitempty"`
+}
+
 type K8sIoAPICoreV1Toleration struct {
 	Effect            *K8sIoAPICoreV1TaintEffect        `json:"effect,omitempty"`
 	Key               *string                           `json:"key,omitempty"`
@@ -714,6 +758,18 @@ type K8sIoApimachineryPkgApisMetaV1LabelSelectorRequirementIn struct {
 	Key      string                                              `json:"key"`
 	Operator K8sIoApimachineryPkgApisMetaV1LabelSelectorOperator `json:"operator"`
 	Values   []string                                            `json:"values,omitempty"`
+}
+
+type K8sIoApimachineryPkgUtilIntstrIntOrString struct {
+	IntVal int    `json:"IntVal"`
+	StrVal string `json:"StrVal"`
+	Type   int    `json:"Type"`
+}
+
+type K8sIoApimachineryPkgUtilIntstrIntOrStringIn struct {
+	IntVal int    `json:"IntVal"`
+	StrVal string `json:"StrVal"`
+	Type   int    `json:"Type"`
 }
 
 type ManagedResourceEdge struct {
@@ -904,6 +960,12 @@ type SearchSecrets struct {
 	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
 }
 
+type SearchServiceBindings struct {
+	Text              *repos.MatchFilter `json:"text,omitempty"`
+	IsReady           *repos.MatchFilter `json:"isReady,omitempty"`
+	MarkedForDeletion *repos.MatchFilter `json:"markedForDeletion,omitempty"`
+}
+
 type SecretEdge struct {
 	Cursor string           `json:"cursor"`
 	Node   *entities.Secret `json:"node"`
@@ -924,6 +986,17 @@ type SecretPaginatedRecords struct {
 	Edges      []*SecretEdge `json:"edges"`
 	PageInfo   *PageInfo     `json:"pageInfo"`
 	TotalCount int           `json:"totalCount"`
+}
+
+type ServiceBindingEdge struct {
+	Cursor string                   `json:"cursor"`
+	Node   *entities.ServiceBinding `json:"node"`
+}
+
+type ServiceBindingPaginatedRecords struct {
+	Edges      []*ServiceBindingEdge `json:"edges"`
+	PageInfo   *PageInfo             `json:"pageInfo"`
+	TotalCount int                   `json:"totalCount"`
 }
 
 type GithubComKloudliteAPIAppsConsoleInternalEntitiesPullSecretFormat string
@@ -1152,6 +1225,49 @@ func (e *GithubComKloudliteOperatorPkgOperatorState) UnmarshalGQL(v interface{})
 }
 
 func (e GithubComKloudliteOperatorPkgOperatorState) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type K8sIoAPICoreV1Protocol string
+
+const (
+	K8sIoAPICoreV1ProtocolSctp K8sIoAPICoreV1Protocol = "SCTP"
+	K8sIoAPICoreV1ProtocolTCP  K8sIoAPICoreV1Protocol = "TCP"
+	K8sIoAPICoreV1ProtocolUDP  K8sIoAPICoreV1Protocol = "UDP"
+)
+
+var AllK8sIoAPICoreV1Protocol = []K8sIoAPICoreV1Protocol{
+	K8sIoAPICoreV1ProtocolSctp,
+	K8sIoAPICoreV1ProtocolTCP,
+	K8sIoAPICoreV1ProtocolUDP,
+}
+
+func (e K8sIoAPICoreV1Protocol) IsValid() bool {
+	switch e {
+	case K8sIoAPICoreV1ProtocolSctp, K8sIoAPICoreV1ProtocolTCP, K8sIoAPICoreV1ProtocolUDP:
+		return true
+	}
+	return false
+}
+
+func (e K8sIoAPICoreV1Protocol) String() string {
+	return string(e)
+}
+
+func (e *K8sIoAPICoreV1Protocol) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = K8sIoAPICoreV1Protocol(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__Protocol", str)
+	}
+	return nil
+}
+
+func (e K8sIoAPICoreV1Protocol) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

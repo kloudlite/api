@@ -23,7 +23,7 @@ func (d *domain) ListApps(ctx ResourceContext, search map[string]repos.MatchFilt
 	return d.appRepo.FindPaginated(ctx, d.appRepo.MergeMatchFilters(filters, search), pq)
 }
 
-func (d *domain) ListAppServices(ctx ResourceContext) ([]*crdsv1.AppSvc, error) {
+func (d *domain) ListAppServices(ctx ResourceContext) ([]*entities.AppServices, error) {
 	if err := d.canReadResourcesInEnvironment(ctx); err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -41,11 +41,13 @@ func (d *domain) ListAppServices(ctx ResourceContext) ([]*crdsv1.AppSvc, error) 
 		return nil, errors.NewE(err)
 	}
 
-	var appServices []*crdsv1.AppSvc
+	var appServices []*entities.AppServices
 
 	for _, app := range apps {
 		for i := range app.Spec.Services {
-			appServices = append(appServices, &app.Spec.Services[i])
+			appServices = append(appServices, &entities.AppServices{
+				AppSvc: app.Spec.Services[i],
+			})
 		}
 	}
 

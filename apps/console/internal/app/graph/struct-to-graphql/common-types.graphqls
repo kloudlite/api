@@ -33,6 +33,11 @@ type Github__com___kloudlite___operator___apis___common____types__MsvcRef @share
   namespace: String!
 }
 
+type Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef @shareable {
+  name: String!
+  namespace: String!
+}
+
 type Github__com___kloudlite___operator___apis___common____types__SecretRef @shareable {
   name: String!
   namespace: String
@@ -252,6 +257,14 @@ type Github__com___kloudlite___operator___apis___crds___v1__TcpProbe @shareable 
   port: Int!
 }
 
+type Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec @shareable {
+  globalIP: String!
+  hostname: String
+  ports: [K8s__io___api___core___v1__ServicePort!]
+  serviceIP: String
+  serviceRef: Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef
+}
+
 type Github__com___kloudlite___operator___pkg___operator__Check @shareable {
   debug: String
   error: String
@@ -302,6 +315,15 @@ type K8s__io___api___core___v1__Secret @shareable {
   type: K8s__io___api___core___v1__SecretType
 }
 
+type K8s__io___api___core___v1__ServicePort @shareable {
+  appProtocol: String
+  name: String
+  nodePort: Int
+  port: Int!
+  protocol: K8s__io___api___core___v1__Protocol
+  targetPort: K8s__io___apimachinery___pkg___util___intstr__IntOrString
+}
+
 type K8s__io___api___core___v1__Toleration @shareable {
   effect: K8s__io___api___core___v1__TaintEffect
   key: String
@@ -330,6 +352,12 @@ type K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirement @
   key: String!
   operator: K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorOperator!
   values: [String!]
+}
+
+type K8s__io___apimachinery___pkg___util___intstr__IntOrString @shareable {
+  IntVal: Int!
+  StrVal: String!
+  Type: Int!
 }
 
 type Metadata @shareable {
@@ -367,6 +395,11 @@ input Github__com___kloudlite___api___pkg___types__SyncStatusIn {
 input Github__com___kloudlite___operator___apis___common____types__MsvcRefIn {
   apiVersion: String
   kind: String
+  name: String!
+  namespace: String!
+}
+
+input Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn {
   name: String!
   namespace: String!
 }
@@ -587,6 +620,14 @@ input Github__com___kloudlite___operator___apis___crds___v1__TcpProbeIn {
   port: Int!
 }
 
+input Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn {
+  globalIP: String!
+  hostname: String
+  ports: [K8s__io___api___core___v1__ServicePortIn!]
+  serviceIP: String
+  serviceRef: Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn
+}
+
 input Github__com___kloudlite___operator___pkg___operator__CheckIn {
   debug: String
   error: String
@@ -627,6 +668,15 @@ input Github__com___kloudlite___operator___pkg___raw____json__RawJsonIn {
   RawMessage: Any
 }
 
+input K8s__io___api___core___v1__ServicePortIn {
+  appProtocol: String
+  name: String
+  nodePort: Int
+  port: Int!
+  protocol: K8s__io___api___core___v1__Protocol
+  targetPort: K8s__io___apimachinery___pkg___util___intstr__IntOrStringIn
+}
+
 input K8s__io___api___core___v1__TolerationIn {
   effect: K8s__io___api___core___v1__TaintEffect
   key: String
@@ -655,6 +705,12 @@ input K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirementI
   key: String!
   operator: K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorOperator!
   values: [String!]
+}
+
+input K8s__io___apimachinery___pkg___util___intstr__IntOrStringIn {
+  IntVal: Int!
+  StrVal: String!
+  Type: Int!
 }
 
 input MetadataIn {
@@ -726,6 +782,12 @@ enum Github__com___kloudlite___operator___pkg___operator__State {
   finished____reconcilation
   under____reconcilation
   yet____to____be____reconciled
+}
+
+enum K8s__io___api___core___v1__Protocol {
+  SCTP
+  TCP
+  UDP
 }
 
 enum K8s__io___api___core___v1__SecretType {

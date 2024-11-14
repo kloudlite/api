@@ -26,6 +26,12 @@ input SearchProjects {
 	markedForDeletion: MatchFilterIn
 }
 
+input SearchServiceBindings {
+	text: MatchFilterIn
+	isReady: MatchFilterIn
+	markedForDeletion: MatchFilterIn
+}
+
 input SearchImagePullSecrets {
 	text: MatchFilterIn
 	isReady: MatchFilterIn
@@ -156,6 +162,8 @@ type Query {
 	core_getManagedResource(msvcName: String, envName: String, name: String!): ManagedResource @isLoggedInAndVerified @hasAccount
 	core_resyncManagedResource(msvcName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 	core_listImportedManagedResources(envName: String!, search: SearchImportedManagedResources, pq: CursorPaginationIn): ImportedManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
+
+	core_listServiceBindings(envName: String!, search: SearchServiceBindings, pq: CursorPaginationIn): ServiceBindingPaginatedRecords @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {

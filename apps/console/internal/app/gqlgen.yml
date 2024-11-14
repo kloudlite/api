@@ -87,6 +87,10 @@ models:
     model: github.com/kloudlite/api/apps/console/internal/entities.RegistryImage
   RegistryImageIn: *registry-image-model
 
+  ServiceBinding: &service-binding-model
+    model: github.com/kloudlite/api/apps/console/internal/entities.ServiceBinding
+  ServiceBindingIn: *service-binding-model
+
   Secret: &secret-model
     model: github.com/kloudlite/api/apps/console/internal/entities.Secret
   SecretIn: *secret-model

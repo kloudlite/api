@@ -1101,6 +1101,33 @@ func (r *queryResolver) CoreListImportedManagedResources(ctx context.Context, en
 	return fn.JsonConvertP[model.ImportedManagedResourcePaginatedRecords](pr)
 }
 
+// CoreListServiceBindings is the resolver for the core_listServiceBindings field.
+func (r *queryResolver) CoreListServiceBindings(ctx context.Context, envName string, search *model.SearchServiceBindings, pq *repos.CursorPagination) (*model.ServiceBindingPaginatedRecords, error) {
+	cc, err := toConsoleContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	filter := map[string]repos.MatchFilter{}
+	if search != nil {
+		if search.Text != nil {
+			filter["metadata.name"] = *search.Text
+		}
+		if search.IsReady != nil {
+			filter["status.isReady"] = *search.IsReady
+		}
+		if search.MarkedForDeletion != nil {
+			filter["markedForDeletion"] = *search.MarkedForDeletion
+		}
+	}
+
+	pApps, err := r.Domain.ListServiceBindings(newResourceContext(cc, envName), filter, fn.DefaultIfNil(pq, repos.DefaultCursorPagination))
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return fn.JsonConvertP[model.ServiceBindingPaginatedRecords](pApps)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 

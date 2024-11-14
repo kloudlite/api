@@ -68,6 +68,7 @@ type ResolverRoot interface {
 	RegistryImage() RegistryImageResolver
 	Router() RouterResolver
 	Secret() SecretResolver
+	ServiceBinding() ServiceBindingResolver
 	AppIn() AppInResolver
 	ClusterManagedServiceIn() ClusterManagedServiceInResolver
 	ConfigIn() ConfigInResolver
@@ -80,6 +81,7 @@ type ResolverRoot interface {
 	MetadataIn() MetadataInResolver
 	RouterIn() RouterInResolver
 	SecretIn() SecretInResolver
+	ServiceBindingIn() ServiceBindingInResolver
 }
 
 type DirectiveRoot struct {
@@ -316,6 +318,11 @@ type ComplexityRoot struct {
 		Namespace  func(childComplexity int) int
 	}
 
+	Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef struct {
+		Name      func(childComplexity int) int
+		Namespace func(childComplexity int) int
+	}
+
 	Github__com___kloudlite___operator___apis___common____types__SecretRef struct {
 		Name      func(childComplexity int) int
 		Namespace func(childComplexity int) int
@@ -535,6 +542,14 @@ type ComplexityRoot struct {
 		Port func(childComplexity int) int
 	}
 
+	Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec struct {
+		GlobalIP   func(childComplexity int) int
+		Hostname   func(childComplexity int) int
+		Ports      func(childComplexity int) int
+		ServiceIP  func(childComplexity int) int
+		ServiceRef func(childComplexity int) int
+	}
+
 	Github__com___kloudlite___operator___pkg___operator__Check struct {
 		Debug      func(childComplexity int) int
 		Error      func(childComplexity int) int
@@ -646,6 +661,15 @@ type ComplexityRoot struct {
 		Type       func(childComplexity int) int
 	}
 
+	K8s__io___api___core___v1__ServicePort struct {
+		AppProtocol func(childComplexity int) int
+		Name        func(childComplexity int) int
+		NodePort    func(childComplexity int) int
+		Port        func(childComplexity int) int
+		Protocol    func(childComplexity int) int
+		TargetPort  func(childComplexity int) int
+	}
+
 	K8s__io___api___core___v1__Toleration struct {
 		Effect            func(childComplexity int) int
 		Key               func(childComplexity int) int
@@ -674,6 +698,12 @@ type ComplexityRoot struct {
 		Key      func(childComplexity int) int
 		Operator func(childComplexity int) int
 		Values   func(childComplexity int) int
+	}
+
+	K8s__io___apimachinery___pkg___util___intstr__IntOrString struct {
+		IntVal func(childComplexity int) int
+		StrVal func(childComplexity int) int
+		Type   func(childComplexity int) int
 	}
 
 	ManagedResource struct {
@@ -825,6 +855,7 @@ type ComplexityRoot struct {
 		CoreListRegistryImages               func(childComplexity int, pq *repos.CursorPagination) int
 		CoreListRouters                      func(childComplexity int, envName string, search *model.SearchRouters, pq *repos.CursorPagination) int
 		CoreListSecrets                      func(childComplexity int, envName string, search *model.SearchSecrets, pq *repos.CursorPagination) int
+		CoreListServiceBindings              func(childComplexity int, envName string, search *model.SearchServiceBindings, pq *repos.CursorPagination) int
 		CoreRestartApp                       func(childComplexity int, envName string, appName string) int
 		CoreResyncApp                        func(childComplexity int, envName string, name string) int
 		CoreResyncConfig                     func(childComplexity int, envName string, name string) int
@@ -965,6 +996,32 @@ type ComplexityRoot struct {
 	}
 
 	SecretPaginatedRecords struct {
+		Edges      func(childComplexity int) int
+		PageInfo   func(childComplexity int) int
+		TotalCount func(childComplexity int) int
+	}
+
+	ServiceBinding struct {
+		APIVersion        func(childComplexity int) int
+		AccountName       func(childComplexity int) int
+		ClusterName       func(childComplexity int) int
+		CreationTime      func(childComplexity int) int
+		Id                func(childComplexity int) int
+		Kind              func(childComplexity int) int
+		MarkedForDeletion func(childComplexity int) int
+		ObjectMeta        func(childComplexity int) int
+		RecordVersion     func(childComplexity int) int
+		Spec              func(childComplexity int) int
+		Status            func(childComplexity int) int
+		UpdateTime        func(childComplexity int) int
+	}
+
+	ServiceBindingEdge struct {
+		Cursor func(childComplexity int) int
+		Node   func(childComplexity int) int
+	}
+
+	ServiceBindingPaginatedRecords struct {
 		Edges      func(childComplexity int) int
 		PageInfo   func(childComplexity int) int
 		TotalCount func(childComplexity int) int
@@ -1152,6 +1209,7 @@ type QueryResolver interface {
 	CoreGetManagedResource(ctx context.Context, msvcName *string, envName *string, name string) (*entities.ManagedResource, error)
 	CoreResyncManagedResource(ctx context.Context, msvcName string, name string) (bool, error)
 	CoreListImportedManagedResources(ctx context.Context, envName string, search *model.SearchImportedManagedResources, pq *repos.CursorPagination) (*model.ImportedManagedResourcePaginatedRecords, error)
+	CoreListServiceBindings(ctx context.Context, envName string, search *model.SearchServiceBindings, pq *repos.CursorPagination) (*model.ServiceBindingPaginatedRecords, error)
 }
 type RegistryImageResolver interface {
 	CreationTime(ctx context.Context, obj *entities.RegistryImage) (string, error)
@@ -1177,6 +1235,13 @@ type SecretResolver interface {
 
 	Type(ctx context.Context, obj *entities.Secret) (*model.K8sIoAPICoreV1SecretType, error)
 	UpdateTime(ctx context.Context, obj *entities.Secret) (string, error)
+}
+type ServiceBindingResolver interface {
+	CreationTime(ctx context.Context, obj *entities.ServiceBinding) (string, error)
+
+	Spec(ctx context.Context, obj *entities.ServiceBinding) (*model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec, error)
+
+	UpdateTime(ctx context.Context, obj *entities.ServiceBinding) (string, error)
 }
 
 type AppInResolver interface {
@@ -1233,6 +1298,15 @@ type SecretInResolver interface {
 	Metadata(ctx context.Context, obj *entities.Secret, data *v12.ObjectMeta) error
 	StringData(ctx context.Context, obj *entities.Secret, data map[string]interface{}) error
 	Type(ctx context.Context, obj *entities.Secret, data *model.K8sIoAPICoreV1SecretType) error
+}
+type ServiceBindingInResolver interface {
+	CreationTime(ctx context.Context, obj *entities.ServiceBinding, data string) error
+
+	Metadata(ctx context.Context, obj *entities.ServiceBinding, data *v12.ObjectMeta) error
+
+	Spec(ctx context.Context, obj *entities.ServiceBinding, data *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn) error
+	Status(ctx context.Context, obj *entities.ServiceBinding, data *model.GithubComKloudliteOperatorPkgOperatorStatusIn) error
+	UpdateTime(ctx context.Context, obj *entities.ServiceBinding, data string) error
 }
 
 type executableSchema struct {
@@ -2302,6 +2376,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___apis___common____types__MsvcRef.Namespace(childComplexity), true
 
+	case "Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef.name":
+		if e.complexity.Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef.Name == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef.Name(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef.namespace":
+		if e.complexity.Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef.Namespace == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef.Namespace(childComplexity), true
+
 	case "Github__com___kloudlite___operator___apis___common____types__SecretRef.name":
 		if e.complexity.Github__com___kloudlite___operator___apis___common____types__SecretRef.Name == nil {
 			break
@@ -3184,6 +3272,41 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__TcpProbe.Port(childComplexity), true
 
+	case "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.globalIP":
+		if e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.GlobalIP == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.GlobalIP(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.hostname":
+		if e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.Hostname == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.Hostname(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.ports":
+		if e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.Ports == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.Ports(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.serviceIP":
+		if e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.ServiceIP == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.ServiceIP(childComplexity), true
+
+	case "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.serviceRef":
+		if e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.ServiceRef == nil {
+			break
+		}
+
+		return e.complexity.Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec.ServiceRef(childComplexity), true
+
 	case "Github__com___kloudlite___operator___pkg___operator__Check.debug":
 		if e.complexity.Github__com___kloudlite___operator___pkg___operator__Check.Debug == nil {
 			break
@@ -3709,6 +3832,48 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.K8s__io___api___core___v1__Secret.Type(childComplexity), true
 
+	case "K8s__io___api___core___v1__ServicePort.appProtocol":
+		if e.complexity.K8s__io___api___core___v1__ServicePort.AppProtocol == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__ServicePort.AppProtocol(childComplexity), true
+
+	case "K8s__io___api___core___v1__ServicePort.name":
+		if e.complexity.K8s__io___api___core___v1__ServicePort.Name == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__ServicePort.Name(childComplexity), true
+
+	case "K8s__io___api___core___v1__ServicePort.nodePort":
+		if e.complexity.K8s__io___api___core___v1__ServicePort.NodePort == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__ServicePort.NodePort(childComplexity), true
+
+	case "K8s__io___api___core___v1__ServicePort.port":
+		if e.complexity.K8s__io___api___core___v1__ServicePort.Port == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__ServicePort.Port(childComplexity), true
+
+	case "K8s__io___api___core___v1__ServicePort.protocol":
+		if e.complexity.K8s__io___api___core___v1__ServicePort.Protocol == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__ServicePort.Protocol(childComplexity), true
+
+	case "K8s__io___api___core___v1__ServicePort.targetPort":
+		if e.complexity.K8s__io___api___core___v1__ServicePort.TargetPort == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___api___core___v1__ServicePort.TargetPort(childComplexity), true
+
 	case "K8s__io___api___core___v1__Toleration.effect":
 		if e.complexity.K8s__io___api___core___v1__Toleration.Effect == nil {
 			break
@@ -3834,6 +3999,27 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirement.Values(childComplexity), true
+
+	case "K8s__io___apimachinery___pkg___util___intstr__IntOrString.IntVal":
+		if e.complexity.K8s__io___apimachinery___pkg___util___intstr__IntOrString.IntVal == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___apimachinery___pkg___util___intstr__IntOrString.IntVal(childComplexity), true
+
+	case "K8s__io___apimachinery___pkg___util___intstr__IntOrString.StrVal":
+		if e.complexity.K8s__io___apimachinery___pkg___util___intstr__IntOrString.StrVal == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___apimachinery___pkg___util___intstr__IntOrString.StrVal(childComplexity), true
+
+	case "K8s__io___apimachinery___pkg___util___intstr__IntOrString.Type":
+		if e.complexity.K8s__io___apimachinery___pkg___util___intstr__IntOrString.Type == nil {
+			break
+		}
+
+		return e.complexity.K8s__io___apimachinery___pkg___util___intstr__IntOrString.Type(childComplexity), true
 
 	case "ManagedResource.apiVersion":
 		if e.complexity.ManagedResource.APIVersion == nil {
@@ -4940,6 +5126,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.CoreListSecrets(childComplexity, args["envName"].(string), args["search"].(*model.SearchSecrets), args["pq"].(*repos.CursorPagination)), true
 
+	case "Query.core_listServiceBindings":
+		if e.complexity.Query.CoreListServiceBindings == nil {
+			break
+		}
+
+		args, err := ec.field_Query_core_listServiceBindings_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.CoreListServiceBindings(childComplexity, args["envName"].(string), args["search"].(*model.SearchServiceBindings), args["pq"].(*repos.CursorPagination)), true
+
 	case "Query.core_restartApp":
 		if e.complexity.Query.CoreRestartApp == nil {
 			break
@@ -5691,6 +5889,125 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.SecretPaginatedRecords.TotalCount(childComplexity), true
 
+	case "ServiceBinding.apiVersion":
+		if e.complexity.ServiceBinding.APIVersion == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.APIVersion(childComplexity), true
+
+	case "ServiceBinding.accountName":
+		if e.complexity.ServiceBinding.AccountName == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.AccountName(childComplexity), true
+
+	case "ServiceBinding.clusterName":
+		if e.complexity.ServiceBinding.ClusterName == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.ClusterName(childComplexity), true
+
+	case "ServiceBinding.creationTime":
+		if e.complexity.ServiceBinding.CreationTime == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.CreationTime(childComplexity), true
+
+	case "ServiceBinding.id":
+		if e.complexity.ServiceBinding.Id == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.Id(childComplexity), true
+
+	case "ServiceBinding.kind":
+		if e.complexity.ServiceBinding.Kind == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.Kind(childComplexity), true
+
+	case "ServiceBinding.markedForDeletion":
+		if e.complexity.ServiceBinding.MarkedForDeletion == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.MarkedForDeletion(childComplexity), true
+
+	case "ServiceBinding.metadata":
+		if e.complexity.ServiceBinding.ObjectMeta == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.ObjectMeta(childComplexity), true
+
+	case "ServiceBinding.recordVersion":
+		if e.complexity.ServiceBinding.RecordVersion == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.RecordVersion(childComplexity), true
+
+	case "ServiceBinding.spec":
+		if e.complexity.ServiceBinding.Spec == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.Spec(childComplexity), true
+
+	case "ServiceBinding.status":
+		if e.complexity.ServiceBinding.Status == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.Status(childComplexity), true
+
+	case "ServiceBinding.updateTime":
+		if e.complexity.ServiceBinding.UpdateTime == nil {
+			break
+		}
+
+		return e.complexity.ServiceBinding.UpdateTime(childComplexity), true
+
+	case "ServiceBindingEdge.cursor":
+		if e.complexity.ServiceBindingEdge.Cursor == nil {
+			break
+		}
+
+		return e.complexity.ServiceBindingEdge.Cursor(childComplexity), true
+
+	case "ServiceBindingEdge.node":
+		if e.complexity.ServiceBindingEdge.Node == nil {
+			break
+		}
+
+		return e.complexity.ServiceBindingEdge.Node(childComplexity), true
+
+	case "ServiceBindingPaginatedRecords.edges":
+		if e.complexity.ServiceBindingPaginatedRecords.Edges == nil {
+			break
+		}
+
+		return e.complexity.ServiceBindingPaginatedRecords.Edges(childComplexity), true
+
+	case "ServiceBindingPaginatedRecords.pageInfo":
+		if e.complexity.ServiceBindingPaginatedRecords.PageInfo == nil {
+			break
+		}
+
+		return e.complexity.ServiceBindingPaginatedRecords.PageInfo(childComplexity), true
+
+	case "ServiceBindingPaginatedRecords.totalCount":
+		if e.complexity.ServiceBindingPaginatedRecords.TotalCount == nil {
+			break
+		}
+
+		return e.complexity.ServiceBindingPaginatedRecords.TotalCount(childComplexity), true
+
 	case "_Service.sdl":
 		if e.complexity._Service.SDL == nil {
 			break
@@ -5718,6 +6035,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub__com___kloudlite___api___apps___console___internal___entities__ManagedResourceRefIn,
 		ec.unmarshalInputGithub__com___kloudlite___api___pkg___types__SyncStatusIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___common____types__MsvcRefIn,
+		ec.unmarshalInputGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___common____types__SecretRefIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppContainerIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AppInterceptPortMappingsIn,
@@ -5749,6 +6067,7 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ServiceTemplateIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__ShellProbeIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__TcpProbeIn,
+		ec.unmarshalInputGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___pkg___operator__CheckIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___pkg___operator__CheckMetaIn,
 		ec.unmarshalInputGithub__com___kloudlite___operator___pkg___operator__ResourceRefIn,
@@ -5756,10 +6075,12 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputGithub__com___kloudlite___operator___pkg___raw____json__RawJsonIn,
 		ec.unmarshalInputImagePullSecretIn,
 		ec.unmarshalInputImportedManagedResourceIn,
+		ec.unmarshalInputK8s__io___api___core___v1__ServicePortIn,
 		ec.unmarshalInputK8s__io___api___core___v1__TolerationIn,
 		ec.unmarshalInputK8s__io___api___core___v1__TopologySpreadConstraintIn,
 		ec.unmarshalInputK8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorIn,
 		ec.unmarshalInputK8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirementIn,
+		ec.unmarshalInputK8s__io___apimachinery___pkg___util___intstr__IntOrStringIn,
 		ec.unmarshalInputManagedResourceIn,
 		ec.unmarshalInputManagedResourceKeyRefIn,
 		ec.unmarshalInputManagedResourceKeyValueRefIn,
@@ -5783,9 +6104,11 @@ func (e *executableSchema) Exec(ctx context.Context) graphql.ResponseHandler {
 		ec.unmarshalInputSearchRegistryImages,
 		ec.unmarshalInputSearchRouters,
 		ec.unmarshalInputSearchSecrets,
+		ec.unmarshalInputSearchServiceBindings,
 		ec.unmarshalInputSecretIn,
 		ec.unmarshalInputSecretKeyRefIn,
 		ec.unmarshalInputSecretKeyValueRefIn,
+		ec.unmarshalInputServiceBindingIn,
 	)
 	first := true
 
@@ -5906,6 +6229,12 @@ type ConsoleCheckNameAvailabilityOutput @shareable {
 }
 
 input SearchProjects {
+	text: MatchFilterIn
+	isReady: MatchFilterIn
+	markedForDeletion: MatchFilterIn
+}
+
+input SearchServiceBindings {
 	text: MatchFilterIn
 	isReady: MatchFilterIn
 	markedForDeletion: MatchFilterIn
@@ -6041,6 +6370,8 @@ type Query {
 	core_getManagedResource(msvcName: String, envName: String, name: String!): ManagedResource @isLoggedInAndVerified @hasAccount
 	core_resyncManagedResource(msvcName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 	core_listImportedManagedResources(envName: String!, search: SearchImportedManagedResources, pq: CursorPaginationIn): ImportedManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
+
+	core_listServiceBindings(envName: String!, search: SearchServiceBindings, pq: CursorPaginationIn): ServiceBindingPaginatedRecords @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -6234,6 +6565,11 @@ type Github__com___kloudlite___api___pkg___types__SyncStatus @shareable {
 type Github__com___kloudlite___operator___apis___common____types__MsvcRef @shareable {
   apiVersion: String
   kind: String
+  name: String!
+  namespace: String!
+}
+
+type Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef @shareable {
   name: String!
   namespace: String!
 }
@@ -6457,6 +6793,14 @@ type Github__com___kloudlite___operator___apis___crds___v1__TcpProbe @shareable 
   port: Int!
 }
 
+type Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec @shareable {
+  globalIP: String!
+  hostname: String
+  ports: [K8s__io___api___core___v1__ServicePort!]
+  serviceIP: String
+  serviceRef: Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef
+}
+
 type Github__com___kloudlite___operator___pkg___operator__Check @shareable {
   debug: String
   error: String
@@ -6507,6 +6851,15 @@ type K8s__io___api___core___v1__Secret @shareable {
   type: K8s__io___api___core___v1__SecretType
 }
 
+type K8s__io___api___core___v1__ServicePort @shareable {
+  appProtocol: String
+  name: String
+  nodePort: Int
+  port: Int!
+  protocol: K8s__io___api___core___v1__Protocol
+  targetPort: K8s__io___apimachinery___pkg___util___intstr__IntOrString
+}
+
 type K8s__io___api___core___v1__Toleration @shareable {
   effect: K8s__io___api___core___v1__TaintEffect
   key: String
@@ -6535,6 +6888,12 @@ type K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirement @
   key: String!
   operator: K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorOperator!
   values: [String!]
+}
+
+type K8s__io___apimachinery___pkg___util___intstr__IntOrString @shareable {
+  IntVal: Int!
+  StrVal: String!
+  Type: Int!
 }
 
 type Metadata @shareable {
@@ -6572,6 +6931,11 @@ input Github__com___kloudlite___api___pkg___types__SyncStatusIn {
 input Github__com___kloudlite___operator___apis___common____types__MsvcRefIn {
   apiVersion: String
   kind: String
+  name: String!
+  namespace: String!
+}
+
+input Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn {
   name: String!
   namespace: String!
 }
@@ -6792,6 +7156,14 @@ input Github__com___kloudlite___operator___apis___crds___v1__TcpProbeIn {
   port: Int!
 }
 
+input Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn {
+  globalIP: String!
+  hostname: String
+  ports: [K8s__io___api___core___v1__ServicePortIn!]
+  serviceIP: String
+  serviceRef: Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn
+}
+
 input Github__com___kloudlite___operator___pkg___operator__CheckIn {
   debug: String
   error: String
@@ -6832,6 +7204,15 @@ input Github__com___kloudlite___operator___pkg___raw____json__RawJsonIn {
   RawMessage: Any
 }
 
+input K8s__io___api___core___v1__ServicePortIn {
+  appProtocol: String
+  name: String
+  nodePort: Int
+  port: Int!
+  protocol: K8s__io___api___core___v1__Protocol
+  targetPort: K8s__io___apimachinery___pkg___util___intstr__IntOrStringIn
+}
+
 input K8s__io___api___core___v1__TolerationIn {
   effect: K8s__io___api___core___v1__TaintEffect
   key: String
@@ -6860,6 +7241,12 @@ input K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirementI
   key: String!
   operator: K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorOperator!
   values: [String!]
+}
+
+input K8s__io___apimachinery___pkg___util___intstr__IntOrStringIn {
+  IntVal: Int!
+  StrVal: String!
+  Type: Int!
 }
 
 input MetadataIn {
@@ -6931,6 +7318,12 @@ enum Github__com___kloudlite___operator___pkg___operator__State {
   finished____reconcilation
   under____reconcilation
   yet____to____be____reconciled
+}
+
+enum K8s__io___api___core___v1__Protocol {
+  SCTP
+  TCP
+  UDP
 }
 
 enum K8s__io___api___core___v1__SecretType {
@@ -7514,6 +7907,48 @@ input SecretKeyValueRefIn {
   key: String!
   secretName: String!
   value: String!
+}
+
+`, BuiltIn: false},
+	{Name: "../struct-to-graphql/servicebinding.graphqls", Input: `type ServiceBinding @shareable {
+  accountName: String!
+  apiVersion: String
+  clusterName: String!
+  creationTime: Date!
+  id: ID!
+  kind: String
+  markedForDeletion: Boolean
+  metadata: Metadata @goField(name: "objectMeta")
+  recordVersion: Int!
+  spec: Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec
+  status: Github__com___kloudlite___operator___pkg___operator__Status
+  updateTime: Date!
+}
+
+type ServiceBindingEdge @shareable {
+  cursor: String!
+  node: ServiceBinding!
+}
+
+type ServiceBindingPaginatedRecords @shareable {
+  edges: [ServiceBindingEdge!]!
+  pageInfo: PageInfo!
+  totalCount: Int!
+}
+
+input ServiceBindingIn {
+  accountName: String!
+  apiVersion: String
+  clusterName: String!
+  creationTime: Date!
+  id: ID!
+  kind: String
+  markedForDeletion: Boolean
+  metadata: MetadataIn
+  recordVersion: Int!
+  spec: Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn
+  status: Github__com___kloudlite___operator___pkg___operator__StatusIn
+  updateTime: Date!
 }
 
 `, BuiltIn: false},
@@ -11586,6 +12021,92 @@ func (ec *executionContext) field_Query_core_listSecrets_argsSearch(
 }
 
 func (ec *executionContext) field_Query_core_listSecrets_argsPq(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*repos.CursorPagination, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["pq"]
+	if !ok {
+		var zeroVal *repos.CursorPagination
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pq"))
+	if tmp, ok := rawArgs["pq"]; ok {
+		return ec.unmarshalOCursorPaginationIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐCursorPagination(ctx, tmp)
+	}
+
+	var zeroVal *repos.CursorPagination
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_core_listServiceBindings_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_core_listServiceBindings_argsEnvName(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["envName"] = arg0
+	arg1, err := ec.field_Query_core_listServiceBindings_argsSearch(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["search"] = arg1
+	arg2, err := ec.field_Query_core_listServiceBindings_argsPq(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pq"] = arg2
+	return args, nil
+}
+func (ec *executionContext) field_Query_core_listServiceBindings_argsEnvName(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (string, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["envName"]
+	if !ok {
+		var zeroVal string
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("envName"))
+	if tmp, ok := rawArgs["envName"]; ok {
+		return ec.unmarshalNString2string(ctx, tmp)
+	}
+
+	var zeroVal string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_core_listServiceBindings_argsSearch(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*model.SearchServiceBindings, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["search"]
+	if !ok {
+		var zeroVal *model.SearchServiceBindings
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+	if tmp, ok := rawArgs["search"]; ok {
+		return ec.unmarshalOSearchServiceBindings2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchServiceBindings(ctx, tmp)
+	}
+
+	var zeroVal *model.SearchServiceBindings
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_core_listServiceBindings_argsPq(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (*repos.CursorPagination, error) {
@@ -19357,6 +19878,94 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 	return fc, nil
 }
 
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_name(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_namespace(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_namespace(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Namespace, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_namespace(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___common____types__SecretRef_name(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCommonTypesSecretRef) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___common____types__SecretRef_name(ctx, field)
 	if err != nil {
@@ -24994,6 +25603,234 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 	return fc, nil
 }
 
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_globalIP(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_globalIP(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.GlobalIP, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_globalIP(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_hostname(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_hostname(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Hostname, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_hostname(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_ports(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_ports(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Ports, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.([]*model.K8sIoAPICoreV1ServicePort)
+	fc.Result = res
+	return ec.marshalOK8s__io___api___core___v1__ServicePort2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePortᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_ports(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "appProtocol":
+				return ec.fieldContext_K8s__io___api___core___v1__ServicePort_appProtocol(ctx, field)
+			case "name":
+				return ec.fieldContext_K8s__io___api___core___v1__ServicePort_name(ctx, field)
+			case "nodePort":
+				return ec.fieldContext_K8s__io___api___core___v1__ServicePort_nodePort(ctx, field)
+			case "port":
+				return ec.fieldContext_K8s__io___api___core___v1__ServicePort_port(ctx, field)
+			case "protocol":
+				return ec.fieldContext_K8s__io___api___core___v1__ServicePort_protocol(ctx, field)
+			case "targetPort":
+				return ec.fieldContext_K8s__io___api___core___v1__ServicePort_targetPort(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type K8s__io___api___core___v1__ServicePort", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceIP(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceIP(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceIP, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceIP(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceRef(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceRef(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ServiceRef, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRef2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceRef(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "name":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Github__com___kloudlite___operator___pkg___operator__Check_debug(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorPkgOperatorCheck) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Check_debug(ctx, field)
 	if err != nil {
@@ -28481,6 +29318,263 @@ func (ec *executionContext) fieldContext_K8s__io___api___core___v1__Secret_type(
 	return fc, nil
 }
 
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort_appProtocol(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1ServicePort) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__ServicePort_appProtocol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AppProtocol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__ServicePort_appProtocol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__ServicePort",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort_name(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1ServicePort) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__ServicePort_name(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Name, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*string)
+	fc.Result = res
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__ServicePort_name(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__ServicePort",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort_nodePort(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1ServicePort) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__ServicePort_nodePort(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.NodePort, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*int)
+	fc.Result = res
+	return ec.marshalOInt2ᚖint(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__ServicePort_nodePort(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__ServicePort",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort_port(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1ServicePort) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__ServicePort_port(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Port, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__ServicePort_port(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__ServicePort",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort_protocol(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1ServicePort) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__ServicePort_protocol(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Protocol, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.K8sIoAPICoreV1Protocol)
+	fc.Result = res
+	return ec.marshalOK8s__io___api___core___v1__Protocol2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1Protocol(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__ServicePort_protocol(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__ServicePort",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type K8s__io___api___core___v1__Protocol does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort_targetPort(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1ServicePort) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___api___core___v1__ServicePort_targetPort(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TargetPort, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.K8sIoApimachineryPkgUtilIntstrIntOrString)
+	fc.Result = res
+	return ec.marshalOK8s__io___apimachinery___pkg___util___intstr__IntOrString2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoApimachineryPkgUtilIntstrIntOrString(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___api___core___v1__ServicePort_targetPort(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___api___core___v1__ServicePort",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "IntVal":
+				return ec.fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_IntVal(ctx, field)
+			case "StrVal":
+				return ec.fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_StrVal(ctx, field)
+			case "Type":
+				return ec.fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_Type(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type K8s__io___apimachinery___pkg___util___intstr__IntOrString", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _K8s__io___api___core___v1__Toleration_effect(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoAPICoreV1Toleration) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_K8s__io___api___core___v1__Toleration_effect(ctx, field)
 	if err != nil {
@@ -29243,6 +30337,138 @@ func (ec *executionContext) fieldContext_K8s__io___apimachinery___pkg___apis___m
 		IsResolver: false,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___apimachinery___pkg___util___intstr__IntOrString_IntVal(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoApimachineryPkgUtilIntstrIntOrString) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_IntVal(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.IntVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_IntVal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___apimachinery___pkg___util___intstr__IntOrString",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___apimachinery___pkg___util___intstr__IntOrString_StrVal(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoApimachineryPkgUtilIntstrIntOrString) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_StrVal(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.StrVal, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_StrVal(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___apimachinery___pkg___util___intstr__IntOrString",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _K8s__io___apimachinery___pkg___util___intstr__IntOrString_Type(ctx context.Context, field graphql.CollectedField, obj *model.K8sIoApimachineryPkgUtilIntstrIntOrString) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_Type(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Type, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_K8s__io___apimachinery___pkg___util___intstr__IntOrString_Type(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "K8s__io___apimachinery___pkg___util___intstr__IntOrString",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
 		},
 	}
 	return fc, nil
@@ -39047,6 +40273,95 @@ func (ec *executionContext) fieldContext_Query_core_listImportedManagedResources
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_core_listServiceBindings(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_core_listServiceBindings(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().CoreListServiceBindings(rctx, fc.Args["envName"].(string), fc.Args["search"].(*model.SearchServiceBindings), fc.Args["pq"].(*repos.CursorPagination))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				var zeroVal *model.ServiceBindingPaginatedRecords
+				return zeroVal, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				var zeroVal *model.ServiceBindingPaginatedRecords
+				return zeroVal, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ServiceBindingPaginatedRecords); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/console/internal/app/graph/model.ServiceBindingPaginatedRecords`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ServiceBindingPaginatedRecords)
+	fc.Result = res
+	return ec.marshalOServiceBindingPaginatedRecords2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐServiceBindingPaginatedRecords(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_core_listServiceBindings(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ServiceBindingPaginatedRecords_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ServiceBindingPaginatedRecords_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ServiceBindingPaginatedRecords_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ServiceBindingPaginatedRecords", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_core_listServiceBindings_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query__entities(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query__entities(ctx, field)
 	if err != nil {
@@ -43250,6 +44565,822 @@ func (ec *executionContext) fieldContext_SecretPaginatedRecords_totalCount(_ con
 	return fc, nil
 }
 
+func (ec *executionContext) _ServiceBinding_accountName(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_accountName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.AccountName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_accountName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_apiVersion(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_apiVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.APIVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_apiVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_clusterName(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_clusterName(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ClusterName, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_clusterName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_creationTime(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_creationTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ServiceBinding().CreationTime(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_creationTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_id(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_id(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Id, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(repos.ID)
+	fc.Result = res
+	return ec.marshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_id(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type ID does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_kind(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_kind(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Kind, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalOString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_kind(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_markedForDeletion(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_markedForDeletion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MarkedForDeletion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*bool)
+	fc.Result = res
+	return ec.marshalOBoolean2ᚖbool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_markedForDeletion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_metadata(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_metadata(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.ObjectMeta, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(v12.ObjectMeta)
+	fc.Result = res
+	return ec.marshalOMetadata2k8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_metadata(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "annotations":
+				return ec.fieldContext_Metadata_annotations(ctx, field)
+			case "creationTimestamp":
+				return ec.fieldContext_Metadata_creationTimestamp(ctx, field)
+			case "deletionTimestamp":
+				return ec.fieldContext_Metadata_deletionTimestamp(ctx, field)
+			case "generation":
+				return ec.fieldContext_Metadata_generation(ctx, field)
+			case "labels":
+				return ec.fieldContext_Metadata_labels(ctx, field)
+			case "name":
+				return ec.fieldContext_Metadata_name(ctx, field)
+			case "namespace":
+				return ec.fieldContext_Metadata_namespace(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Metadata", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_recordVersion(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_recordVersion(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.RecordVersion, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_recordVersion(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_spec(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_spec(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ServiceBinding().Spec(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_spec(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "globalIP":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_globalIP(ctx, field)
+			case "hostname":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_hostname(ctx, field)
+			case "ports":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_ports(ctx, field)
+			case "serviceIP":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceIP(ctx, field)
+			case "serviceRef":
+				return ec.fieldContext_Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceRef(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_status(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_status(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Status, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(operator.Status)
+	fc.Result = res
+	return ec.marshalOGithub__com___kloudlite___operator___pkg___operator__Status2githubᚗcomᚋkloudliteᚋoperatorᚋpkgᚋoperatorᚐStatus(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_status(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "checkList":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checkList(ctx, field)
+			case "checks":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_checks(ctx, field)
+			case "isReady":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_isReady(ctx, field)
+			case "lastReadyGeneration":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReadyGeneration(ctx, field)
+			case "lastReconcileTime":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_lastReconcileTime(ctx, field)
+			case "message":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_message(ctx, field)
+			case "resources":
+				return ec.fieldContext_Github__com___kloudlite___operator___pkg___operator__Status_resources(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___pkg___operator__Status", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBinding_updateTime(ctx context.Context, field graphql.CollectedField, obj *entities.ServiceBinding) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBinding_updateTime(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return ec.resolvers.ServiceBinding().UpdateTime(rctx, obj)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNDate2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBinding_updateTime(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBinding",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Date does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBindingEdge_cursor(ctx context.Context, field graphql.CollectedField, obj *model.ServiceBindingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBindingEdge_cursor(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Cursor, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBindingEdge_cursor(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBindingEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBindingEdge_node(ctx context.Context, field graphql.CollectedField, obj *model.ServiceBindingEdge) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBindingEdge_node(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Node, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*entities.ServiceBinding)
+	fc.Result = res
+	return ec.marshalNServiceBinding2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐServiceBinding(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBindingEdge_node(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBindingEdge",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_ServiceBinding_accountName(ctx, field)
+			case "apiVersion":
+				return ec.fieldContext_ServiceBinding_apiVersion(ctx, field)
+			case "clusterName":
+				return ec.fieldContext_ServiceBinding_clusterName(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_ServiceBinding_creationTime(ctx, field)
+			case "id":
+				return ec.fieldContext_ServiceBinding_id(ctx, field)
+			case "kind":
+				return ec.fieldContext_ServiceBinding_kind(ctx, field)
+			case "markedForDeletion":
+				return ec.fieldContext_ServiceBinding_markedForDeletion(ctx, field)
+			case "metadata":
+				return ec.fieldContext_ServiceBinding_metadata(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_ServiceBinding_recordVersion(ctx, field)
+			case "spec":
+				return ec.fieldContext_ServiceBinding_spec(ctx, field)
+			case "status":
+				return ec.fieldContext_ServiceBinding_status(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_ServiceBinding_updateTime(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ServiceBinding", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBindingPaginatedRecords_edges(ctx context.Context, field graphql.CollectedField, obj *model.ServiceBindingPaginatedRecords) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBindingPaginatedRecords_edges(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Edges, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.([]*model.ServiceBindingEdge)
+	fc.Result = res
+	return ec.marshalNServiceBindingEdge2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐServiceBindingEdgeᚄ(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBindingPaginatedRecords_edges(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBindingPaginatedRecords",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "cursor":
+				return ec.fieldContext_ServiceBindingEdge_cursor(ctx, field)
+			case "node":
+				return ec.fieldContext_ServiceBindingEdge_node(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ServiceBindingEdge", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBindingPaginatedRecords_pageInfo(ctx context.Context, field graphql.CollectedField, obj *model.ServiceBindingPaginatedRecords) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBindingPaginatedRecords_pageInfo(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.PageInfo, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(*model.PageInfo)
+	fc.Result = res
+	return ec.marshalNPageInfo2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐPageInfo(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBindingPaginatedRecords_pageInfo(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBindingPaginatedRecords",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "endCursor":
+				return ec.fieldContext_PageInfo_endCursor(ctx, field)
+			case "hasNextPage":
+				return ec.fieldContext_PageInfo_hasNextPage(ctx, field)
+			case "hasPrevPage":
+				return ec.fieldContext_PageInfo_hasPrevPage(ctx, field)
+			case "startCursor":
+				return ec.fieldContext_PageInfo_startCursor(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type PageInfo", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _ServiceBindingPaginatedRecords_totalCount(ctx context.Context, field graphql.CollectedField, obj *model.ServiceBindingPaginatedRecords) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_ServiceBindingPaginatedRecords_totalCount(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.TotalCount, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(int)
+	fc.Result = res
+	return ec.marshalNInt2int(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_ServiceBindingPaginatedRecords_totalCount(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "ServiceBindingPaginatedRecords",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Int does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) __Service_sdl(ctx context.Context, field graphql.CollectedField, obj *fedruntime.Service) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext__Service_sdl(ctx, field)
 	if err != nil {
@@ -45752,6 +47883,40 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn, error) {
+	var it model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"name", "namespace"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "namespace":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("namespace"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Namespace = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___common____types__SecretRefIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisCommonTypesSecretRefIn, error) {
 	var it model.GithubComKloudliteOperatorApisCommonTypesSecretRefIn
 	asMap := map[string]interface{}{}
@@ -47237,6 +49402,61 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn, error) {
+	var it model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"globalIP", "hostname", "ports", "serviceIP", "serviceRef"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "globalIP":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("globalIP"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.GlobalIP = data
+		case "hostname":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("hostname"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Hostname = data
+		case "ports":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("ports"))
+			data, err := ec.unmarshalOK8s__io___api___core___v1__ServicePortIn2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePortInᚄ(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Ports = data
+		case "serviceIP":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceIP"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ServiceIP = data
+		case "serviceRef":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceRef"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ServiceRef = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___pkg___operator__CheckIn(ctx context.Context, obj interface{}) (model.GithubComKloudliteOperatorPkgOperatorCheckIn, error) {
 	var it model.GithubComKloudliteOperatorPkgOperatorCheckIn
 	asMap := map[string]interface{}{}
@@ -47654,6 +49874,68 @@ func (ec *executionContext) unmarshalInputImportedManagedResourceIn(ctx context.
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputK8s__io___api___core___v1__ServicePortIn(ctx context.Context, obj interface{}) (model.K8sIoAPICoreV1ServicePortIn, error) {
+	var it model.K8sIoAPICoreV1ServicePortIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"appProtocol", "name", "nodePort", "port", "protocol", "targetPort"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "appProtocol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("appProtocol"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AppProtocol = data
+		case "name":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Name = data
+		case "nodePort":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("nodePort"))
+			data, err := ec.unmarshalOInt2ᚖint(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.NodePort = data
+		case "port":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("port"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Port = data
+		case "protocol":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("protocol"))
+			data, err := ec.unmarshalOK8s__io___api___core___v1__Protocol2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1Protocol(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Protocol = data
+		case "targetPort":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("targetPort"))
+			data, err := ec.unmarshalOK8s__io___apimachinery___pkg___util___intstr__IntOrStringIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoApimachineryPkgUtilIntstrIntOrStringIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.TargetPort = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputK8s__io___api___core___v1__TolerationIn(ctx context.Context, obj interface{}) (model.K8sIoAPICoreV1TolerationIn, error) {
 	var it model.K8sIoAPICoreV1TolerationIn
 	asMap := map[string]interface{}{}
@@ -47854,6 +50136,47 @@ func (ec *executionContext) unmarshalInputK8s__io___apimachinery___pkg___apis___
 				return it, err
 			}
 			it.Values = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputK8s__io___apimachinery___pkg___util___intstr__IntOrStringIn(ctx context.Context, obj interface{}) (model.K8sIoApimachineryPkgUtilIntstrIntOrStringIn, error) {
+	var it model.K8sIoApimachineryPkgUtilIntstrIntOrStringIn
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"IntVal", "StrVal", "Type"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "IntVal":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("IntVal"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IntVal = data
+		case "StrVal":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("StrVal"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.StrVal = data
+		case "Type":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("Type"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Type = data
 		}
 	}
 
@@ -48878,6 +51201,47 @@ func (ec *executionContext) unmarshalInputSearchSecrets(ctx context.Context, obj
 	return it, nil
 }
 
+func (ec *executionContext) unmarshalInputSearchServiceBindings(ctx context.Context, obj interface{}) (model.SearchServiceBindings, error) {
+	var it model.SearchServiceBindings
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"text", "isReady", "markedForDeletion"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "text":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("text"))
+			data, err := ec.unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchFilter(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Text = data
+		case "isReady":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("isReady"))
+			data, err := ec.unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchFilter(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.IsReady = data
+		case "markedForDeletion":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("markedForDeletion"))
+			data, err := ec.unmarshalOMatchFilterIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐMatchFilter(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MarkedForDeletion = data
+		}
+	}
+
+	return it, nil
+}
+
 func (ec *executionContext) unmarshalInputSecretIn(ctx context.Context, obj interface{}) (entities.Secret, error) {
 	var it entities.Secret
 	asMap := map[string]interface{}{}
@@ -49031,6 +51395,120 @@ func (ec *executionContext) unmarshalInputSecretKeyValueRefIn(ctx context.Contex
 				return it, err
 			}
 			it.Value = data
+		}
+	}
+
+	return it, nil
+}
+
+func (ec *executionContext) unmarshalInputServiceBindingIn(ctx context.Context, obj interface{}) (entities.ServiceBinding, error) {
+	var it entities.ServiceBinding
+	asMap := map[string]interface{}{}
+	for k, v := range obj.(map[string]interface{}) {
+		asMap[k] = v
+	}
+
+	fieldsInOrder := [...]string{"accountName", "apiVersion", "clusterName", "creationTime", "id", "kind", "markedForDeletion", "metadata", "recordVersion", "spec", "status", "updateTime"}
+	for _, k := range fieldsInOrder {
+		v, ok := asMap[k]
+		if !ok {
+			continue
+		}
+		switch k {
+		case "accountName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("accountName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.AccountName = data
+		case "apiVersion":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("apiVersion"))
+			data, err := ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.APIVersion = data
+		case "clusterName":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.ClusterName = data
+		case "creationTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("creationTime"))
+			data, err := ec.unmarshalNDate2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.ServiceBindingIn().CreationTime(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "id":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("id"))
+			data, err := ec.unmarshalNID2githubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐID(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Id = data
+		case "kind":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("kind"))
+			data, err := ec.unmarshalOString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Kind = data
+		case "markedForDeletion":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("markedForDeletion"))
+			data, err := ec.unmarshalOBoolean2ᚖbool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MarkedForDeletion = data
+		case "metadata":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
+			data, err := ec.unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.ServiceBindingIn().Metadata(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "recordVersion":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("recordVersion"))
+			data, err := ec.unmarshalNInt2int(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.RecordVersion = data
+		case "spec":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spec"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.ServiceBindingIn().Spec(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "status":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
+			data, err := ec.unmarshalOGithub__com___kloudlite___operator___pkg___operator__StatusIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorStatusIn(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.ServiceBindingIn().Status(ctx, &it, data); err != nil {
+				return it, err
+			}
+		case "updateTime":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("updateTime"))
+			data, err := ec.unmarshalNDate2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			if err = ec.resolvers.ServiceBindingIn().UpdateTime(ctx, &it, data); err != nil {
+				return it, err
+			}
 		}
 	}
 
@@ -51278,6 +53756,50 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___common_
 	return out
 }
 
+var github__com___kloudlite___operator___apis___common____types__NamespacedResourceRefImplementors = []string{"Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___common____types__NamespacedResourceRefImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef")
+		case "name":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_name(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "namespace":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef_namespace(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var github__com___kloudlite___operator___apis___common____types__SecretRefImplementors = []string{"Github__com___kloudlite___operator___apis___common____types__SecretRef"}
 
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___common____types__SecretRef(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisCommonTypesSecretRef) graphql.Marshaler {
@@ -52695,6 +55217,53 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 	return out
 }
 
+var github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecImplementors = []string{"Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec"}
+
+func (ec *executionContext) _Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec")
+		case "globalIP":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_globalIP(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "hostname":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_hostname(ctx, field, obj)
+		case "ports":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_ports(ctx, field, obj)
+		case "serviceIP":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceIP(ctx, field, obj)
+		case "serviceRef":
+			out.Values[i] = ec._Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec_serviceRef(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var github__com___kloudlite___operator___pkg___operator__CheckImplementors = []string{"Github__com___kloudlite___operator___pkg___operator__Check"}
 
 func (ec *executionContext) _Github__com___kloudlite___operator___pkg___operator__Check(ctx context.Context, sel ast.SelectionSet, obj *model.GithubComKloudliteOperatorPkgOperatorCheck) graphql.Marshaler {
@@ -53937,6 +56506,55 @@ func (ec *executionContext) _K8s__io___api___core___v1__Secret(ctx context.Conte
 	return out
 }
 
+var k8s__io___api___core___v1__ServicePortImplementors = []string{"K8s__io___api___core___v1__ServicePort"}
+
+func (ec *executionContext) _K8s__io___api___core___v1__ServicePort(ctx context.Context, sel ast.SelectionSet, obj *model.K8sIoAPICoreV1ServicePort) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, k8s__io___api___core___v1__ServicePortImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("K8s__io___api___core___v1__ServicePort")
+		case "appProtocol":
+			out.Values[i] = ec._K8s__io___api___core___v1__ServicePort_appProtocol(ctx, field, obj)
+		case "name":
+			out.Values[i] = ec._K8s__io___api___core___v1__ServicePort_name(ctx, field, obj)
+		case "nodePort":
+			out.Values[i] = ec._K8s__io___api___core___v1__ServicePort_nodePort(ctx, field, obj)
+		case "port":
+			out.Values[i] = ec._K8s__io___api___core___v1__ServicePort_port(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "protocol":
+			out.Values[i] = ec._K8s__io___api___core___v1__ServicePort_protocol(ctx, field, obj)
+		case "targetPort":
+			out.Values[i] = ec._K8s__io___api___core___v1__ServicePort_targetPort(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
 var k8s__io___api___core___v1__TolerationImplementors = []string{"K8s__io___api___core___v1__Toleration"}
 
 func (ec *executionContext) _K8s__io___api___core___v1__Toleration(ctx context.Context, sel ast.SelectionSet, obj *model.K8sIoAPICoreV1Toleration) graphql.Marshaler {
@@ -54101,6 +56719,55 @@ func (ec *executionContext) _K8s__io___apimachinery___pkg___apis___meta___v1__La
 			}
 		case "values":
 			out.Values[i] = ec._K8s__io___apimachinery___pkg___apis___meta___v1__LabelSelectorRequirement_values(ctx, field, obj)
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var k8s__io___apimachinery___pkg___util___intstr__IntOrStringImplementors = []string{"K8s__io___apimachinery___pkg___util___intstr__IntOrString"}
+
+func (ec *executionContext) _K8s__io___apimachinery___pkg___util___intstr__IntOrString(ctx context.Context, sel ast.SelectionSet, obj *model.K8sIoApimachineryPkgUtilIntstrIntOrString) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, k8s__io___apimachinery___pkg___util___intstr__IntOrStringImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("K8s__io___apimachinery___pkg___util___intstr__IntOrString")
+		case "IntVal":
+			out.Values[i] = ec._K8s__io___apimachinery___pkg___util___intstr__IntOrString_IntVal(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "StrVal":
+			out.Values[i] = ec._K8s__io___apimachinery___pkg___util___intstr__IntOrString_StrVal(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "Type":
+			out.Values[i] = ec._K8s__io___apimachinery___pkg___util___intstr__IntOrString_Type(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -55902,6 +58569,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "core_listServiceBindings":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_core_listServiceBindings(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
 		case "_entities":
 			field := field
 
@@ -57202,6 +59888,268 @@ func (ec *executionContext) _SecretPaginatedRecords(ctx context.Context, sel ast
 			}
 		case "totalCount":
 			out.Values[i] = ec._SecretPaginatedRecords_totalCount(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var serviceBindingImplementors = []string{"ServiceBinding"}
+
+func (ec *executionContext) _ServiceBinding(ctx context.Context, sel ast.SelectionSet, obj *entities.ServiceBinding) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, serviceBindingImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServiceBinding")
+		case "accountName":
+			out.Values[i] = ec._ServiceBinding_accountName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "apiVersion":
+			out.Values[i] = ec._ServiceBinding_apiVersion(ctx, field, obj)
+		case "clusterName":
+			out.Values[i] = ec._ServiceBinding_clusterName(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "creationTime":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ServiceBinding_creationTime(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "id":
+			out.Values[i] = ec._ServiceBinding_id(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "kind":
+			out.Values[i] = ec._ServiceBinding_kind(ctx, field, obj)
+		case "markedForDeletion":
+			out.Values[i] = ec._ServiceBinding_markedForDeletion(ctx, field, obj)
+		case "metadata":
+			out.Values[i] = ec._ServiceBinding_metadata(ctx, field, obj)
+		case "recordVersion":
+			out.Values[i] = ec._ServiceBinding_recordVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "spec":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ServiceBinding_spec(ctx, field, obj)
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "status":
+			out.Values[i] = ec._ServiceBinding_status(ctx, field, obj)
+		case "updateTime":
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._ServiceBinding_updateTime(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
+			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var serviceBindingEdgeImplementors = []string{"ServiceBindingEdge"}
+
+func (ec *executionContext) _ServiceBindingEdge(ctx context.Context, sel ast.SelectionSet, obj *model.ServiceBindingEdge) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, serviceBindingEdgeImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServiceBindingEdge")
+		case "cursor":
+			out.Values[i] = ec._ServiceBindingEdge_cursor(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "node":
+			out.Values[i] = ec._ServiceBindingEdge_node(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		default:
+			panic("unknown field " + strconv.Quote(field.Name))
+		}
+	}
+	out.Dispatch(ctx)
+	if out.Invalids > 0 {
+		return graphql.Null
+	}
+
+	atomic.AddInt32(&ec.deferred, int32(len(deferred)))
+
+	for label, dfs := range deferred {
+		ec.processDeferredGroup(graphql.DeferredGroup{
+			Label:    label,
+			Path:     graphql.GetPath(ctx),
+			FieldSet: dfs,
+			Context:  ctx,
+		})
+	}
+
+	return out
+}
+
+var serviceBindingPaginatedRecordsImplementors = []string{"ServiceBindingPaginatedRecords"}
+
+func (ec *executionContext) _ServiceBindingPaginatedRecords(ctx context.Context, sel ast.SelectionSet, obj *model.ServiceBindingPaginatedRecords) graphql.Marshaler {
+	fields := graphql.CollectFields(ec.OperationContext, sel, serviceBindingPaginatedRecordsImplementors)
+
+	out := graphql.NewFieldSet(fields)
+	deferred := make(map[string]*graphql.FieldSet)
+	for i, field := range fields {
+		switch field.Name {
+		case "__typename":
+			out.Values[i] = graphql.MarshalString("ServiceBindingPaginatedRecords")
+		case "edges":
+			out.Values[i] = ec._ServiceBindingPaginatedRecords_edges(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "pageInfo":
+			out.Values[i] = ec._ServiceBindingPaginatedRecords_pageInfo(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				out.Invalids++
+			}
+		case "totalCount":
+			out.Values[i] = ec._ServiceBindingPaginatedRecords_totalCount(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -58742,6 +61690,21 @@ func (ec *executionContext) marshalNInt2int64(ctx context.Context, sel ast.Selec
 	return res
 }
 
+func (ec *executionContext) marshalNK8s__io___api___core___v1__ServicePort2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePort(ctx context.Context, sel ast.SelectionSet, v *model.K8sIoAPICoreV1ServicePort) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._K8s__io___api___core___v1__ServicePort(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalNK8s__io___api___core___v1__ServicePortIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePortIn(ctx context.Context, v interface{}) (*model.K8sIoAPICoreV1ServicePortIn, error) {
+	res, err := ec.unmarshalInputK8s__io___api___core___v1__ServicePortIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalNK8s__io___api___core___v1__Toleration2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1Toleration(ctx context.Context, sel ast.SelectionSet, v *model.K8sIoAPICoreV1Toleration) graphql.Marshaler {
 	if v == nil {
 		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
@@ -59312,6 +62275,70 @@ func (ec *executionContext) marshalNSecretKeyValueRef2ᚖgithubᚗcomᚋkloudlit
 		return graphql.Null
 	}
 	return ec._SecretKeyValueRef(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNServiceBinding2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐServiceBinding(ctx context.Context, sel ast.SelectionSet, v *entities.ServiceBinding) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ServiceBinding(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalNServiceBindingEdge2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐServiceBindingEdgeᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.ServiceBindingEdge) graphql.Marshaler {
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNServiceBindingEdge2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐServiceBindingEdge(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) marshalNServiceBindingEdge2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐServiceBindingEdge(ctx context.Context, sel ast.SelectionSet, v *model.ServiceBindingEdge) graphql.Marshaler {
+	if v == nil {
+		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
+			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
+		}
+		return graphql.Null
+	}
+	return ec._ServiceBindingEdge(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalNString2string(ctx context.Context, v interface{}) (string, error) {
@@ -60141,6 +63168,21 @@ func (ec *executionContext) marshalOGithub__com___kloudlite___api___apps___conso
 	return ec._Github__com___kloudlite___api___apps___console___internal___entities__SecretCreatedFor(ctx, sel, v)
 }
 
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRef2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRef) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___common____types__NamespacedResourceRef(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCommonTypesNamespacedResourceRefIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___common____types__NamespacedResourceRefIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__AppInterceptPortMappings2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1AppInterceptPortMappingsᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorApisCrdsV1AppInterceptPortMappings) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -60883,6 +63925,21 @@ func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis_
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpec) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpec(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisNetworkingV1ServiceBindingSpecIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___networking___v1__ServiceBindingSpecIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOGithub__com___kloudlite___operator___pkg___operator__CheckMeta2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorPkgOperatorCheckMetaᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.GithubComKloudliteOperatorPkgOperatorCheckMeta) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -61157,6 +64214,22 @@ func (ec *executionContext) marshalOInt2ᚖint64(ctx context.Context, sel ast.Se
 	return res
 }
 
+func (ec *executionContext) unmarshalOK8s__io___api___core___v1__Protocol2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1Protocol(ctx context.Context, v interface{}) (*model.K8sIoAPICoreV1Protocol, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var res = new(model.K8sIoAPICoreV1Protocol)
+	err := res.UnmarshalGQL(v)
+	return res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOK8s__io___api___core___v1__Protocol2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1Protocol(ctx context.Context, sel ast.SelectionSet, v *model.K8sIoAPICoreV1Protocol) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return v
+}
+
 func (ec *executionContext) marshalOK8s__io___api___core___v1__Secret2ᚖk8sᚗioᚋapiᚋcoreᚋv1ᚐSecret(ctx context.Context, sel ast.SelectionSet, v *v11.Secret) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -61178,6 +64251,73 @@ func (ec *executionContext) marshalOK8s__io___api___core___v1__SecretType2ᚖgit
 		return graphql.Null
 	}
 	return v
+}
+
+func (ec *executionContext) marshalOK8s__io___api___core___v1__ServicePort2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePortᚄ(ctx context.Context, sel ast.SelectionSet, v []*model.K8sIoAPICoreV1ServicePort) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	ret := make(graphql.Array, len(v))
+	var wg sync.WaitGroup
+	isLen1 := len(v) == 1
+	if !isLen1 {
+		wg.Add(len(v))
+	}
+	for i := range v {
+		i := i
+		fc := &graphql.FieldContext{
+			Index:  &i,
+			Result: &v[i],
+		}
+		ctx := graphql.WithFieldContext(ctx, fc)
+		f := func(i int) {
+			defer func() {
+				if r := recover(); r != nil {
+					ec.Error(ctx, ec.Recover(ctx, r))
+					ret = nil
+				}
+			}()
+			if !isLen1 {
+				defer wg.Done()
+			}
+			ret[i] = ec.marshalNK8s__io___api___core___v1__ServicePort2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePort(ctx, sel, v[i])
+		}
+		if isLen1 {
+			f(i)
+		} else {
+			go f(i)
+		}
+
+	}
+	wg.Wait()
+
+	for _, e := range ret {
+		if e == graphql.Null {
+			return graphql.Null
+		}
+	}
+
+	return ret
+}
+
+func (ec *executionContext) unmarshalOK8s__io___api___core___v1__ServicePortIn2ᚕᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePortInᚄ(ctx context.Context, v interface{}) ([]*model.K8sIoAPICoreV1ServicePortIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	var vSlice []interface{}
+	if v != nil {
+		vSlice = graphql.CoerceList(v)
+	}
+	var err error
+	res := make([]*model.K8sIoAPICoreV1ServicePortIn, len(vSlice))
+	for i := range vSlice {
+		ctx := graphql.WithPathContext(ctx, graphql.NewPathWithIndex(i))
+		res[i], err = ec.unmarshalNK8s__io___api___core___v1__ServicePortIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1ServicePortIn(ctx, vSlice[i])
+		if err != nil {
+			return nil, err
+		}
+	}
+	return res, nil
 }
 
 func (ec *executionContext) unmarshalOK8s__io___api___core___v1__TaintEffect2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoAPICoreV1TaintEffect(ctx context.Context, v interface{}) (*model.K8sIoAPICoreV1TaintEffect, error) {
@@ -61428,6 +64568,21 @@ func (ec *executionContext) unmarshalOK8s__io___apimachinery___pkg___apis___meta
 	return res, nil
 }
 
+func (ec *executionContext) marshalOK8s__io___apimachinery___pkg___util___intstr__IntOrString2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoApimachineryPkgUtilIntstrIntOrString(ctx context.Context, sel ast.SelectionSet, v *model.K8sIoApimachineryPkgUtilIntstrIntOrString) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._K8s__io___apimachinery___pkg___util___intstr__IntOrString(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOK8s__io___apimachinery___pkg___util___intstr__IntOrStringIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐK8sIoApimachineryPkgUtilIntstrIntOrStringIn(ctx context.Context, v interface{}) (*model.K8sIoApimachineryPkgUtilIntstrIntOrStringIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputK8s__io___apimachinery___pkg___util___intstr__IntOrStringIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOManagedResource2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐManagedResource(ctx context.Context, sel ast.SelectionSet, v *entities.ManagedResource) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -61621,6 +64776,14 @@ func (ec *executionContext) unmarshalOSearchSecrets2ᚖgithubᚗcomᚋkloudlite�
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
+func (ec *executionContext) unmarshalOSearchServiceBindings2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchServiceBindings(ctx context.Context, v interface{}) (*model.SearchServiceBindings, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputSearchServiceBindings(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
 func (ec *executionContext) marshalOSecret2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋentitiesᚐSecret(ctx context.Context, sel ast.SelectionSet, v *entities.Secret) graphql.Marshaler {
 	if v == nil {
 		return graphql.Null
@@ -61700,6 +64863,13 @@ func (ec *executionContext) marshalOSecretPaginatedRecords2ᚖgithubᚗcomᚋklo
 		return graphql.Null
 	}
 	return ec._SecretPaginatedRecords(ctx, sel, v)
+}
+
+func (ec *executionContext) marshalOServiceBindingPaginatedRecords2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐServiceBindingPaginatedRecords(ctx context.Context, sel ast.SelectionSet, v *model.ServiceBindingPaginatedRecords) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._ServiceBindingPaginatedRecords(ctx, sel, v)
 }
 
 func (ec *executionContext) unmarshalOString2string(ctx context.Context, v interface{}) (string, error) {

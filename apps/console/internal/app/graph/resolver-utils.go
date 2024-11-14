@@ -100,6 +100,7 @@ var (
 	errNilProject                 = errors.Newf("project obj is nil")
 	errNilProjectManagedService   = errors.Newf("project manged svc obj is nil")
 	errNilRouter                  = errors.Newf("router obj is nil")
+	errNilServiceBinding          = errors.Newf("service binding obj is nil")
 )
 
 func newResourceContext(ctx domain.ConsoleContext, environmentName string) domain.ResourceContext {

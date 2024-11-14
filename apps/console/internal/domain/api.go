@@ -194,7 +194,7 @@ type Domain interface {
 
 	ListApps(ctx ResourceContext, search map[string]repos.MatchFilter, pq repos.CursorPagination) (*repos.PaginatedRecord[*entities.App], error)
 	GetApp(ctx ResourceContext, name string) (*entities.App, error)
-	ListAppServices(ctx ResourceContext) ([]*crdsv1.AppSvc, error)
+	ListAppServices(ctx ResourceContext) ([]*entities.AppServices, error)
 
 	CreateApp(ctx ResourceContext, app entities.App) (*entities.App, error)
 	UpdateApp(ctx ResourceContext, app entities.App) (*entities.App, error)
@@ -325,6 +325,7 @@ type Domain interface {
 type ServiceBinding interface {
 	OnServiceBindingUpdateMessage(ctx ConsoleContext, svcb *networkingv1.ServiceBinding, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnServiceBindingDeleteMessage(ctx ConsoleContext, svcb *networkingv1.ServiceBinding) error
+	ListServiceBindings(ctx ResourceContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.ServiceBinding], error)
 }
 
 type ClusterManagedService interface {

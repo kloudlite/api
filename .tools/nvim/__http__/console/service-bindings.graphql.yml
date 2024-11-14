@@ -1,0 +1,21 @@
+---
+
+label: "list service bindings"
+query: |+
+  query Core_listServiceBindings($envName: String!) {
+    core_listServiceBindings(envName: $envName) {
+      edges {
+        cursor
+        node {
+          accountName
+        }
+      }
+      totalCount
+    }
+  }
+variables:
+  {
+    "envName": "piy-dev-env"
+  }
+
+---
