@@ -6194,6 +6194,7 @@ enum ConsoleResType {
 	environment
 	registry_image
 	vpn_device
+	secret_variable
 }
 
 type ConsoleCheckNameAvailabilityOutput @shareable {
@@ -7197,6 +7198,7 @@ enum Github__com___kloudlite___api___apps___console___internal___entities__Resou
   managed_resource
   router
   secret
+  secret_variable
   service_binding
 }
 

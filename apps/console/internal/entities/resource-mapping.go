@@ -20,6 +20,7 @@ const (
 	ResourceTypeImportedManagedResource ResourceType = "imported_managed_resource"
 	ResourceTypeClusterManagedService   ResourceType = "cluster_managed_service"
 	ResourceTypeServiceBinding          ResourceType = "service_binding"
+	ResourceTypeSecretVariable          ResourceType = "secret_variable"
 )
 
 type ResourceHeirarchy string
