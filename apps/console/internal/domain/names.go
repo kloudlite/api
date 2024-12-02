@@ -58,6 +58,11 @@ func (d *domain) CheckNameAvailability(ctx context.Context, accountName string, 
 			return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fields.MetadataName: name, fc.ManagedResourceManagedServiceName: msvcName}, d.mresRepo)
 		}
 
+	case entities.ResourceTypeSecretVariable:
+		{
+			return checkResourceName(ctx, repos.Filter{fields.AccountName: accountName, fc.SecretVariableName: name}, d.secretVariableRepo)
+		}
+
 	default:
 		{
 			if environmentName == nil {
