@@ -3,7 +3,13 @@ package functions
 import (
 	"strings"
 	"testing"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
+	"os"
 )
+
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
 
 func TestGenReadableName(t *testing.T) {
 	type args struct {

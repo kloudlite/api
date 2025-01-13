@@ -2,9 +2,15 @@ package functions_test
 
 import (
 	"testing"
+	"os"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
 
 	fn "github.com/kloudlite/api/pkg/functions"
 )
+
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
 
 func TestReverse(t *testing.T) {
 	type args struct {

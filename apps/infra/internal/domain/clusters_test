@@ -4,6 +4,9 @@ import (
 	"context"
 	"errors"
 	"testing"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
+	"os"
 
 	domainMocks "github.com/kloudlite/api/apps/infra/internal/domain/mocks"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
@@ -26,7 +29,14 @@ import (
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
+
 func TestCreateCluster(t *testing.T) {
+	RegisterFailHandler(Fail)
+	junitReporter = reporters.NewJUnitReporter("junit.xml")
+	RunSpecsWithDefaultAndCustomReporters(t, "Infra Domain Suite", []Reporter{junitReporter})
+
 	type domainArgs struct {
 		env *env.Env
 

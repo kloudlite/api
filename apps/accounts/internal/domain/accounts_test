@@ -24,7 +24,27 @@ import (
 
 	// "kloudlite.io/pkg/repos"
 	reposMock "github.com/kloudlite/api/mocks/pkg/repos"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
+	"os"
+	"testing"
 )
+
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
+
+func TestDomain(t *testing.T) {
+	RegisterFailHandler(Fail)
+	junitReporter = reporters.NewJUnitReporter("junit.xml")
+	RunSpecsWithDefaultAndCustomReporters(t, "Accounts Domain Suite", []Reporter{junitReporter})
+}
+
+var _ = BeforeEach(func() {
+	var err error
+	session, err = gexec.Start(exec.Command("echo", "Starting test..."), GinkgoWriter, GinkgoWriter)
+	Expect(err).ShouldNot(HaveOccurred())
+	Eventually(session).Should(gexec.Exit(0))
+})
 
 var _ = Describe("domain.ActivateAccount says", func() {
 	// Given("an account", func() {})

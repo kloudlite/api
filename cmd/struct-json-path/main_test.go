@@ -6,7 +6,13 @@ import (
 	"reflect"
 	"sort"
 	"testing"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
+	"os"
 )
+
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
 
 func Test_extractTag(t *testing.T) {
 	type args struct {

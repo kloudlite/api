@@ -20,7 +20,14 @@ import (
 	types2 "github.com/kloudlite/api/cmd/struct-to-graphql/pkg/parser/testdata/types"
 	"github.com/kloudlite/api/pkg/types"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
+	"os"
+	"testing"
 )
+
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
 
 type ExampleJson struct {
 	metav1.TypeMeta   `json:",inline"`
@@ -190,7 +197,7 @@ spec:
                   properties:
                     apiVersion:
                       description: 'APIVersion defines the versioned schema of this
-                        representation of an object. Servers should convert recognized
+                        representation of an object. Servers may convert recognized
                         schemas to the latest internal value, and may reject unrecognized
                         values. More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources'
                       type: string

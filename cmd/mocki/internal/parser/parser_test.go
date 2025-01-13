@@ -3,12 +3,22 @@ package parser_test
 import (
 	"strings"
 	"testing"
+	"os"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
 
 	"github.com/google/go-cmp/cmp"
 	parser "github.com/kloudlite/api/cmd/mocki/internal/parser"
 )
 
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
+
 func TestFindAndParseInterface(t *testing.T) {
+	RegisterFailHandler(Fail)
+	junitReporter = reporters.NewJUnitReporter("junit.xml")
+	RunSpecsWithDefaultAndCustomReporters(t, "Parser Suite", []Reporter{junitReporter})
+
 	type args struct {
 		packagePath   string
 		interfaceName string

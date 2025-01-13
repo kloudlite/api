@@ -4,6 +4,9 @@ import (
 	"context"
 	"reflect"
 	"testing"
+	"os"
+	"github.com/onsi/ginkgo/v2/reporters"
+	"github.com/onsi/gomega/gexec"
 
 	"github.com/kloudlite/api/apps/message-office/internal/entities"
 	fc "github.com/kloudlite/api/apps/message-office/internal/entities/field-constants"
@@ -15,7 +18,14 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
+var junitReporter *reporters.JUnitReporter
+var session *gexec.Session
+
 func TestRepo_AllocatePlatformEdgeCluster(t *testing.T) {
+	RegisterFailHandler(Fail)
+	junitReporter = reporters.NewJUnitReporter("junit.xml")
+	RunSpecsWithDefaultAndCustomReporters(t, "Platform Edge Repo Suite", []Reporter{junitReporter})
+
 	type fields struct {
 		edge_clusters      func(t *testing.T) repos.DbRepo[*entities.PlatformEdgeCluster]
 		allocated_clusters func(t *testing.T) repos.DbRepo[*entities.ClusterAllocation]
