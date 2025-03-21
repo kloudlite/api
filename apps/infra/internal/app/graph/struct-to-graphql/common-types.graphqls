@@ -129,6 +129,7 @@ type Github__com___kloudlite___operator___apis___clusters___v1__AwsCredentials @
 }
 
 type Github__com___kloudlite___operator___apis___clusters___v1__AwsEC2PoolConfig @shareable {
+  ami: String!
   instanceType: String!
   nodes: Map
 }
@@ -143,6 +144,7 @@ type Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNode @
 }
 
 type Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotPoolConfig @shareable {
+  ami: String!
   cpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotCpuNode
   gpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNode
   nodes: Map
@@ -777,6 +779,7 @@ input Github__com___kloudlite___operator___apis___clusters___v1__AwsCredentialsI
 }
 
 input Github__com___kloudlite___operator___apis___clusters___v1__AwsEC2PoolConfigIn {
+  ami: String!
   instanceType: String!
   nodes: Map
 }
@@ -791,6 +794,7 @@ input Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNodeI
 }
 
 input Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotPoolConfigIn {
+  ami: String!
   cpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotCpuNodeIn
   gpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNodeIn
   nodes: Map

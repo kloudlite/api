@@ -164,4 +164,16 @@ type Domain interface {
 	GetVolumeAttachment(ctx InfraContext, clusterName string, volAttachmentName string) (*entities.VolumeAttachment, error)
 	OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error
+
+	// Workspace & Workmachine
+	ListWorkspaces(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
+	GetWorkspace(ctx InfraContext, name string) (*entities.Workspace, error)
+
+	CreateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error)
+	UpdateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error)
+	DeleteWorkspace(ctx InfraContext, name string) error
+
+	CreateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
+	UpdateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
+	UpdateWorkmachineStatus(ctx InfraContext, status bool) (bool, error)
 }

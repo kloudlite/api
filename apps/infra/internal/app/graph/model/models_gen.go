@@ -227,11 +227,13 @@ type GithubComKloudliteOperatorApisClustersV1AWSCredentialsIn struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSEC2PoolConfig struct {
+	Ami          string                 `json:"ami"`
 	InstanceType string                 `json:"instanceType"`
 	Nodes        map[string]interface{} `json:"nodes,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSEC2PoolConfigIn struct {
+	Ami          string                 `json:"ami"`
 	InstanceType string                 `json:"instanceType"`
 	Nodes        map[string]interface{} `json:"nodes,omitempty"`
 }
@@ -255,6 +257,7 @@ type GithubComKloudliteOperatorApisClustersV1AWSSpotGpuNodeIn struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSSpotPoolConfig struct {
+	Ami                      string                                                  `json:"ami"`
 	CPUNode                  *GithubComKloudliteOperatorApisClustersV1AWSSpotCPUNode `json:"cpuNode,omitempty"`
 	GpuNode                  *GithubComKloudliteOperatorApisClustersV1AWSSpotGpuNode `json:"gpuNode,omitempty"`
 	Nodes                    map[string]interface{}                                  `json:"nodes,omitempty"`
@@ -262,6 +265,7 @@ type GithubComKloudliteOperatorApisClustersV1AWSSpotPoolConfig struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSSpotPoolConfigIn struct {
+	Ami     string                                                    `json:"ami"`
 	CPUNode *GithubComKloudliteOperatorApisClustersV1AWSSpotCPUNodeIn `json:"cpuNode,omitempty"`
 	GpuNode *GithubComKloudliteOperatorApisClustersV1AWSSpotGpuNodeIn `json:"gpuNode,omitempty"`
 	Nodes   map[string]interface{}                                    `json:"nodes,omitempty"`
@@ -1372,6 +1376,14 @@ type SearchVolumeAttachments struct {
 	Text *repos.MatchFilter `json:"text,omitempty"`
 }
 
+type SearchWorkmachines struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchWorkspaces struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
 type VolumeAttachmentEdge struct {
 	Cursor string                     `json:"cursor"`
 	Node   *entities.VolumeAttachment `json:"node"`
@@ -1381,6 +1393,28 @@ type VolumeAttachmentPaginatedRecords struct {
 	Edges      []*VolumeAttachmentEdge `json:"edges"`
 	PageInfo   *PageInfo               `json:"pageInfo"`
 	TotalCount int                     `json:"totalCount"`
+}
+
+type WorkmachineEdge struct {
+	Cursor string                `json:"cursor"`
+	Node   *entities.Workmachine `json:"node"`
+}
+
+type WorkmachinePaginatedRecords struct {
+	Edges      []*WorkmachineEdge `json:"edges"`
+	PageInfo   *PageInfo          `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+type WorkspaceEdge struct {
+	Cursor string              `json:"cursor"`
+	Node   *entities.Workspace `json:"node"`
+}
+
+type WorkspacePaginatedRecords struct {
+	Edges      []*WorkspaceEdge `json:"edges"`
+	PageInfo   *PageInfo        `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
 }
 
 type GithubComKloudliteAPIAppsInfraInternalEntitiesClusterVisibilityMode string
