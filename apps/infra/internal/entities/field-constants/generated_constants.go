@@ -313,6 +313,7 @@ const (
 	NodePoolSpecAws                                 = "spec.aws"
 	NodePoolSpecAwsAvailabilityZone                 = "spec.aws.availabilityZone"
 	NodePoolSpecAwsEc2Pool                          = "spec.aws.ec2Pool"
+	NodePoolSpecAwsEc2PoolAmi                       = "spec.aws.ec2Pool.ami"
 	NodePoolSpecAwsEc2PoolInstanceType              = "spec.aws.ec2Pool.instanceType"
 	NodePoolSpecAwsEc2PoolNodes                     = "spec.aws.ec2Pool.nodes"
 	NodePoolSpecAwsIamInstanceProfileRole           = "spec.aws.iamInstanceProfileRole"
@@ -322,6 +323,7 @@ const (
 	NodePoolSpecAwsRootVolumeSize                   = "spec.aws.rootVolumeSize"
 	NodePoolSpecAwsRootVolumeType                   = "spec.aws.rootVolumeType"
 	NodePoolSpecAwsSpotPool                         = "spec.aws.spotPool"
+	NodePoolSpecAwsSpotPoolAmi                      = "spec.aws.spotPool.ami"
 	NodePoolSpecAwsSpotPoolCpuNode                  = "spec.aws.spotPool.cpuNode"
 	NodePoolSpecAwsSpotPoolCpuNodeMemoryPerVcpu     = "spec.aws.spotPool.cpuNode.memoryPerVcpu"
 	NodePoolSpecAwsSpotPoolCpuNodeMemoryPerVcpuMax  = "spec.aws.spotPool.cpuNode.memoryPerVcpu.max"
@@ -780,6 +782,18 @@ const (
 	WgParamsVirtualCidr        = "virtualCidr"
 	WgParamsWgPrivateKey       = "wg_private_key"
 	WgParamsWgPublicKey        = "wg_public_key"
+)
+
+// constant vars generated for struct Workmachine
+const (
+	WorkmachineAuthorizedKeys = "authorizedKeys"
+	WorkmachineMachineSize    = "machineSize"
+	WorkmachineMachineStatus  = "machineStatus"
+)
+
+// constant vars generated for struct Workspace
+const (
+	WorkspaceName = "name"
 )
 
 // constant vars generated for struct

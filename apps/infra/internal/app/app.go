@@ -69,6 +69,10 @@ var Module = fx.Module(
 	repos.NewFxMongoRepo[*entities.PersistentVolume]("pv", "pv", entities.PersistentVolumeIndices),
 	repos.NewFxMongoRepo[*entities.VolumeAttachment]("volume_attachments", "volatt", entities.VolumeAttachmentIndices),
 
+	// Workspace
+	repos.NewFxMongoRepo[*entities.Workspace]("workspaces", "wsp", entities.WorkspaceIndexes),
+	repos.NewFxMongoRepo[*entities.Workmachine]("work_machines", "wm", entities.WorkmachineIndexes),
+
 	fx.Provide(
 		func(conn IAMGrpcClient) iam.IAMClient {
 			return iam.NewIAMClient(conn)
