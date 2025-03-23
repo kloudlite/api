@@ -9,6 +9,19 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
+func (d *domain) findWorkmachine(ctx InfraContext) (*entities.Workmachine, error) {
+	wm, err := d.workmachineRepo.FindOne(ctx, repos.Filter{
+		fields.AccountName: ctx.AccountName,
+	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	if wm == nil {
+		return nil, errors.Newf("no workmachine for account=%q found", ctx.AccountName)
+	}
+	return wm, nil
+}
+
 func (d *domain) CreateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	workmachine.AccountName = ctx.AccountName
 	workmachine.CreatedBy = common.CreatedOrUpdatedBy{
@@ -70,4 +83,8 @@ func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool) (bool, e
 		return false, errors.NewE(err)
 	}
 	return true, nil
+}
+
+func (d *domain) GetWorkmachine(ctx InfraContext) (*entities.Workmachine, error) {
+	return d.findWorkmachine(ctx)
 }

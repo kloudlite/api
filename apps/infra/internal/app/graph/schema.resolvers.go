@@ -868,6 +868,16 @@ func (r *queryResolver) InfraGetWorkspace(ctx context.Context, name string) (*en
 	return r.Domain.GetWorkspace(ictx, name)
 }
 
+// InfraGetWorkmachine is the resolver for the infra_getWorkmachine field.
+func (r *queryResolver) InfraGetWorkmachine(ctx context.Context) (*entities.Workmachine, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+
+	return r.Domain.GetWorkmachine(ictx)
+}
+
 // Mutation returns generated.MutationResolver implementation.
 func (r *Resolver) Mutation() generated.MutationResolver { return &mutationResolver{r} }
 
