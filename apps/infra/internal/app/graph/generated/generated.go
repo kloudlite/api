@@ -1251,6 +1251,7 @@ type ComplexityRoot struct {
 		InfraGetPv                            func(childComplexity int, clusterName string, name string) int
 		InfraGetPvc                           func(childComplexity int, clusterName string, name string) int
 		InfraGetVolumeAttachment              func(childComplexity int, clusterName string, name string) int
+		InfraGetWorkmachine                   func(childComplexity int) int
 		InfraGetWorkspace                     func(childComplexity int, name string) int
 		InfraListBYOKClusters                 func(childComplexity int, search *model.SearchCluster, pagination *repos.CursorPagination) int
 		InfraListClusters                     func(childComplexity int, search *model.SearchCluster, pagination *repos.CursorPagination) int
@@ -1553,6 +1554,7 @@ type QueryResolver interface {
 	InfraGetVolumeAttachment(ctx context.Context, clusterName string, name string) (*entities.VolumeAttachment, error)
 	InfraListWorkspaces(ctx context.Context, search *model.SearchWorkspaces, pagination *repos.CursorPagination) (*model.WorkspacePaginatedRecords, error)
 	InfraGetWorkspace(ctx context.Context, name string) (*entities.Workspace, error)
+	InfraGetWorkmachine(ctx context.Context) (*entities.Workmachine, error)
 }
 type VolumeAttachmentResolver interface {
 	CreationTime(ctx context.Context, obj *entities.VolumeAttachment) (string, error)
@@ -7090,6 +7092,13 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.InfraGetVolumeAttachment(childComplexity, args["clusterName"].(string), args["name"].(string)), true
 
+	case "Query.infra_getWorkmachine":
+		if e.complexity.Query.InfraGetWorkmachine == nil {
+			break
+		}
+
+		return e.complexity.Query.InfraGetWorkmachine(childComplexity), true
+
 	case "Query.infra_getWorkspace":
 		if e.complexity.Query.InfraGetWorkspace == nil {
 			break
@@ -7996,6 +8005,9 @@ type Query {
     # Workspaces
     infra_listWorkspaces(search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
     infra_getWorkspace(name: String!): Workspace @isLoggedInAndVerified @hasAccount
+
+    # Workmachine
+    infra_getWorkmachine: Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -50900,6 +50912,102 @@ func (ec *executionContext) fieldContext_Query_infra_getWorkspace(ctx context.Co
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_infra_getWorkmachine(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_infra_getWorkmachine(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().InfraGetWorkmachine(rctx)
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				var zeroVal *entities.Workmachine
+				return zeroVal, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				var zeroVal *entities.Workmachine
+				return zeroVal, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*entities.Workmachine); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/infra/internal/entities.Workmachine`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*entities.Workmachine)
+	fc.Result = res
+	return ec.marshalOWorkmachine2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkmachine(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_infra_getWorkmachine(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "accountName":
+				return ec.fieldContext_Workmachine_accountName(ctx, field)
+			case "authorizedKeys":
+				return ec.fieldContext_Workmachine_authorizedKeys(ctx, field)
+			case "createdBy":
+				return ec.fieldContext_Workmachine_createdBy(ctx, field)
+			case "creationTime":
+				return ec.fieldContext_Workmachine_creationTime(ctx, field)
+			case "displayName":
+				return ec.fieldContext_Workmachine_displayName(ctx, field)
+			case "id":
+				return ec.fieldContext_Workmachine_id(ctx, field)
+			case "lastUpdatedBy":
+				return ec.fieldContext_Workmachine_lastUpdatedBy(ctx, field)
+			case "machineSize":
+				return ec.fieldContext_Workmachine_machineSize(ctx, field)
+			case "machineStatus":
+				return ec.fieldContext_Workmachine_machineStatus(ctx, field)
+			case "markedForDeletion":
+				return ec.fieldContext_Workmachine_markedForDeletion(ctx, field)
+			case "recordVersion":
+				return ec.fieldContext_Workmachine_recordVersion(ctx, field)
+			case "updateTime":
+				return ec.fieldContext_Workmachine_updateTime(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type Workmachine", field.Name)
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query__service(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query__service(ctx, field)
 	if err != nil {
@@ -70242,6 +70350,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_infra_getWorkspace(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "infra_getWorkmachine":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_infra_getWorkmachine(ctx, field)
 				return res
 			}
 

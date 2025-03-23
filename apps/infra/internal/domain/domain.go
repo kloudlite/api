@@ -73,6 +73,8 @@ type domain struct {
 	helmClient helm.Client
 }
 
+
+
 func (d *domain) resyncToTargetCluster(ctx InfraContext, action types.SyncAction, dispatchAddr *entities.DispatchAddr, obj client.Object, recordVersion int) error {
 	switch action {
 	case types.SyncActionApply:

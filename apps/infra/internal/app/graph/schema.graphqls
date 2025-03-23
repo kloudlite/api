@@ -141,6 +141,9 @@ type Query {
     # Workspaces
     infra_listWorkspaces(search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
     infra_getWorkspace(name: String!): Workspace @isLoggedInAndVerified @hasAccount
+
+    # Workmachine
+    infra_getWorkmachine: Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
