@@ -2,6 +2,7 @@ package nats
 
 import (
 	"context"
+	"fmt"
 	"os"
 	"os/signal"
 
@@ -104,12 +105,14 @@ type JetstreamConsumerArgs struct {
 }
 
 func NewJetstreamConsumer(ctx context.Context, jc *nats.JetstreamClient, args JetstreamConsumerArgs) (*JetstreamConsumer, error) {
+	fmt.Println("stream....", args.Stream)
 	s, err := jc.Jetstream.Stream(ctx, args.Stream)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-
+	fmt.Println("stream....", err)
 	c, err := s.CreateOrUpdateConsumer(ctx, jetstream.ConsumerConfig(args.ConsumerConfig))
+	fmt.Println("logge....", err)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}

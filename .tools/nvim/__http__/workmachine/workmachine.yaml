@@ -1,0 +1,89 @@
+---
+label: "Upsert Workmachine"
+query: |+
+  mutation Infra_upsertWorkMachine($workmachine: WorkmachineIn!) {
+    infra_upsertWorkMachine(workmachine: $workmachine) {
+      accountName
+      displayName
+    }
+  }
+variables:
+  {
+  "workmachine": {
+    "name": "test-wm3",
+    "authorizedKeys": "bdcdjsk",
+    "displayName": "test wm2",
+    "machineSize": "4 GB",
+    "machineStatus": true
+    }
+  }
+
+---
+
+label: "update Workmachine"
+query: |+
+  mutation Infra_updateWorkMachine($workmachine: WorkmachineIn!) {
+    infra_updateWorkMachine(workmachine: $workmachine) {
+      accountName
+    }
+  }
+variables:
+  {
+  "workmachine": {
+    "name": "test-wm1",
+    "authorizedKeys": "bdcdjsk",
+    "displayName": "test wm",
+    "machineSize": "4 GB",
+    "machineStatus": true
+    }
+  }
+
+---
+
+label: "update Workmachine Status"
+query: |+
+  mutation Infra_updateWorkMachineStatus($status: Boolean!, $name: String!) {
+    infra_updateWorkMachineStatus(status: $status, name: $name)
+  }
+variables:
+  {
+    "status": false,
+    "name": "test-wm3"
+  }
+
+---
+
+label: "get workmachine"
+query: |+
+  query Infra_getWorkmachine($name: String!) {
+    infra_getWorkmachine(name: $name) {
+      accountName
+    }
+  }
+variables:
+  {
+    "name": "test-wm3"
+  }
+
+---
+
+label: "list App"
+query: |+
+  query Iot_listApps($projectName: String!, $deviceBlueprintName: String!) {
+    iot_listApps(projectName: $projectName, deviceBlueprintName: $deviceBlueprintName) {
+      totalCount
+      edges {
+        node {
+          displayName
+          id
+        }
+      }
+    }
+  }
+variables:
+  {
+    "projectName": "sample-project",
+    "deviceBlueprintName": "sample-device-blueprint",
+  }
+
+---

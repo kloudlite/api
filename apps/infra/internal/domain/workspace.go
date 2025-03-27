@@ -42,7 +42,7 @@ func (d *domain) CreateWorkspace(ctx InfraContext, workspace entities.Workspace)
 
 func (d *domain) UpdateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error) {
 	patchForUpdate := repos.Document{
-		fields.DisplayName: workspace.Name,
+		fields.DisplayName: workspace.DisplayName,
 		fields.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,

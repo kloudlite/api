@@ -8,6 +8,7 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
+
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
@@ -332,13 +333,13 @@ func (r *mutationResolver) InfraDeleteWorkspace(ctx context.Context, name string
 	return true, nil
 }
 
-// InfraCreateWorkMachine is the resolver for the infra_createWorkMachine field.
-func (r *mutationResolver) InfraCreateWorkMachine(ctx context.Context, workmachine entities.Workmachine) (*entities.Workmachine, error) {
+// InfraUpsertWorkMachine is the resolver for the infra_upsertWorkMachine field.
+func (r *mutationResolver) InfraUpsertWorkMachine(ctx context.Context, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	return r.Domain.CreateWorkMachine(ictx, workmachine)
+	return r.Domain.UpsertWorkMachine(ictx, workmachine)
 }
 
 // InfraUpdateWorkMachine is the resolver for the infra_updateWorkMachine field.
@@ -352,12 +353,12 @@ func (r *mutationResolver) InfraUpdateWorkMachine(ctx context.Context, workmachi
 }
 
 // InfraUpdateWorkMachineStatus is the resolver for the infra_updateWorkMachineStatus field.
-func (r *mutationResolver) InfraUpdateWorkMachineStatus(ctx context.Context, status bool) (bool, error) {
+func (r *mutationResolver) InfraUpdateWorkMachineStatus(ctx context.Context, status bool, name string) (bool, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
-	return r.Domain.UpdateWorkmachineStatus(ictx, status)
+	return r.Domain.UpdateWorkmachineStatus(ictx, status, name)
 }
 
 // InfraCheckNameAvailability is the resolver for the infra_checkNameAvailability field.
@@ -869,13 +870,13 @@ func (r *queryResolver) InfraGetWorkspace(ctx context.Context, name string) (*en
 }
 
 // InfraGetWorkmachine is the resolver for the infra_getWorkmachine field.
-func (r *queryResolver) InfraGetWorkmachine(ctx context.Context) (*entities.Workmachine, error) {
+func (r *queryResolver) InfraGetWorkmachine(ctx context.Context, name string) (*entities.Workmachine, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.GetWorkmachine(ictx)
+	return r.Domain.GetWorkmachine(ictx, name)
 }
 
 // Mutation returns generated.MutationResolver implementation.

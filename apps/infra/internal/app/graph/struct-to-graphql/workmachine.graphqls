@@ -9,6 +9,7 @@ type Workmachine @shareable {
   machineSize: String!
   machineStatus: Boolean!
   markedForDeletion: Boolean
+  name: String!
   recordVersion: Int!
   updateTime: Date!
 }
@@ -29,5 +30,6 @@ input WorkmachineIn {
   displayName: String!
   machineSize: String!
   machineStatus: Boolean!
+  name: String!
 }
 

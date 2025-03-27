@@ -9,9 +9,10 @@ import (
 	"github.com/kloudlite/api/pkg/repos"
 )
 
-func (d *domain) findWorkmachine(ctx InfraContext) (*entities.Workmachine, error) {
+func (d *domain) findWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error) {
 	wm, err := d.workmachineRepo.FindOne(ctx, repos.Filter{
 		fields.AccountName: ctx.AccountName,
+		fc.WorkmachineName: name,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -22,7 +23,7 @@ func (d *domain) findWorkmachine(ctx InfraContext) (*entities.Workmachine, error
 	return wm, nil
 }
 
-func (d *domain) CreateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error) {
+func (d *domain) UpsertWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	workmachine.AccountName = ctx.AccountName
 	workmachine.CreatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
@@ -53,6 +54,7 @@ func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workma
 		ctx,
 		repos.Filter{
 			fields.AccountName: ctx.AccountName,
+			fc.WorkmachineName: workmachine.Name,
 		},
 		patchForUpdate,
 	)
@@ -62,7 +64,7 @@ func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workma
 	return upWorkmachine, nil
 }
 
-func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool) (bool, error) {
+func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool, name string) (bool, error) {
 	patchForUpdate := repos.Document{
 		fc.WorkmachineMachineStatus: status,
 		fields.LastUpdatedBy: common.CreatedOrUpdatedBy{
@@ -76,6 +78,7 @@ func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool) (bool, e
 		ctx,
 		repos.Filter{
 			fields.AccountName: ctx.AccountName,
+			fc.WorkmachineName: name,
 		},
 		patchForUpdate,
 	)
@@ -85,6 +88,6 @@ func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool) (bool, e
 	return true, nil
 }
 
-func (d *domain) GetWorkmachine(ctx InfraContext) (*entities.Workmachine, error) {
-	return d.findWorkmachine(ctx)
+func (d *domain) GetWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error) {
+	return d.findWorkmachine(ctx, name)
 }

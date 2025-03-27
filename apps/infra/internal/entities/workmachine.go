@@ -11,6 +11,7 @@ type Workmachine struct {
 	common.ResourceMetadata `json:",inline"`
 
 	AccountName string `json:"accountName" graphql:"noinput"`
+	Name        string `json:"name"`
 
 	MachineSize    string `json:"machineSize"`
 	AuthorizedKeys string `json:"authorizedKeys"`
@@ -26,6 +27,10 @@ var WorkmachineIndexes = []repos.IndexField{
 	},
 	{
 		Field: []repos.IndexKey{
+			{
+				Key:   "name",
+				Value: repos.IndexAsc,
+			},
 			{
 				Key:   fields.AccountName,
 				Value: repos.IndexAsc,
