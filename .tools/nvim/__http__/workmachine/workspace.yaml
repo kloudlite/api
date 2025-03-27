@@ -1,0 +1,76 @@
+---
+label: "Create workspace"
+query: |+
+  mutation Infra_createWorkspace($workspace: WorkspaceIn!) {
+    infra_createWorkspace(workspace: $workspace) {
+      accountName
+    }
+  }
+variables:
+  {
+    "workspace": {
+      "displayName": "test ws5",
+      "name": "test-ws5"
+    }
+  }
+
+---
+
+label: "update workspace"
+query: |+
+  mutation Infra_updateWorkspace($workspace: WorkspaceIn!) {
+    infra_updateWorkspace(workspace: $workspace) {
+      accountName
+    }
+  }
+variables:
+  {
+    "workspace": {
+      "displayName": "test ws1",
+      "name": "test-ws"
+    }
+  }
+
+---
+
+label: "delete Workspace"
+query: |+
+  mutation Infra_deleteWorkspace($name: String!) {
+    infra_deleteWorkspace(name: $name)
+  }
+variables:
+  {
+    "name": "test-ws"
+  }
+
+---
+
+label: "get workspace"
+query: |+
+  query Infra_getWorkspace($name: String!) {
+    infra_getWorkspace(name: $name) {
+      accountName
+      name
+    }
+  }
+variables:
+  {
+    "name": "test-ws"
+  }
+
+---
+
+label: "list App"
+query: |+
+  query Infra_listWorkspaces {
+    infra_listWorkspaces {
+      totalCount
+    }
+  }
+# variables:
+#   {
+#     "projectName": "sample-project",
+#     "deviceBlueprintName": "sample-device-blueprint",
+#   }
+
+---

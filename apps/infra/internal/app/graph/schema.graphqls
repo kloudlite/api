@@ -143,7 +143,7 @@ type Query {
     infra_getWorkspace(name: String!): Workspace @isLoggedInAndVerified @hasAccount
 
     # Workmachine
-    infra_getWorkmachine: Workmachine @isLoggedInAndVerified @hasAccount
+    infra_getWorkmachine(name: String!): Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -191,9 +191,9 @@ type Mutation {
     infra_deleteWorkspace(name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     # Workmachine
-    infra_createWorkMachine(workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount
+    infra_upsertWorkMachine(workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount
     infra_updateWorkMachine(workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount 
-    infra_updateWorkMachineStatus(status: Boolean!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_updateWorkMachineStatus(status: Boolean!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 }
 
 type EncodedValue {

@@ -789,6 +789,7 @@ const (
 	WorkmachineAuthorizedKeys = "authorizedKeys"
 	WorkmachineMachineSize    = "machineSize"
 	WorkmachineMachineStatus  = "machineStatus"
+	WorkmachineName           = "name"
 )
 
 // constant vars generated for struct Workspace

@@ -173,9 +173,9 @@ type Domain interface {
 	UpdateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error)
 	DeleteWorkspace(ctx InfraContext, name string) error
 
-	GetWorkmachine(ctx InfraContext) (*entities.Workmachine, error)
+	GetWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error)
 
-	CreateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
+	UpsertWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
 	UpdateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	UpdateWorkmachineStatus(ctx InfraContext, status bool) (bool, error)
+	UpdateWorkmachineStatus(ctx InfraContext, status bool, name string) (bool, error)
 }
