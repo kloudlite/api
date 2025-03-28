@@ -7,18 +7,17 @@ package graph
 import (
 	"context"
 	"fmt"
-	"github.com/kloudlite/api/pkg/errors"
 	"time"
 
+	"github.com/kloudlite/api/pkg/errors"
+	fn "github.com/kloudlite/api/pkg/functions"
+
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
+	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
-
-// AuthorizedKeys is the resolver for the authorizedKeys field.
-func (r *workmachineResolver) AuthorizedKeys(ctx context.Context, obj *entities.Workmachine) (string, error) {
-	panic(fmt.Errorf("not implemented: AuthorizedKeys - authorizedKeys"))
-}
 
 // CreationTime is the resolver for the creationTime field.
 func (r *workmachineResolver) CreationTime(ctx context.Context, obj *entities.Workmachine) (string, error) {
@@ -26,6 +25,11 @@ func (r *workmachineResolver) CreationTime(ctx context.Context, obj *entities.Wo
 		return "", errors.Newf("workmachine obj is nil")
 	}
 	return obj.CreationTime.Format(time.RFC3339), nil
+}
+
+// DispatchAddr is the resolver for the dispatchAddr field.
+func (r *workmachineResolver) DispatchAddr(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteAPIAppsInfraInternalEntitiesDispatchAddr, error) {
+	panic(fmt.Errorf("not implemented: DispatchAddr - dispatchAddr"))
 }
 
 // ID is the resolver for the id field.
@@ -36,14 +40,14 @@ func (r *workmachineResolver) ID(ctx context.Context, obj *entities.Workmachine)
 	return obj.Id, nil
 }
 
-// MachineSize is the resolver for the machineSize field.
-func (r *workmachineResolver) MachineSize(ctx context.Context, obj *entities.Workmachine) (string, error) {
-	panic(fmt.Errorf("not implemented: MachineSize - machineSize"))
+// Spec is the resolver for the spec field.
+func (r *workmachineResolver) Spec(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec, error) {
+	panic(fmt.Errorf("not implemented: Spec - spec"))
 }
 
-// MachineStatus is the resolver for the machineStatus field.
-func (r *workmachineResolver) MachineStatus(ctx context.Context, obj *entities.Workmachine) (bool, error) {
-	panic(fmt.Errorf("not implemented: MachineStatus - machineStatus"))
+// Status is the resolver for the status field.
+func (r *workmachineResolver) Status(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus, error) {
+	panic(fmt.Errorf("not implemented: Status - status"))
 }
 
 // UpdateTime is the resolver for the updateTime field.
@@ -54,19 +58,25 @@ func (r *workmachineResolver) UpdateTime(ctx context.Context, obj *entities.Work
 	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
-// AuthorizedKeys is the resolver for the authorizedKeys field.
-func (r *workmachineInResolver) AuthorizedKeys(ctx context.Context, obj *entities.Workmachine, data string) error {
-	panic(fmt.Errorf("not implemented: AuthorizedKeys - authorizedKeys"))
+// Metadata is the resolver for the metadata field.
+func (r *workmachineInResolver) Metadata(ctx context.Context, obj *entities.Workmachine, data *v1.ObjectMeta) error {
+	if obj == nil {
+		return errors.Newf("workmachine is nil")
+	}
+	return fn.JsonConversion(data, &obj.ObjectMeta)
 }
 
-// MachineSize is the resolver for the machineSize field.
-func (r *workmachineInResolver) MachineSize(ctx context.Context, obj *entities.Workmachine, data string) error {
-	panic(fmt.Errorf("not implemented: MachineSize - machineSize"))
+// Spec is the resolver for the spec field.
+func (r *workmachineInResolver) Spec(ctx context.Context, obj *entities.Workmachine, data *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn) error {
+	if obj == nil {
+		return nil
+	}
+	return fn.JsonConversion(data, &obj.Spec)
 }
 
-// MachineStatus is the resolver for the machineStatus field.
-func (r *workmachineInResolver) MachineStatus(ctx context.Context, obj *entities.Workmachine, data bool) error {
-	panic(fmt.Errorf("not implemented: MachineStatus - machineStatus"))
+// Status is the resolver for the status field.
+func (r *workmachineInResolver) Status(ctx context.Context, obj *entities.Workmachine, data *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatusIn) error {
+	panic(fmt.Errorf("not implemented: Status - status"))
 }
 
 // Workmachine returns generated.WorkmachineResolver implementation.

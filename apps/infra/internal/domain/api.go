@@ -49,6 +49,8 @@ const (
 	ResourceTypePVC                   ResourceType = "persistance_volume_claim"
 	ResourceTypePV                    ResourceType = "persistance_volume"
 	ResourceTypeVolumeAttachment      ResourceType = "volume_attachment"
+	ResourceTypeWorkspace             ResourceType = "workspace"
+	ResourceTypeWorkmachine           ResourceType = "workmachine"
 )
 
 type Domain interface {
@@ -165,17 +167,22 @@ type Domain interface {
 	OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error
 
-	// Workspace & Workmachine
-	ListWorkspaces(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
-	GetWorkspace(ctx InfraContext, name string) (*entities.Workspace, error)
+	// Workspace
+	ListWorkspaces(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
+	GetWorkspace(ctx InfraContext, clusterName string, name string) (*entities.Workspace, error)
+	OnWorkspaceUpdateMessage(ctx InfraContext, clusterName string, workspace entities.Workspace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnWorkspaceDeleteMessage(ctx InfraContext, clusterName string, workspace entities.Workspace) error
 
-	CreateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error)
-	UpdateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error)
-	DeleteWorkspace(ctx InfraContext, name string) error
+	CreateWorkspace(ctx InfraContext, clusterName string, workspace entities.Workspace) (*entities.Workspace, error)
+	UpdateWorkspace(ctx InfraContext, clusterName string, workspace entities.Workspace) (*entities.Workspace, error)
+	DeleteWorkspace(ctx InfraContext, clusterName string, name string) error
 
-	GetWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error)
+	// Workmachine
+	GetWorkmachine(ctx InfraContext, clusterName string, name string) (*entities.Workmachine, error)
+	OnWorkmachineUpdateMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnWorkmachineDeleteMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine) error
 
-	UpsertWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	UpdateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	UpdateWorkmachineStatus(ctx InfraContext, status bool, name string) (bool, error)
+	UpsertWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error)
+	UpdateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error)
+	UpdateWorkmachineStatus(ctx InfraContext, clusterName string, status bool, name string) (bool, error)
 }

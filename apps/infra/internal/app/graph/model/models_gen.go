@@ -10,6 +10,7 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
 	"github.com/kloudlite/operator/pkg/operator"
+	"github.com/kloudlite/operator/toolkit/reconciler"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -438,6 +439,27 @@ type GithubComKloudliteOperatorApisCommonTypesSecretRefIn struct {
 	Namespace *string `json:"namespace,omitempty"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig struct {
+	Ami                    string  `json:"ami"`
+	AvailabilityZone       string  `json:"availabilityZone"`
+	ExternalVolumeSize     string  `json:"externalVolumeSize"`
+	ExternalVolumeType     string  `json:"externalVolumeType"`
+	IamInstanceProfileRole *string `json:"iamInstanceProfileRole,omitempty"`
+	InstanceType           string  `json:"instanceType"`
+	PublicSubnetID         string  `json:"publicSubnetId"`
+	Region                 string  `json:"region"`
+	RootVolumeSize         int     `json:"rootVolumeSize"`
+	RootVolumeType         string  `json:"rootVolumeType"`
+	SecurityGroupID        string  `json:"SecurityGroupID"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn struct {
+	Ami                string `json:"ami"`
+	AvailabilityZone   string `json:"availabilityZone"`
+	ExternalVolumeSize string `json:"externalVolumeSize"`
+	InstanceType       string `json:"instanceType"`
+}
+
 type GithubComKloudliteOperatorApisCrdsV1BasicAuth struct {
 	Enabled    bool    `json:"enabled"`
 	SecretName *string `json:"secretName,omitempty"`
@@ -524,6 +546,28 @@ type GithubComKloudliteOperatorApisCrdsV1RouterSpecIn struct {
 	MaxBodySizeInMb *int                                             `json:"maxBodySizeInMB,omitempty"`
 	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimitIn `json:"rateLimit,omitempty"`
 	Routes          []*GithubComKloudliteOperatorApisCrdsV1RouteIn   `json:"routes,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec struct {
+	AWS           *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig `json:"aws"`
+	SSHPublicKeys []string                                              `json:"sshPublicKeys"`
+	State         GithubComKloudliteOperatorApisCrdsV1WorkMachineState  `json:"state"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn struct {
+	AWS           *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn `json:"aws"`
+	SSHPublicKeys []string                                                `json:"sshPublicKeys"`
+	State         GithubComKloudliteOperatorApisCrdsV1WorkMachineState    `json:"state"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus struct {
+	MachineSSHKey *string            `json:"machineSSHKey,omitempty"`
+	Status        *reconciler.Status `json:"status,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineStatusIn struct {
+	MachineSSHKey *string                                              `json:"machineSSHKey,omitempty"`
+	Status        *GithubComKloudliteOperatorToolkitReconcilerStatusIn `json:"status,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec struct {
@@ -1811,6 +1855,47 @@ func (e *GithubComKloudliteOperatorApisCommonTypesCloudProvider) UnmarshalGQL(v 
 }
 
 func (e GithubComKloudliteOperatorApisCommonTypesCloudProvider) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineState string
+
+const (
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOff GithubComKloudliteOperatorApisCrdsV1WorkMachineState = "OFF"
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOn  GithubComKloudliteOperatorApisCrdsV1WorkMachineState = "ON"
+)
+
+var AllGithubComKloudliteOperatorApisCrdsV1WorkMachineState = []GithubComKloudliteOperatorApisCrdsV1WorkMachineState{
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOff,
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOn,
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkMachineState) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOff, GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOn:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkMachineState) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisCrdsV1WorkMachineState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisCrdsV1WorkMachineState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkMachineState) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

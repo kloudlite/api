@@ -4,14 +4,22 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
+	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/operator/operators/resource-watcher/types"
 )
 
-func (d *domain) findWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error) {
+func (d *domain) applyWorkmachine(ctx InfraContext, wm *entities.Workmachine) error {
+	addTrackingId(&wm.WorkMachine, wm.Id)
+	return d.resDispatcher.ApplyToTargetCluster(ctx, wm.DispatchAddr, &wm.WorkMachine, wm.RecordVersion)
+}
+
+func (d *domain) findWorkmachine(ctx InfraContext, clusterName string, name string) (*entities.Workmachine, error) {
 	wm, err := d.workmachineRepo.FindOne(ctx, repos.Filter{
 		fc.AccountName:  ctx.AccountName,
 		fc.MetadataName: name,
+		fc.ClusterName:  clusterName,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -22,8 +30,14 @@ func (d *domain) findWorkmachine(ctx InfraContext, name string) (*entities.Workm
 	return wm, nil
 }
 
-func (d *domain) UpsertWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error) {
+func (d *domain) UpsertWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	workmachine.AccountName = ctx.AccountName
+	workmachine.ClusterName = clusterName
+
+	workmachine.DispatchAddr = &entities.DispatchAddr{
+		AccountName: ctx.AccountName,
+		ClusterName: clusterName}
+
 	workmachine.CreatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
 		UserName:  ctx.UserName,
@@ -36,10 +50,17 @@ func (d *domain) UpsertWorkMachine(ctx InfraContext, workmachine entities.Workma
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
+
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeWorkmachine, wm.Name, PublishAdd)
+
+	if err := d.applyWorkmachine(ctx, wm); err != nil {
+		return nil, errors.NewE(err)
+	}
+
 	return wm, nil
 }
 
-func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error) {
+func (d *domain) UpdateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	patchForUpdate := repos.Document{
 		fc.DisplayName: workmachine.DisplayName,
 		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
@@ -52,20 +73,29 @@ func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workma
 	upWorkmachine, err := d.workmachineRepo.Patch(
 		ctx,
 		repos.Filter{
-			fc.AccountName:  ctx.AccountName,
-			fc.MetadataName: workmachine.Name,
+			fc.AccountName:     ctx.AccountName,
+			fc.MetadataName:    workmachine.Name,
+			fields.ClusterName: clusterName,
 		},
 		patchForUpdate,
 	)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
+
+	d.resourceEventPublisher.PublishResourceEvent(ctx, workmachine.ClusterName, ResourceTypeWorkmachine, upWorkmachine.Name, PublishUpdate)
+
+	if err := d.applyWorkmachine(ctx, upWorkmachine); err != nil {
+		return nil, errors.NewE(err)
+	}
+
 	return upWorkmachine, nil
 }
 
-func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool, name string) (bool, error) {
+func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, clusterName string, status bool, name string) (bool, error) {
 	patchForUpdate := repos.Document{
-		fc.WorkmachineSpecState: status,
+		// fc.WorkmachineSpecState: status,
+		fc.WorkmachineMachineStatus: status,
 		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
@@ -73,20 +103,85 @@ func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool, name str
 		},
 	}
 
-	_, err := d.workmachineRepo.Patch(
+	upWorkmachine, err := d.workmachineRepo.Patch(
 		ctx,
 		repos.Filter{
-			fc.AccountName:  ctx.AccountName,
-			fc.MetadataName: name,
+			fc.AccountName:     ctx.AccountName,
+			fc.MetadataName:    name,
+			fields.ClusterName: clusterName,
 		},
 		patchForUpdate,
 	)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
+
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeWorkmachine, upWorkmachine.Name, PublishUpdate)
+
+	if err := d.applyWorkmachine(ctx, upWorkmachine); err != nil {
+		return false, errors.NewE(err)
+	}
+
 	return true, nil
 }
 
-func (d *domain) GetWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error) {
-	return d.findWorkmachine(ctx, name)
+func (d *domain) GetWorkmachine(ctx InfraContext, clusterName string, name string) (*entities.Workmachine, error) {
+	return d.findWorkmachine(ctx, clusterName, name)
+}
+
+func (d *domain) OnWorkmachineDeleteMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine) error {
+	err := d.workmachineRepo.DeleteOne(
+		ctx,
+		repos.Filter{
+			fields.AccountName:  ctx.AccountName,
+			fields.ClusterName:  clusterName,
+			fields.MetadataName: workmachine.Name,
+		},
+	)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeWorkmachine, workmachine.Name, PublishDelete)
+	return nil
+}
+
+func (d *domain) OnWorkmachineUpdateMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
+	wm, err := d.findWorkmachine(ctx, clusterName, workmachine.Name)
+	if err != nil {
+		return errors.NewE(err)
+	}
+
+	if wm == nil {
+		workmachine.AccountName = ctx.AccountName
+		workmachine.ClusterName = clusterName
+
+		workmachine.CreatedBy = common.CreatedOrUpdatedBy{
+			UserId:    ctx.UserId,
+			UserName:  ctx.UserName,
+			UserEmail: ctx.UserEmail,
+		}
+
+		workmachine.LastUpdatedBy = workmachine.CreatedBy
+
+		wm, err = d.workmachineRepo.Create(ctx, &workmachine)
+		if err != nil {
+			return errors.NewE(err)
+		}
+	}
+
+	upWm, err := d.workmachineRepo.PatchById(
+		ctx,
+		wm.Id,
+		common.PatchForSyncFromAgent(
+			&workmachine,
+			workmachine.RecordVersion,
+			status,
+			common.PatchOpts{
+				MessageTimestamp: opts.MessageTimestamp,
+			}))
+	if err != nil {
+		return errors.NewE(err)
+	}
+	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeWorkmachine, upWm.Name, PublishUpdate)
+	return nil
 }
