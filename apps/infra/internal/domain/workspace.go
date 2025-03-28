@@ -4,15 +4,14 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
-	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
 func (d *domain) findWorkspace(ctx InfraContext, name string) (*entities.Workspace, error) {
 	ws, err := d.workspaceRepo.FindOne(ctx, repos.Filter{
-		fields.AccountName: ctx.AccountName,
-		fc.WorkspaceName:   name,
+		fc.AccountName:  ctx.AccountName,
+		fc.MetadataName: name,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -42,8 +41,8 @@ func (d *domain) CreateWorkspace(ctx InfraContext, workspace entities.Workspace)
 
 func (d *domain) UpdateWorkspace(ctx InfraContext, workspace entities.Workspace) (*entities.Workspace, error) {
 	patchForUpdate := repos.Document{
-		fields.DisplayName: workspace.DisplayName,
-		fields.LastUpdatedBy: common.CreatedOrUpdatedBy{
+		fc.DisplayName: workspace.DisplayName,
+		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
@@ -53,8 +52,8 @@ func (d *domain) UpdateWorkspace(ctx InfraContext, workspace entities.Workspace)
 	upWorkspace, err := d.workspaceRepo.Patch(
 		ctx,
 		repos.Filter{
-			fields.AccountName: ctx.AccountName,
-			fc.WorkspaceName:   workspace.Name,
+			fc.AccountName:  ctx.AccountName,
+			fc.MetadataName: workspace.Name,
 		},
 		patchForUpdate,
 	)
@@ -68,8 +67,8 @@ func (d *domain) DeleteWorkspace(ctx InfraContext, name string) error {
 	err := d.workspaceRepo.DeleteOne(
 		ctx,
 		repos.Filter{
-			fields.AccountName: ctx.AccountName,
-			fc.WorkspaceName:   name,
+			fc.AccountName:  ctx.AccountName,
+			fc.MetadataName: name,
 		},
 	)
 	if err != nil {
@@ -84,7 +83,7 @@ func (d *domain) GetWorkspace(ctx InfraContext, name string) (*entities.Workspac
 
 func (d *domain) ListWorkspaces(ctx InfraContext, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error) {
 	filter := repos.Filter{
-		fields.AccountName: ctx.AccountName,
+		fc.AccountName: ctx.AccountName,
 	}
 	return d.workspaceRepo.FindPaginated(ctx, d.workspaceRepo.MergeMatchFilters(filter, search), pagination)
 }

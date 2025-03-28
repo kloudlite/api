@@ -4,15 +4,14 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
-	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
 )
 
 func (d *domain) findWorkmachine(ctx InfraContext, name string) (*entities.Workmachine, error) {
 	wm, err := d.workmachineRepo.FindOne(ctx, repos.Filter{
-		fields.AccountName: ctx.AccountName,
-		fc.WorkmachineName: name,
+		fc.AccountName:  ctx.AccountName,
+		fc.MetadataName: name,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -42,8 +41,8 @@ func (d *domain) UpsertWorkMachine(ctx InfraContext, workmachine entities.Workma
 
 func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	patchForUpdate := repos.Document{
-		fields.DisplayName: workmachine.DisplayName,
-		fields.LastUpdatedBy: common.CreatedOrUpdatedBy{
+		fc.DisplayName: workmachine.DisplayName,
+		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
@@ -53,8 +52,8 @@ func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workma
 	upWorkmachine, err := d.workmachineRepo.Patch(
 		ctx,
 		repos.Filter{
-			fields.AccountName: ctx.AccountName,
-			fc.WorkmachineName: workmachine.Name,
+			fc.AccountName:  ctx.AccountName,
+			fc.MetadataName: workmachine.Name,
 		},
 		patchForUpdate,
 	)
@@ -66,8 +65,8 @@ func (d *domain) UpdateWorkMachine(ctx InfraContext, workmachine entities.Workma
 
 func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool, name string) (bool, error) {
 	patchForUpdate := repos.Document{
-		fc.WorkmachineMachineStatus: status,
-		fields.LastUpdatedBy: common.CreatedOrUpdatedBy{
+		fc.WorkmachineSpecState: status,
+		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
 			UserEmail: ctx.UserEmail,
@@ -77,8 +76,8 @@ func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, status bool, name str
 	_, err := d.workmachineRepo.Patch(
 		ctx,
 		repos.Filter{
-			fields.AccountName: ctx.AccountName,
-			fc.WorkmachineName: name,
+			fc.AccountName:  ctx.AccountName,
+			fc.MetadataName: name,
 		},
 		patchForUpdate,
 	)
