@@ -271,6 +271,20 @@ type Github__com___kloudlite___operator___apis___common____types__SecretRef @sha
   namespace: String
 }
 
+type Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig @shareable {
+  ami: String!
+  availabilityZone: String!
+  externalVolumeSize: String!
+  externalVolumeType: String!
+  iamInstanceProfileRole: String
+  instanceType: String!
+  publicSubnetId: String!
+  region: String!
+  rootVolumeSize: Int!
+  rootVolumeType: String!
+  SecurityGroupID: String!
+}
+
 type Github__com___kloudlite___operator___apis___crds___v1__BasicAuth @shareable {
   enabled: Boolean!
   secretName: String
@@ -313,6 +327,17 @@ type Github__com___kloudlite___operator___apis___crds___v1__RouterSpec @shareabl
   maxBodySizeInMB: Int
   rateLimit: Github__com___kloudlite___operator___apis___crds___v1__RateLimit
   routes: [Github__com___kloudlite___operator___apis___crds___v1__Route!]
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec @shareable {
+  aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig!
+  sshPublicKeys: [String!]!
+  state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatus @shareable {
+  machineSSHKey: String
+  status: Github__com___kloudlite___operator___toolkit___reconciler__Status
 }
 
 type Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec @shareable {
@@ -903,6 +928,13 @@ input Github__com___kloudlite___operator___apis___common____types__SecretRefIn {
   namespace: String
 }
 
+input Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn {
+  ami: String!
+  availabilityZone: String!
+  externalVolumeSize: String!
+  instanceType: String!
+}
+
 input Github__com___kloudlite___operator___apis___crds___v1__BasicAuthIn {
   enabled: Boolean!
   secretName: String
@@ -945,6 +977,17 @@ input Github__com___kloudlite___operator___apis___crds___v1__RouterSpecIn {
   maxBodySizeInMB: Int
   rateLimit: Github__com___kloudlite___operator___apis___crds___v1__RateLimitIn
   routes: [Github__com___kloudlite___operator___apis___crds___v1__RouteIn!]
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn {
+  aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn!
+  sshPublicKeys: [String!]!
+  state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatusIn {
+  machineSSHKey: String
+  status: Github__com___kloudlite___operator___toolkit___reconciler__StatusIn
 }
 
 input Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpecIn {
@@ -1421,6 +1464,11 @@ enum Github__com___kloudlite___operator___apis___common____types__CloudProvider 
   azure
   digitalocean
   gcp
+}
+
+enum Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState {
+  OFF
+  ON
 }
 
 enum Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState {

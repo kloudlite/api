@@ -786,6 +786,10 @@ const (
 
 // constant vars generated for struct Workmachine
 const (
+	WorkmachineDispatchAddr                  = "dispatchAddr"
+	WorkmachineDispatchAddrAccountName       = "dispatchAddr.accountName"
+	WorkmachineDispatchAddrClusterName       = "dispatchAddr.clusterName"
+	WorkmachineMachineStatus                 = "machineStatus"
 	WorkmachineSpec                          = "spec"
 	WorkmachineSpecAws                       = "spec.aws"
 	WorkmachineSpecAwsSecurityGroupID        = "spec.aws.SecurityGroupID"
@@ -805,6 +809,9 @@ const (
 
 // constant vars generated for struct Workspace
 const (
+	WorkspaceDispatchAddr                   = "dispatchAddr"
+	WorkspaceDispatchAddrAccountName        = "dispatchAddr.accountName"
+	WorkspaceDispatchAddrClusterName        = "dispatchAddr.clusterName"
 	WorkspaceSpec                           = "spec"
 	WorkspaceSpecEnableCodeServer           = "spec.enableCodeServer"
 	WorkspaceSpecEnableJupyterNotebook      = "spec.enableJupyterNotebook"

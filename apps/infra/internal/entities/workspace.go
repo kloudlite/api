@@ -4,7 +4,9 @@ import (
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/repos"
+	"github.com/kloudlite/api/pkg/types"
 	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
+	"github.com/kloudlite/operator/toolkit/reconciler"
 )
 
 type Workspace struct {
@@ -15,6 +17,18 @@ type Workspace struct {
 
 	AccountName string `json:"accountName" graphql:"noinput"`
 	ClusterName string `json:"clusterName" graphql:"noinput"`
+
+	DispatchAddr *DispatchAddr `json:"dispatchAddr" graphql:"noinput"`
+
+	SyncStatus types.SyncStatus `json:"syncStatus" graphql:"noinput"`
+}
+
+func (v *Workspace) GetDisplayName() string {
+	return v.ResourceMetadata.DisplayName
+}
+
+func (v *Workspace) GetStatus() reconciler.Status {
+	return reconciler.Status{}
 }
 
 var WorkspaceIndexes = []repos.IndexField{
