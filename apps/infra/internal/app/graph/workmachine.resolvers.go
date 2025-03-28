@@ -6,6 +6,7 @@ package graph
 
 import (
 	"context"
+	"fmt"
 	"github.com/kloudlite/api/pkg/errors"
 	"time"
 
@@ -13,6 +14,11 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
 )
+
+// AuthorizedKeys is the resolver for the authorizedKeys field.
+func (r *workmachineResolver) AuthorizedKeys(ctx context.Context, obj *entities.Workmachine) (string, error) {
+	panic(fmt.Errorf("not implemented: AuthorizedKeys - authorizedKeys"))
+}
 
 // CreationTime is the resolver for the creationTime field.
 func (r *workmachineResolver) CreationTime(ctx context.Context, obj *entities.Workmachine) (string, error) {
@@ -30,6 +36,16 @@ func (r *workmachineResolver) ID(ctx context.Context, obj *entities.Workmachine)
 	return obj.Id, nil
 }
 
+// MachineSize is the resolver for the machineSize field.
+func (r *workmachineResolver) MachineSize(ctx context.Context, obj *entities.Workmachine) (string, error) {
+	panic(fmt.Errorf("not implemented: MachineSize - machineSize"))
+}
+
+// MachineStatus is the resolver for the machineStatus field.
+func (r *workmachineResolver) MachineStatus(ctx context.Context, obj *entities.Workmachine) (bool, error) {
+	panic(fmt.Errorf("not implemented: MachineStatus - machineStatus"))
+}
+
 // UpdateTime is the resolver for the updateTime field.
 func (r *workmachineResolver) UpdateTime(ctx context.Context, obj *entities.Workmachine) (string, error) {
 	if obj == nil || obj.UpdateTime.IsZero() {
@@ -38,7 +54,26 @@ func (r *workmachineResolver) UpdateTime(ctx context.Context, obj *entities.Work
 	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
+// AuthorizedKeys is the resolver for the authorizedKeys field.
+func (r *workmachineInResolver) AuthorizedKeys(ctx context.Context, obj *entities.Workmachine, data string) error {
+	panic(fmt.Errorf("not implemented: AuthorizedKeys - authorizedKeys"))
+}
+
+// MachineSize is the resolver for the machineSize field.
+func (r *workmachineInResolver) MachineSize(ctx context.Context, obj *entities.Workmachine, data string) error {
+	panic(fmt.Errorf("not implemented: MachineSize - machineSize"))
+}
+
+// MachineStatus is the resolver for the machineStatus field.
+func (r *workmachineInResolver) MachineStatus(ctx context.Context, obj *entities.Workmachine, data bool) error {
+	panic(fmt.Errorf("not implemented: MachineStatus - machineStatus"))
+}
+
 // Workmachine returns generated.WorkmachineResolver implementation.
 func (r *Resolver) Workmachine() generated.WorkmachineResolver { return &workmachineResolver{r} }
 
+// WorkmachineIn returns generated.WorkmachineInResolver implementation.
+func (r *Resolver) WorkmachineIn() generated.WorkmachineInResolver { return &workmachineInResolver{r} }
+
 type workmachineResolver struct{ *Resolver }
+type workmachineInResolver struct{ *Resolver }

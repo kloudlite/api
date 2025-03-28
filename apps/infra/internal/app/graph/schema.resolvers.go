@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
