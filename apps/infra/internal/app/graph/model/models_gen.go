@@ -10,6 +10,7 @@ import (
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	"github.com/kloudlite/api/pkg/repos"
 	"github.com/kloudlite/operator/pkg/operator"
+	"github.com/kloudlite/operator/toolkit/reconciler"
 	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
@@ -227,11 +228,13 @@ type GithubComKloudliteOperatorApisClustersV1AWSCredentialsIn struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSEC2PoolConfig struct {
+	Ami          string                 `json:"ami"`
 	InstanceType string                 `json:"instanceType"`
 	Nodes        map[string]interface{} `json:"nodes,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSEC2PoolConfigIn struct {
+	Ami          string                 `json:"ami"`
 	InstanceType string                 `json:"instanceType"`
 	Nodes        map[string]interface{} `json:"nodes,omitempty"`
 }
@@ -255,6 +258,7 @@ type GithubComKloudliteOperatorApisClustersV1AWSSpotGpuNodeIn struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSSpotPoolConfig struct {
+	Ami                      string                                                  `json:"ami"`
 	CPUNode                  *GithubComKloudliteOperatorApisClustersV1AWSSpotCPUNode `json:"cpuNode,omitempty"`
 	GpuNode                  *GithubComKloudliteOperatorApisClustersV1AWSSpotGpuNode `json:"gpuNode,omitempty"`
 	Nodes                    map[string]interface{}                                  `json:"nodes,omitempty"`
@@ -262,6 +266,7 @@ type GithubComKloudliteOperatorApisClustersV1AWSSpotPoolConfig struct {
 }
 
 type GithubComKloudliteOperatorApisClustersV1AWSSpotPoolConfigIn struct {
+	Ami     string                                                    `json:"ami"`
 	CPUNode *GithubComKloudliteOperatorApisClustersV1AWSSpotCPUNodeIn `json:"cpuNode,omitempty"`
 	GpuNode *GithubComKloudliteOperatorApisClustersV1AWSSpotGpuNodeIn `json:"gpuNode,omitempty"`
 	Nodes   map[string]interface{}                                    `json:"nodes,omitempty"`
@@ -434,6 +439,161 @@ type GithubComKloudliteOperatorApisCommonTypesSecretRefIn struct {
 	Namespace *string `json:"namespace,omitempty"`
 }
 
+type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig struct {
+	Ami                    string  `json:"ami"`
+	AvailabilityZone       string  `json:"availabilityZone"`
+	ExternalVolumeSize     string  `json:"externalVolumeSize"`
+	ExternalVolumeType     string  `json:"externalVolumeType"`
+	IamInstanceProfileRole *string `json:"iamInstanceProfileRole,omitempty"`
+	InstanceType           string  `json:"instanceType"`
+	PublicSubnetID         string  `json:"publicSubnetId"`
+	Region                 string  `json:"region"`
+	RootVolumeSize         int     `json:"rootVolumeSize"`
+	RootVolumeType         string  `json:"rootVolumeType"`
+	SecurityGroupID        string  `json:"SecurityGroupID"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn struct {
+	Ami                string `json:"ami"`
+	AvailabilityZone   string `json:"availabilityZone"`
+	ExternalVolumeSize string `json:"externalVolumeSize"`
+	InstanceType       string `json:"instanceType"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BasicAuth struct {
+	Enabled    bool    `json:"enabled"`
+	SecretName *string `json:"secretName,omitempty"`
+	Username   *string `json:"username,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1BasicAuthIn struct {
+	Enabled    bool    `json:"enabled"`
+	SecretName *string `json:"secretName,omitempty"`
+	Username   *string `json:"username,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1Cors struct {
+	AllowCredentials *bool    `json:"allowCredentials,omitempty"`
+	Enabled          *bool    `json:"enabled,omitempty"`
+	Origins          []string `json:"origins,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1CorsIn struct {
+	AllowCredentials *bool    `json:"allowCredentials,omitempty"`
+	Enabled          *bool    `json:"enabled,omitempty"`
+	Origins          []string `json:"origins,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1HTTPS struct {
+	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
+	Enabled       bool    `json:"enabled"`
+	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1HTTPSIn struct {
+	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
+	Enabled       bool    `json:"enabled"`
+	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RateLimit struct {
+	Connections *int  `json:"connections,omitempty"`
+	Enabled     *bool `json:"enabled,omitempty"`
+	Rpm         *int  `json:"rpm,omitempty"`
+	Rps         *int  `json:"rps,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RateLimitIn struct {
+	Connections *int  `json:"connections,omitempty"`
+	Enabled     *bool `json:"enabled,omitempty"`
+	Rpm         *int  `json:"rpm,omitempty"`
+	Rps         *int  `json:"rps,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1Route struct {
+	App     string `json:"app"`
+	Path    string `json:"path"`
+	Port    int    `json:"port"`
+	Rewrite *bool  `json:"rewrite,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RouteIn struct {
+	App     string `json:"app"`
+	Path    string `json:"path"`
+	Port    int    `json:"port"`
+	Rewrite *bool  `json:"rewrite,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RouterSpec struct {
+	BackendProtocol *string                                        `json:"backendProtocol,omitempty"`
+	BasicAuth       *GithubComKloudliteOperatorApisCrdsV1BasicAuth `json:"basicAuth,omitempty"`
+	Cors            *GithubComKloudliteOperatorApisCrdsV1Cors      `json:"cors,omitempty"`
+	Domains         []string                                       `json:"domains"`
+	HTTPS           *GithubComKloudliteOperatorApisCrdsV1HTTPS     `json:"https,omitempty"`
+	IngressClass    *string                                        `json:"ingressClass,omitempty"`
+	MaxBodySizeInMb *int                                           `json:"maxBodySizeInMB,omitempty"`
+	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimit `json:"rateLimit,omitempty"`
+	Routes          []*GithubComKloudliteOperatorApisCrdsV1Route   `json:"routes,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1RouterSpecIn struct {
+	BackendProtocol *string                                          `json:"backendProtocol,omitempty"`
+	BasicAuth       *GithubComKloudliteOperatorApisCrdsV1BasicAuthIn `json:"basicAuth,omitempty"`
+	Cors            *GithubComKloudliteOperatorApisCrdsV1CorsIn      `json:"cors,omitempty"`
+	Domains         []string                                         `json:"domains"`
+	HTTPS           *GithubComKloudliteOperatorApisCrdsV1HTTPSIn     `json:"https,omitempty"`
+	IngressClass    *string                                          `json:"ingressClass,omitempty"`
+	MaxBodySizeInMb *int                                             `json:"maxBodySizeInMB,omitempty"`
+	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimitIn `json:"rateLimit,omitempty"`
+	Routes          []*GithubComKloudliteOperatorApisCrdsV1RouteIn   `json:"routes,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec struct {
+	AWS           *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig `json:"aws"`
+	SSHPublicKeys []string                                              `json:"sshPublicKeys"`
+	State         GithubComKloudliteOperatorApisCrdsV1WorkMachineState  `json:"state"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn struct {
+	AWS           *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn `json:"aws"`
+	SSHPublicKeys []string                                                `json:"sshPublicKeys"`
+	State         GithubComKloudliteOperatorApisCrdsV1WorkMachineState    `json:"state"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus struct {
+	MachineSSHKey *string            `json:"machineSSHKey,omitempty"`
+	Status        *reconciler.Status `json:"status,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineStatusIn struct {
+	MachineSSHKey *string                                              `json:"machineSSHKey,omitempty"`
+	Status        *GithubComKloudliteOperatorToolkitReconcilerStatusIn `json:"status,omitempty"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec struct {
+	EnableCodeServer      *bool                                              `json:"enableCodeServer,omitempty"`
+	EnableJupyterNotebook *bool                                              `json:"enableJupyterNotebook,omitempty"`
+	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
+	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
+	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
+	NodeName              string                                             `json:"nodeName"`
+	Router                *GithubComKloudliteOperatorApisCrdsV1RouterSpec    `json:"router"`
+	ServiceAccountName    string                                             `json:"serviceAccountName"`
+	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
+	EnableCodeServer      *bool                                              `json:"enableCodeServer,omitempty"`
+	EnableJupyterNotebook *bool                                              `json:"enableJupyterNotebook,omitempty"`
+	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
+	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
+	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
+	NodeName              string                                             `json:"nodeName"`
+	Router                *GithubComKloudliteOperatorApisCrdsV1RouterSpecIn  `json:"router"`
+	ServiceAccountName    string                                             `json:"serviceAccountName"`
+	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
+}
+
 type GithubComKloudliteOperatorPkgOperatorCheckMeta struct {
 	Debug       *bool   `json:"debug,omitempty"`
 	Description *string `json:"description,omitempty"`
@@ -467,7 +627,26 @@ type GithubComKloudliteOperatorToolkitReconcilerCheck struct {
 	Status     bool                                              `json:"status"`
 }
 
+type GithubComKloudliteOperatorToolkitReconcilerCheckIn struct {
+	Debug      *string                                           `json:"debug,omitempty"`
+	Error      *string                                           `json:"error,omitempty"`
+	Generation *int                                              `json:"generation,omitempty"`
+	Info       *string                                           `json:"info,omitempty"`
+	Message    *string                                           `json:"message,omitempty"`
+	StartedAt  *string                                           `json:"startedAt,omitempty"`
+	State      *GithubComKloudliteOperatorToolkitReconcilerState `json:"state,omitempty"`
+	Status     bool                                              `json:"status"`
+}
+
 type GithubComKloudliteOperatorToolkitReconcilerCheckMeta struct {
+	Debug       *bool   `json:"debug,omitempty"`
+	Description *string `json:"description,omitempty"`
+	Hide        *bool   `json:"hide,omitempty"`
+	Name        string  `json:"name"`
+	Title       string  `json:"title"`
+}
+
+type GithubComKloudliteOperatorToolkitReconcilerCheckMetaIn struct {
 	Debug       *bool   `json:"debug,omitempty"`
 	Description *string `json:"description,omitempty"`
 	Hide        *bool   `json:"hide,omitempty"`
@@ -480,6 +659,22 @@ type GithubComKloudliteOperatorToolkitReconcilerResourceRef struct {
 	Kind       string `json:"kind"`
 	Name       string `json:"name"`
 	Namespace  string `json:"namespace"`
+}
+
+type GithubComKloudliteOperatorToolkitReconcilerResourceRefIn struct {
+	APIVersion string `json:"apiVersion"`
+	Kind       string `json:"kind"`
+	Name       string `json:"name"`
+	Namespace  string `json:"namespace"`
+}
+
+type GithubComKloudliteOperatorToolkitReconcilerStatusIn struct {
+	CheckList           []*GithubComKloudliteOperatorToolkitReconcilerCheckMetaIn   `json:"checkList,omitempty"`
+	Checks              map[string]interface{}                                      `json:"checks,omitempty"`
+	IsReady             bool                                                        `json:"isReady"`
+	LastReadyGeneration *int                                                        `json:"lastReadyGeneration,omitempty"`
+	LastReconcileTime   *string                                                     `json:"lastReconcileTime,omitempty"`
+	Resources           []*GithubComKloudliteOperatorToolkitReconcilerResourceRefIn `json:"resources,omitempty"`
 }
 
 type GlobalVPNDeviceEdge struct {
@@ -1372,6 +1567,14 @@ type SearchVolumeAttachments struct {
 	Text *repos.MatchFilter `json:"text,omitempty"`
 }
 
+type SearchWorkmachines struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
+type SearchWorkspaces struct {
+	Text *repos.MatchFilter `json:"text,omitempty"`
+}
+
 type VolumeAttachmentEdge struct {
 	Cursor string                     `json:"cursor"`
 	Node   *entities.VolumeAttachment `json:"node"`
@@ -1381,6 +1584,28 @@ type VolumeAttachmentPaginatedRecords struct {
 	Edges      []*VolumeAttachmentEdge `json:"edges"`
 	PageInfo   *PageInfo               `json:"pageInfo"`
 	TotalCount int                     `json:"totalCount"`
+}
+
+type WorkmachineEdge struct {
+	Cursor string                `json:"cursor"`
+	Node   *entities.Workmachine `json:"node"`
+}
+
+type WorkmachinePaginatedRecords struct {
+	Edges      []*WorkmachineEdge `json:"edges"`
+	PageInfo   *PageInfo          `json:"pageInfo"`
+	TotalCount int                `json:"totalCount"`
+}
+
+type WorkspaceEdge struct {
+	Cursor string              `json:"cursor"`
+	Node   *entities.Workspace `json:"node"`
+}
+
+type WorkspacePaginatedRecords struct {
+	Edges      []*WorkspaceEdge `json:"edges"`
+	PageInfo   *PageInfo        `json:"pageInfo"`
+	TotalCount int              `json:"totalCount"`
 }
 
 type GithubComKloudliteAPIAppsInfraInternalEntitiesClusterVisibilityMode string
@@ -1630,6 +1855,88 @@ func (e *GithubComKloudliteOperatorApisCommonTypesCloudProvider) UnmarshalGQL(v 
 }
 
 func (e GithubComKloudliteOperatorApisCommonTypesCloudProvider) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineState string
+
+const (
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOff GithubComKloudliteOperatorApisCrdsV1WorkMachineState = "OFF"
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOn  GithubComKloudliteOperatorApisCrdsV1WorkMachineState = "ON"
+)
+
+var AllGithubComKloudliteOperatorApisCrdsV1WorkMachineState = []GithubComKloudliteOperatorApisCrdsV1WorkMachineState{
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOff,
+	GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOn,
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkMachineState) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOff, GithubComKloudliteOperatorApisCrdsV1WorkMachineStateOn:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkMachineState) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisCrdsV1WorkMachineState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisCrdsV1WorkMachineState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkMachineState) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type GithubComKloudliteOperatorApisCrdsV1WorkspaceState string
+
+const (
+	GithubComKloudliteOperatorApisCrdsV1WorkspaceStateOff GithubComKloudliteOperatorApisCrdsV1WorkspaceState = "OFF"
+	GithubComKloudliteOperatorApisCrdsV1WorkspaceStateOn  GithubComKloudliteOperatorApisCrdsV1WorkspaceState = "ON"
+)
+
+var AllGithubComKloudliteOperatorApisCrdsV1WorkspaceState = []GithubComKloudliteOperatorApisCrdsV1WorkspaceState{
+	GithubComKloudliteOperatorApisCrdsV1WorkspaceStateOff,
+	GithubComKloudliteOperatorApisCrdsV1WorkspaceStateOn,
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkspaceState) IsValid() bool {
+	switch e {
+	case GithubComKloudliteOperatorApisCrdsV1WorkspaceStateOff, GithubComKloudliteOperatorApisCrdsV1WorkspaceStateOn:
+		return true
+	}
+	return false
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkspaceState) String() string {
+	return string(e)
+}
+
+func (e *GithubComKloudliteOperatorApisCrdsV1WorkspaceState) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = GithubComKloudliteOperatorApisCrdsV1WorkspaceState(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState", str)
+	}
+	return nil
+}
+
+func (e GithubComKloudliteOperatorApisCrdsV1WorkspaceState) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

@@ -129,6 +129,7 @@ type Github__com___kloudlite___operator___apis___clusters___v1__AwsCredentials @
 }
 
 type Github__com___kloudlite___operator___apis___clusters___v1__AwsEC2PoolConfig @shareable {
+  ami: String!
   instanceType: String!
   nodes: Map
 }
@@ -143,6 +144,7 @@ type Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNode @
 }
 
 type Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotPoolConfig @shareable {
+  ami: String!
   cpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotCpuNode
   gpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNode
   nodes: Map
@@ -267,6 +269,87 @@ type Github__com___kloudlite___operator___apis___common____types__SecretKeyRef @
 type Github__com___kloudlite___operator___apis___common____types__SecretRef @shareable {
   name: String!
   namespace: String
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig @shareable {
+  ami: String!
+  availabilityZone: String!
+  externalVolumeSize: String!
+  externalVolumeType: String!
+  iamInstanceProfileRole: String
+  instanceType: String!
+  publicSubnetId: String!
+  region: String!
+  rootVolumeSize: Int!
+  rootVolumeType: String!
+  SecurityGroupID: String!
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__BasicAuth @shareable {
+  enabled: Boolean!
+  secretName: String
+  username: String
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__Cors @shareable {
+  allowCredentials: Boolean
+  enabled: Boolean
+  origins: [String!]
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__Https @shareable {
+  clusterIssuer: String
+  enabled: Boolean!
+  forceRedirect: Boolean
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__RateLimit @shareable {
+  connections: Int
+  enabled: Boolean
+  rpm: Int
+  rps: Int
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__Route @shareable {
+  app: String!
+  path: String!
+  port: Int!
+  rewrite: Boolean
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__RouterSpec @shareable {
+  backendProtocol: String
+  basicAuth: Github__com___kloudlite___operator___apis___crds___v1__BasicAuth
+  cors: Github__com___kloudlite___operator___apis___crds___v1__Cors
+  domains: [String!]!
+  https: Github__com___kloudlite___operator___apis___crds___v1__Https
+  ingressClass: String
+  maxBodySizeInMB: Int
+  rateLimit: Github__com___kloudlite___operator___apis___crds___v1__RateLimit
+  routes: [Github__com___kloudlite___operator___apis___crds___v1__Route!]
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec @shareable {
+  aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig!
+  sshPublicKeys: [String!]!
+  state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatus @shareable {
+  machineSSHKey: String
+  status: Github__com___kloudlite___operator___toolkit___reconciler__Status
+}
+
+type Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec @shareable {
+  enableCodeServer: Boolean
+  enableJupyterNotebook: Boolean
+  enableTTYD: Boolean
+  enableVSCodeServer: Boolean
+  imagePullPolicy: String!
+  nodeName: String!
+  router: Github__com___kloudlite___operator___apis___crds___v1__RouterSpec!
+  serviceAccountName: String!
+  state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
 }
 
 type Github__com___kloudlite___operator___pkg___operator__Check @shareable {
@@ -777,6 +860,7 @@ input Github__com___kloudlite___operator___apis___clusters___v1__AwsCredentialsI
 }
 
 input Github__com___kloudlite___operator___apis___clusters___v1__AwsEC2PoolConfigIn {
+  ami: String!
   instanceType: String!
   nodes: Map
 }
@@ -791,6 +875,7 @@ input Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNodeI
 }
 
 input Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotPoolConfigIn {
+  ami: String!
   cpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotCpuNodeIn
   gpuNode: Github__com___kloudlite___operator___apis___clusters___v1__AwsSpotGpuNodeIn
   nodes: Map
@@ -841,6 +926,115 @@ input Github__com___kloudlite___operator___apis___common____types__MinMaxFloatIn
 input Github__com___kloudlite___operator___apis___common____types__SecretRefIn {
   name: String!
   namespace: String
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn {
+  ami: String!
+  availabilityZone: String!
+  externalVolumeSize: String!
+  instanceType: String!
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__BasicAuthIn {
+  enabled: Boolean!
+  secretName: String
+  username: String
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__CorsIn {
+  allowCredentials: Boolean
+  enabled: Boolean
+  origins: [String!]
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__HttpsIn {
+  clusterIssuer: String
+  enabled: Boolean!
+  forceRedirect: Boolean
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__RateLimitIn {
+  connections: Int
+  enabled: Boolean
+  rpm: Int
+  rps: Int
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__RouteIn {
+  app: String!
+  path: String!
+  port: Int!
+  rewrite: Boolean
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__RouterSpecIn {
+  backendProtocol: String
+  basicAuth: Github__com___kloudlite___operator___apis___crds___v1__BasicAuthIn
+  cors: Github__com___kloudlite___operator___apis___crds___v1__CorsIn
+  domains: [String!]!
+  https: Github__com___kloudlite___operator___apis___crds___v1__HttpsIn
+  ingressClass: String
+  maxBodySizeInMB: Int
+  rateLimit: Github__com___kloudlite___operator___apis___crds___v1__RateLimitIn
+  routes: [Github__com___kloudlite___operator___apis___crds___v1__RouteIn!]
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn {
+  aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn!
+  sshPublicKeys: [String!]!
+  state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatusIn {
+  machineSSHKey: String
+  status: Github__com___kloudlite___operator___toolkit___reconciler__StatusIn
+}
+
+input Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpecIn {
+  enableCodeServer: Boolean
+  enableJupyterNotebook: Boolean
+  enableTTYD: Boolean
+  enableVSCodeServer: Boolean
+  imagePullPolicy: String!
+  nodeName: String!
+  router: Github__com___kloudlite___operator___apis___crds___v1__RouterSpecIn!
+  serviceAccountName: String!
+  state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
+}
+
+input Github__com___kloudlite___operator___toolkit___reconciler__CheckIn {
+  debug: String
+  error: String
+  generation: Int
+  info: String
+  message: String
+  startedAt: Date
+  state: Github__com___kloudlite___operator___toolkit___reconciler__State
+  status: Boolean!
+}
+
+input Github__com___kloudlite___operator___toolkit___reconciler__CheckMetaIn {
+  debug: Boolean
+  description: String
+  hide: Boolean
+  name: String!
+  title: String!
+}
+
+input Github__com___kloudlite___operator___toolkit___reconciler__ResourceRefIn {
+  apiVersion: String!
+  kind: String!
+  name: String!
+  namespace: String!
+}
+
+input Github__com___kloudlite___operator___toolkit___reconciler__StatusIn {
+  checkList: [Github__com___kloudlite___operator___toolkit___reconciler__CheckMetaIn!]
+  checks: Map
+  isReady: Boolean!
+  lastReadyGeneration: Int
+  lastReconcileTime: Date
+  resources: [Github__com___kloudlite___operator___toolkit___reconciler__ResourceRefIn!]
 }
 
 input K8s__io___api___core___v1__AWSElasticBlockStoreVolumeSourceIn {
@@ -1270,6 +1464,16 @@ enum Github__com___kloudlite___operator___apis___common____types__CloudProvider 
   azure
   digitalocean
   gcp
+}
+
+enum Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState {
+  OFF
+  ON
+}
+
+enum Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState {
+  OFF
+  ON
 }
 
 enum Github__com___kloudlite___operator___pkg___operator__State {

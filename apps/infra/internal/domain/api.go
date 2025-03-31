@@ -49,6 +49,8 @@ const (
 	ResourceTypePVC                   ResourceType = "persistance_volume_claim"
 	ResourceTypePV                    ResourceType = "persistance_volume"
 	ResourceTypeVolumeAttachment      ResourceType = "volume_attachment"
+	ResourceTypeWorkspace             ResourceType = "workspace"
+	ResourceTypeWorkmachine           ResourceType = "workmachine"
 )
 
 type Domain interface {
@@ -164,4 +166,21 @@ type Domain interface {
 	GetVolumeAttachment(ctx InfraContext, clusterName string, volAttachmentName string) (*entities.VolumeAttachment, error)
 	OnVolumeAttachmentUpdateMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnVolumeAttachmentDeleteMessage(ctx InfraContext, clusterName string, volumeAttachment entities.VolumeAttachment) error
+
+	// Workspace
+	ListWorkspaces(ctx InfraContext, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error)
+	GetWorkspace(ctx InfraContext, clusterName string, name string) (*entities.Workspace, error)
+	OnWorkspaceUpdateMessage(ctx InfraContext, clusterName string, workspace entities.Workspace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnWorkspaceDeleteMessage(ctx InfraContext, clusterName string, workspace entities.Workspace) error
+
+	CreateWorkspace(ctx InfraContext, clusterName string, workspace entities.Workspace) (*entities.Workspace, error)
+	UpdateWorkspace(ctx InfraContext, clusterName string, workspace entities.Workspace) (*entities.Workspace, error)
+	DeleteWorkspace(ctx InfraContext, clusterName string, name string) error
+
+	// Workmachine
+	GetWorkmachine(ctx InfraContext, clusterName string, name string) (*entities.Workmachine, error)
+	OnWorkmachineUpdateMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
+	OnWorkmachineDeleteMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine) error
+
+	UpsertWorkMachine(ctx InfraContext, clusterName string, workmachineName string, sshPublicKeys []string, machineType string, running bool) (*entities.Workmachine, error)
 }

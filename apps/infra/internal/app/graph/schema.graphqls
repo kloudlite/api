@@ -71,6 +71,14 @@ input SearchVolumeAttachments {
   text: MatchFilterIn
 }
 
+input SearchWorkspaces {
+  text: MatchFilterIn
+}
+
+input SearchWorkmachines {
+  text: MatchFilterIn
+}
+
 type CheckAwsAccessOutput {
     result: Boolean!
     installationUrl: String
@@ -129,6 +137,13 @@ type Query {
 
     infra_listVolumeAttachments(clusterName: String!, search: SearchVolumeAttachments, pq: CursorPaginationIn): VolumeAttachmentPaginatedRecords @isLoggedInAndVerified @hasAccount
     infra_getVolumeAttachment(clusterName: String!, name: String!): VolumeAttachment @isLoggedInAndVerified @hasAccount
+
+    # Workspaces
+    infra_listWorkspaces(search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getWorkspace(name: String!): Workspace @isLoggedInAndVerified @hasAccount
+
+    # Workmachine
+    infra_getWorkmachine: Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -169,6 +184,14 @@ type Mutation {
     # infra_deleteHelmRelease(clusterName: String!, releaseName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     infra_deletePV(clusterName: String!, pvName: String!): Boolean! @isLoggedInAndVerified @hasAccount
+
+    # Workspaces
+    infra_createWorkspace( workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_updateWorkspace( workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_deleteWorkspace( name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+
+    # Workmachine
+    infra_upsertWorkMachine(sshKeys: [String!], machineType: String , running: Boolean): Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type EncodedValue {

@@ -56,6 +56,8 @@ type domain struct {
 	namespaceRepo        repos.DbRepo[*entities.Namespace]
 	pvRepo               repos.DbRepo[*entities.PersistentVolume]
 	volumeAttachmentRepo repos.DbRepo[*entities.VolumeAttachment]
+	workspaceRepo        repos.DbRepo[*entities.Workspace]
+	workmachineRepo      repos.DbRepo[*entities.Workmachine]
 
 	iamClient              iam.IAMClient
 	consoleClient          console.ConsoleClient
@@ -70,6 +72,8 @@ type domain struct {
 
 	helmClient helm.Client
 }
+
+
 
 func (d *domain) resyncToTargetCluster(ctx InfraContext, action types.SyncAction, dispatchAddr *entities.DispatchAddr, obj client.Object, recordVersion int) error {
 	switch action {
@@ -195,6 +199,8 @@ var Module = fx.Module("domain",
 			pvRepo repos.DbRepo[*entities.PersistentVolume],
 			namespaceRepo repos.DbRepo[*entities.Namespace],
 			volumeAttachmentRepo repos.DbRepo[*entities.VolumeAttachment],
+			workspaceRepo repos.DbRepo[*entities.Workspace],
+			workmachineRepo repos.DbRepo[*entities.Workmachine],
 
 			k8sClient k8s.Client,
 
@@ -268,6 +274,8 @@ var Module = fx.Module("domain",
 				volumeAttachmentRepo: volumeAttachmentRepo,
 				pvRepo:               pvRepo,
 				namespaceRepo:        namespaceRepo,
+				workspaceRepo:        workspaceRepo,
+				workmachineRepo:      workmachineRepo,
 
 				helmClient: helmClient,
 			}, nil
