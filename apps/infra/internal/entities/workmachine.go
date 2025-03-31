@@ -21,6 +21,10 @@ type Workmachine struct {
 
 	MachineStatus bool `json:"machineStatus"`
 
+	SshPublicKeys []string `json:"sshPublicKeys"`
+	MachineType   string   `json:"machineType"`
+	Running       bool     `json:"running"`
+
 	SyncStatus types.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 

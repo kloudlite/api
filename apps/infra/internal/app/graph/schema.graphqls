@@ -139,11 +139,11 @@ type Query {
     infra_getVolumeAttachment(clusterName: String!, name: String!): VolumeAttachment @isLoggedInAndVerified @hasAccount
 
     # Workspaces
-    infra_listWorkspaces(clusterName: String!,search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
-    infra_getWorkspace(clusterName: String!,name: String!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_listWorkspaces(search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getWorkspace(name: String!): Workspace @isLoggedInAndVerified @hasAccount
 
     # Workmachine
-    infra_getWorkmachine(clusterName: String!, name: String!): Workmachine @isLoggedInAndVerified @hasAccount
+    infra_getWorkmachine: Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -186,14 +186,12 @@ type Mutation {
     infra_deletePV(clusterName: String!, pvName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     # Workspaces
-    infra_createWorkspace(clusterName: String!, workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
-    infra_updateWorkspace(clusterName: String!, workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
-    infra_deleteWorkspace(clusterName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_createWorkspace( workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_updateWorkspace( workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_deleteWorkspace( name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     # Workmachine
-    infra_upsertWorkMachine(clusterName: String!, workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount
-    infra_updateWorkMachine(clusterName: String!, workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount 
-    infra_updateWorkMachineStatus(clusterName: String!, status: Boolean!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_upsertWorkMachine(sshKeys: [String!], machineType: String , running: Boolean): Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type EncodedValue {

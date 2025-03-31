@@ -790,6 +790,8 @@ const (
 	WorkmachineDispatchAddrAccountName       = "dispatchAddr.accountName"
 	WorkmachineDispatchAddrClusterName       = "dispatchAddr.clusterName"
 	WorkmachineMachineStatus                 = "machineStatus"
+	WorkmachineMachineType                   = "machineType"
+	WorkmachineRunning                       = "running"
 	WorkmachineSpec                          = "spec"
 	WorkmachineSpecAws                       = "spec.aws"
 	WorkmachineSpecAwsSecurityGroupID        = "spec.aws.SecurityGroupID"
@@ -805,6 +807,7 @@ const (
 	WorkmachineSpecAwsRootVolumeType         = "spec.aws.rootVolumeType"
 	WorkmachineSpecSshPublicKeys             = "spec.sshPublicKeys"
 	WorkmachineSpecState                     = "spec.state"
+	WorkmachineSshPublicKeys                 = "sshPublicKeys"
 )
 
 // constant vars generated for struct Workspace

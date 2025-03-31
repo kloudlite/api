@@ -182,7 +182,5 @@ type Domain interface {
 	OnWorkmachineUpdateMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine, status types.ResourceStatus, opts UpdateAndDeleteOpts) error
 	OnWorkmachineDeleteMessage(ctx InfraContext, clusterName string, workmachine entities.Workmachine) error
 
-	UpsertWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	UpdateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	UpdateWorkmachineStatus(ctx InfraContext, clusterName string, status bool, name string) (bool, error)
+	UpsertWorkMachine(ctx InfraContext, clusterName string, workmachineName string, sshPublicKeys []string, machineType string, running bool) (*entities.Workmachine, error)
 }

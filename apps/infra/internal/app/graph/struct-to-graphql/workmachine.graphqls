@@ -9,10 +9,14 @@ type Workmachine @shareable {
   id: ID!
   kind: String
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  machineStatus: Boolean!
+  machineType: String!
   markedForDeletion: Boolean
   metadata: Metadata @goField(name: "objectMeta")
   recordVersion: Int!
+  running: Boolean!
   spec: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec
+  sshPublicKeys: String!
   status: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatus
   syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
@@ -33,8 +37,12 @@ input WorkmachineIn {
   apiVersion: String
   displayName: String!
   kind: String
+  machineStatus: Boolean!
+  machineType: String!
   metadata: MetadataIn
+  running: Boolean!
   spec: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn
+  sshPublicKeys: String!
   status: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatusIn
 }
 

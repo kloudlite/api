@@ -1134,34 +1134,32 @@ type ComplexityRoot struct {
 	}
 
 	Mutation struct {
-		InfraCreateBYOKCluster       func(childComplexity int, cluster entities.BYOKCluster) int
-		InfraCreateCluster           func(childComplexity int, cluster entities.Cluster) int
-		InfraCreateDomainEntry       func(childComplexity int, domainEntry entities.DomainEntry) int
-		InfraCreateGlobalVPNDevice   func(childComplexity int, gvpnDevice entities.GlobalVPNDevice) int
-		InfraCreateGlobalVpn         func(childComplexity int, gvpn entities.GlobalVPN) int
-		InfraCreateNodePool          func(childComplexity int, clusterName string, pool entities.NodePool) int
-		InfraCreateProviderSecret    func(childComplexity int, secret entities.CloudProviderSecret) int
-		InfraCreateWorkspace         func(childComplexity int, clusterName string, workspace entities.Workspace) int
-		InfraDeleteBYOKCluster       func(childComplexity int, name string) int
-		InfraDeleteCluster           func(childComplexity int, name string) int
-		InfraDeleteDomainEntry       func(childComplexity int, domainName string) int
-		InfraDeleteGlobalVPNDevice   func(childComplexity int, gvpn string, deviceName string) int
-		InfraDeleteGlobalVpn         func(childComplexity int, name string) int
-		InfraDeleteNodePool          func(childComplexity int, clusterName string, poolName string) int
-		InfraDeleteProviderSecret    func(childComplexity int, secretName string) int
-		InfraDeletePv                func(childComplexity int, clusterName string, pvName string) int
-		InfraDeleteWorkspace         func(childComplexity int, clusterName string, name string) int
-		InfraUpdateBYOKCluster       func(childComplexity int, clusterName string, displayName string) int
-		InfraUpdateCluster           func(childComplexity int, cluster entities.Cluster) int
-		InfraUpdateDomainEntry       func(childComplexity int, domainEntry entities.DomainEntry) int
-		InfraUpdateGlobalVPNDevice   func(childComplexity int, gvpnDevice entities.GlobalVPNDevice) int
-		InfraUpdateGlobalVpn         func(childComplexity int, gvpn entities.GlobalVPN) int
-		InfraUpdateNodePool          func(childComplexity int, clusterName string, pool entities.NodePool) int
-		InfraUpdateProviderSecret    func(childComplexity int, secret entities.CloudProviderSecret) int
-		InfraUpdateWorkMachine       func(childComplexity int, clusterName string, workmachine entities.Workmachine) int
-		InfraUpdateWorkMachineStatus func(childComplexity int, clusterName string, status bool, name string) int
-		InfraUpdateWorkspace         func(childComplexity int, clusterName string, workspace entities.Workspace) int
-		InfraUpsertWorkMachine       func(childComplexity int, clusterName string, workmachine entities.Workmachine) int
+		InfraCreateBYOKCluster     func(childComplexity int, cluster entities.BYOKCluster) int
+		InfraCreateCluster         func(childComplexity int, cluster entities.Cluster) int
+		InfraCreateDomainEntry     func(childComplexity int, domainEntry entities.DomainEntry) int
+		InfraCreateGlobalVPNDevice func(childComplexity int, gvpnDevice entities.GlobalVPNDevice) int
+		InfraCreateGlobalVpn       func(childComplexity int, gvpn entities.GlobalVPN) int
+		InfraCreateNodePool        func(childComplexity int, clusterName string, pool entities.NodePool) int
+		InfraCreateProviderSecret  func(childComplexity int, secret entities.CloudProviderSecret) int
+		InfraCreateWorkspace       func(childComplexity int, workspace entities.Workspace) int
+		InfraDeleteBYOKCluster     func(childComplexity int, name string) int
+		InfraDeleteCluster         func(childComplexity int, name string) int
+		InfraDeleteDomainEntry     func(childComplexity int, domainName string) int
+		InfraDeleteGlobalVPNDevice func(childComplexity int, gvpn string, deviceName string) int
+		InfraDeleteGlobalVpn       func(childComplexity int, name string) int
+		InfraDeleteNodePool        func(childComplexity int, clusterName string, poolName string) int
+		InfraDeleteProviderSecret  func(childComplexity int, secretName string) int
+		InfraDeletePv              func(childComplexity int, clusterName string, pvName string) int
+		InfraDeleteWorkspace       func(childComplexity int, name string) int
+		InfraUpdateBYOKCluster     func(childComplexity int, clusterName string, displayName string) int
+		InfraUpdateCluster         func(childComplexity int, cluster entities.Cluster) int
+		InfraUpdateDomainEntry     func(childComplexity int, domainEntry entities.DomainEntry) int
+		InfraUpdateGlobalVPNDevice func(childComplexity int, gvpnDevice entities.GlobalVPNDevice) int
+		InfraUpdateGlobalVpn       func(childComplexity int, gvpn entities.GlobalVPN) int
+		InfraUpdateNodePool        func(childComplexity int, clusterName string, pool entities.NodePool) int
+		InfraUpdateProviderSecret  func(childComplexity int, secret entities.CloudProviderSecret) int
+		InfraUpdateWorkspace       func(childComplexity int, workspace entities.Workspace) int
+		InfraUpsertWorkMachine     func(childComplexity int, sshKeys []string, machineType *string, running *bool) int
 	}
 
 	Namespace struct {
@@ -1334,8 +1332,8 @@ type ComplexityRoot struct {
 		InfraGetPv                            func(childComplexity int, clusterName string, name string) int
 		InfraGetPvc                           func(childComplexity int, clusterName string, name string) int
 		InfraGetVolumeAttachment              func(childComplexity int, clusterName string, name string) int
-		InfraGetWorkmachine                   func(childComplexity int, clusterName string, name string) int
-		InfraGetWorkspace                     func(childComplexity int, clusterName string, name string) int
+		InfraGetWorkmachine                   func(childComplexity int) int
+		InfraGetWorkspace                     func(childComplexity int, name string) int
 		InfraListBYOKClusters                 func(childComplexity int, search *model.SearchCluster, pagination *repos.CursorPagination) int
 		InfraListClusters                     func(childComplexity int, search *model.SearchCluster, pagination *repos.CursorPagination) int
 		InfraListDomainEntries                func(childComplexity int, search *model.SearchDomainEntry, pagination *repos.CursorPagination) int
@@ -1348,7 +1346,7 @@ type ComplexityRoot struct {
 		InfraListPVs                          func(childComplexity int, clusterName string, search *model.SearchPersistentVolumes, pq *repos.CursorPagination) int
 		InfraListProviderSecrets              func(childComplexity int, search *model.SearchProviderSecret, pagination *repos.CursorPagination) int
 		InfraListVolumeAttachments            func(childComplexity int, clusterName string, search *model.SearchVolumeAttachments, pq *repos.CursorPagination) int
-		InfraListWorkspaces                   func(childComplexity int, clusterName string, search *model.SearchWorkspaces, pagination *repos.CursorPagination) int
+		InfraListWorkspaces                   func(childComplexity int, search *model.SearchWorkspaces, pagination *repos.CursorPagination) int
 		InfratGetBYOKClusterSetupInstructions func(childComplexity int, name string, onlyHelmValues *bool) int
 		__resolve__service                    func(childComplexity int) int
 	}
@@ -1394,10 +1392,14 @@ type ComplexityRoot struct {
 		ID                func(childComplexity int) int
 		Kind              func(childComplexity int) int
 		LastUpdatedBy     func(childComplexity int) int
+		MachineStatus     func(childComplexity int) int
+		MachineType       func(childComplexity int) int
 		MarkedForDeletion func(childComplexity int) int
 		ObjectMeta        func(childComplexity int) int
 		RecordVersion     func(childComplexity int) int
+		Running           func(childComplexity int) int
 		Spec              func(childComplexity int) int
+		SshPublicKeys     func(childComplexity int) int
 		Status            func(childComplexity int) int
 		SyncStatus        func(childComplexity int) int
 		UpdateTime        func(childComplexity int) int
@@ -1564,12 +1566,10 @@ type MutationResolver interface {
 	InfraUpdateNodePool(ctx context.Context, clusterName string, pool entities.NodePool) (*entities.NodePool, error)
 	InfraDeleteNodePool(ctx context.Context, clusterName string, poolName string) (bool, error)
 	InfraDeletePv(ctx context.Context, clusterName string, pvName string) (bool, error)
-	InfraCreateWorkspace(ctx context.Context, clusterName string, workspace entities.Workspace) (*entities.Workspace, error)
-	InfraUpdateWorkspace(ctx context.Context, clusterName string, workspace entities.Workspace) (*entities.Workspace, error)
-	InfraDeleteWorkspace(ctx context.Context, clusterName string, name string) (bool, error)
-	InfraUpsertWorkMachine(ctx context.Context, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	InfraUpdateWorkMachine(ctx context.Context, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error)
-	InfraUpdateWorkMachineStatus(ctx context.Context, clusterName string, status bool, name string) (bool, error)
+	InfraCreateWorkspace(ctx context.Context, workspace entities.Workspace) (*entities.Workspace, error)
+	InfraUpdateWorkspace(ctx context.Context, workspace entities.Workspace) (*entities.Workspace, error)
+	InfraDeleteWorkspace(ctx context.Context, name string) (bool, error)
+	InfraUpsertWorkMachine(ctx context.Context, sshKeys []string, machineType *string, running *bool) (*entities.Workmachine, error)
 }
 type NamespaceResolver interface {
 	CreationTime(ctx context.Context, obj *entities.Namespace) (string, error)
@@ -1647,9 +1647,9 @@ type QueryResolver interface {
 	InfraGetPv(ctx context.Context, clusterName string, name string) (*entities.PersistentVolume, error)
 	InfraListVolumeAttachments(ctx context.Context, clusterName string, search *model.SearchVolumeAttachments, pq *repos.CursorPagination) (*model.VolumeAttachmentPaginatedRecords, error)
 	InfraGetVolumeAttachment(ctx context.Context, clusterName string, name string) (*entities.VolumeAttachment, error)
-	InfraListWorkspaces(ctx context.Context, clusterName string, search *model.SearchWorkspaces, pagination *repos.CursorPagination) (*model.WorkspacePaginatedRecords, error)
-	InfraGetWorkspace(ctx context.Context, clusterName string, name string) (*entities.Workspace, error)
-	InfraGetWorkmachine(ctx context.Context, clusterName string, name string) (*entities.Workmachine, error)
+	InfraListWorkspaces(ctx context.Context, search *model.SearchWorkspaces, pagination *repos.CursorPagination) (*model.WorkspacePaginatedRecords, error)
+	InfraGetWorkspace(ctx context.Context, name string) (*entities.Workspace, error)
+	InfraGetWorkmachine(ctx context.Context) (*entities.Workmachine, error)
 }
 type VolumeAttachmentResolver interface {
 	CreationTime(ctx context.Context, obj *entities.VolumeAttachment) (string, error)
@@ -1668,6 +1668,7 @@ type WorkmachineResolver interface {
 	ID(ctx context.Context, obj *entities.Workmachine) (repos.ID, error)
 
 	Spec(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec, error)
+
 	Status(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus, error)
 
 	UpdateTime(ctx context.Context, obj *entities.Workmachine) (string, error)
@@ -1730,7 +1731,9 @@ type VolumeAttachmentInResolver interface {
 }
 type WorkmachineInResolver interface {
 	Metadata(ctx context.Context, obj *entities.Workmachine, data *v1.ObjectMeta) error
+
 	Spec(ctx context.Context, obj *entities.Workmachine, data *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn) error
+
 	Status(ctx context.Context, obj *entities.Workmachine, data *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatusIn) error
 }
 type WorkspaceInResolver interface {
@@ -6402,7 +6405,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.InfraCreateWorkspace(childComplexity, args["clusterName"].(string), args["workspace"].(entities.Workspace)), true
+		return e.complexity.Mutation.InfraCreateWorkspace(childComplexity, args["workspace"].(entities.Workspace)), true
 
 	case "Mutation.infra_deleteBYOKCluster":
 		if e.complexity.Mutation.InfraDeleteBYOKCluster == nil {
@@ -6510,7 +6513,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.InfraDeleteWorkspace(childComplexity, args["clusterName"].(string), args["name"].(string)), true
+		return e.complexity.Mutation.InfraDeleteWorkspace(childComplexity, args["name"].(string)), true
 
 	case "Mutation.infra_updateBYOKCluster":
 		if e.complexity.Mutation.InfraUpdateBYOKCluster == nil {
@@ -6596,30 +6599,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Mutation.InfraUpdateProviderSecret(childComplexity, args["secret"].(entities.CloudProviderSecret)), true
 
-	case "Mutation.infra_updateWorkMachine":
-		if e.complexity.Mutation.InfraUpdateWorkMachine == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_infra_updateWorkMachine_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.InfraUpdateWorkMachine(childComplexity, args["clusterName"].(string), args["workmachine"].(entities.Workmachine)), true
-
-	case "Mutation.infra_updateWorkMachineStatus":
-		if e.complexity.Mutation.InfraUpdateWorkMachineStatus == nil {
-			break
-		}
-
-		args, err := ec.field_Mutation_infra_updateWorkMachineStatus_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Mutation.InfraUpdateWorkMachineStatus(childComplexity, args["clusterName"].(string), args["status"].(bool), args["name"].(string)), true
-
 	case "Mutation.infra_updateWorkspace":
 		if e.complexity.Mutation.InfraUpdateWorkspace == nil {
 			break
@@ -6630,7 +6609,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.InfraUpdateWorkspace(childComplexity, args["clusterName"].(string), args["workspace"].(entities.Workspace)), true
+		return e.complexity.Mutation.InfraUpdateWorkspace(childComplexity, args["workspace"].(entities.Workspace)), true
 
 	case "Mutation.infra_upsertWorkMachine":
 		if e.complexity.Mutation.InfraUpsertWorkMachine == nil {
@@ -6642,7 +6621,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Mutation.InfraUpsertWorkMachine(childComplexity, args["clusterName"].(string), args["workmachine"].(entities.Workmachine)), true
+		return e.complexity.Mutation.InfraUpsertWorkMachine(childComplexity, args["sshKeys"].([]string), args["machineType"].(*string), args["running"].(*bool)), true
 
 	case "Namespace.apiVersion":
 		if e.complexity.Namespace.APIVersion == nil {
@@ -7566,12 +7545,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			break
 		}
 
-		args, err := ec.field_Query_infra_getWorkmachine_args(context.TODO(), rawArgs)
-		if err != nil {
-			return 0, false
-		}
-
-		return e.complexity.Query.InfraGetWorkmachine(childComplexity, args["clusterName"].(string), args["name"].(string)), true
+		return e.complexity.Query.InfraGetWorkmachine(childComplexity), true
 
 	case "Query.infra_getWorkspace":
 		if e.complexity.Query.InfraGetWorkspace == nil {
@@ -7583,7 +7557,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraGetWorkspace(childComplexity, args["clusterName"].(string), args["name"].(string)), true
+		return e.complexity.Query.InfraGetWorkspace(childComplexity, args["name"].(string)), true
 
 	case "Query.infra_listBYOKClusters":
 		if e.complexity.Query.InfraListBYOKClusters == nil {
@@ -7734,7 +7708,7 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 			return 0, false
 		}
 
-		return e.complexity.Query.InfraListWorkspaces(childComplexity, args["clusterName"].(string), args["search"].(*model.SearchWorkspaces), args["pagination"].(*repos.CursorPagination)), true
+		return e.complexity.Query.InfraListWorkspaces(childComplexity, args["search"].(*model.SearchWorkspaces), args["pagination"].(*repos.CursorPagination)), true
 
 	case "Query.infrat_getBYOKClusterSetupInstructions":
 		if e.complexity.Query.InfratGetBYOKClusterSetupInstructions == nil {
@@ -7972,6 +7946,20 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Workmachine.LastUpdatedBy(childComplexity), true
 
+	case "Workmachine.machineStatus":
+		if e.complexity.Workmachine.MachineStatus == nil {
+			break
+		}
+
+		return e.complexity.Workmachine.MachineStatus(childComplexity), true
+
+	case "Workmachine.machineType":
+		if e.complexity.Workmachine.MachineType == nil {
+			break
+		}
+
+		return e.complexity.Workmachine.MachineType(childComplexity), true
+
 	case "Workmachine.markedForDeletion":
 		if e.complexity.Workmachine.MarkedForDeletion == nil {
 			break
@@ -7993,12 +7981,26 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Workmachine.RecordVersion(childComplexity), true
 
+	case "Workmachine.running":
+		if e.complexity.Workmachine.Running == nil {
+			break
+		}
+
+		return e.complexity.Workmachine.Running(childComplexity), true
+
 	case "Workmachine.spec":
 		if e.complexity.Workmachine.Spec == nil {
 			break
 		}
 
 		return e.complexity.Workmachine.Spec(childComplexity), true
+
+	case "Workmachine.sshPublicKeys":
+		if e.complexity.Workmachine.SshPublicKeys == nil {
+			break
+		}
+
+		return e.complexity.Workmachine.SshPublicKeys(childComplexity), true
 
 	case "Workmachine.status":
 		if e.complexity.Workmachine.Status == nil {
@@ -8575,11 +8577,11 @@ type Query {
     infra_getVolumeAttachment(clusterName: String!, name: String!): VolumeAttachment @isLoggedInAndVerified @hasAccount
 
     # Workspaces
-    infra_listWorkspaces(clusterName: String!,search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
-    infra_getWorkspace(clusterName: String!,name: String!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_listWorkspaces(search: SearchWorkspaces, pagination: CursorPaginationIn): WorkspacePaginatedRecords @isLoggedInAndVerified @hasAccount
+    infra_getWorkspace(name: String!): Workspace @isLoggedInAndVerified @hasAccount
 
     # Workmachine
-    infra_getWorkmachine(clusterName: String!, name: String!): Workmachine @isLoggedInAndVerified @hasAccount
+    infra_getWorkmachine: Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type Mutation {
@@ -8622,14 +8624,12 @@ type Mutation {
     infra_deletePV(clusterName: String!, pvName: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     # Workspaces
-    infra_createWorkspace(clusterName: String!, workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
-    infra_updateWorkspace(clusterName: String!, workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
-    infra_deleteWorkspace(clusterName: String!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_createWorkspace( workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_updateWorkspace( workspace: WorkspaceIn!): Workspace @isLoggedInAndVerified @hasAccount
+    infra_deleteWorkspace( name: String!): Boolean! @isLoggedInAndVerified @hasAccount
 
     # Workmachine
-    infra_upsertWorkMachine(clusterName: String!, workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount
-    infra_updateWorkMachine(clusterName: String!, workmachine: WorkmachineIn!): Workmachine @isLoggedInAndVerified @hasAccount 
-    infra_updateWorkMachineStatus(clusterName: String!, status: Boolean!, name: String!): Boolean! @isLoggedInAndVerified @hasAccount
+    infra_upsertWorkMachine(sshKeys: [String!], machineType: String , running: Boolean): Workmachine @isLoggedInAndVerified @hasAccount
 }
 
 type EncodedValue {
@@ -10774,10 +10774,14 @@ input VolumeAttachmentIn {
   id: ID!
   kind: String
   lastUpdatedBy: Github__com___kloudlite___api___common__CreatedOrUpdatedBy!
+  machineStatus: Boolean!
+  machineType: String!
   markedForDeletion: Boolean
   metadata: Metadata @goField(name: "objectMeta")
   recordVersion: Int!
+  running: Boolean!
   spec: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec
+  sshPublicKeys: String!
   status: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatus
   syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
@@ -10798,8 +10802,12 @@ input WorkmachineIn {
   apiVersion: String
   displayName: String!
   kind: String
+  machineStatus: Boolean!
+  machineType: String!
   metadata: MetadataIn
+  running: Boolean!
   spec: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn
+  sshPublicKeys: String!
   status: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineStatusIn
 }
 
@@ -11166,40 +11174,13 @@ func (ec *executionContext) field_Mutation_infra_createProviderSecret_argsSecret
 func (ec *executionContext) field_Mutation_infra_createWorkspace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_infra_createWorkspace_argsClusterName(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_infra_createWorkspace_argsWorkspace(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Mutation_infra_createWorkspace_argsWorkspace(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["workspace"] = arg1
+	args["workspace"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_infra_createWorkspace_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Mutation_infra_createWorkspace_argsWorkspace(
 	ctx context.Context,
 	rawArgs map[string]interface{},
@@ -11562,40 +11543,13 @@ func (ec *executionContext) field_Mutation_infra_deleteProviderSecret_argsSecret
 func (ec *executionContext) field_Mutation_infra_deleteWorkspace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_infra_deleteWorkspace_argsClusterName(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_infra_deleteWorkspace_argsName(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Mutation_infra_deleteWorkspace_argsName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["name"] = arg1
+	args["name"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_infra_deleteWorkspace_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Mutation_infra_deleteWorkspace_argsName(
 	ctx context.Context,
 	rawArgs map[string]interface{},
@@ -11896,188 +11850,16 @@ func (ec *executionContext) field_Mutation_infra_updateProviderSecret_argsSecret
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_infra_updateWorkMachineStatus_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_infra_updateWorkMachineStatus_argsClusterName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Mutation_infra_updateWorkMachineStatus_argsStatus(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["status"] = arg1
-	arg2, err := ec.field_Mutation_infra_updateWorkMachineStatus_argsName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["name"] = arg2
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_infra_updateWorkMachineStatus_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_infra_updateWorkMachineStatus_argsStatus(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (bool, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["status"]
-	if !ok {
-		var zeroVal bool
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
-	if tmp, ok := rawArgs["status"]; ok {
-		return ec.unmarshalNBoolean2bool(ctx, tmp)
-	}
-
-	var zeroVal bool
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_infra_updateWorkMachineStatus_argsName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["name"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-	if tmp, ok := rawArgs["name"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_infra_updateWorkMachine_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_infra_updateWorkMachine_argsClusterName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Mutation_infra_updateWorkMachine_argsWorkmachine(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["workmachine"] = arg1
-	return args, nil
-}
-func (ec *executionContext) field_Mutation_infra_updateWorkMachine_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Mutation_infra_updateWorkMachine_argsWorkmachine(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (entities.Workmachine, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["workmachine"]
-	if !ok {
-		var zeroVal entities.Workmachine
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workmachine"))
-	if tmp, ok := rawArgs["workmachine"]; ok {
-		return ec.unmarshalNWorkmachineIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkmachine(ctx, tmp)
-	}
-
-	var zeroVal entities.Workmachine
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Mutation_infra_updateWorkspace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_infra_updateWorkspace_argsClusterName(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_infra_updateWorkspace_argsWorkspace(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Mutation_infra_updateWorkspace_argsWorkspace(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["workspace"] = arg1
+	args["workspace"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_infra_updateWorkspace_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Mutation_infra_updateWorkspace_argsWorkspace(
 	ctx context.Context,
 	rawArgs map[string]interface{},
@@ -12103,59 +11885,86 @@ func (ec *executionContext) field_Mutation_infra_updateWorkspace_argsWorkspace(
 func (ec *executionContext) field_Mutation_infra_upsertWorkMachine_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Mutation_infra_upsertWorkMachine_argsClusterName(ctx, rawArgs)
+	arg0, err := ec.field_Mutation_infra_upsertWorkMachine_argsSSHKeys(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Mutation_infra_upsertWorkMachine_argsWorkmachine(ctx, rawArgs)
+	args["sshKeys"] = arg0
+	arg1, err := ec.field_Mutation_infra_upsertWorkMachine_argsMachineType(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["workmachine"] = arg1
+	args["machineType"] = arg1
+	arg2, err := ec.field_Mutation_infra_upsertWorkMachine_argsRunning(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["running"] = arg2
 	return args, nil
 }
-func (ec *executionContext) field_Mutation_infra_upsertWorkMachine_argsClusterName(
+func (ec *executionContext) field_Mutation_infra_upsertWorkMachine_argsSSHKeys(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (string, error) {
+) ([]string, error) {
 	// We won't call the directive if the argument is null.
 	// Set call_argument_directives_with_null to true to call directives
 	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
+	_, ok := rawArgs["sshKeys"]
 	if !ok {
-		var zeroVal string
+		var zeroVal []string
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("sshKeys"))
+	if tmp, ok := rawArgs["sshKeys"]; ok {
+		return ec.unmarshalOString2ᚕstringᚄ(ctx, tmp)
 	}
 
-	var zeroVal string
+	var zeroVal []string
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Mutation_infra_upsertWorkMachine_argsWorkmachine(
+func (ec *executionContext) field_Mutation_infra_upsertWorkMachine_argsMachineType(
 	ctx context.Context,
 	rawArgs map[string]interface{},
-) (entities.Workmachine, error) {
+) (*string, error) {
 	// We won't call the directive if the argument is null.
 	// Set call_argument_directives_with_null to true to call directives
 	// even if the argument is null.
-	_, ok := rawArgs["workmachine"]
+	_, ok := rawArgs["machineType"]
 	if !ok {
-		var zeroVal entities.Workmachine
+		var zeroVal *string
 		return zeroVal, nil
 	}
 
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("workmachine"))
-	if tmp, ok := rawArgs["workmachine"]; ok {
-		return ec.unmarshalNWorkmachineIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkmachine(ctx, tmp)
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("machineType"))
+	if tmp, ok := rawArgs["machineType"]; ok {
+		return ec.unmarshalOString2ᚖstring(ctx, tmp)
 	}
 
-	var zeroVal entities.Workmachine
+	var zeroVal *string
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Mutation_infra_upsertWorkMachine_argsRunning(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*bool, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["running"]
+	if !ok {
+		var zeroVal *bool
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("running"))
+	if tmp, ok := rawArgs["running"]; ok {
+		return ec.unmarshalOBoolean2ᚖbool(ctx, tmp)
+	}
+
+	var zeroVal *bool
 	return zeroVal, nil
 }
 
@@ -12882,102 +12691,16 @@ func (ec *executionContext) field_Query_infra_getVolumeAttachment_argsName(
 	return zeroVal, nil
 }
 
-func (ec *executionContext) field_Query_infra_getWorkmachine_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
-	var err error
-	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_infra_getWorkmachine_argsClusterName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Query_infra_getWorkmachine_argsName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["name"] = arg1
-	return args, nil
-}
-func (ec *executionContext) field_Query_infra_getWorkmachine_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
-func (ec *executionContext) field_Query_infra_getWorkmachine_argsName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["name"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("name"))
-	if tmp, ok := rawArgs["name"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Query_infra_getWorkspace_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_infra_getWorkspace_argsClusterName(ctx, rawArgs)
+	arg0, err := ec.field_Query_infra_getWorkspace_argsName(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Query_infra_getWorkspace_argsName(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["name"] = arg1
+	args["name"] = arg0
 	return args, nil
 }
-func (ec *executionContext) field_Query_infra_getWorkspace_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Query_infra_getWorkspace_argsName(
 	ctx context.Context,
 	rawArgs map[string]interface{},
@@ -13814,45 +13537,18 @@ func (ec *executionContext) field_Query_infra_listVolumeAttachments_argsPq(
 func (ec *executionContext) field_Query_infra_listWorkspaces_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
 	var err error
 	args := map[string]interface{}{}
-	arg0, err := ec.field_Query_infra_listWorkspaces_argsClusterName(ctx, rawArgs)
+	arg0, err := ec.field_Query_infra_listWorkspaces_argsSearch(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["clusterName"] = arg0
-	arg1, err := ec.field_Query_infra_listWorkspaces_argsSearch(ctx, rawArgs)
+	args["search"] = arg0
+	arg1, err := ec.field_Query_infra_listWorkspaces_argsPagination(ctx, rawArgs)
 	if err != nil {
 		return nil, err
 	}
-	args["search"] = arg1
-	arg2, err := ec.field_Query_infra_listWorkspaces_argsPagination(ctx, rawArgs)
-	if err != nil {
-		return nil, err
-	}
-	args["pagination"] = arg2
+	args["pagination"] = arg1
 	return args, nil
 }
-func (ec *executionContext) field_Query_infra_listWorkspaces_argsClusterName(
-	ctx context.Context,
-	rawArgs map[string]interface{},
-) (string, error) {
-	// We won't call the directive if the argument is null.
-	// Set call_argument_directives_with_null to true to call directives
-	// even if the argument is null.
-	_, ok := rawArgs["clusterName"]
-	if !ok {
-		var zeroVal string
-		return zeroVal, nil
-	}
-
-	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("clusterName"))
-	if tmp, ok := rawArgs["clusterName"]; ok {
-		return ec.unmarshalNString2string(ctx, tmp)
-	}
-
-	var zeroVal string
-	return zeroVal, nil
-}
-
 func (ec *executionContext) field_Query_infra_listWorkspaces_argsSearch(
 	ctx context.Context,
 	rawArgs map[string]interface{},
@@ -45617,7 +45313,7 @@ func (ec *executionContext) _Mutation_infra_createWorkspace(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InfraCreateWorkspace(rctx, fc.Args["clusterName"].(string), fc.Args["workspace"].(entities.Workspace))
+			return ec.resolvers.Mutation().InfraCreateWorkspace(rctx, fc.Args["workspace"].(entities.Workspace))
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -45734,7 +45430,7 @@ func (ec *executionContext) _Mutation_infra_updateWorkspace(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InfraUpdateWorkspace(rctx, fc.Args["clusterName"].(string), fc.Args["workspace"].(entities.Workspace))
+			return ec.resolvers.Mutation().InfraUpdateWorkspace(rctx, fc.Args["workspace"].(entities.Workspace))
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -45851,7 +45547,7 @@ func (ec *executionContext) _Mutation_infra_deleteWorkspace(ctx context.Context,
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InfraDeleteWorkspace(rctx, fc.Args["clusterName"].(string), fc.Args["name"].(string))
+			return ec.resolvers.Mutation().InfraDeleteWorkspace(rctx, fc.Args["name"].(string))
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -45935,7 +45631,7 @@ func (ec *executionContext) _Mutation_infra_upsertWorkMachine(ctx context.Contex
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InfraUpsertWorkMachine(rctx, fc.Args["clusterName"].(string), fc.Args["workmachine"].(entities.Workmachine))
+			return ec.resolvers.Mutation().InfraUpsertWorkMachine(rctx, fc.Args["sshKeys"].([]string), fc.Args["machineType"].(*string), fc.Args["running"].(*bool))
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -46005,14 +45701,22 @@ func (ec *executionContext) fieldContext_Mutation_infra_upsertWorkMachine(ctx co
 				return ec.fieldContext_Workmachine_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_Workmachine_lastUpdatedBy(ctx, field)
+			case "machineStatus":
+				return ec.fieldContext_Workmachine_machineStatus(ctx, field)
+			case "machineType":
+				return ec.fieldContext_Workmachine_machineType(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workmachine_markedForDeletion(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Workmachine_metadata(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Workmachine_recordVersion(ctx, field)
+			case "running":
+				return ec.fieldContext_Workmachine_running(ctx, field)
 			case "spec":
 				return ec.fieldContext_Workmachine_spec(ctx, field)
+			case "sshPublicKeys":
+				return ec.fieldContext_Workmachine_sshPublicKeys(ctx, field)
 			case "status":
 				return ec.fieldContext_Workmachine_status(ctx, field)
 			case "syncStatus":
@@ -46031,207 +45735,6 @@ func (ec *executionContext) fieldContext_Mutation_infra_upsertWorkMachine(ctx co
 	}()
 	ctx = graphql.WithFieldContext(ctx, fc)
 	if fc.Args, err = ec.field_Mutation_infra_upsertWorkMachine_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_infra_updateWorkMachine(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_infra_updateWorkMachine(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InfraUpdateWorkMachine(rctx, fc.Args["clusterName"].(string), fc.Args["workmachine"].(entities.Workmachine))
-		}
-
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				var zeroVal *entities.Workmachine
-				return zeroVal, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				var zeroVal *entities.Workmachine
-				return zeroVal, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(*entities.Workmachine); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/infra/internal/entities.Workmachine`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		return graphql.Null
-	}
-	res := resTmp.(*entities.Workmachine)
-	fc.Result = res
-	return ec.marshalOWorkmachine2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkmachine(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_infra_updateWorkMachine(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			switch field.Name {
-			case "accountName":
-				return ec.fieldContext_Workmachine_accountName(ctx, field)
-			case "apiVersion":
-				return ec.fieldContext_Workmachine_apiVersion(ctx, field)
-			case "clusterName":
-				return ec.fieldContext_Workmachine_clusterName(ctx, field)
-			case "createdBy":
-				return ec.fieldContext_Workmachine_createdBy(ctx, field)
-			case "creationTime":
-				return ec.fieldContext_Workmachine_creationTime(ctx, field)
-			case "dispatchAddr":
-				return ec.fieldContext_Workmachine_dispatchAddr(ctx, field)
-			case "displayName":
-				return ec.fieldContext_Workmachine_displayName(ctx, field)
-			case "id":
-				return ec.fieldContext_Workmachine_id(ctx, field)
-			case "kind":
-				return ec.fieldContext_Workmachine_kind(ctx, field)
-			case "lastUpdatedBy":
-				return ec.fieldContext_Workmachine_lastUpdatedBy(ctx, field)
-			case "markedForDeletion":
-				return ec.fieldContext_Workmachine_markedForDeletion(ctx, field)
-			case "metadata":
-				return ec.fieldContext_Workmachine_metadata(ctx, field)
-			case "recordVersion":
-				return ec.fieldContext_Workmachine_recordVersion(ctx, field)
-			case "spec":
-				return ec.fieldContext_Workmachine_spec(ctx, field)
-			case "status":
-				return ec.fieldContext_Workmachine_status(ctx, field)
-			case "syncStatus":
-				return ec.fieldContext_Workmachine_syncStatus(ctx, field)
-			case "updateTime":
-				return ec.fieldContext_Workmachine_updateTime(ctx, field)
-			}
-			return nil, fmt.Errorf("no field named %q was found under type Workmachine", field.Name)
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_infra_updateWorkMachine_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Mutation_infra_updateWorkMachineStatus(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Mutation_infra_updateWorkMachineStatus(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		directive0 := func(rctx context.Context) (interface{}, error) {
-			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Mutation().InfraUpdateWorkMachineStatus(rctx, fc.Args["clusterName"].(string), fc.Args["status"].(bool), fc.Args["name"].(string))
-		}
-
-		directive1 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.IsLoggedInAndVerified == nil {
-				var zeroVal bool
-				return zeroVal, errors.New("directive isLoggedInAndVerified is not implemented")
-			}
-			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
-		}
-		directive2 := func(ctx context.Context) (interface{}, error) {
-			if ec.directives.HasAccount == nil {
-				var zeroVal bool
-				return zeroVal, errors.New("directive hasAccount is not implemented")
-			}
-			return ec.directives.HasAccount(ctx, nil, directive1)
-		}
-
-		tmp, err := directive2(rctx)
-		if err != nil {
-			return nil, graphql.ErrorOnPath(ctx, err)
-		}
-		if tmp == nil {
-			return nil, nil
-		}
-		if data, ok := tmp.(bool); ok {
-			return data, nil
-		}
-		return nil, fmt.Errorf(`unexpected type %T from directive, should be bool`, tmp)
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(bool)
-	fc.Result = res
-	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Mutation_infra_updateWorkMachineStatus(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Mutation",
-		Field:      field,
-		IsMethod:   true,
-		IsResolver: true,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type Boolean does not have child fields")
-		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Mutation_infra_updateWorkMachineStatus_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
 		ec.Error(ctx, err)
 		return fc, err
 	}
@@ -54140,7 +53643,7 @@ func (ec *executionContext) _Query_infra_listWorkspaces(ctx context.Context, fie
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraListWorkspaces(rctx, fc.Args["clusterName"].(string), fc.Args["search"].(*model.SearchWorkspaces), fc.Args["pagination"].(*repos.CursorPagination))
+			return ec.resolvers.Query().InfraListWorkspaces(rctx, fc.Args["search"].(*model.SearchWorkspaces), fc.Args["pagination"].(*repos.CursorPagination))
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -54229,7 +53732,7 @@ func (ec *executionContext) _Query_infra_getWorkspace(ctx context.Context, field
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraGetWorkspace(rctx, fc.Args["clusterName"].(string), fc.Args["name"].(string))
+			return ec.resolvers.Query().InfraGetWorkspace(rctx, fc.Args["name"].(string))
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -54346,7 +53849,7 @@ func (ec *executionContext) _Query_infra_getWorkmachine(ctx context.Context, fie
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		directive0 := func(rctx context.Context) (interface{}, error) {
 			ctx = rctx // use context from middleware stack in children
-			return ec.resolvers.Query().InfraGetWorkmachine(rctx, fc.Args["clusterName"].(string), fc.Args["name"].(string))
+			return ec.resolvers.Query().InfraGetWorkmachine(rctx)
 		}
 
 		directive1 := func(ctx context.Context) (interface{}, error) {
@@ -54388,7 +53891,7 @@ func (ec *executionContext) _Query_infra_getWorkmachine(ctx context.Context, fie
 	return ec.marshalOWorkmachine2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkmachine(ctx, field.Selections, res)
 }
 
-func (ec *executionContext) fieldContext_Query_infra_getWorkmachine(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+func (ec *executionContext) fieldContext_Query_infra_getWorkmachine(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Query",
 		Field:      field,
@@ -54416,14 +53919,22 @@ func (ec *executionContext) fieldContext_Query_infra_getWorkmachine(ctx context.
 				return ec.fieldContext_Workmachine_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_Workmachine_lastUpdatedBy(ctx, field)
+			case "machineStatus":
+				return ec.fieldContext_Workmachine_machineStatus(ctx, field)
+			case "machineType":
+				return ec.fieldContext_Workmachine_machineType(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workmachine_markedForDeletion(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Workmachine_metadata(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Workmachine_recordVersion(ctx, field)
+			case "running":
+				return ec.fieldContext_Workmachine_running(ctx, field)
 			case "spec":
 				return ec.fieldContext_Workmachine_spec(ctx, field)
+			case "sshPublicKeys":
+				return ec.fieldContext_Workmachine_sshPublicKeys(ctx, field)
 			case "status":
 				return ec.fieldContext_Workmachine_status(ctx, field)
 			case "syncStatus":
@@ -54433,17 +53944,6 @@ func (ec *executionContext) fieldContext_Query_infra_getWorkmachine(ctx context.
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Workmachine", field.Name)
 		},
-	}
-	defer func() {
-		if r := recover(); r != nil {
-			err = ec.Recover(ctx, r)
-			ec.Error(ctx, err)
-		}
-	}()
-	ctx = graphql.WithFieldContext(ctx, fc)
-	if fc.Args, err = ec.field_Query_infra_getWorkmachine_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
-		ec.Error(ctx, err)
-		return fc, err
 	}
 	return fc, nil
 }
@@ -56101,6 +55601,94 @@ func (ec *executionContext) fieldContext_Workmachine_lastUpdatedBy(_ context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Workmachine_machineStatus(ctx context.Context, field graphql.CollectedField, obj *entities.Workmachine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workmachine_machineStatus(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MachineStatus, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workmachine_machineStatus(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workmachine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workmachine_machineType(ctx context.Context, field graphql.CollectedField, obj *entities.Workmachine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workmachine_machineType(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.MachineType, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workmachine_machineType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workmachine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Workmachine_markedForDeletion(ctx context.Context, field graphql.CollectedField, obj *entities.Workmachine) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Workmachine_markedForDeletion(ctx, field)
 	if err != nil {
@@ -56243,6 +55831,50 @@ func (ec *executionContext) fieldContext_Workmachine_recordVersion(_ context.Con
 	return fc, nil
 }
 
+func (ec *executionContext) _Workmachine_running(ctx context.Context, field graphql.CollectedField, obj *entities.Workmachine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workmachine_running(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.Running, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(bool)
+	fc.Result = res
+	return ec.marshalNBoolean2bool(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workmachine_running(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workmachine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type Boolean does not have child fields")
+		},
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Workmachine_spec(ctx context.Context, field graphql.CollectedField, obj *entities.Workmachine) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Workmachine_spec(ctx, field)
 	if err != nil {
@@ -56287,6 +55919,50 @@ func (ec *executionContext) fieldContext_Workmachine_spec(_ context.Context, fie
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec_state(ctx, field)
 			}
 			return nil, fmt.Errorf("no field named %q was found under type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec", field.Name)
+		},
+	}
+	return fc, nil
+}
+
+func (ec *executionContext) _Workmachine_sshPublicKeys(ctx context.Context, field graphql.CollectedField, obj *entities.Workmachine) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Workmachine_sshPublicKeys(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		ctx = rctx // use context from middleware stack in children
+		return obj.SshPublicKeys, nil
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		if !graphql.HasFieldError(ctx, fc) {
+			ec.Errorf(ctx, "must not be null")
+		}
+		return graphql.Null
+	}
+	res := resTmp.(string)
+	fc.Result = res
+	return ec.marshalNString2string(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Workmachine_sshPublicKeys(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Workmachine",
+		Field:      field,
+		IsMethod:   false,
+		IsResolver: false,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			return nil, errors.New("field of type String does not have child fields")
 		},
 	}
 	return fc, nil
@@ -56544,14 +56220,22 @@ func (ec *executionContext) fieldContext_WorkmachineEdge_node(_ context.Context,
 				return ec.fieldContext_Workmachine_kind(ctx, field)
 			case "lastUpdatedBy":
 				return ec.fieldContext_Workmachine_lastUpdatedBy(ctx, field)
+			case "machineStatus":
+				return ec.fieldContext_Workmachine_machineStatus(ctx, field)
+			case "machineType":
+				return ec.fieldContext_Workmachine_machineType(ctx, field)
 			case "markedForDeletion":
 				return ec.fieldContext_Workmachine_markedForDeletion(ctx, field)
 			case "metadata":
 				return ec.fieldContext_Workmachine_metadata(ctx, field)
 			case "recordVersion":
 				return ec.fieldContext_Workmachine_recordVersion(ctx, field)
+			case "running":
+				return ec.fieldContext_Workmachine_running(ctx, field)
 			case "spec":
 				return ec.fieldContext_Workmachine_spec(ctx, field)
+			case "sshPublicKeys":
+				return ec.fieldContext_Workmachine_sshPublicKeys(ctx, field)
 			case "status":
 				return ec.fieldContext_Workmachine_status(ctx, field)
 			case "syncStatus":
@@ -64917,7 +64601,7 @@ func (ec *executionContext) unmarshalInputWorkmachineIn(ctx context.Context, obj
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"apiVersion", "displayName", "kind", "metadata", "spec", "status"}
+	fieldsInOrder := [...]string{"apiVersion", "displayName", "kind", "machineStatus", "machineType", "metadata", "running", "spec", "sshPublicKeys", "status"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -64945,6 +64629,20 @@ func (ec *executionContext) unmarshalInputWorkmachineIn(ctx context.Context, obj
 				return it, err
 			}
 			it.Kind = data
+		case "machineStatus":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("machineStatus"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MachineStatus = data
+		case "machineType":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("machineType"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.MachineType = data
 		case "metadata":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("metadata"))
 			data, err := ec.unmarshalOMetadataIn2ᚖk8sᚗioᚋapimachineryᚋpkgᚋapisᚋmetaᚋv1ᚐObjectMeta(ctx, v)
@@ -64954,6 +64652,13 @@ func (ec *executionContext) unmarshalInputWorkmachineIn(ctx context.Context, obj
 			if err = ec.resolvers.WorkmachineIn().Metadata(ctx, &it, data); err != nil {
 				return it, err
 			}
+		case "running":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("running"))
+			data, err := ec.unmarshalNBoolean2bool(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.Running = data
 		case "spec":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("spec"))
 			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn(ctx, v)
@@ -64963,6 +64668,13 @@ func (ec *executionContext) unmarshalInputWorkmachineIn(ctx context.Context, obj
 			if err = ec.resolvers.WorkmachineIn().Spec(ctx, &it, data); err != nil {
 				return it, err
 			}
+		case "sshPublicKeys":
+			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("sshPublicKeys"))
+			data, err := ec.unmarshalNString2string(ctx, v)
+			if err != nil {
+				return it, err
+			}
+			it.SshPublicKeys = data
 		case "status":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("status"))
 			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineStatusIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineStatusIn(ctx, v)
@@ -73418,17 +73130,6 @@ func (ec *executionContext) _Mutation(ctx context.Context, sel ast.SelectionSet)
 			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
 				return ec._Mutation_infra_upsertWorkMachine(ctx, field)
 			})
-		case "infra_updateWorkMachine":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_infra_updateWorkMachine(ctx, field)
-			})
-		case "infra_updateWorkMachineStatus":
-			out.Values[i] = ec.OperationContext.RootResolverMiddleware(innerCtx, func(ctx context.Context) (res graphql.Marshaler) {
-				return ec._Mutation_infra_updateWorkMachineStatus(ctx, field)
-			})
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -76316,12 +76017,27 @@ func (ec *executionContext) _Workmachine(ctx context.Context, sel ast.SelectionS
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
+		case "machineStatus":
+			out.Values[i] = ec._Workmachine_machineStatus(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "machineType":
+			out.Values[i] = ec._Workmachine_machineType(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "markedForDeletion":
 			out.Values[i] = ec._Workmachine_markedForDeletion(ctx, field, obj)
 		case "metadata":
 			out.Values[i] = ec._Workmachine_metadata(ctx, field, obj)
 		case "recordVersion":
 			out.Values[i] = ec._Workmachine_recordVersion(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
+		case "running":
+			out.Values[i] = ec._Workmachine_running(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				atomic.AddUint32(&out.Invalids, 1)
 			}
@@ -76358,6 +76074,11 @@ func (ec *executionContext) _Workmachine(ctx context.Context, sel ast.SelectionS
 			}
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+		case "sshPublicKeys":
+			out.Values[i] = ec._Workmachine_sshPublicKeys(ctx, field, obj)
+			if out.Values[i] == graphql.Null {
+				atomic.AddUint32(&out.Invalids, 1)
+			}
 		case "status":
 			field := field
 
@@ -79307,11 +79028,6 @@ func (ec *executionContext) marshalNWorkmachineEdge2ᚖgithubᚗcomᚋkloudlite�
 		return graphql.Null
 	}
 	return ec._WorkmachineEdge(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNWorkmachineIn2githubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkmachine(ctx context.Context, v interface{}) (entities.Workmachine, error) {
-	res, err := ec.unmarshalInputWorkmachineIn(ctx, v)
-	return res, graphql.ErrorOnPath(ctx, err)
 }
 
 func (ec *executionContext) marshalNWorkspace2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋentitiesᚐWorkspace(ctx context.Context, sel ast.SelectionSet, v *entities.Workspace) graphql.Marshaler {

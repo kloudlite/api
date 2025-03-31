@@ -7,7 +7,9 @@ import (
 	"github.com/kloudlite/api/common/fields"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+	crdsv1 "github.com/kloudlite/operator/apis/crds/v1"
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func (d *domain) applyWorkmachine(ctx InfraContext, wm *entities.Workmachine) error {
@@ -24,29 +26,53 @@ func (d *domain) findWorkmachine(ctx InfraContext, clusterName string, name stri
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	if wm == nil {
-		return nil, errors.Newf("no workmachine for account=%q found", ctx.AccountName)
-	}
+
 	return wm, nil
 }
 
-func (d *domain) UpsertWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
-	workmachine.AccountName = ctx.AccountName
-	workmachine.ClusterName = clusterName
+func (d *domain) UpsertWorkMachine(ctx InfraContext, clusterName string, workmachineName string, sshPublicKeys []string, machineType string, running bool) (*entities.Workmachine, error) {
 
-	workmachine.DispatchAddr = &entities.DispatchAddr{
-		AccountName: ctx.AccountName,
-		ClusterName: clusterName}
+	wm, err := d.findWorkmachine(
+		ctx,
+		clusterName,
+		workmachineName,
+	)
 
-	workmachine.CreatedBy = common.CreatedOrUpdatedBy{
-		UserId:    ctx.UserId,
-		UserName:  ctx.UserName,
-		UserEmail: ctx.UserEmail,
+	if err != nil {
+		return nil, errors.NewE(err)
 	}
 
-	workmachine.LastUpdatedBy = workmachine.CreatedBy
+	if wm == nil {
+		wm = &entities.Workmachine{
+			AccountName:   ctx.AccountName,
+			ClusterName:   clusterName,
+			SshPublicKeys: sshPublicKeys,
+			MachineType:   machineType,
+			Running:       running,
+			WorkMachine: crdsv1.WorkMachine{
+				ObjectMeta: metav1.ObjectMeta{
+					Name:      workmachineName,
+					Namespace: clusterName,
+				},
+			},
+		}
+	} else {
+		wm.SshPublicKeys = sshPublicKeys
+		wm.MachineType = machineType
+		wm.Running = running
 
-	wm, err := d.workmachineRepo.Create(ctx, &workmachine)
+	}
+
+	upWorkmachine, err := d.workmachineRepo.Upsert(
+		ctx,
+		repos.Filter{
+			fc.AccountName:     ctx.AccountName,
+			fc.MetadataName:    workmachineName,
+			fields.ClusterName: clusterName,
+		},
+		wm,
+	)
+
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -57,72 +83,8 @@ func (d *domain) UpsertWorkMachine(ctx InfraContext, clusterName string, workmac
 		return nil, errors.NewE(err)
 	}
 
-	return wm, nil
-}
-
-func (d *domain) UpdateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
-	patchForUpdate := repos.Document{
-		fc.DisplayName: workmachine.DisplayName,
-		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
-			UserId:    ctx.UserId,
-			UserName:  ctx.UserName,
-			UserEmail: ctx.UserEmail,
-		},
-	}
-
-	upWorkmachine, err := d.workmachineRepo.Patch(
-		ctx,
-		repos.Filter{
-			fc.AccountName:     ctx.AccountName,
-			fc.MetadataName:    workmachine.Name,
-			fields.ClusterName: clusterName,
-		},
-		patchForUpdate,
-	)
-	if err != nil {
-		return nil, errors.NewE(err)
-	}
-
-	d.resourceEventPublisher.PublishResourceEvent(ctx, workmachine.ClusterName, ResourceTypeWorkmachine, upWorkmachine.Name, PublishUpdate)
-
-	if err := d.applyWorkmachine(ctx, upWorkmachine); err != nil {
-		return nil, errors.NewE(err)
-	}
-
 	return upWorkmachine, nil
-}
 
-func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, clusterName string, status bool, name string) (bool, error) {
-	patchForUpdate := repos.Document{
-		// fc.WorkmachineSpecState: status,
-		fc.WorkmachineMachineStatus: status,
-		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
-			UserId:    ctx.UserId,
-			UserName:  ctx.UserName,
-			UserEmail: ctx.UserEmail,
-		},
-	}
-
-	upWorkmachine, err := d.workmachineRepo.Patch(
-		ctx,
-		repos.Filter{
-			fc.AccountName:     ctx.AccountName,
-			fc.MetadataName:    name,
-			fields.ClusterName: clusterName,
-		},
-		patchForUpdate,
-	)
-	if err != nil {
-		return false, errors.NewE(err)
-	}
-
-	d.resourceEventPublisher.PublishResourceEvent(ctx, clusterName, ResourceTypeWorkmachine, upWorkmachine.Name, PublishUpdate)
-
-	if err := d.applyWorkmachine(ctx, upWorkmachine); err != nil {
-		return false, errors.NewE(err)
-	}
-
-	return true, nil
 }
 
 func (d *domain) GetWorkmachine(ctx InfraContext, clusterName string, name string) (*entities.Workmachine, error) {
