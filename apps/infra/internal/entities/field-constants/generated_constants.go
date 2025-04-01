@@ -789,7 +789,6 @@ const (
 	WorkmachineDispatchAddr                  = "dispatchAddr"
 	WorkmachineDispatchAddrAccountName       = "dispatchAddr.accountName"
 	WorkmachineDispatchAddrClusterName       = "dispatchAddr.clusterName"
-	WorkmachineMachineStatus                 = "machineStatus"
 	WorkmachineSpec                          = "spec"
 	WorkmachineSpecAws                       = "spec.aws"
 	WorkmachineSpecAwsSecurityGroupID        = "spec.aws.SecurityGroupID"
@@ -844,6 +843,7 @@ const (
 	WorkspaceSpecRouterRoutes               = "spec.router.routes"
 	WorkspaceSpecServiceAccountName         = "spec.serviceAccountName"
 	WorkspaceSpecState                      = "spec.state"
+	WorkspaceWorkmachineName                = "workmachineName"
 )
 
 // constant vars generated for struct

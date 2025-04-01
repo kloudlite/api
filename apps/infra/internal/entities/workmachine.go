@@ -19,8 +19,6 @@ type Workmachine struct {
 
 	DispatchAddr *DispatchAddr `json:"dispatchAddr" graphql:"noinput"`
 
-	MachineStatus bool `json:"machineStatus"`
-
 	SyncStatus types.SyncStatus `json:"syncStatus" graphql:"noinput"`
 }
 

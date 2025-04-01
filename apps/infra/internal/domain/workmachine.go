@@ -24,13 +24,13 @@ func (d *domain) findWorkmachine(ctx InfraContext, clusterName string, name stri
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	if wm == nil {
-		return nil, errors.Newf("no workmachine for account=%q found", ctx.AccountName)
-	}
+	// if wm == nil {
+	// 	return nil, errors.Newf("no workmachine for account=%q found", ctx.AccountName)
+	// }
 	return wm, nil
 }
 
-func (d *domain) UpsertWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
+func (d *domain) CreateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	workmachine.AccountName = ctx.AccountName
 	workmachine.ClusterName = clusterName
 
@@ -62,7 +62,8 @@ func (d *domain) UpsertWorkMachine(ctx InfraContext, clusterName string, workmac
 
 func (d *domain) UpdateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	patchForUpdate := repos.Document{
-		fc.DisplayName: workmachine.DisplayName,
+		fc.DisplayName:     workmachine.DisplayName,
+		fc.WorkmachineSpec: workmachine.Spec,
 		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
@@ -93,9 +94,14 @@ func (d *domain) UpdateWorkMachine(ctx InfraContext, clusterName string, workmac
 }
 
 func (d *domain) UpdateWorkmachineStatus(ctx InfraContext, clusterName string, status bool, name string) (bool, error) {
+	machineStatus := "OFF"
+	if status {
+		machineStatus = "ON"
+	}
+
 	patchForUpdate := repos.Document{
-		// fc.WorkmachineSpecState: status,
-		fc.WorkmachineMachineStatus: status,
+		fc.WorkmachineSpecState: machineStatus,
+		// fc.WorkmachineMachineStatus: status,
 		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,

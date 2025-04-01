@@ -7,15 +7,16 @@ package graph
 import (
 	"context"
 	"fmt"
-	"github.com/kloudlite/api/pkg/errors"
 	"time"
+
+	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
 	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
-	"k8s.io/apimachinery/pkg/apis/meta/v1"
+	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CreationTime is the resolver for the creationTime field.
@@ -41,7 +42,11 @@ func (r *workspaceResolver) ID(ctx context.Context, obj *entities.Workspace) (re
 
 // Spec is the resolver for the spec field.
 func (r *workspaceResolver) Spec(ctx context.Context, obj *entities.Workspace) (*model.GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec, error) {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	var m model.GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec
+	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
@@ -70,7 +75,10 @@ func (r *workspaceInResolver) Spec(ctx context.Context, obj *entities.Workspace,
 
 // Status is the resolver for the status field.
 func (r *workspaceInResolver) Status(ctx context.Context, obj *entities.Workspace, data *model.GithubComKloudliteOperatorToolkitReconcilerStatusIn) error {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return errors.Newf("workspace is nil")
+	}
+	return fn.JsonConversion(data, &obj.Status)
 }
 
 // Workspace returns generated.WorkspaceResolver implementation.

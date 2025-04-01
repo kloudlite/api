@@ -1,18 +1,18 @@
 ---
-label: "Upsert Workmachine"
+label: "Create Workmachine"
 query: |+
-  mutation Infra_upsertWorkMachine($clusterName: String!, $workmachine: WorkmachineIn!) {
-    infra_upsertWorkMachine(clusterName: $clusterName, workmachine: $workmachine) {
+  mutation Infra_createWorkMachine($clusterName: String!, $workmachine: WorkmachineIn!) {
+    infra_createWorkMachine(clusterName: $clusterName, workmachine: $workmachine) {
       accountName
     }
   }
 variables:
   {
-    "clusterName": "test-clus",
+    "clusterName": "ttt",
     "workmachine": {
-      "displayName": "test wm1",
+      "displayName": "tt",
       "metadata": {
-        "name": "test-wm1"
+        "name": "tt"
       }
     }
   }
@@ -28,11 +28,11 @@ query: |+
   }
 variables:
   {
-    "clusterName": "test-clus",
+    "clusterName": "ttt",
     "workmachine": {
-      "displayName": "test wmm1",
+      "displayName": "mm",
       "metadata": {
-        "name": "test-wm1"
+        "name": "tt"
       }
     }
   }

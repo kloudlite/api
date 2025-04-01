@@ -16,6 +16,7 @@ type Workspace @shareable {
   status: Github__com___kloudlite___operator___toolkit___reconciler__Status
   syncStatus: Github__com___kloudlite___api___pkg___types__SyncStatus!
   updateTime: Date!
+  workmachineName: String!
 }
 
 type WorkspaceEdge @shareable {

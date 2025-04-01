@@ -15,8 +15,9 @@ type Workspace struct {
 
 	crdsv1.Workspace `json:",inline"`
 
-	AccountName string `json:"accountName" graphql:"noinput"`
-	ClusterName string `json:"clusterName" graphql:"noinput"`
+	AccountName     string `json:"accountName" graphql:"noinput"`
+	ClusterName     string `json:"clusterName" graphql:"noinput"`
+	WorkmachineName string `json:"workmachineName" graphql:"noinput"`
 
 	DispatchAddr *DispatchAddr `json:"dispatchAddr" graphql:"noinput"`
 

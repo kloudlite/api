@@ -303,43 +303,52 @@ func (r *mutationResolver) InfraDeletePv(ctx context.Context, clusterName string
 }
 
 // InfraCreateWorkspace is the resolver for the infra_createWorkspace field.
-func (r *mutationResolver) InfraCreateWorkspace(ctx context.Context, clusterName string, workspace entities.Workspace) (*entities.Workspace, error) {
+func (r *mutationResolver) InfraCreateWorkspace(ctx context.Context, workmachineName string, clusterName string, workspace entities.Workspace) (*entities.Workspace, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	return r.Domain.CreateWorkspace(ictx, clusterName, workspace)
+	return r.Domain.CreateWorkspace(ictx, workmachineName, clusterName, workspace)
 }
 
 // InfraUpdateWorkspace is the resolver for the infra_updateWorkspace field.
-func (r *mutationResolver) InfraUpdateWorkspace(ctx context.Context, clusterName string, workspace entities.Workspace) (*entities.Workspace, error) {
+func (r *mutationResolver) InfraUpdateWorkspace(ctx context.Context, workmachineName string, clusterName string, workspace entities.Workspace) (*entities.Workspace, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.UpdateWorkspace(ictx, clusterName, workspace)
+	return r.Domain.UpdateWorkspace(ictx, workmachineName, clusterName, workspace)
 }
 
 // InfraDeleteWorkspace is the resolver for the infra_deleteWorkspace field.
-func (r *mutationResolver) InfraDeleteWorkspace(ctx context.Context, clusterName string, name string) (bool, error) {
+func (r *mutationResolver) InfraDeleteWorkspace(ctx context.Context, workmachineName string, clusterName string, name string) (bool, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return false, errors.NewE(err)
 	}
-	if err := r.Domain.DeleteWorkspace(ictx, clusterName, name); err != nil {
+	if err := r.Domain.DeleteWorkspace(ictx, workmachineName, clusterName, name); err != nil {
 		return false, errors.NewE(err)
 	}
 	return true, nil
 }
 
-// InfraUpsertWorkMachine is the resolver for the infra_upsertWorkMachine field.
-func (r *mutationResolver) InfraUpsertWorkMachine(ctx context.Context, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
+// InfraUpdateWorkspaceStatus is the resolver for the infra_updateWorkspaceStatus field.
+func (r *mutationResolver) InfraUpdateWorkspaceStatus(ctx context.Context, workmachineName string, clusterName string, status bool, name string) (bool, error) {
+	ictx, err := toInfraContext(ctx)
+	if err != nil {
+		return false, errors.NewE(err)
+	}
+	return r.Domain.UpdateWorkspaceStatus(ictx, workmachineName, clusterName, status, name)
+}
+
+// InfraCreateWorkMachine is the resolver for the infra_createWorkMachine field.
+func (r *mutationResolver) InfraCreateWorkMachine(ctx context.Context, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-	return r.Domain.UpsertWorkMachine(ictx, clusterName, workmachine)
+	return r.Domain.CreateWorkMachine(ictx, clusterName, workmachine)
 }
 
 // InfraUpdateWorkMachine is the resolver for the infra_updateWorkMachine field.
@@ -833,7 +842,7 @@ func (r *queryResolver) InfraGetVolumeAttachment(ctx context.Context, clusterNam
 }
 
 // InfraListWorkspaces is the resolver for the infra_listWorkspaces field.
-func (r *queryResolver) InfraListWorkspaces(ctx context.Context, clusterName string, search *model.SearchWorkspaces, pagination *repos.CursorPagination) (*model.WorkspacePaginatedRecords, error) {
+func (r *queryResolver) InfraListWorkspaces(ctx context.Context, workmachineName string, clusterName string, search *model.SearchWorkspaces, pagination *repos.CursorPagination) (*model.WorkspacePaginatedRecords, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -851,7 +860,7 @@ func (r *queryResolver) InfraListWorkspaces(ctx context.Context, clusterName str
 		}
 	}
 
-	pWorkspaces, err := r.Domain.ListWorkspaces(ictx, clusterName, filter, *pagination)
+	pWorkspaces, err := r.Domain.ListWorkspaces(ictx, workmachineName, clusterName, filter, *pagination)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
@@ -860,13 +869,13 @@ func (r *queryResolver) InfraListWorkspaces(ctx context.Context, clusterName str
 }
 
 // InfraGetWorkspace is the resolver for the infra_getWorkspace field.
-func (r *queryResolver) InfraGetWorkspace(ctx context.Context, clusterName string, name string) (*entities.Workspace, error) {
+func (r *queryResolver) InfraGetWorkspace(ctx context.Context, workmachineName string, clusterName string, name string) (*entities.Workspace, error) {
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
 
-	return r.Domain.GetWorkspace(ictx, clusterName, name)
+	return r.Domain.GetWorkspace(ictx, workmachineName, clusterName, name)
 }
 
 // InfraGetWorkmachine is the resolver for the infra_getWorkmachine field.

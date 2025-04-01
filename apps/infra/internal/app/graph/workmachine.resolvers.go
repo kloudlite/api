@@ -7,16 +7,15 @@ package graph
 import (
 	"context"
 	"fmt"
-	"time"
-
 	"github.com/kloudlite/api/pkg/errors"
-	fn "github.com/kloudlite/api/pkg/functions"
+	"time"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/model"
 	"github.com/kloudlite/api/apps/infra/internal/entities"
+	fn "github.com/kloudlite/api/pkg/functions"
 	"github.com/kloudlite/api/pkg/repos"
-	v1 "k8s.io/apimachinery/pkg/apis/meta/v1"
+	"k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 // CreationTime is the resolver for the creationTime field.
@@ -42,12 +41,20 @@ func (r *workmachineResolver) ID(ctx context.Context, obj *entities.Workmachine)
 
 // Spec is the resolver for the spec field.
 func (r *workmachineResolver) Spec(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec, error) {
-	panic(fmt.Errorf("not implemented: Spec - spec"))
+	var m model.GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec
+	if err := fn.JsonConversion(obj.Spec, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // Status is the resolver for the status field.
 func (r *workmachineResolver) Status(ctx context.Context, obj *entities.Workmachine) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus, error) {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	var m model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus
+	if err := fn.JsonConversion(obj.Status, &m); err != nil {
+		return nil, errors.NewE(err)
+	}
+	return &m, nil
 }
 
 // UpdateTime is the resolver for the updateTime field.
@@ -76,7 +83,10 @@ func (r *workmachineInResolver) Spec(ctx context.Context, obj *entities.Workmach
 
 // Status is the resolver for the status field.
 func (r *workmachineInResolver) Status(ctx context.Context, obj *entities.Workmachine, data *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineStatusIn) error {
-	panic(fmt.Errorf("not implemented: Status - status"))
+	if obj == nil {
+		return errors.Newf("workmachine is nil")
+	}
+	return fn.JsonConversion(data, &obj.Status)
 }
 
 // Workmachine returns generated.WorkmachineResolver implementation.
