@@ -170,9 +170,10 @@ func (d *domain) OnWorkspaceDeleteMessage(ctx InfraContext, clusterName string, 
 	err := d.workspaceRepo.DeleteOne(
 		ctx,
 		repos.Filter{
-			fields.AccountName: ctx.AccountName,
-			fields.ClusterName: clusterName,
-			fc.MetadataName:    workspace.Name,
+			fields.AccountName:          ctx.AccountName,
+			fields.ClusterName:          clusterName,
+			fc.MetadataName:             workspace.Name,
+			fc.WorkspaceWorkmachineName: workspace.WorkmachineName,
 		},
 	)
 	if err != nil {
