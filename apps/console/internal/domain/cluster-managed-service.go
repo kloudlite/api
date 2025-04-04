@@ -379,7 +379,7 @@ func (d *domain) OnClusterManagedServiceUpdateMessage(ctx ConsoleContext, cluste
 						Kind:       "RootCredentials",
 						Spec:       nil,
 						Export: plugin.Export{
-							ViaSecret: xService.SyncedOutputSecretRef.Name,
+							ViaSecret: service.SyncedOutputSecretRef.Name,
 						},
 					},
 					// ResourceTemplate: crdsv1.MresResourceTemplate{
