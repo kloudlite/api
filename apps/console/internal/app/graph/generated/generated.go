@@ -1082,55 +1082,56 @@ type ComplexityRoot struct {
 	}
 
 	Query struct {
-		CoreCheckNameAvailability            func(childComplexity int, envName *string, msvcName *string, resType entities.ResourceType, name string) int
-		CoreGetApp                           func(childComplexity int, envName string, name string) int
-		CoreGetConfig                        func(childComplexity int, envName string, name string) int
-		CoreGetConfigValues                  func(childComplexity int, envName string, queries []*domain.ConfigKeyRef) int
-		CoreGetDNSHostSuffix                 func(childComplexity int) int
-		CoreGetEnvironment                   func(childComplexity int, name string) int
-		CoreGetExternalApp                   func(childComplexity int, envName string, name string) int
-		CoreGetHelmChart                     func(childComplexity int, envName string, name string) int
-		CoreGetImagePullSecret               func(childComplexity int, name string) int
-		CoreGetManagedResouceOutputKeyValues func(childComplexity int, msvcName *string, envName *string, keyrefs []*domain.ManagedResourceKeyRef) int
-		CoreGetManagedResouceOutputKeys      func(childComplexity int, msvcName *string, envName *string, name string) int
-		CoreGetManagedResource               func(childComplexity int, msvcName *string, envName *string, name string) int
-		CoreGetManagedServicePlugin          func(childComplexity int, category string, name string) int
-		CoreGetRegistryImage                 func(childComplexity int, image string) int
-		CoreGetRegistryImageURL              func(childComplexity int) int
-		CoreGetRouter                        func(childComplexity int, envName string, name string) int
-		CoreGetSecret                        func(childComplexity int, envName string, name string) int
-		CoreGetSecretValues                  func(childComplexity int, envName string, queries []*domain.SecretKeyRef) int
-		CoreGetSecretVariable                func(childComplexity int, name string) int
-		CoreGetSecretVariableOutputKeyValues func(childComplexity int, keyrefs []*domain.SecretVariableKeyRef) int
-		CoreGetSecretVariableOutputKeys      func(childComplexity int, name string) int
-		CoreListApps                         func(childComplexity int, envName string, search *model.SearchApps, pq *repos.CursorPagination) int
-		CoreListConfigs                      func(childComplexity int, envName string, search *model.SearchConfigs, pq *repos.CursorPagination) int
-		CoreListEnvironments                 func(childComplexity int, search *model.SearchEnvironments, pq *repos.CursorPagination) int
-		CoreListExternalApps                 func(childComplexity int, envName string, search *model.SearchExternalApps, pq *repos.CursorPagination) int
-		CoreListHelmCharts                   func(childComplexity int, envName string, search *model.SearchHelmCharts, pq *repos.CursorPagination) int
-		CoreListImagePullSecrets             func(childComplexity int, search *model.SearchImagePullSecrets, pq *repos.CursorPagination) int
-		CoreListImportedManagedResources     func(childComplexity int, envName string, search *model.SearchImportedManagedResources, pq *repos.CursorPagination) int
-		CoreListManagedResources             func(childComplexity int, search *model.SearchManagedResources, pq *repos.CursorPagination) int
-		CoreListManagedServicePlugins        func(childComplexity int) int
-		CoreListRegistryImages               func(childComplexity int, pq *repos.CursorPagination) int
-		CoreListRouters                      func(childComplexity int, envName string, search *model.SearchRouters, pq *repos.CursorPagination) int
-		CoreListSecretVariables              func(childComplexity int, search *model.SearchSecretVariables, pq *repos.CursorPagination) int
-		CoreListSecrets                      func(childComplexity int, envName string, search *model.SearchSecrets, pq *repos.CursorPagination) int
-		CoreListServiceBindings              func(childComplexity int, envName string, pagination *repos.CursorPagination) int
-		CoreRestartApp                       func(childComplexity int, envName string, appName string) int
-		CoreResyncApp                        func(childComplexity int, envName string, name string) int
-		CoreResyncConfig                     func(childComplexity int, envName string, name string) int
-		CoreResyncEnvironment                func(childComplexity int, name string) int
-		CoreResyncExternalApp                func(childComplexity int, envName string, name string) int
-		CoreResyncImagePullSecret            func(childComplexity int, name string) int
-		CoreResyncManagedResource            func(childComplexity int, msvcName string, name string) int
-		CoreResyncRouter                     func(childComplexity int, envName string, name string) int
-		CoreResyncSecret                     func(childComplexity int, envName string, name string) int
-		CoreSearchRegistryImages             func(childComplexity int, query string) int
-		InfraGetClusterManagedService        func(childComplexity int, name string) int
-		InfraListClusterManagedServices      func(childComplexity int, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) int
-		__resolve__service                   func(childComplexity int) int
-		__resolve_entities                   func(childComplexity int, representations []map[string]interface{}) int
+		CoreCheckNameAvailability               func(childComplexity int, envName *string, msvcName *string, resType entities.ResourceType, name string) int
+		CoreGetApp                              func(childComplexity int, envName string, name string) int
+		CoreGetConfig                           func(childComplexity int, envName string, name string) int
+		CoreGetConfigValues                     func(childComplexity int, envName string, queries []*domain.ConfigKeyRef) int
+		CoreGetDNSHostSuffix                    func(childComplexity int) int
+		CoreGetEnvironment                      func(childComplexity int, name string) int
+		CoreGetExternalApp                      func(childComplexity int, envName string, name string) int
+		CoreGetHelmChart                        func(childComplexity int, envName string, name string) int
+		CoreGetImagePullSecret                  func(childComplexity int, name string) int
+		CoreGetManagedResouceOutputKeyValues    func(childComplexity int, msvcName *string, envName *string, keyrefs []*domain.ManagedResourceKeyRef) int
+		CoreGetManagedResouceOutputKeys         func(childComplexity int, msvcName *string, envName *string, name string) int
+		CoreGetManagedResource                  func(childComplexity int, msvcName *string, envName *string, name string) int
+		CoreGetManagedServicePlugin             func(childComplexity int, category string, name string) int
+		CoreGetRegistryImage                    func(childComplexity int, image string) int
+		CoreGetRegistryImageURL                 func(childComplexity int) int
+		CoreGetRouter                           func(childComplexity int, envName string, name string) int
+		CoreGetSecret                           func(childComplexity int, envName string, name string) int
+		CoreGetSecretValues                     func(childComplexity int, envName string, queries []*domain.SecretKeyRef) int
+		CoreGetSecretVariable                   func(childComplexity int, name string) int
+		CoreGetSecretVariableOutputKeyValues    func(childComplexity int, keyrefs []*domain.SecretVariableKeyRef) int
+		CoreGetSecretVariableOutputKeys         func(childComplexity int, name string) int
+		CoreListApps                            func(childComplexity int, envName string, search *model.SearchApps, pq *repos.CursorPagination) int
+		CoreListConfigs                         func(childComplexity int, envName string, search *model.SearchConfigs, pq *repos.CursorPagination) int
+		CoreListEnvironments                    func(childComplexity int, search *model.SearchEnvironments, pq *repos.CursorPagination) int
+		CoreListExternalApps                    func(childComplexity int, envName string, search *model.SearchExternalApps, pq *repos.CursorPagination) int
+		CoreListHelmCharts                      func(childComplexity int, envName string, search *model.SearchHelmCharts, pq *repos.CursorPagination) int
+		CoreListImagePullSecrets                func(childComplexity int, search *model.SearchImagePullSecrets, pq *repos.CursorPagination) int
+		CoreListImportedManagedResources        func(childComplexity int, envName string, search *model.SearchImportedManagedResources, pq *repos.CursorPagination) int
+		CoreListManagedResources                func(childComplexity int, search *model.SearchManagedResources, pq *repos.CursorPagination) int
+		CoreListManagedServicePlugins           func(childComplexity int) int
+		CoreListRegistryImages                  func(childComplexity int, pq *repos.CursorPagination) int
+		CoreListRouters                         func(childComplexity int, envName string, search *model.SearchRouters, pq *repos.CursorPagination) int
+		CoreListSecretVariables                 func(childComplexity int, search *model.SearchSecretVariables, pq *repos.CursorPagination) int
+		CoreListSecrets                         func(childComplexity int, envName string, search *model.SearchSecrets, pq *repos.CursorPagination) int
+		CoreListServiceBindings                 func(childComplexity int, envName string, pagination *repos.CursorPagination) int
+		CoreRestartApp                          func(childComplexity int, envName string, appName string) int
+		CoreResyncApp                           func(childComplexity int, envName string, name string) int
+		CoreResyncConfig                        func(childComplexity int, envName string, name string) int
+		CoreResyncEnvironment                   func(childComplexity int, name string) int
+		CoreResyncExternalApp                   func(childComplexity int, envName string, name string) int
+		CoreResyncImagePullSecret               func(childComplexity int, name string) int
+		CoreResyncManagedResource               func(childComplexity int, msvcName string, name string) int
+		CoreResyncRouter                        func(childComplexity int, envName string, name string) int
+		CoreResyncSecret                        func(childComplexity int, envName string, name string) int
+		CoreSearchRegistryImages                func(childComplexity int, query string) int
+		InfraGetClusterManagedService           func(childComplexity int, name string) int
+		InfraListClusterManagedServices         func(childComplexity int, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) int
+		InfraListHelmTypeClusterManagedServices func(childComplexity int, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) int
+		__resolve__service                      func(childComplexity int) int
+		__resolve_entities                      func(childComplexity int, representations []map[string]interface{}) int
 	}
 
 	RegistryImage struct {
@@ -1534,6 +1535,7 @@ type QueryResolver interface {
 	CoreGetManagedResouceOutputKeyValues(ctx context.Context, msvcName *string, envName *string, keyrefs []*domain.ManagedResourceKeyRef) ([]*domain.ManagedResourceKeyValueRef, error)
 	InfraListClusterManagedServices(ctx context.Context, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) (*model.ClusterManagedServicePaginatedRecords, error)
 	InfraGetClusterManagedService(ctx context.Context, name string) (*entities.ClusterManagedService, error)
+	InfraListHelmTypeClusterManagedServices(ctx context.Context, search *model.SearchClusterManagedService, pagination *repos.CursorPagination) (*model.ClusterManagedServicePaginatedRecords, error)
 	CoreListManagedResources(ctx context.Context, search *model.SearchManagedResources, pq *repos.CursorPagination) (*model.ManagedResourcePaginatedRecords, error)
 	CoreGetManagedResource(ctx context.Context, msvcName *string, envName *string, name string) (*entities.ManagedResource, error)
 	CoreResyncManagedResource(ctx context.Context, msvcName string, name string) (bool, error)
@@ -6775,6 +6777,18 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Query.InfraListClusterManagedServices(childComplexity, args["search"].(*model.SearchClusterManagedService), args["pagination"].(*repos.CursorPagination)), true
 
+	case "Query.infra_listHelmTypeClusterManagedServices":
+		if e.complexity.Query.InfraListHelmTypeClusterManagedServices == nil {
+			break
+		}
+
+		args, err := ec.field_Query_infra_listHelmTypeClusterManagedServices_args(context.TODO(), rawArgs)
+		if err != nil {
+			return 0, false
+		}
+
+		return e.complexity.Query.InfraListHelmTypeClusterManagedServices(childComplexity, args["search"].(*model.SearchClusterManagedService), args["pagination"].(*repos.CursorPagination)), true
+
 	case "Query._service":
 		if e.complexity.Query.__resolve__service == nil {
 			break
@@ -8077,8 +8091,9 @@ type Query {
 	core_getManagedResouceOutputKeys(msvcName: String, envName:String , name: String!): [String!]! @isLoggedInAndVerified @hasAccount
 	core_getManagedResouceOutputKeyValues(msvcName: String, envName:String, keyrefs: [ManagedResourceKeyRefIn]): [ManagedResourceKeyValueRef!]! @isLoggedInAndVerified @hasAccount
 
-  infra_listClusterManagedServices(search: SearchClusterManagedService, pagination: CursorPaginationIn): ClusterManagedServicePaginatedRecords @isLoggedInAndVerified @hasAccount
-  infra_getClusterManagedService(name: String!): ClusterManagedService @isLoggedInAndVerified @hasAccount
+	infra_listClusterManagedServices(search: SearchClusterManagedService, pagination: CursorPaginationIn): ClusterManagedServicePaginatedRecords @isLoggedInAndVerified @hasAccount
+	infra_getClusterManagedService(name: String!): ClusterManagedService @isLoggedInAndVerified @hasAccount
+	infra_listHelmTypeClusterManagedServices(search: SearchClusterManagedService, pagination: CursorPaginationIn): ClusterManagedServicePaginatedRecords @isLoggedInAndVerified @hasAccount
 
 	core_listManagedResources(search: SearchManagedResources, pq: CursorPaginationIn): ManagedResourcePaginatedRecords @isLoggedInAndVerified @hasAccount
 	core_getManagedResource(msvcName: String, envName: String, name: String!): ManagedResource @isLoggedInAndVerified @hasAccount
@@ -8654,7 +8669,7 @@ type Github__com___kloudlite___operator___pkg___raw____json__RawJson @shareable 
 
 type Github__com___kloudlite___operator___toolkit___plugin__Export @shareable {
   template: String
-  viaSecret: String!
+  viaSecret: String
 }
 
 type Github__com___kloudlite___operator___toolkit___reconciler__Check @shareable {
@@ -9150,7 +9165,7 @@ input Github__com___kloudlite___operator___pkg___raw____json__RawJsonIn {
 
 input Github__com___kloudlite___operator___toolkit___plugin__ExportIn {
   template: String
-  viaSecret: String!
+  viaSecret: String
 }
 
 input Github__com___kloudlite___operator___toolkit___reconciler__CheckIn {
@@ -15718,6 +15733,65 @@ func (ec *executionContext) field_Query_infra_listClusterManagedServices_argsSea
 }
 
 func (ec *executionContext) field_Query_infra_listClusterManagedServices_argsPagination(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*repos.CursorPagination, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["pagination"]
+	if !ok {
+		var zeroVal *repos.CursorPagination
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("pagination"))
+	if tmp, ok := rawArgs["pagination"]; ok {
+		return ec.unmarshalOCursorPaginationIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋpkgᚋreposᚐCursorPagination(ctx, tmp)
+	}
+
+	var zeroVal *repos.CursorPagination
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_infra_listHelmTypeClusterManagedServices_args(ctx context.Context, rawArgs map[string]interface{}) (map[string]interface{}, error) {
+	var err error
+	args := map[string]interface{}{}
+	arg0, err := ec.field_Query_infra_listHelmTypeClusterManagedServices_argsSearch(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["search"] = arg0
+	arg1, err := ec.field_Query_infra_listHelmTypeClusterManagedServices_argsPagination(ctx, rawArgs)
+	if err != nil {
+		return nil, err
+	}
+	args["pagination"] = arg1
+	return args, nil
+}
+func (ec *executionContext) field_Query_infra_listHelmTypeClusterManagedServices_argsSearch(
+	ctx context.Context,
+	rawArgs map[string]interface{},
+) (*model.SearchClusterManagedService, error) {
+	// We won't call the directive if the argument is null.
+	// Set call_argument_directives_with_null to true to call directives
+	// even if the argument is null.
+	_, ok := rawArgs["search"]
+	if !ok {
+		var zeroVal *model.SearchClusterManagedService
+		return zeroVal, nil
+	}
+
+	ctx = graphql.WithPathContext(ctx, graphql.NewPathWithField("search"))
+	if tmp, ok := rawArgs["search"]; ok {
+		return ec.unmarshalOSearchClusterManagedService2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐSearchClusterManagedService(ctx, tmp)
+	}
+
+	var zeroVal *model.SearchClusterManagedService
+	return zeroVal, nil
+}
+
+func (ec *executionContext) field_Query_infra_listHelmTypeClusterManagedServices_argsPagination(
 	ctx context.Context,
 	rawArgs map[string]interface{},
 ) (*repos.CursorPagination, error) {
@@ -32067,14 +32141,11 @@ func (ec *executionContext) _Github__com___kloudlite___operator___toolkit___plug
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___toolkit___plugin__Export_viaSecret(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -50223,6 +50294,95 @@ func (ec *executionContext) fieldContext_Query_infra_getClusterManagedService(ct
 	return fc, nil
 }
 
+func (ec *executionContext) _Query_infra_listHelmTypeClusterManagedServices(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
+	fc, err := ec.fieldContext_Query_infra_listHelmTypeClusterManagedServices(ctx, field)
+	if err != nil {
+		return graphql.Null
+	}
+	ctx = graphql.WithFieldContext(ctx, fc)
+	defer func() {
+		if r := recover(); r != nil {
+			ec.Error(ctx, ec.Recover(ctx, r))
+			ret = graphql.Null
+		}
+	}()
+	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
+		directive0 := func(rctx context.Context) (interface{}, error) {
+			ctx = rctx // use context from middleware stack in children
+			return ec.resolvers.Query().InfraListHelmTypeClusterManagedServices(rctx, fc.Args["search"].(*model.SearchClusterManagedService), fc.Args["pagination"].(*repos.CursorPagination))
+		}
+
+		directive1 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.IsLoggedInAndVerified == nil {
+				var zeroVal *model.ClusterManagedServicePaginatedRecords
+				return zeroVal, errors.New("directive isLoggedInAndVerified is not implemented")
+			}
+			return ec.directives.IsLoggedInAndVerified(ctx, nil, directive0)
+		}
+		directive2 := func(ctx context.Context) (interface{}, error) {
+			if ec.directives.HasAccount == nil {
+				var zeroVal *model.ClusterManagedServicePaginatedRecords
+				return zeroVal, errors.New("directive hasAccount is not implemented")
+			}
+			return ec.directives.HasAccount(ctx, nil, directive1)
+		}
+
+		tmp, err := directive2(rctx)
+		if err != nil {
+			return nil, graphql.ErrorOnPath(ctx, err)
+		}
+		if tmp == nil {
+			return nil, nil
+		}
+		if data, ok := tmp.(*model.ClusterManagedServicePaginatedRecords); ok {
+			return data, nil
+		}
+		return nil, fmt.Errorf(`unexpected type %T from directive, should be *github.com/kloudlite/api/apps/console/internal/app/graph/model.ClusterManagedServicePaginatedRecords`, tmp)
+	})
+	if err != nil {
+		ec.Error(ctx, err)
+		return graphql.Null
+	}
+	if resTmp == nil {
+		return graphql.Null
+	}
+	res := resTmp.(*model.ClusterManagedServicePaginatedRecords)
+	fc.Result = res
+	return ec.marshalOClusterManagedServicePaginatedRecords2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋconsoleᚋinternalᚋappᚋgraphᚋmodelᚐClusterManagedServicePaginatedRecords(ctx, field.Selections, res)
+}
+
+func (ec *executionContext) fieldContext_Query_infra_listHelmTypeClusterManagedServices(ctx context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
+	fc = &graphql.FieldContext{
+		Object:     "Query",
+		Field:      field,
+		IsMethod:   true,
+		IsResolver: true,
+		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
+			switch field.Name {
+			case "edges":
+				return ec.fieldContext_ClusterManagedServicePaginatedRecords_edges(ctx, field)
+			case "pageInfo":
+				return ec.fieldContext_ClusterManagedServicePaginatedRecords_pageInfo(ctx, field)
+			case "totalCount":
+				return ec.fieldContext_ClusterManagedServicePaginatedRecords_totalCount(ctx, field)
+			}
+			return nil, fmt.Errorf("no field named %q was found under type ClusterManagedServicePaginatedRecords", field.Name)
+		},
+	}
+	defer func() {
+		if r := recover(); r != nil {
+			err = ec.Recover(ctx, r)
+			ec.Error(ctx, err)
+		}
+	}()
+	ctx = graphql.WithFieldContext(ctx, fc)
+	if fc.Args, err = ec.field_Query_infra_listHelmTypeClusterManagedServices_args(ctx, field.ArgumentMap(ec.Variables)); err != nil {
+		ec.Error(ctx, err)
+		return fc, err
+	}
+	return fc, nil
+}
+
 func (ec *executionContext) _Query_core_listManagedResources(ctx context.Context, field graphql.CollectedField) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Query_core_listManagedResources(ctx, field)
 	if err != nil {
@@ -61995,7 +62155,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___t
 			it.Template = data
 		case "viaSecret":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("viaSecret"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -69400,9 +69560,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___toolkit___plug
 			out.Values[i] = ec._Github__com___kloudlite___operator___toolkit___plugin__Export_template(ctx, field, obj)
 		case "viaSecret":
 			out.Values[i] = ec._Github__com___kloudlite___operator___toolkit___plugin__Export_viaSecret(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}
@@ -73780,6 +73937,25 @@ func (ec *executionContext) _Query(ctx context.Context, sel ast.SelectionSet) gr
 					}
 				}()
 				res = ec._Query_infra_getClusterManagedService(ctx, field)
+				return res
+			}
+
+			rrm := func(ctx context.Context) graphql.Marshaler {
+				return ec.OperationContext.RootResolverMiddleware(ctx,
+					func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return rrm(innerCtx) })
+		case "infra_listHelmTypeClusterManagedServices":
+			field := field
+
+			innerFunc := func(ctx context.Context, _ *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Query_infra_listHelmTypeClusterManagedServices(ctx, field)
 				return res
 			}
 

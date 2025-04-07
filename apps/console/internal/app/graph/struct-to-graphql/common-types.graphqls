@@ -379,7 +379,7 @@ type Github__com___kloudlite___operator___pkg___raw____json__RawJson @shareable 
 
 type Github__com___kloudlite___operator___toolkit___plugin__Export @shareable {
   template: String
-  viaSecret: String!
+  viaSecret: String
 }
 
 type Github__com___kloudlite___operator___toolkit___reconciler__Check @shareable {
@@ -875,7 +875,7 @@ input Github__com___kloudlite___operator___pkg___raw____json__RawJsonIn {
 
 input Github__com___kloudlite___operator___toolkit___plugin__ExportIn {
   template: String
-  viaSecret: String!
+  viaSecret: String
 }
 
 input Github__com___kloudlite___operator___toolkit___reconciler__CheckIn {

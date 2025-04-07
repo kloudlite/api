@@ -755,12 +755,12 @@ type GithubComKloudliteOperatorPkgRawJSONRawJSONIn struct {
 
 type GithubComKloudliteOperatorToolkitPluginExport struct {
 	Template  *string `json:"template,omitempty"`
-	ViaSecret string  `json:"viaSecret"`
+	ViaSecret *string `json:"viaSecret,omitempty"`
 }
 
 type GithubComKloudliteOperatorToolkitPluginExportIn struct {
 	Template  *string `json:"template,omitempty"`
-	ViaSecret string  `json:"viaSecret"`
+	ViaSecret *string `json:"viaSecret,omitempty"`
 }
 
 type GithubComKloudliteOperatorToolkitReconcilerCheck struct {
