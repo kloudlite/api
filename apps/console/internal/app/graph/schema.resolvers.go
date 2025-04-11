@@ -422,6 +422,7 @@ func (r *mutationResolver) InfraCreateClusterManagedService(ctx context.Context,
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
+	service.ClusterName = "tenant-cluster"
 	return r.Domain.CreateClusterManagedService(ictx, service)
 }
 
