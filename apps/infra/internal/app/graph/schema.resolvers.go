@@ -8,7 +8,6 @@ import (
 	"context"
 	"encoding/base64"
 	"fmt"
-
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
@@ -348,6 +347,8 @@ func (r *mutationResolver) InfraCreateWorkMachine(ctx context.Context, clusterNa
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
+	// For temporary purpose, we are hardcoding the cluster name
+	workmachine.ClusterName = "tenant-cluster"
 	return r.Domain.CreateWorkMachine(ictx, clusterName, workmachine)
 }
 
@@ -472,8 +473,8 @@ func (r *queryResolver) InfraListBYOKClusters(ctx context.Context, search *model
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-
-	return fn.JsonConvertP[model.BYOKClusterPaginatedRecords](globalVPNs)
+	res, err := fn.JsonConvertP[model.BYOKClusterPaginatedRecords](globalVPNs)
+	return res, err
 }
 
 // InfraGetBYOKCluster is the resolver for the infra_getBYOKCluster field.
@@ -708,7 +709,8 @@ func (r *queryResolver) InfraCheckAWSAccess(ctx context.Context, cloudproviderNa
 
 // InfraListManagedServiceTemplates is the resolver for the infra_listManagedServiceTemplates field.
 func (r *queryResolver) InfraListManagedServiceTemplates(ctx context.Context) ([]*entities.MsvcTemplate, error) {
-	return r.Domain.ListManagedSvcTemplates()
+	data, err := r.Domain.ListManagedSvcTemplates()
+	return data, err
 }
 
 // InfraGetManagedServiceTemplate is the resolver for the infra_getManagedServiceTemplate field.
@@ -880,12 +882,12 @@ func (r *queryResolver) InfraGetWorkspace(ctx context.Context, workmachineName s
 
 // InfraGetWorkmachine is the resolver for the infra_getWorkmachine field.
 func (r *queryResolver) InfraGetWorkmachine(ctx context.Context, clusterName string, name string) (*entities.Workmachine, error) {
+	fmt.Println("HERE")
 	ictx, err := toInfraContext(ctx)
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-
-	return r.Domain.GetWorkmachine(ictx, clusterName, name)
+	return r.Domain.GetWorkmachine(ictx, "tenant-cluster", name)
 }
 
 // Mutation returns generated.MutationResolver implementation.

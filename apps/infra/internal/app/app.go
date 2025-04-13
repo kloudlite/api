@@ -2,8 +2,10 @@ package app
 
 import (
 	"context"
+	"fmt"
 	"log/slog"
 
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
 
 	"github.com/kloudlite/api/apps/infra/internal/entities"
@@ -38,6 +40,7 @@ type (
 	IAMGrpcClient     grpc.Client
 	AccountGrpcClient grpc.Client
 	ConsoleGrpcClient grpc.Client
+	AuthGrpcClient    grpc.Client
 )
 
 type (
@@ -89,6 +92,12 @@ var Module = fx.Module(
 	fx.Provide(
 		func(conn ConsoleGrpcClient) console.ConsoleClient {
 			return console.NewConsoleClient(conn)
+		},
+	),
+
+	fx.Provide(
+		func(conn AuthGrpcClient) auth.AuthClient {
+			return auth.NewAuthClient(conn)
 		},
 	),
 
@@ -228,6 +237,12 @@ var Module = fx.Module(
 
 			schema := generated.NewExecutableSchema(config)
 			server.SetupGraphqlServer(schema,
+				func(c *fiber.Ctx) error {
+					b := c.Body()
+					fmt.Println(string(b))
+					c.Next()
+					return nil
+				},
 				httpServer.NewReadSessionMiddleware(sessionRepo, constants.CookieName, constants.CacheSessionPrefix),
 			)
 		},

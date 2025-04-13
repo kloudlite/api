@@ -5,13 +5,45 @@ import (
 	fc "github.com/kloudlite/api/apps/infra/internal/entities/field-constants"
 	"github.com/kloudlite/api/common"
 	"github.com/kloudlite/api/common/fields"
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/pkg/errors"
 	"github.com/kloudlite/api/pkg/repos"
+	klv1 "github.com/kloudlite/operator/apis/crds/v1"
 	"github.com/kloudlite/operator/operators/resource-watcher/types"
+	v1 "k8s.io/api/core/v1"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 func (d *domain) applyWorkmachine(ctx InfraContext, wm *entities.Workmachine) error {
 	addTrackingId(&wm.WorkMachine, wm.Id)
+	err := d.resDispatcher.ApplyToTargetCluster(ctx, wm.DispatchAddr, &v1.Namespace{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Namespace",
+			APIVersion: "v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name: wm.Spec.TargetNamespace,
+		},
+	}, wm.RecordVersion)
+	if err != nil {
+		return errors.NewE(err)
+	}
+	err = d.resDispatcher.ApplyToTargetCluster(ctx, wm.DispatchAddr, &v1.Secret{
+		TypeMeta: metav1.TypeMeta{
+			Kind:       "Secret",
+			APIVersion: "v1",
+		},
+		ObjectMeta: metav1.ObjectMeta{
+			Name:      "kl-session",
+			Namespace: wm.Spec.TargetNamespace,
+		},
+		Data: map[string][]byte{
+			"session-id": []byte(wm.SessionId),
+		},
+	}, wm.RecordVersion)
+	if err != nil {
+		return errors.NewE(err)
+	}
 	return d.resDispatcher.ApplyToTargetCluster(ctx, wm.DispatchAddr, &wm.WorkMachine, wm.RecordVersion)
 }
 
@@ -45,6 +77,20 @@ func (d *domain) CreateWorkMachine(ctx InfraContext, clusterName string, workmac
 	}
 
 	workmachine.LastUpdatedBy = workmachine.CreatedBy
+
+	out, err := d.authClient.GenerateMachineSession(ctx, &auth.GenerateMachineSessionIn{
+		UserId:    string(ctx.UserId),
+		MachineId: workmachine.Name,
+		Cluster:   workmachine.ClusterName,
+	})
+	if err != nil {
+		return nil, errors.NewE(err)
+	}
+	workmachine.SessionId = out.SessionId
+	workmachine.Spec.JobParams = klv1.WorkMachineJobParams{
+		NodeSelector: map[string]string{},
+		Tolerations:  []v1.Toleration{},
+	}
 
 	wm, err := d.workmachineRepo.Create(ctx, &workmachine)
 	if err != nil {

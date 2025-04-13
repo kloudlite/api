@@ -16,6 +16,7 @@ type Workmachine struct {
 
 	AccountName string `json:"accountName" graphql:"noinput"`
 	ClusterName string `json:"clusterName" graphql:"noinput"`
+	SessionId   string `json:"sessionId" graphql:"ignore"`
 
 	DispatchAddr *DispatchAddr `json:"dispatchAddr" graphql:"noinput"`
 

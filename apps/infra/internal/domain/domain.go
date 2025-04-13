@@ -7,6 +7,7 @@ import (
 	"os"
 	"strconv"
 
+	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/auth"
 	"github.com/kloudlite/api/grpc-interfaces/kloudlite.io/rpc/console"
 
 	"sigs.k8s.io/yaml"
@@ -61,6 +62,7 @@ type domain struct {
 
 	iamClient              iam.IAMClient
 	consoleClient          console.ConsoleClient
+	authClient             auth.AuthClient
 	accountsSvc            AccountsSvc
 	moSvc                  ports.MessageOfficeService
 	resDispatcher          ResourceDispatcher
@@ -203,6 +205,7 @@ var Module = fx.Module("domain",
 			k8sClient k8s.Client,
 
 			iamClient iam.IAMClient,
+			authClient auth.AuthClient,
 			consoleClient console.ConsoleClient,
 			accountsSvc AccountsSvc,
 			moSvc ports.MessageOfficeService,
@@ -264,6 +267,7 @@ var Module = fx.Module("domain",
 				k8sClient:              k8sClient,
 				iamClient:              iamClient,
 				consoleClient:          consoleClient,
+				authClient:             authClient,
 				accountsSvc:            accountsSvc,
 				moSvc:                  moSvc,
 				resourceEventPublisher: resourceEventPublisher,

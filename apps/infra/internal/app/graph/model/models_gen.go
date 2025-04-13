@@ -442,122 +442,46 @@ type GithubComKloudliteOperatorApisCommonTypesSecretRefIn struct {
 type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig struct {
 	Ami                    string  `json:"ami"`
 	AvailabilityZone       string  `json:"availabilityZone"`
-	ExternalVolumeSize     string  `json:"externalVolumeSize"`
+	ExternalVolumeSize     int     `json:"externalVolumeSize"`
 	ExternalVolumeType     string  `json:"externalVolumeType"`
 	IamInstanceProfileRole *string `json:"iamInstanceProfileRole,omitempty"`
 	InstanceType           string  `json:"instanceType"`
-	PublicSubnetID         string  `json:"publicSubnetId"`
 	Region                 string  `json:"region"`
 	RootVolumeSize         int     `json:"rootVolumeSize"`
 	RootVolumeType         string  `json:"rootVolumeType"`
-	SecurityGroupID        string  `json:"SecurityGroupID"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn struct {
 	Ami                string `json:"ami"`
 	AvailabilityZone   string `json:"availabilityZone"`
-	ExternalVolumeSize string `json:"externalVolumeSize"`
+	ExternalVolumeSize int    `json:"externalVolumeSize"`
 	InstanceType       string `json:"instanceType"`
 }
 
-type GithubComKloudliteOperatorApisCrdsV1BasicAuth struct {
-	Enabled    bool    `json:"enabled"`
-	SecretName *string `json:"secretName,omitempty"`
-	Username   *string `json:"username,omitempty"`
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams struct {
+	NodeSelector map[string]interface{}      `json:"nodeSelector,omitempty"`
+	Tolerations  []*K8sIoAPICoreV1Toleration `json:"tolerations,omitempty"`
 }
 
-type GithubComKloudliteOperatorApisCrdsV1BasicAuthIn struct {
-	Enabled    bool    `json:"enabled"`
-	SecretName *string `json:"secretName,omitempty"`
-	Username   *string `json:"username,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1Cors struct {
-	AllowCredentials *bool    `json:"allowCredentials,omitempty"`
-	Enabled          *bool    `json:"enabled,omitempty"`
-	Origins          []string `json:"origins,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1CorsIn struct {
-	AllowCredentials *bool    `json:"allowCredentials,omitempty"`
-	Enabled          *bool    `json:"enabled,omitempty"`
-	Origins          []string `json:"origins,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1HTTPS struct {
-	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
-	Enabled       bool    `json:"enabled"`
-	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1HTTPSIn struct {
-	ClusterIssuer *string `json:"clusterIssuer,omitempty"`
-	Enabled       bool    `json:"enabled"`
-	ForceRedirect *bool   `json:"forceRedirect,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1RateLimit struct {
-	Connections *int  `json:"connections,omitempty"`
-	Enabled     *bool `json:"enabled,omitempty"`
-	Rpm         *int  `json:"rpm,omitempty"`
-	Rps         *int  `json:"rps,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1RateLimitIn struct {
-	Connections *int  `json:"connections,omitempty"`
-	Enabled     *bool `json:"enabled,omitempty"`
-	Rpm         *int  `json:"rpm,omitempty"`
-	Rps         *int  `json:"rps,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1Route struct {
-	App     string `json:"app"`
-	Path    string `json:"path"`
-	Port    int    `json:"port"`
-	Rewrite *bool  `json:"rewrite,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1RouteIn struct {
-	App     string `json:"app"`
-	Path    string `json:"path"`
-	Port    int    `json:"port"`
-	Rewrite *bool  `json:"rewrite,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1RouterSpec struct {
-	BackendProtocol *string                                        `json:"backendProtocol,omitempty"`
-	BasicAuth       *GithubComKloudliteOperatorApisCrdsV1BasicAuth `json:"basicAuth,omitempty"`
-	Cors            *GithubComKloudliteOperatorApisCrdsV1Cors      `json:"cors,omitempty"`
-	Domains         []string                                       `json:"domains"`
-	HTTPS           *GithubComKloudliteOperatorApisCrdsV1HTTPS     `json:"https,omitempty"`
-	IngressClass    *string                                        `json:"ingressClass,omitempty"`
-	MaxBodySizeInMb *int                                           `json:"maxBodySizeInMB,omitempty"`
-	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimit `json:"rateLimit,omitempty"`
-	Routes          []*GithubComKloudliteOperatorApisCrdsV1Route   `json:"routes,omitempty"`
-}
-
-type GithubComKloudliteOperatorApisCrdsV1RouterSpecIn struct {
-	BackendProtocol *string                                          `json:"backendProtocol,omitempty"`
-	BasicAuth       *GithubComKloudliteOperatorApisCrdsV1BasicAuthIn `json:"basicAuth,omitempty"`
-	Cors            *GithubComKloudliteOperatorApisCrdsV1CorsIn      `json:"cors,omitempty"`
-	Domains         []string                                         `json:"domains"`
-	HTTPS           *GithubComKloudliteOperatorApisCrdsV1HTTPSIn     `json:"https,omitempty"`
-	IngressClass    *string                                          `json:"ingressClass,omitempty"`
-	MaxBodySizeInMb *int                                             `json:"maxBodySizeInMB,omitempty"`
-	RateLimit       *GithubComKloudliteOperatorApisCrdsV1RateLimitIn `json:"rateLimit,omitempty"`
-	Routes          []*GithubComKloudliteOperatorApisCrdsV1RouteIn   `json:"routes,omitempty"`
+type GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn struct {
+	NodeSelector map[string]interface{}        `json:"nodeSelector,omitempty"`
+	Tolerations  []*K8sIoAPICoreV1TolerationIn `json:"tolerations,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec struct {
-	AWS           *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig `json:"aws"`
-	SSHPublicKeys []string                                              `json:"sshPublicKeys"`
-	State         GithubComKloudliteOperatorApisCrdsV1WorkMachineState  `json:"state"`
+	AWS             *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig     `json:"aws,omitempty"`
+	JobParams       *GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams `json:"jobParams"`
+	SSHPublicKeys   []string                                                  `json:"sshPublicKeys"`
+	State           GithubComKloudliteOperatorApisCrdsV1WorkMachineState      `json:"state"`
+	TargetNamespace *string                                                   `json:"targetNamespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn struct {
-	AWS           *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn `json:"aws"`
-	SSHPublicKeys []string                                                `json:"sshPublicKeys"`
-	State         GithubComKloudliteOperatorApisCrdsV1WorkMachineState    `json:"state"`
+	AWS             *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn     `json:"aws,omitempty"`
+	JobParams       *GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn `json:"jobParams"`
+	SSHPublicKeys   []string                                                    `json:"sshPublicKeys"`
+	State           GithubComKloudliteOperatorApisCrdsV1WorkMachineState        `json:"state"`
+	TargetNamespace *string                                                     `json:"targetNamespace,omitempty"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1WorkMachineStatus struct {
@@ -576,10 +500,9 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec struct {
 	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
 	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
 	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
-	NodeName              string                                             `json:"nodeName"`
-	Router                *GithubComKloudliteOperatorApisCrdsV1RouterSpec    `json:"router"`
 	ServiceAccountName    string                                             `json:"serviceAccountName"`
 	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
+	WorkMachine           string                                             `json:"workMachine"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
@@ -588,10 +511,9 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
 	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
 	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
 	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
-	NodeName              string                                             `json:"nodeName"`
-	Router                *GithubComKloudliteOperatorApisCrdsV1RouterSpecIn  `json:"router"`
 	ServiceAccountName    string                                             `json:"serviceAccountName"`
 	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
+	WorkMachine           string                                             `json:"workMachine"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheckMeta struct {
@@ -1311,6 +1233,22 @@ type K8sIoAPICoreV1TaintIn struct {
 	Value     *string                   `json:"value,omitempty"`
 }
 
+type K8sIoAPICoreV1Toleration struct {
+	Effect            *K8sIoAPICoreV1TaintEffect        `json:"effect,omitempty"`
+	Key               *string                           `json:"key,omitempty"`
+	Operator          *K8sIoAPICoreV1TolerationOperator `json:"operator,omitempty"`
+	TolerationSeconds *int                              `json:"tolerationSeconds,omitempty"`
+	Value             *string                           `json:"value,omitempty"`
+}
+
+type K8sIoAPICoreV1TolerationIn struct {
+	Effect            *K8sIoAPICoreV1TaintEffect        `json:"effect,omitempty"`
+	Key               *string                           `json:"key,omitempty"`
+	Operator          *K8sIoAPICoreV1TolerationOperator `json:"operator,omitempty"`
+	TolerationSeconds *int                              `json:"tolerationSeconds,omitempty"`
+	Value             *string                           `json:"value,omitempty"`
+}
+
 type K8sIoAPICoreV1TypedLocalObjectReference struct {
 	APIGroup *string `json:"apiGroup,omitempty"`
 	Kind     string  `json:"kind"`
@@ -1820,6 +1758,7 @@ const (
 	GithubComKloudliteOperatorApisCommonTypesCloudProviderAzure        GithubComKloudliteOperatorApisCommonTypesCloudProvider = "azure"
 	GithubComKloudliteOperatorApisCommonTypesCloudProviderDigitalocean GithubComKloudliteOperatorApisCommonTypesCloudProvider = "digitalocean"
 	GithubComKloudliteOperatorApisCommonTypesCloudProviderGCP          GithubComKloudliteOperatorApisCommonTypesCloudProvider = "gcp"
+	GithubComKloudliteOperatorApisCommonTypesCloudProviderUnknown      GithubComKloudliteOperatorApisCommonTypesCloudProvider = "unknown"
 )
 
 var AllGithubComKloudliteOperatorApisCommonTypesCloudProvider = []GithubComKloudliteOperatorApisCommonTypesCloudProvider{
@@ -1827,11 +1766,12 @@ var AllGithubComKloudliteOperatorApisCommonTypesCloudProvider = []GithubComKloud
 	GithubComKloudliteOperatorApisCommonTypesCloudProviderAzure,
 	GithubComKloudliteOperatorApisCommonTypesCloudProviderDigitalocean,
 	GithubComKloudliteOperatorApisCommonTypesCloudProviderGCP,
+	GithubComKloudliteOperatorApisCommonTypesCloudProviderUnknown,
 }
 
 func (e GithubComKloudliteOperatorApisCommonTypesCloudProvider) IsValid() bool {
 	switch e {
-	case GithubComKloudliteOperatorApisCommonTypesCloudProviderAWS, GithubComKloudliteOperatorApisCommonTypesCloudProviderAzure, GithubComKloudliteOperatorApisCommonTypesCloudProviderDigitalocean, GithubComKloudliteOperatorApisCommonTypesCloudProviderGCP:
+	case GithubComKloudliteOperatorApisCommonTypesCloudProviderAWS, GithubComKloudliteOperatorApisCommonTypesCloudProviderAzure, GithubComKloudliteOperatorApisCommonTypesCloudProviderDigitalocean, GithubComKloudliteOperatorApisCommonTypesCloudProviderGCP, GithubComKloudliteOperatorApisCommonTypesCloudProviderUnknown:
 		return true
 	}
 	return false
@@ -2475,6 +2415,47 @@ func (e *K8sIoAPICoreV1TaintEffect) UnmarshalGQL(v interface{}) error {
 }
 
 func (e K8sIoAPICoreV1TaintEffect) MarshalGQL(w io.Writer) {
+	fmt.Fprint(w, strconv.Quote(e.String()))
+}
+
+type K8sIoAPICoreV1TolerationOperator string
+
+const (
+	K8sIoAPICoreV1TolerationOperatorEqual  K8sIoAPICoreV1TolerationOperator = "Equal"
+	K8sIoAPICoreV1TolerationOperatorExists K8sIoAPICoreV1TolerationOperator = "Exists"
+)
+
+var AllK8sIoAPICoreV1TolerationOperator = []K8sIoAPICoreV1TolerationOperator{
+	K8sIoAPICoreV1TolerationOperatorEqual,
+	K8sIoAPICoreV1TolerationOperatorExists,
+}
+
+func (e K8sIoAPICoreV1TolerationOperator) IsValid() bool {
+	switch e {
+	case K8sIoAPICoreV1TolerationOperatorEqual, K8sIoAPICoreV1TolerationOperatorExists:
+		return true
+	}
+	return false
+}
+
+func (e K8sIoAPICoreV1TolerationOperator) String() string {
+	return string(e)
+}
+
+func (e *K8sIoAPICoreV1TolerationOperator) UnmarshalGQL(v interface{}) error {
+	str, ok := v.(string)
+	if !ok {
+		return fmt.Errorf("enums must be strings")
+	}
+
+	*e = K8sIoAPICoreV1TolerationOperator(str)
+	if !e.IsValid() {
+		return fmt.Errorf("%s is not a valid K8s__io___api___core___v1__TolerationOperator", str)
+	}
+	return nil
+}
+
+func (e K8sIoAPICoreV1TolerationOperator) MarshalGQL(w io.Writer) {
 	fmt.Fprint(w, strconv.Quote(e.String()))
 }
 

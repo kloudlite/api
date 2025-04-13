@@ -336,10 +336,12 @@ github.com/klauspost/compress v1.17.11 h1:In6xLpyWOi1+C7tXUUWv2ot1QvBjxevKAaI6IX
 github.com/klauspost/compress v1.17.11/go.mod h1:pMDklpSncoRMuLFrf1W9Ss9KT+0rH90U12bZKk7uwG0=
 github.com/kloudlite/container-registry-authorizer v0.0.0-20231021122509-161dc30fde55 h1:YnZh3TL6AG4EfoInx1/L5zcPHd2QxgLKseJB1KtHjdQ=
 github.com/kloudlite/container-registry-authorizer v0.0.0-20231021122509-161dc30fde55/go.mod h1:GZj3wZmIw/qCciclRhgQTgmGiqe8wxoVzMXQjbOfnbc=
-github.com/kloudlite/operator v1.1.2-0.20250328040220-c964d5549635 h1:/3Ws4XTO8BkL63ZifHHBQcgoLs5BsNdLkOmc3wDrBtg=
-github.com/kloudlite/operator v1.1.2-0.20250328040220-c964d5549635/go.mod h1:uYa7bRoz6xRTr4X2dxZHmMmzu9ulmrLKMYxoVCcaUl8=
 github.com/kloudlite/operator v1.1.2-0.20250328045905-33abde44fe03 h1:p60H7FgvJZU9B3B/6bplVZ/VPTHul9avomS3S2WDHYQ=
 github.com/kloudlite/operator v1.1.2-0.20250328045905-33abde44fe03/go.mod h1:uYa7bRoz6xRTr4X2dxZHmMmzu9ulmrLKMYxoVCcaUl8=
+github.com/kloudlite/operator v1.1.2-0.20250412052019-f42323964f1e h1:EIt98s2s5uKAp4NGr5fMs2La1G56vy/pKcbKeDCXm8A=
+github.com/kloudlite/operator v1.1.2-0.20250412052019-f42323964f1e/go.mod h1:GyeOpRXRV/HkfJXeNtsKDKXMpOhPt67rOCP9sR3vx7Q=
+github.com/kloudlite/operator v1.1.2-0.20250413100852-11e94fe054a9 h1:TDXYSivQF6cHbYeq1vyABYHVB0NLtkse3hBituFUicE=
+github.com/kloudlite/operator v1.1.2-0.20250413100852-11e94fe054a9/go.mod h1:GyeOpRXRV/HkfJXeNtsKDKXMpOhPt67rOCP9sR3vx7Q=
 github.com/kloudlite/operator/toolkit v0.0.0-20250316093242-493e9b587c10 h1:VjNyjNEzyTuvcJowzdWyTgoGj6gawxPd4q30qTihKYg=
 github.com/kloudlite/operator/toolkit v0.0.0-20250316093242-493e9b587c10/go.mod h1:iqOsr4qQ4fbM4pkiBhExA2lb6cvlc7g9O93qkx0TRAs=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=
