@@ -8918,7 +8918,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams
 
 type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec @shareable {
   aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig
-  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams!
+  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams
   sshPublicKeys: [String!]!
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
   targetNamespace: String
@@ -9538,7 +9538,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParam
 
 input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn {
   aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn
-  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn!
+  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn
   sshPublicKeys: [String!]!
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
   targetNamespace: String
@@ -26673,14 +26673,11 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
 	res := resTmp.(*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams)
 	fc.Result = res
-	return ec.marshalNGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams(ctx, field.Selections, res)
+	return ec.marshalOGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec_jobParams(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -60114,7 +60111,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 			it.AWS = data
 		case "jobParams":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("jobParams"))
-			data, err := ec.unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn(ctx, v)
+			data, err := ec.unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -68029,9 +68026,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec_aws(ctx, field, obj)
 		case "jobParams":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec_jobParams(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "sshPublicKeys":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec_sshPublicKeys(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -77046,21 +77040,6 @@ func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis_
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 
-func (ec *executionContext) marshalNGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams) graphql.Marshaler {
-	if v == nil {
-		if !graphql.HasFieldError(ctx, graphql.GetFieldContext(ctx)) {
-			ec.Errorf(ctx, "the requested element is null which the schema does not allow")
-		}
-		return graphql.Null
-	}
-	return ec._Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams(ctx, sel, v)
-}
-
-func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn, error) {
-	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn(ctx, v)
-	return &res, graphql.ErrorOnPath(ctx, err)
-}
-
 func (ec *executionContext) unmarshalNGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineState2githubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineState(ctx context.Context, v interface{}) (model.GithubComKloudliteOperatorApisCrdsV1WorkMachineState, error) {
 	var res model.GithubComKloudliteOperatorApisCrdsV1WorkMachineState
 	err := res.UnmarshalGQL(v)
@@ -79179,6 +79158,21 @@ func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis_
 		return nil, nil
 	}
 	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn(ctx, v)
+	return &res, graphql.ErrorOnPath(ctx, err)
+}
+
+func (ec *executionContext) marshalOGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams(ctx context.Context, sel ast.SelectionSet, v *model.GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams) graphql.Marshaler {
+	if v == nil {
+		return graphql.Null
+	}
+	return ec._Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams(ctx, sel, v)
+}
+
+func (ec *executionContext) unmarshalOGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn2ᚖgithubᚗcomᚋkloudliteᚋapiᚋappsᚋinfraᚋinternalᚋappᚋgraphᚋmodelᚐGithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn(ctx context.Context, v interface{}) (*model.GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn, error) {
+	if v == nil {
+		return nil, nil
+	}
+	res, err := ec.unmarshalInputGithub__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn(ctx, v)
 	return &res, graphql.ErrorOnPath(ctx, err)
 }
 

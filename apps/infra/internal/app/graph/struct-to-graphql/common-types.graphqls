@@ -290,7 +290,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams
 
 type Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpec @shareable {
   aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig
-  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams!
+  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParams
   sshPublicKeys: [String!]!
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
   targetNamespace: String
@@ -910,7 +910,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParam
 
 input Github__com___kloudlite___operator___apis___crds___v1__WorkMachineSpecIn {
   aws: Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn
-  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn!
+  jobParams: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineJobParamsIn
   sshPublicKeys: [String!]!
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkMachineState!
   targetNamespace: String

@@ -187,6 +187,7 @@ func (d *domainI) MachineLogin(ctx context.Context, userId string, machineId str
 		return nil, errors.NewE(err)
 	}
 	session := newAuthSession(user.Id, user.Email, user.Name, user.Verified, "work_machine")
+	session.Extras = map[string]any{}
 	session.Extras[common.MACHINE_ID_KEY] = machineId
 	session.Extras[common.CLUSTER_KEY] = cluster
 	return session, nil

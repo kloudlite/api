@@ -470,7 +470,7 @@ type GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn struct {
 
 type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec struct {
 	AWS             *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig     `json:"aws,omitempty"`
-	JobParams       *GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams `json:"jobParams"`
+	JobParams       *GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParams `json:"jobParams,omitempty"`
 	SSHPublicKeys   []string                                                  `json:"sshPublicKeys"`
 	State           GithubComKloudliteOperatorApisCrdsV1WorkMachineState      `json:"state"`
 	TargetNamespace *string                                                   `json:"targetNamespace,omitempty"`
@@ -478,7 +478,7 @@ type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpec struct {
 
 type GithubComKloudliteOperatorApisCrdsV1WorkMachineSpecIn struct {
 	AWS             *GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn     `json:"aws,omitempty"`
-	JobParams       *GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn `json:"jobParams"`
+	JobParams       *GithubComKloudliteOperatorApisCrdsV1WorkMachineJobParamsIn `json:"jobParams,omitempty"`
 	SSHPublicKeys   []string                                                    `json:"sshPublicKeys"`
 	State           GithubComKloudliteOperatorApisCrdsV1WorkMachineState        `json:"state"`
 	TargetNamespace *string                                                     `json:"targetNamespace,omitempty"`
