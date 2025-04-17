@@ -338,6 +338,8 @@ github.com/kloudlite/container-registry-authorizer v0.0.0-20231021122509-161dc30
 github.com/kloudlite/container-registry-authorizer v0.0.0-20231021122509-161dc30fde55/go.mod h1:GZj3wZmIw/qCciclRhgQTgmGiqe8wxoVzMXQjbOfnbc=
 github.com/kloudlite/operator v1.1.2-0.20250413162252-5b8a435298e5 h1:BNknamQlcW3DaiTIToMem3dejPnb0LQHtQWUm4AoimM=
 github.com/kloudlite/operator v1.1.2-0.20250413162252-5b8a435298e5/go.mod h1:GyeOpRXRV/HkfJXeNtsKDKXMpOhPt67rOCP9sR3vx7Q=
+github.com/kloudlite/operator v1.1.2-0.20250417101045-370362bfb826 h1:3WoPo//eAvhBgEueHuLa896rp8EW/3Dyo7NEE1OyUHM=
+github.com/kloudlite/operator v1.1.2-0.20250417101045-370362bfb826/go.mod h1:hKBHOdG7FQpwyRMiuk5Dc6cacTxEkNIK5BY6B45mXso=
 github.com/kloudlite/operator/toolkit v0.0.0-20250316093242-493e9b587c10 h1:VjNyjNEzyTuvcJowzdWyTgoGj6gawxPd4q30qTihKYg=
 github.com/kloudlite/operator/toolkit v0.0.0-20250316093242-493e9b587c10/go.mod h1:iqOsr4qQ4fbM4pkiBhExA2lb6cvlc7g9O93qkx0TRAs=
 github.com/konsorten/go-windows-terminal-sequences v1.0.1/go.mod h1:T0+1ngSBFLxvqU3pZ+m/2kptfBszLMUkC4ZK/EgS/cQ=

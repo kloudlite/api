@@ -441,19 +441,16 @@ type GithubComKloudliteOperatorApisCommonTypesSecretRefIn struct {
 
 type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig struct {
 	Ami                    string  `json:"ami"`
-	AvailabilityZone       string  `json:"availabilityZone"`
 	ExternalVolumeSize     int     `json:"externalVolumeSize"`
 	ExternalVolumeType     string  `json:"externalVolumeType"`
 	IamInstanceProfileRole *string `json:"iamInstanceProfileRole,omitempty"`
 	InstanceType           string  `json:"instanceType"`
-	Region                 string  `json:"region"`
 	RootVolumeSize         int     `json:"rootVolumeSize"`
 	RootVolumeType         string  `json:"rootVolumeType"`
 }
 
 type GithubComKloudliteOperatorApisCrdsV1AWSMachineConfigIn struct {
 	Ami                string `json:"ami"`
-	AvailabilityZone   string `json:"availabilityZone"`
 	ExternalVolumeSize int    `json:"externalVolumeSize"`
 	InstanceType       string `json:"instanceType"`
 }
@@ -500,7 +497,7 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec struct {
 	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
 	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
 	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
-	ServiceAccountName    string                                             `json:"serviceAccountName"`
+	ServiceAccountName    *string                                            `json:"serviceAccountName,omitempty"`
 	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
 	WorkMachine           string                                             `json:"workMachine"`
 }
@@ -511,7 +508,7 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
 	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
 	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
 	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
-	ServiceAccountName    string                                             `json:"serviceAccountName"`
+	ServiceAccountName    *string                                            `json:"serviceAccountName,omitempty"`
 	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
 	WorkMachine           string                                             `json:"workMachine"`
 }

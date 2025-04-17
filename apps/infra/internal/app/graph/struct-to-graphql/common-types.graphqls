@@ -273,12 +273,10 @@ type Github__com___kloudlite___operator___apis___common____types__SecretRef @sha
 
 type Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig @shareable {
   ami: String!
-  availabilityZone: String!
   externalVolumeSize: Int!
   externalVolumeType: String!
   iamInstanceProfileRole: String
   instanceType: String!
-  region: String!
   rootVolumeSize: Int!
   rootVolumeType: String!
 }
@@ -307,7 +305,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec @share
   enableTTYD: Boolean
   enableVSCodeServer: Boolean
   imagePullPolicy: String!
-  serviceAccountName: String!
+  serviceAccountName: String
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
   workMachine: String!
 }
@@ -898,7 +896,6 @@ input Github__com___kloudlite___operator___apis___common____types__SecretRefIn {
 
 input Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn {
   ami: String!
-  availabilityZone: String!
   externalVolumeSize: Int!
   instanceType: String!
 }
@@ -927,7 +924,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpecIn {
   enableTTYD: Boolean
   enableVSCodeServer: Boolean
   imagePullPolicy: String!
-  serviceAccountName: String!
+  serviceAccountName: String
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
   workMachine: String!
 }

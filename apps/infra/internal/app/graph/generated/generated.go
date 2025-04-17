@@ -513,12 +513,10 @@ type ComplexityRoot struct {
 
 	Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig struct {
 		Ami                    func(childComplexity int) int
-		AvailabilityZone       func(childComplexity int) int
 		ExternalVolumeSize     func(childComplexity int) int
 		ExternalVolumeType     func(childComplexity int) int
 		IamInstanceProfileRole func(childComplexity int) int
 		InstanceType           func(childComplexity int) int
-		Region                 func(childComplexity int) int
 		RootVolumeSize         func(childComplexity int) int
 		RootVolumeType         func(childComplexity int) int
 	}
@@ -3570,13 +3568,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.Ami(childComplexity), true
 
-	case "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.availabilityZone":
-		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.AvailabilityZone == nil {
-			break
-		}
-
-		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.AvailabilityZone(childComplexity), true
-
 	case "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.externalVolumeSize":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.ExternalVolumeSize == nil {
 			break
@@ -3604,13 +3595,6 @@ func (e *executableSchema) Complexity(typeName, field string, childComplexity in
 		}
 
 		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.InstanceType(childComplexity), true
-
-	case "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.region":
-		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.Region == nil {
-			break
-		}
-
-		return e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.Region(childComplexity), true
 
 	case "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.rootVolumeSize":
 		if e.complexity.Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig.RootVolumeSize == nil {
@@ -8901,12 +8885,10 @@ type Github__com___kloudlite___operator___apis___common____types__SecretRef @sha
 
 type Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig @shareable {
   ami: String!
-  availabilityZone: String!
   externalVolumeSize: Int!
   externalVolumeType: String!
   iamInstanceProfileRole: String
   instanceType: String!
-  region: String!
   rootVolumeSize: Int!
   rootVolumeType: String!
 }
@@ -8935,7 +8917,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec @share
   enableTTYD: Boolean
   enableVSCodeServer: Boolean
   imagePullPolicy: String!
-  serviceAccountName: String!
+  serviceAccountName: String
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
   workMachine: String!
 }
@@ -9526,7 +9508,6 @@ input Github__com___kloudlite___operator___apis___common____types__SecretRefIn {
 
 input Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfigIn {
   ami: String!
-  availabilityZone: String!
   externalVolumeSize: Int!
   instanceType: String!
 }
@@ -9555,7 +9536,7 @@ input Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpecIn {
   enableTTYD: Boolean
   enableVSCodeServer: Boolean
   imagePullPolicy: String!
-  serviceAccountName: String!
+  serviceAccountName: String
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
   workMachine: String!
 }
@@ -26148,50 +26129,6 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 	return fc, nil
 }
 
-func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_availabilityZone(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_availabilityZone(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.AvailabilityZone, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_availabilityZone(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
 func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_externalVolumeSize(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig) (ret graphql.Marshaler) {
 	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_externalVolumeSize(ctx, field)
 	if err != nil {
@@ -26353,50 +26290,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 }
 
 func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_instanceType(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
-	fc = &graphql.FieldContext{
-		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig",
-		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
-		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
-			return nil, errors.New("field of type String does not have child fields")
-		},
-	}
-	return fc, nil
-}
-
-func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_region(ctx context.Context, field graphql.CollectedField, obj *model.GithubComKloudliteOperatorApisCrdsV1AWSMachineConfig) (ret graphql.Marshaler) {
-	fc, err := ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_region(ctx, field)
-	if err != nil {
-		return graphql.Null
-	}
-	ctx = graphql.WithFieldContext(ctx, fc)
-	defer func() {
-		if r := recover(); r != nil {
-			ec.Error(ctx, ec.Recover(ctx, r))
-			ret = graphql.Null
-		}
-	}()
-	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
-		ctx = rctx // use context from middleware stack in children
-		return obj.Region, nil
-	})
-	if err != nil {
-		ec.Error(ctx, err)
-		return graphql.Null
-	}
-	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
-		return graphql.Null
-	}
-	res := resTmp.(string)
-	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
-}
-
-func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_region(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
 	fc = &graphql.FieldContext{
 		Object:     "Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig",
 		Field:      field,
@@ -26629,8 +26522,6 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 			switch field.Name {
 			case "ami":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_ami(ctx, field)
-			case "availabilityZone":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_availabilityZone(ctx, field)
 			case "externalVolumeSize":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_externalVolumeSize(ctx, field)
 			case "externalVolumeType":
@@ -26639,8 +26530,6 @@ func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___ap
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_iamInstanceProfileRole(ctx, field)
 			case "instanceType":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_instanceType(ctx, field)
-			case "region":
-				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_region(ctx, field)
 			case "rootVolumeSize":
 				return ec.fieldContext_Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_rootVolumeSize(ctx, field)
 			case "rootVolumeType":
@@ -27153,14 +27042,11 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_serviceAccountName(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -60013,7 +59899,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"ami", "availabilityZone", "externalVolumeSize", "instanceType"}
+	fieldsInOrder := [...]string{"ami", "externalVolumeSize", "instanceType"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -60027,13 +59913,6 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 				return it, err
 			}
 			it.Ami = data
-		case "availabilityZone":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("availabilityZone"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.AvailabilityZone = data
 		case "externalVolumeSize":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("externalVolumeSize"))
 			data, err := ec.unmarshalNInt2int(ctx, v)
@@ -60228,7 +60107,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 			it.ImagePullPolicy = data
 		case "serviceAccountName":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("serviceAccountName"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -67913,11 +67792,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
-		case "availabilityZone":
-			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_availabilityZone(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "externalVolumeSize":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_externalVolumeSize(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
@@ -67932,11 +67806,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_iamInstanceProfileRole(ctx, field, obj)
 		case "instanceType":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_instanceType(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
-		case "region":
-			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__AWSMachineConfig_region(ctx, field, obj)
 			if out.Values[i] == graphql.Null {
 				out.Invalids++
 			}
@@ -68125,9 +67994,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			}
 		case "serviceAccountName":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_serviceAccountName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "state":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_state(ctx, field, obj)
 			if out.Values[i] == graphql.Null {

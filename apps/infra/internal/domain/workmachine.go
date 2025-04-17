@@ -78,6 +78,11 @@ func (d *domain) CreateWorkMachine(ctx InfraContext, clusterName string, workmac
 
 	workmachine.LastUpdatedBy = workmachine.CreatedBy
 
+	workmachine.EnsureGVK()
+	if err := d.k8sClient.ValidateObject(ctx, &workmachine.WorkMachine); err != nil {
+		return nil, errors.NewE(err)
+	}
+
 	out, err := d.authClient.GenerateMachineSession(ctx, &auth.GenerateMachineSessionIn{
 		UserId:    string(ctx.UserId),
 		MachineId: workmachine.Name,
@@ -91,6 +96,8 @@ func (d *domain) CreateWorkMachine(ctx InfraContext, clusterName string, workmac
 		NodeSelector: map[string]string{},
 		Tolerations:  []v1.Toleration{},
 	}
+	workmachine.Spec.AWSMachineConfig.RootVolumeSize = 100
+	workmachine.Spec.AWSMachineConfig.RootVolumeType = "gp2"
 
 	wm, err := d.workmachineRepo.Create(ctx, &workmachine)
 	if err != nil {
@@ -108,8 +115,12 @@ func (d *domain) CreateWorkMachine(ctx InfraContext, clusterName string, workmac
 
 func (d *domain) UpdateWorkMachine(ctx InfraContext, clusterName string, workmachine entities.Workmachine) (*entities.Workmachine, error) {
 	patchForUpdate := repos.Document{
-		fc.DisplayName:     workmachine.DisplayName,
-		fc.WorkmachineSpec: workmachine.Spec,
+		fc.DisplayName:                          workmachine.DisplayName,
+		fc.WorkmachineSpecAwsAmi:                workmachine.Spec.AWSMachineConfig.AMI,
+		fc.WorkmachineSpecAwsExternalVolumeSize: workmachine.Spec.AWSMachineConfig.ExternalVolumeSize,
+		fc.WorkmachineSpecAwsInstanceType:       workmachine.Spec.AWSMachineConfig.InstanceType,
+		fc.WorkmachineSpecSshPublicKeys:         workmachine.Spec.SSHPublicKeys,
+		fc.WorkmachineSpecState:                 workmachine.Spec.State,
 		fc.LastUpdatedBy: common.CreatedOrUpdatedBy{
 			UserId:    ctx.UserId,
 			UserName:  ctx.UserName,
