@@ -821,7 +821,6 @@ const (
 	WorkspaceSpecServiceAccountName    = "spec.serviceAccountName"
 	WorkspaceSpecState                 = "spec.state"
 	WorkspaceSpecWorkMachine           = "spec.workMachine"
-	WorkspaceWorkmachineName           = "workmachineName"
 )
 
 // constant vars generated for struct

@@ -46,7 +46,7 @@ var (
 	ingressGVK          = fn.GVK("networking.k8s.io/v1", "Ingress")
 	secretGVK           = fn.GVK("v1", "Secret")
 	workspaceGVK        = fn.GVK("crds.kloudlite.io/v1", "Workspace")
-	workmachineGVK      = fn.GVK("crds.kloudlite.io/v1", "Workmachine")
+	workmachineGVK      = fn.GVK("crds.kloudlite.io/v1", "WorkMachine")
 )
 
 func processResourceUpdates(consumer ReceiveResourceUpdatesConsumer, d domain.Domain, logger *slog.Logger) {

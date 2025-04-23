@@ -134,10 +134,15 @@ const (
 
 // constant vars generated for struct HelmChart
 const (
+	HelmChartExport                                                                                         = "export"
+	HelmChartExportTemplate                                                                                 = "export.template"
+	HelmChartExportViaSecret                                                                                = "export.viaSecret"
 	HelmChartSpec                                                                                           = "spec"
-	HelmChartSpecChartName                                                                                  = "spec.chartName"
-	HelmChartSpecChartRepoURL                                                                               = "spec.chartRepoURL"
-	HelmChartSpecChartVersion                                                                               = "spec.chartVersion"
+	HelmChartSpecChart                                                                                      = "spec.chart"
+	HelmChartSpecChartName                                                                                  = "spec.chart.name"
+	HelmChartSpecChartUrl                                                                                   = "spec.chart.url"
+	HelmChartSpecChartVersion                                                                               = "spec.chart.version"
+	HelmChartSpecHelmValues                                                                                 = "spec.helmValues"
 	HelmChartSpecJobVars                                                                                    = "spec.jobVars"
 	HelmChartSpecJobVarsAffinity                                                                            = "spec.jobVars.affinity"
 	HelmChartSpecJobVarsAffinityNodeAffinity                                                                = "spec.jobVars.affinity.nodeAffinity"
@@ -150,15 +155,19 @@ const (
 	HelmChartSpecJobVarsAffinityPodAntiAffinity                                                             = "spec.jobVars.affinity.podAntiAffinity"
 	HelmChartSpecJobVarsAffinityPodAntiAffinityPreferredDuringSchedulingIgnoredDuringExecution              = "spec.jobVars.affinity.podAntiAffinity.preferredDuringSchedulingIgnoredDuringExecution"
 	HelmChartSpecJobVarsAffinityPodAntiAffinityRequiredDuringSchedulingIgnoredDuringExecution               = "spec.jobVars.affinity.podAntiAffinity.requiredDuringSchedulingIgnoredDuringExecution"
-	HelmChartSpecJobVarsBackOffLimit                                                                        = "spec.jobVars.backOffLimit"
 	HelmChartSpecJobVarsNodeSelector                                                                        = "spec.jobVars.nodeSelector"
+	HelmChartSpecJobVarsResources                                                                           = "spec.jobVars.resources"
+	HelmChartSpecJobVarsResourcesCpu                                                                        = "spec.jobVars.resources.cpu"
+	HelmChartSpecJobVarsResourcesCpuMax                                                                     = "spec.jobVars.resources.cpu.max"
+	HelmChartSpecJobVarsResourcesCpuMin                                                                     = "spec.jobVars.resources.cpu.min"
+	HelmChartSpecJobVarsResourcesMemory                                                                     = "spec.jobVars.resources.memory"
+	HelmChartSpecJobVarsResourcesMemoryMax                                                                  = "spec.jobVars.resources.memory.max"
+	HelmChartSpecJobVarsResourcesMemoryMin                                                                  = "spec.jobVars.resources.memory.min"
 	HelmChartSpecJobVarsTolerations                                                                         = "spec.jobVars.tolerations"
 	HelmChartSpecPostInstall                                                                                = "spec.postInstall"
 	HelmChartSpecPostUninstall                                                                              = "spec.postUninstall"
 	HelmChartSpecPreInstall                                                                                 = "spec.preInstall"
 	HelmChartSpecPreUninstall                                                                               = "spec.preUninstall"
-	HelmChartSpecReleaseName                                                                                = "spec.releaseName"
-	HelmChartSpecValues                                                                                     = "spec.values"
 )
 
 // constant vars generated for struct ImagePullSecret

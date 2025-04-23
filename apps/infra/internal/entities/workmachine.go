@@ -28,7 +28,7 @@ func (v *Workmachine) GetDisplayName() string {
 }
 
 func (v *Workmachine) GetStatus() reconciler.Status {
-	return reconciler.Status{}
+	return v.WorkMachine.Status.Status
 }
 
 var WorkmachineIndexes = []repos.IndexField{

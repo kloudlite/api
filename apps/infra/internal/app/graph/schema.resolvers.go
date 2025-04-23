@@ -7,7 +7,9 @@ package graph
 import (
 	"context"
 	"encoding/base64"
+	"encoding/json"
 	"fmt"
+
 	"github.com/kloudlite/api/pkg/errors"
 
 	"github.com/kloudlite/api/apps/infra/internal/app/graph/generated"
@@ -866,8 +868,10 @@ func (r *queryResolver) InfraListWorkspaces(ctx context.Context, workmachineName
 	if err != nil {
 		return nil, errors.NewE(err)
 	}
-
-	return fn.JsonConvertP[model.WorkspacePaginatedRecords](pWorkspaces)
+	d, _ := fn.JsonConvertP[model.WorkspacePaginatedRecords](pWorkspaces)
+	data, err := json.Marshal(d)
+	fmt.Println("pWorkspaces", string(data))
+	return d, err
 }
 
 // InfraGetWorkspace is the resolver for the infra_getWorkspace field.

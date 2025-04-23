@@ -56,6 +56,11 @@ func (r *workspaceResolver) UpdateTime(ctx context.Context, obj *entities.Worksp
 	return obj.UpdateTime.Format(time.RFC3339), nil
 }
 
+// WorkmachineName is the resolver for the workmachineName field.
+func (r *workspaceResolver) WorkmachineName(ctx context.Context, obj *entities.Workspace) (string, error) {
+	panic(fmt.Errorf("not implemented: WorkmachineName - workmachineName"))
+}
+
 // Metadata is the resolver for the metadata field.
 func (r *workspaceInResolver) Metadata(ctx context.Context, obj *entities.Workspace, data *v1.ObjectMeta) error {
 	if obj == nil {

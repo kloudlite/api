@@ -15,9 +15,8 @@ type Workspace struct {
 
 	crdsv1.Workspace `json:",inline"`
 
-	AccountName     string `json:"accountName" graphql:"noinput"`
-	ClusterName     string `json:"clusterName" graphql:"noinput"`
-	WorkmachineName string `json:"workmachineName" graphql:"noinput"`
+	AccountName string `json:"accountName" graphql:"noinput"`
+	ClusterName string `json:"clusterName" graphql:"noinput"`
 
 	DispatchAddr *DispatchAddr `json:"dispatchAddr" graphql:"noinput"`
 
@@ -29,7 +28,7 @@ func (v *Workspace) GetDisplayName() string {
 }
 
 func (v *Workspace) GetStatus() reconciler.Status {
-	return reconciler.Status{}
+	return v.Status
 }
 
 var WorkspaceIndexes = []repos.IndexField{

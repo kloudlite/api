@@ -496,7 +496,7 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec struct {
 	EnableJupyterNotebook *bool                                              `json:"enableJupyterNotebook,omitempty"`
 	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
 	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
-	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
+	ImagePullPolicy       *string                                            `json:"imagePullPolicy,omitempty"`
 	ServiceAccountName    *string                                            `json:"serviceAccountName,omitempty"`
 	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
 	WorkMachine           string                                             `json:"workMachine"`
@@ -507,10 +507,9 @@ type GithubComKloudliteOperatorApisCrdsV1WorkspaceSpecIn struct {
 	EnableJupyterNotebook *bool                                              `json:"enableJupyterNotebook,omitempty"`
 	EnableTtyd            *bool                                              `json:"enableTTYD,omitempty"`
 	EnableVSCodeServer    *bool                                              `json:"enableVSCodeServer,omitempty"`
-	ImagePullPolicy       string                                             `json:"imagePullPolicy"`
+	ImagePullPolicy       *string                                            `json:"imagePullPolicy,omitempty"`
 	ServiceAccountName    *string                                            `json:"serviceAccountName,omitempty"`
 	State                 GithubComKloudliteOperatorApisCrdsV1WorkspaceState `json:"state"`
-	WorkMachine           string                                             `json:"workMachine"`
 }
 
 type GithubComKloudliteOperatorPkgOperatorCheckMeta struct {

@@ -1650,6 +1650,7 @@ type WorkspaceResolver interface {
 	Spec(ctx context.Context, obj *entities.Workspace) (*model.GithubComKloudliteOperatorApisCrdsV1WorkspaceSpec, error)
 
 	UpdateTime(ctx context.Context, obj *entities.Workspace) (string, error)
+	WorkmachineName(ctx context.Context, obj *entities.Workspace) (string, error)
 }
 
 type BYOKClusterInResolver interface {
@@ -8916,7 +8917,7 @@ type Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec @share
   enableJupyterNotebook: Boolean
   enableTTYD: Boolean
   enableVSCodeServer: Boolean
-  imagePullPolicy: String!
+  imagePullPolicy: String
   serviceAccountName: String
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
   workMachine: String!
@@ -9535,10 +9536,9 @@ input Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpecIn {
   enableJupyterNotebook: Boolean
   enableTTYD: Boolean
   enableVSCodeServer: Boolean
-  imagePullPolicy: String!
+  imagePullPolicy: String
   serviceAccountName: String
   state: Github__com___kloudlite___operator___apis___crds___v1__WorkspaceState!
-  workMachine: String!
 }
 
 input Github__com___kloudlite___operator___toolkit___reconciler__CheckIn {
@@ -26998,14 +26998,11 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 		return graphql.Null
 	}
 	if resTmp == nil {
-		if !graphql.HasFieldError(ctx, fc) {
-			ec.Errorf(ctx, "must not be null")
-		}
 		return graphql.Null
 	}
-	res := resTmp.(string)
+	res := resTmp.(*string)
 	fc.Result = res
-	return ec.marshalNString2string(ctx, field.Selections, res)
+	return ec.marshalOString2ᚖstring(ctx, field.Selections, res)
 }
 
 func (ec *executionContext) fieldContext_Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_imagePullPolicy(_ context.Context, field graphql.CollectedField) (fc *graphql.FieldContext, err error) {
@@ -56658,7 +56655,7 @@ func (ec *executionContext) _Workspace_workmachineName(ctx context.Context, fiel
 	}()
 	resTmp, err := ec.ResolverMiddleware(ctx, func(rctx context.Context) (interface{}, error) {
 		ctx = rctx // use context from middleware stack in children
-		return obj.WorkmachineName, nil
+		return ec.resolvers.Workspace().WorkmachineName(rctx, obj)
 	})
 	if err != nil {
 		ec.Error(ctx, err)
@@ -56679,8 +56676,8 @@ func (ec *executionContext) fieldContext_Workspace_workmachineName(_ context.Con
 	fc = &graphql.FieldContext{
 		Object:     "Workspace",
 		Field:      field,
-		IsMethod:   false,
-		IsResolver: false,
+		IsMethod:   true,
+		IsResolver: true,
 		Child: func(ctx context.Context, field graphql.CollectedField) (*graphql.FieldContext, error) {
 			return nil, errors.New("field of type String does not have child fields")
 		},
@@ -60063,7 +60060,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 		asMap[k] = v
 	}
 
-	fieldsInOrder := [...]string{"enableCodeServer", "enableJupyterNotebook", "enableTTYD", "enableVSCodeServer", "imagePullPolicy", "serviceAccountName", "state", "workMachine"}
+	fieldsInOrder := [...]string{"enableCodeServer", "enableJupyterNotebook", "enableTTYD", "enableVSCodeServer", "imagePullPolicy", "serviceAccountName", "state"}
 	for _, k := range fieldsInOrder {
 		v, ok := asMap[k]
 		if !ok {
@@ -60100,7 +60097,7 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 			it.EnableVSCodeServer = data
 		case "imagePullPolicy":
 			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("imagePullPolicy"))
-			data, err := ec.unmarshalNString2string(ctx, v)
+			data, err := ec.unmarshalOString2ᚖstring(ctx, v)
 			if err != nil {
 				return it, err
 			}
@@ -60119,13 +60116,6 @@ func (ec *executionContext) unmarshalInputGithub__com___kloudlite___operator___a
 				return it, err
 			}
 			it.State = data
-		case "workMachine":
-			ctx := graphql.WithPathContext(ctx, graphql.NewPathWithField("workMachine"))
-			data, err := ec.unmarshalNString2string(ctx, v)
-			if err != nil {
-				return it, err
-			}
-			it.WorkMachine = data
 		}
 	}
 
@@ -67989,9 +67979,6 @@ func (ec *executionContext) _Github__com___kloudlite___operator___apis___crds___
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_enableVSCodeServer(ctx, field, obj)
 		case "imagePullPolicy":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_imagePullPolicy(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				out.Invalids++
-			}
 		case "serviceAccountName":
 			out.Values[i] = ec._Github__com___kloudlite___operator___apis___crds___v1__WorkspaceSpec_serviceAccountName(ctx, field, obj)
 		case "state":
@@ -75518,10 +75505,41 @@ func (ec *executionContext) _Workspace(ctx context.Context, sel ast.SelectionSet
 
 			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		case "workmachineName":
-			out.Values[i] = ec._Workspace_workmachineName(ctx, field, obj)
-			if out.Values[i] == graphql.Null {
-				atomic.AddUint32(&out.Invalids, 1)
+			field := field
+
+			innerFunc := func(ctx context.Context, fs *graphql.FieldSet) (res graphql.Marshaler) {
+				defer func() {
+					if r := recover(); r != nil {
+						ec.Error(ctx, ec.Recover(ctx, r))
+					}
+				}()
+				res = ec._Workspace_workmachineName(ctx, field, obj)
+				if res == graphql.Null {
+					atomic.AddUint32(&fs.Invalids, 1)
+				}
+				return res
 			}
+
+			if field.Deferrable != nil {
+				dfs, ok := deferred[field.Deferrable.Label]
+				di := 0
+				if ok {
+					dfs.AddField(field)
+					di = len(dfs.Values) - 1
+				} else {
+					dfs = graphql.NewFieldSet([]graphql.CollectedField{field})
+					deferred[field.Deferrable.Label] = dfs
+				}
+				dfs.Concurrently(di, func(ctx context.Context) graphql.Marshaler {
+					return innerFunc(ctx, dfs)
+				})
+
+				// don't run the out.Concurrently() call below
+				out.Values[i] = graphql.Null
+				continue
+			}
+
+			out.Concurrently(i, func(ctx context.Context) graphql.Marshaler { return innerFunc(ctx, out) })
 		default:
 			panic("unknown field " + strconv.Quote(field.Name))
 		}

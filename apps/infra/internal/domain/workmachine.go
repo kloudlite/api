@@ -68,7 +68,8 @@ func (d *domain) CreateWorkMachine(ctx InfraContext, clusterName string, workmac
 
 	workmachine.DispatchAddr = &entities.DispatchAddr{
 		AccountName: ctx.AccountName,
-		ClusterName: clusterName}
+		ClusterName: clusterName,
+	}
 
 	workmachine.CreatedBy = common.CreatedOrUpdatedBy{
 		UserId:    ctx.UserId,
@@ -231,17 +232,19 @@ func (d *domain) OnWorkmachineUpdateMessage(ctx InfraContext, clusterName string
 			return errors.NewE(err)
 		}
 	}
-
+	patch := common.PatchForSyncFromAgent(
+		&workmachine,
+		workmachine.RecordVersion,
+		status,
+		common.PatchOpts{
+			MessageTimestamp: opts.MessageTimestamp,
+		})
+	patch[fc.Status] = workmachine.Status
 	upWm, err := d.workmachineRepo.PatchById(
 		ctx,
 		wm.Id,
-		common.PatchForSyncFromAgent(
-			&workmachine,
-			workmachine.RecordVersion,
-			status,
-			common.PatchOpts{
-				MessageTimestamp: opts.MessageTimestamp,
-			}))
+		patch,
+	)
 	if err != nil {
 		return errors.NewE(err)
 	}

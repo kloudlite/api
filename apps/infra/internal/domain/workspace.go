@@ -20,7 +20,7 @@ func (d *domain) findWorkspace(ctx InfraContext, workmachineName string, cluster
 		fc.AccountName:              ctx.AccountName,
 		fc.MetadataName:             name,
 		fc.ClusterName:              clusterName,
-		fc.WorkspaceWorkmachineName: workmachineName,
+		fc.WorkspaceSpecWorkMachine: workmachineName,
 	})
 	if err != nil {
 		return nil, errors.NewE(err)
@@ -34,7 +34,6 @@ func (d *domain) findWorkspace(ctx InfraContext, workmachineName string, cluster
 func (d *domain) CreateWorkspace(ctx InfraContext, workmachineName string, clusterName string, workspace entities.Workspace) (*entities.Workspace, error) {
 	workspace.AccountName = ctx.AccountName
 	workspace.ClusterName = clusterName
-	workspace.WorkmachineName = workmachineName
 
 	workspace.DispatchAddr = &entities.DispatchAddr{
 		AccountName: ctx.AccountName,
@@ -47,6 +46,11 @@ func (d *domain) CreateWorkspace(ctx InfraContext, workmachineName string, clust
 	}
 
 	workspace.LastUpdatedBy = workspace.CreatedBy
+	workspace.Spec.WorkMachine = workmachineName
+	workspace.EnsureGVK()
+	if err := d.k8sClient.ValidateObject(ctx, &workspace.Workspace); err != nil {
+		return nil, errors.NewE(err)
+	}
 
 	ws, err := d.workspaceRepo.Create(ctx, &workspace)
 	if err != nil {
@@ -78,7 +82,7 @@ func (d *domain) UpdateWorkspace(ctx InfraContext, workmachineName string, clust
 			fc.AccountName:              ctx.AccountName,
 			fc.MetadataName:             workspace.Name,
 			fields.ClusterName:          clusterName,
-			fc.WorkspaceWorkmachineName: workmachineName,
+			fc.WorkspaceSpecWorkMachine: workmachineName,
 		},
 		patchForUpdate,
 	)
@@ -116,7 +120,7 @@ func (d *domain) UpdateWorkspaceStatus(ctx InfraContext, workmachineName string,
 			fc.AccountName:              ctx.AccountName,
 			fc.MetadataName:             name,
 			fields.ClusterName:          clusterName,
-			fc.WorkspaceWorkmachineName: workmachineName,
+			fc.WorkspaceSpecWorkMachine: workmachineName,
 		},
 		patchForUpdate,
 	)
@@ -141,7 +145,7 @@ func (d *domain) DeleteWorkspace(ctx InfraContext, workmachineName string, clust
 			fields.ClusterName:          clusterName,
 			fields.AccountName:          ctx.AccountName,
 			fields.MetadataName:         name,
-			fc.WorkspaceWorkmachineName: workmachineName,
+			fc.WorkspaceSpecWorkMachine: workmachineName,
 		},
 		common.PatchForMarkDeletion(),
 	)
@@ -160,7 +164,7 @@ func (d *domain) GetWorkspace(ctx InfraContext, workmachineName string, clusterN
 func (d *domain) ListWorkspaces(ctx InfraContext, workmachineName string, clusterName string, search map[string]repos.MatchFilter, pagination repos.CursorPagination) (*repos.PaginatedRecord[*entities.Workspace], error) {
 	filter := repos.Filter{
 		fc.AccountName:              ctx.AccountName,
-		fc.WorkspaceWorkmachineName: workmachineName,
+		fc.WorkspaceSpecWorkMachine: workmachineName,
 		fc.ClusterName:              clusterName,
 	}
 	return d.workspaceRepo.FindPaginated(ctx, d.workspaceRepo.MergeMatchFilters(filter, search), pagination)
@@ -173,7 +177,7 @@ func (d *domain) OnWorkspaceDeleteMessage(ctx InfraContext, clusterName string, 
 			fields.AccountName:          ctx.AccountName,
 			fields.ClusterName:          clusterName,
 			fc.MetadataName:             workspace.Name,
-			fc.WorkspaceWorkmachineName: workspace.WorkmachineName,
+			fc.WorkspaceSpecWorkMachine: workspace.Spec.WorkMachine,
 		},
 	)
 	if err != nil {
@@ -184,7 +188,7 @@ func (d *domain) OnWorkspaceDeleteMessage(ctx InfraContext, clusterName string, 
 }
 
 func (d *domain) OnWorkspaceUpdateMessage(ctx InfraContext, clusterName string, workspace entities.Workspace, status types.ResourceStatus, opts UpdateAndDeleteOpts) error {
-	ws, err := d.findWorkspace(ctx, workspace.WorkmachineName, clusterName, workspace.Name)
+	ws, err := d.findWorkspace(ctx, workspace.Spec.WorkMachine, clusterName, workspace.Name)
 	if err != nil {
 		return errors.NewE(err)
 	}
